@@ -1,0 +1,3349 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+    <!-- shw2018 洪卫  modify 2019.08.15-->
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="Spring Boot, Spring Cloud, 微服务, Java技术, 好好学java, Java面试, 分布式, 最新干货分享">
+    <meta name="baidu-site-verification" content="fmlEuI34ir" />
+    <meta name="google-site-verification" content="ZWVq5UvPg33BCEA3LRTUkYe5J854o9lF1_WRTer9l8A" />
+    <meta name="description" content="本站是 好好学java 的技术分享博客。内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、分布式、Java面试、测试开发等相关的研究与知识分享。">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>jdbc就是这么简单 | 好好学java | Spring Boot | Spring Cloud | 微服务 | Java技术 | Java面试 | 分布式 | 最新干货分享</title>
+    <link rel="icon" type="image/png" href="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7">
+
+    <!-- <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css"> -->
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    <!-- 自定义fontawesome样式：欧阳思海 -->
+    <link rel="stylesheet" type="text/css" href="/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/brands.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/fontawesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/regular.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/solid.min.css">
+
+
+    <style type="text/css">
+        code[class*="language-"],
+            pre[class*="language-"] {
+                white-space: pre !important;
+            }
+
+            
+
+        /* 将matery.css中的背景颜色修改放到这里：欧阳思海 */
+        .bg-color {
+            background-image: linear-gradient(to right, #ec8585 0%, #419488 100%);
+            opacity: 0.9;
+            // 透明度
+        }
+    </style>
+
+    <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
+    <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+
+    
+    
+    <script>
+        (function () {
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+    
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?6fe466069710c03a563713b507fbaca7";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+    <!-- Google Analytics -->
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-XXXXX-Y', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <!-- End Google Analytics -->
+
+    <script>(function (i, s, o, g, r, a, m) { i["DaoVoiceObject"] = r; i[r] = i[r] || function () { (i[r].q = i[r].q || []).push(arguments) }, i[r].l = 1 * new Date(); a = s.createElement(o), m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; a.charset = "utf-8"; m.parentNode.insertBefore(a, m) })(window, document, "script", ('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/0a804bac.js", "daovoice")</script>
+
+    <script>
+        if (true) {
+            daovoice('init', {
+                app_id: "0a804bac",
+                user_id: "NO_89757", // 必填: 该用户在您系统上的唯一ID
+                email: "daovoice@example.com", // 选填:  该用户在您系统上的主邮箱
+                name: "道客船长", // 选填: 用户名
+                signed_up: 1449821660 // 选填: 用户的注册时间，用Unix时间戳表示
+            });
+            daovoice('update');
+
+            daovoice('init', {
+                app_id: "0a804bac"
+            });
+            daovoice('update');
+        }
+    </script>
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/rss2.xml" title="好好学java" type="application/rss+xml">
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+    <body>
+
+        <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span" style="font-size: 1.4rem;">好好学java</span>
+                </a>
+            </div>
+            
+
+
+<!-- <a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-navicon"></i></a>
+<ul class="right">
+    
+    <li class="hide-on-med-and-down">
+        <a href="" class="waves-effect waves-light">
+            
+            <i class="fa "></i>
+            
+            <span></span>
+        </a>
+    </li>
+    
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title=""></i>
+        </a>
+    </li>
+</ul> -->
+
+<!-- 支持二级菜单特性 洪卫 shw2018 modify 2019.09.17  -->
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-align-justify"></i></a>
+<ul class="right nav-menu">
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-folder-minus"></i>
+                
+                <span style="font-size: 1.1rem;">Java学习</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/" >
+                    
+                    <span>Java入门</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Javaweb/" >
+                    
+                    <span>Java Web</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/spring%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>Spring教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/springboot%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>SpringBoot教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/springcloud%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>SpringCloud教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98/" >
+                    
+                    <span>Java面试</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%89%91%E6%8C%87offer/" >
+                    
+                    <span>剑指offer</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-code-branch"></i>
+                
+                <span style="font-size: 1.1rem;">Java进阶</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97/" >
+                    
+                    <span>设计模式</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" >
+                    
+                    <span>Java并发编程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/" >
+                    
+                    <span>数据库</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/redis/" >
+                    
+                    <span>Redis</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/linux/" >
+                    
+                    <span>Linux</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/" >
+                    
+                    <span>Java实战项目</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-code"></i>
+                
+                <span style="font-size: 1.1rem;">python学习</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/python%E5%9F%BA%E7%A1%80/" >
+                    
+                    <span>python基础</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/python%E6%A1%86%E6%9E%B6/" >
+                    
+                    <span>python框架</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/python%E5%85%B6%E4%BB%96/" >
+                    
+                    <span>python其他</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-coffee"></i>
+                
+                <span style="font-size: 1.1rem;">Java扩展</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/dubbo/" >
+                    
+                    <span>dubbo</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/netty/" >
+                    
+                    <span>netty</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/rpc/" >
+                    
+                    <span>rpc</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/eureka/" >
+                    
+                    <span>eureka</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/" >
+                    
+                    <span>中间件</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" >
+                    
+                    <span>分布式</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-desktop"></i>
+                
+                <span style="font-size: 1.1rem;">计算机核心</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" >
+                    
+                    <span>数据结构</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98/" >
+                    
+                    <span>leetcode刷题</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" >
+                    
+                    <span>计算机网络</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" >
+                    
+                    <span>算法</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/categories/" class="waves-effect waves-light">
+              
+                <i style="font-size: 1.1rem;" class="fa fa-adjust"></i>
+              
+              <span style="font-size: 1.1rem;">学习资源</span>
+            </a>
+
+            
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/contact" class="waves-effect waves-light">
+              
+                <i style="font-size: 1.1rem;" class="fa fa-envelope"></i>
+              
+              <span style="font-size: 1.1rem;">留言</span>
+            </a>
+
+            
+      </li>
+    
+
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title="搜索"></i>
+        </a>
+    </li>
+
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">好好学java</div>
+        <div class="logo-desc">
+            
+            
+            本站是 好好学java 的技术分享博客，涵盖Java后端技术、SpringBoot、微服务架构、分布式、Java面试等知 ...
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-folder-minus"></i>
+			
+			Java学习
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/ " style="margin-left:75px";>
+				  
+		          <span>Java入门</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Javaweb/ " style="margin-left:75px";>
+				  
+		          <span>Java Web</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/spring%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>Spring教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/springboot%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>SpringBoot教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/springcloud%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>SpringCloud教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98/ " style="margin-left:75px";>
+				  
+		          <span>Java面试</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%89%91%E6%8C%87offer/ " style="margin-left:75px";>
+				  
+		          <span>剑指offer</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-code-branch"></i>
+			
+			Java进阶
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97/ " style="margin-left:75px";>
+				  
+		          <span>设计模式</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>Java并发编程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/ " style="margin-left:75px";>
+				  
+		          <span>数据库</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/redis/ " style="margin-left:75px";>
+				  
+		          <span>Redis</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/linux/ " style="margin-left:75px";>
+				  
+		          <span>Linux</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/ " style="margin-left:75px";>
+				  
+		          <span>Java实战项目</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-code"></i>
+			
+			python学习
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/python%E5%9F%BA%E7%A1%80/ " style="margin-left:75px";>
+				  
+		          <span>python基础</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/python%E6%A1%86%E6%9E%B6/ " style="margin-left:75px";>
+				  
+		          <span>python框架</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/python%E5%85%B6%E4%BB%96/ " style="margin-left:75px";>
+				  
+		          <span>python其他</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-coffee"></i>
+			
+			Java扩展
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/dubbo/ " style="margin-left:75px";>
+				  
+		          <span>dubbo</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/netty/ " style="margin-left:75px";>
+				  
+		          <span>netty</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/rpc/ " style="margin-left:75px";>
+				  
+		          <span>rpc</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/eureka/ " style="margin-left:75px";>
+				  
+		          <span>eureka</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/ " style="margin-left:75px";>
+				  
+		          <span>中间件</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/ " style="margin-left:75px";>
+				  
+		          <span>分布式</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-desktop"></i>
+			
+			计算机核心
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/ " style="margin-left:75px";>
+				  
+		          <span>数据结构</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98/ " style="margin-left:75px";>
+				  
+		          <span>leetcode刷题</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/ " style="margin-left:75px";>
+				  
+		          <span>计算机网络</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E7%AE%97%E6%B3%95/ " style="margin-left:75px";>
+				  
+		          <span>算法</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories/" class="waves-effect waves-light">
+			
+			    <i class="fa fa-fw fa-adjust"></i>
+			
+			学习资源
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa fa-fw fa-envelope"></i>
+			
+			留言
+		</a>
+          
+        </li>
+        
+        
+    </ul>
+</div>
+
+        </div>
+
+        
+    </nav>
+
+</header>
+
+        
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('http://image.ouyangsihai.cn/Fo9qpM78sByGmE9bq8BpOGlmJlur')">
+    <div class="container">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <div class="description center-align post-title">
+                        jdbc就是这么简单
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 20px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+
+    /* 自定义mycard：欧阳思海 */
+
+    #my-card {
+        /* position: relative; */
+        width: 310px;
+        height: 300px;
+        /* max-height: 330px; */
+        margin-bottom: 15px;
+        margin-top: 15px;
+        /* text-align: center; */
+        border: 0;
+        border-radius: 3px;
+        color: rgba(0, 0, 0, .87);
+        background: #fff 50%;
+        background-image: none;
+        background-size: auto;
+        background-size: cover;
+        box-shadow: 0 15px 35px rgba(50, 50, 93, .1), 0 5px 15px rgba(0, 0, 0, .07);
+    }
+
+    /* .widget {
+        line-height: 1.6em;
+        word-wrap: break-word;
+        font-size: 0.9em;
+        padding-top: 15px;
+        padding-left: -45px;
+    } */
+</style>
+
+
+
+
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- shw2018 洪卫  modify 2019.08.15-->
+
+<!-- 代码块修改的代码开始 -->
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFunction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+<!-- 代码块折行 -->
+
+<style type="text/css">
+code[class*="language-"], pre[class*="language-"] { white-space: pre !important; }
+</style>
+
+<!-- 代码块修改代码结束 -->
+
+
+<!-- 文章内容详情 -->
+<div id="container">
+    <div id="artDetail">
+        <div class="card">
+            <div class="card-content article-info">
+                <div class="row tag-cate">
+                    <div class="col s7">
+                        
+                        <div class="article-tag">
+                            <!--我修改的地方：欧阳思海-->
+                            
+                            <a href="/tags/session/" target="_blank">
+                                <span class="chip bg-color">session</span>
+                            </a>
+                            
+                            <a href="/tags/jdbc/" target="_blank">
+                                <span class="chip bg-color">jdbc</span>
+                            </a>
+                            
+                        </div>
+                        
+                    </div>
+                    <div class="col s5 right-align">
+                        
+                        <div class="post-cate">
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Java-Web%E9%97%AF%E5%85%B3/" class="post-category" target="_blank">
+                                Java Web闯关
+                            </a>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <div class="post-info">
+                    <div class="post-date info-break-policy">
+                        <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
+                        2019-10-21
+                    </div>
+
+                    <div class="post-author info-break-policy">
+                        <i class="fa fa-user-o fa-fw"></i>作者:&nbsp;&nbsp;
+                        
+                        欧阳思海
+                        
+                    </div>
+
+                    
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;
+                        6.6k
+                    </div>
+                    
+
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-clock-o fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                        26 分
+                    </div>
+                    
+                    
+
+                    
+                    <span id="busuanzi_container_site_pv" style='display:none'></span>
+                    <i class="fa fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                    <span id="busuanzi_value_page_pv"></span>
+
+                    
+
+                </div>
+            </div>
+            <hr class="clearfix">
+            <div class="card-content article-card-content">
+                <!-- 欧阳思海，modify，2020.05.01-->
+<!-- 文章详情详情页面的头部广告位置信息 -->
+<div id="post-head-panel">
+    
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" style="font-size: 18px;" target="_blank">
+        <img src="/icons/hot.gif">
+        本人花费半年的时间总结的《Java面试指南》已拿腾讯等大厂offer，已开源在github ，欢迎star！
+    </a>
+    
+    
+</div>
+<br />
+
+
+
+<blockquote>
+    
+            <p>本文GitHub <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">https://github.com/OUYANGSIHAI/JavaInterview</a> 已收录，这是我花了6个月总结的<b>一线大厂Java面试</b>总结，本人已拿大厂offer，欢迎star</p>
+    
+    <p>原文链接：blog.ouyangsihai.cn &gt;&gt; <a href="/jdbc-jiu-shi-zhe-me-jian-dan.html" target="_blank">jdbc就是这么简单</a></p>
+</blockquote>
+                <div id="articleContent">
+                    <blockquote>
+<p>文章有不当之处，欢迎指正，如果喜欢微信阅读，你也可以关注我的微信公众号：<code class="java">
+好好学java</code>，获取优质学习资源。</p>
+</blockquote>
+<h3 id="一、JDBC"><a href="#一、JDBC" class="headerlink" title="一、JDBC"></a>一、JDBC</h3><p>JAVA Database Connectivity java 数据库连接.</p>
+<p>JDBC（Java DataBase Connectivity,java数据库连接）是一种用于执行SQL语句的Java API，可以为多种关系数据库提供统一访问，它由一组用Java语言编写的类和接口组成。JDBC提供了一种基准，据此可以构建更高级的工具和接口，使数据库开发人员能够编写数据库应用程序，同时，JDBC也是个商标名。</p>
+<h3 id="二、为什么会出现JDBC"><a href="#二、为什么会出现JDBC" class="headerlink" title="二、为什么会出现JDBC"></a>二、为什么会出现JDBC</h3><p>SUN公司提供的一种数据库访问规则、规范, 由于数据库种类较多，并且java语言使用比较广泛，sun公司就提供了一种规范，让其他的数据库提供商去实现底层的访问规则。 我们的java程序只要使用sun公司提供的jdbc驱动即可。</p>
+<h3 id="三、数据库驱动"><a href="#三、数据库驱动" class="headerlink" title="三、数据库驱动"></a>三、数据库驱动</h3><h3 id="精彩内容推荐"><a href="#精彩内容推荐" class="headerlink" title="精彩内容推荐"></a>精彩内容推荐</h3><ul>
+<li><a target="_blank" rel="noopener" href="http://mp.weixin.qq.com/s?__biz=MzI2OTQ4OTQ1NQ==&mid=2247484823&idx=1&sn=62b44bada6303bf5877720c6858cb5e9&chksm=eadec1d7dda948c1abe657991d8cd27a1bcbfc853b745a1c911bd00e6fc4e9ed3de0d15e6690#rd">一套java架构师学习资源,等你拿</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzI2OTQ4OTQ1NQ==&mid=2247483855&idx=1&sn=47e3f6ff6b689aab562417c785a54c48&chksm=eadec58fdda94c990ec318e298c1febe7eb1c79af7d89377c1362aa6afbad462e3e8abd9efe3&scene=21#wechat_redirect">你所需要的大数据视频教程</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzI2OTQ4OTQ1NQ==&mid=2247484247&idx=1&sn=be719deeb1aa0c659f4dcab695344f04&chksm=eadec717dda94e01efe186464ef158159501ce7c62e90c243f8a0d9a5e8aa786fb7d640c9e17&scene=21#wechat_redirect">java全套学习视频教程及源码</a></li>
+<li><a target="_blank" rel="noopener" href="http://mp.weixin.qq.com/s?__biz=MzI2OTQ4OTQ1NQ==&mid=2247484782&idx=1&sn=eeb3be483a0aa3e9a9382909718eabe0&chksm=eadec12edda948381a7e6315564508b98d5784328b920f39e444c7c31e21e48d95b5b08ef0a0#rd">微服务资源springboot、springcloud、docker、dubbo项目实战等倾心分享</a></li>
+</ul>
+<p>我们安装好数据库之后，我们的应用程序也是不能直接使用数据库的，必须要通过相应的数据库驱动程序，通过驱动程序去和数据库打交道。其实也就是数据库厂商的JDBC接口实现，即对Connection等接口的实现类的jar文件。<br><img src="https://upload-images.jianshu.io/upload_images/5824016-a06c8ef0b2c441ab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="1.png"></p>
+<h3 id="四、常用接口"><a href="#四、常用接口" class="headerlink" title="四、常用接口"></a>四、常用接口</h3><p><strong>1.Driver接口</strong></p>
+<p>Driver接口由数据库厂家提供，作为java开发人员，只需要使用Driver接口就可以了。在编程中要连接数据库，必须先装载特定厂商的数据库驱动程序，不同的数据库有不同的装载方法。如：</p>
+<ul>
+<li><p>装载MySql驱动：Class.forName(“com.mysql.jdbc.Driver”);</p>
+</li>
+<li><p>装载Oracle驱动：Class.forName(“oracle.jdbc.driver.OracleDriver”);</p>
+</li>
+</ul>
+<p><strong>2.Connection接口</strong></p>
+<p>Connection与特定数据库的连接（会话），在连接上下文中执行sql语句并返回结果。DriverManager.getConnection(url, user, password)方法建立在JDBC URL中定义的数据库Connection连接上。</p>
+<ul>
+<li><p>连接MySql数据库：Connection conn &#x3D; DriverManager.getConnection(“jdbc:mysql:&#x2F;&#x2F;host:port&#x2F;database”, “user”, “password”);</p>
+</li>
+<li><p>连接Oracle数据库：Connection conn &#x3D; DriverManager.getConnection(“jdbc:oracle:thin:@host:port:database”, “user”, “password”);</p>
+</li>
+<li><p>连接SqlServer数据库：Connection conn &#x3D; DriverManager.getConnection(“jdbc:microsoft:sqlserver:&#x2F;&#x2F;host:port; DatabaseName&#x3D;database”, “user”, “password”);</p>
+</li>
+</ul>
+<p><strong>常用方法：</strong></p>
+<ul>
+<li>createStatement()：创建向数据库发送sql的statement对象。</li>
+<li>prepareStatement(sql) ：创建向数据库发送预编译sql的PrepareSatement对象。</li>
+<li>prepareCall(sql)：创建执行存储过程的callableStatement对象。</li>
+<li>setAutoCommit(boolean autoCommit)：设置事务是否自动提交。</li>
+<li>commit() ：在链接上提交事务。</li>
+<li>rollback() ：在此链接上回滚事务。</li>
+</ul>
+<p><strong>3.Statement接口</strong></p>
+<p>用于执行静态SQL语句并返回它所生成结果的对象。</p>
+<p>三种Statement类：</p>
+<ul>
+<li>Statement：由createStatement创建，用于发送简单的SQL语句（不带参数）。</li>
+<li>PreparedStatement ：继承自Statement接口，由preparedStatement创建，用于发送含有一个或多个参数的SQL语句。PreparedStatement对象比Statement对象的效率更高，并且可以防止SQL注入，所以我们一般都使用PreparedStatement。</li>
+<li>CallableStatement：继承自PreparedStatement接口，由方法prepareCall创建，用于调用存储过程。</li>
+</ul>
+<p><strong>常用Statement方法：</strong></p>
+<ul>
+<li>execute(String sql):运行语句，返回是否有结果集</li>
+<li>executeQuery(String sql)：运行select语句，返回ResultSet结果集。</li>
+<li>executeUpdate(String sql)：运行insert&#x2F;update&#x2F;delete操作，返回更新的行数。</li>
+<li>addBatch(String sql) ：把多条sql语句放到一个批处理中。</li>
+<li>executeBatch()：向数据库发送一批sql语句执行。</li>
+</ul>
+<p><strong>4.ResultSet接口</strong></p>
+<p>ResultSet提供检索不同类型字段的方法，常用的有：</p>
+<ul>
+<li>getString(int index)、getString(String columnName)：获得在数据库里是varchar、char等类型的数据对象。</li>
+<li>getFloat(int index)、getFloat(String columnName)：获得在数据库里是Float类型的数据对象。</li>
+<li>getDate(int index)、getDate(String columnName)：获得在数据库里是Date类型的数据。</li>
+<li>getBoolean(int index)、getBoolean(String columnName)：获得在数据库里是Boolean类型的数据。</li>
+<li>getObject(int index)、getObject(String columnName)：获取在数据库里任意类型的数据。</li>
+</ul>
+<p>ResultSet还提供了对结果集进行滚动的方法：</p>
+<ul>
+<li>next()：移动到下一行</li>
+<li>Previous()：移动到前一行</li>
+<li>absolute(int row)：移动到指定行</li>
+<li>beforeFirst()：移动resultSet的最前面。</li>
+<li>afterLast() ：移动到resultSet的最后面。</li>
+</ul>
+<p>使用后依次关闭对象及连接：<strong>ResultSet → Statement → Connection</strong></p>
+<h3 id="五、使用JDBC的基本步骤"><a href="#五、使用JDBC的基本步骤" class="headerlink" title="五、使用JDBC的基本步骤"></a>五、使用JDBC的基本步骤</h3><h5 id="1-注册驱动"><a href="#1-注册驱动" class="headerlink" title="1. 注册驱动"></a>1. 注册驱动</h5><pre class="line-numbers language-java"><code class="language-java">
+DriverManager<span class="token punctuation">.</span><span class="token function">registerDriver</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">com<span class="token punctuation">.</span>mysql<span class="token punctuation">.</span>jdbc<span class="token punctuation">.</span>Driver</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<h5 id="2-建立连接"><a href="#2-建立连接" class="headerlink" title="2. 建立连接"></a>2. 建立连接</h5><pre class="line-numbers language-java"><code class="language-java">
+<span class="token comment" spellcheck="true">//DriverManager.getConnection("jdbc:mysql://localhost/test?user=SIHAI&amp;password=SIHAI");</span>
+<span class="token comment" spellcheck="true">//2. 建立连接 参数一： 协议 + 访问的数据库 ， 参数二： 用户名 ， 参数三： 密码。</span>
+
+ conn <span class="token operator">=</span> DriverManager<span class="token punctuation">.</span><span class="token function">getConnection</span><span class="token punctuation">(</span><span class="token string">"jdbc:mysql://localhost/student"</span><span class="token punctuation">,</span> <span class="token string">"root"</span><span class="token punctuation">,</span> <span class="token string">"root"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h5 id="3-创建statement"><a href="#3-创建statement" class="headerlink" title="3. 创建statement"></a>3. 创建statement</h5><pre class="line-numbers language-java"><code class="language-java">
+<span class="token comment" spellcheck="true">//3. 创建statement ， 跟数据库打交道，一定需要这个对象</span>
+st <span class="token operator">=</span> conn<span class="token punctuation">.</span><span class="token function">createStatement</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<h5 id="4-执行sql-，得到ResultSet"><a href="#4-执行sql-，得到ResultSet" class="headerlink" title="4. 执行sql ，得到ResultSet"></a>4. 执行sql ，得到ResultSet</h5><pre class="line-numbers language-java"><code class="language-java">
+<span class="token comment" spellcheck="true">//4. 执行查询 ， 得到结果集</span>
+String sql <span class="token operator">=</span> <span class="token string">"select * from t_stu"</span><span class="token punctuation">;</span>
+rs <span class="token operator">=</span> st<span class="token punctuation">.</span><span class="token function">executeQuery</span><span class="token punctuation">(</span>sql<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<h5 id="5-遍历结果集"><a href="#5-遍历结果集" class="headerlink" title="5. 遍历结果集"></a>5. 遍历结果集</h5><pre class="line-numbers language-java"><code class="language-java">
+        <span class="token comment" spellcheck="true">//5. 遍历查询每一条记录</span>
+         <span class="token keyword">while</span><span class="token punctuation">(</span>rs<span class="token punctuation">.</span><span class="token function">next</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+             <span class="token keyword">int</span> id <span class="token operator">=</span> rs<span class="token punctuation">.</span><span class="token function">getInt</span><span class="token punctuation">(</span><span class="token string">"id"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+             String name <span class="token operator">=</span> rs<span class="token punctuation">.</span><span class="token function">getString</span><span class="token punctuation">(</span><span class="token string">"name"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+             <span class="token keyword">int</span> age <span class="token operator">=</span> rs<span class="token punctuation">.</span><span class="token function">getInt</span><span class="token punctuation">(</span><span class="token string">"age"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+             System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"id="</span><span class="token operator">+</span>id <span class="token operator">+</span> <span class="token string">"===name="</span><span class="token operator">+</span>name<span class="token operator">+</span><span class="token string">"==age="</span><span class="token operator">+</span>age<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                 
+         <span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h5 id="6-释放资源"><a href="#6-释放资源" class="headerlink" title="6. 释放资源"></a>6. 释放资源</h5><pre class="line-numbers language-java"><code class="language-java">
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>rs <span class="token operator">!=</span> null<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+       <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            rs<span class="token punctuation">.</span><span class="token function">close</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">SQLException</span> sqlEx<span class="token punctuation">)</span> <span class="token punctuation">{</span> <span class="token punctuation">}</span> <span class="token comment" spellcheck="true">// ignore </span>
+        rs <span class="token operator">=</span> null<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="六、JDBC-工具类构建"><a href="#六、JDBC-工具类构建" class="headerlink" title="六、JDBC 工具类构建"></a>六、JDBC 工具类构建</h3><h5 id="1-资源释放工作的整合"><a href="#1-资源释放工作的整合" class="headerlink" title="1. 资源释放工作的整合"></a>1. 资源释放工作的整合</h5><pre class="line-numbers language-java"><code class="language-java">
+<span class="token comment" spellcheck="true">/**
+     * 释放资源
+     * @param conn
+     * @param st
+     * @param rs
+     */</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">release</span><span class="token punctuation">(</span>Connection conn <span class="token punctuation">,</span> Statement st <span class="token punctuation">,</span> ResultSet rs<span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token function">closeRs</span><span class="token punctuation">(</span>rs<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">closeSt</span><span class="token punctuation">(</span>st<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">closeConn</span><span class="token punctuation">(</span>conn<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">closeRs</span><span class="token punctuation">(</span>ResultSet rs<span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            <span class="token keyword">if</span><span class="token punctuation">(</span>rs <span class="token operator">!=</span> null<span class="token punctuation">)</span><span class="token punctuation">{</span>
+                rs<span class="token punctuation">.</span><span class="token function">close</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">SQLException</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span><span class="token keyword">finally</span><span class="token punctuation">{</span>
+            rs <span class="token operator">=</span> null<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">closeSt</span><span class="token punctuation">(</span>Statement st<span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            <span class="token keyword">if</span><span class="token punctuation">(</span>st <span class="token operator">!=</span> null<span class="token punctuation">)</span><span class="token punctuation">{</span>
+                st<span class="token punctuation">.</span><span class="token function">close</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">SQLException</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span><span class="token keyword">finally</span><span class="token punctuation">{</span>
+            st <span class="token operator">=</span> null<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">closeConn</span><span class="token punctuation">(</span>Connection conn<span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            <span class="token keyword">if</span><span class="token punctuation">(</span>conn <span class="token operator">!=</span> null<span class="token punctuation">)</span><span class="token punctuation">{</span>
+                conn<span class="token punctuation">.</span><span class="token function">close</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">SQLException</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span><span class="token keyword">finally</span><span class="token punctuation">{</span>
+            conn <span class="token operator">=</span> null<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h5 id="2-驱动防二次注册"><a href="#2-驱动防二次注册" class="headerlink" title="2. 驱动防二次注册"></a>2. 驱动防二次注册</h5><pre class="line-numbers language-java"><code class="language-java">
+<span class="token comment" spellcheck="true">/**
+     * 获取连接对象
+     * @return
+     */</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> Connection <span class="token function">getConn</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        Connection conn <span class="token operator">=</span> null<span class="token punctuation">;</span>
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            Class<span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span>driverClass<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token comment" spellcheck="true">//静态代码块 ---> 类加载了，就执行。 java.sql.DriverManager.registerDriver(new Driver());</span>
+            <span class="token comment" spellcheck="true">//DriverManager.registerDriver(new com.mysql.jdbc.Driver());</span>
+            <span class="token comment" spellcheck="true">//DriverManager.getConnection("jdbc:mysql://localhost/test?user=monty&amp;password=greatsqldb");</span>
+            <span class="token comment" spellcheck="true">//2. 建立连接 参数一： 协议 + 访问的数据库 ， 参数二： 用户名 ， 参数三： 密码。</span>
+            conn <span class="token operator">=</span> DriverManager<span class="token punctuation">.</span><span class="token function">getConnection</span><span class="token punctuation">(</span>url<span class="token punctuation">,</span> name<span class="token punctuation">,</span> password<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span> conn<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h5 id="3-使用properties配置文件"><a href="#3-使用properties配置文件" class="headerlink" title="3. 使用properties配置文件"></a>3. 使用properties配置文件</h5><ul>
+<li>在src底下声明一个文件 xxx.properties ，里面的内容吐下：</li>
+</ul>
+<pre class="line-numbers language-java"><code class="language-java">
+         driverClass<span class="token operator">=</span>com<span class="token punctuation">.</span>mysql<span class="token punctuation">.</span>jdbc<span class="token punctuation">.</span>Driver
+          url<span class="token operator">=</span>jdbc<span class="token operator">:</span>mysql<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>localhost<span class="token operator">/</span>student
+          name<span class="token operator">=</span>root
+          password<span class="token operator">=</span>root
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<ul>
+<li>在工具类里面，使用静态代码块，读取属性</li>
+</ul>
+<pre class="line-numbers language-java"><code class="language-java">
+<span class="token keyword">static</span><span class="token punctuation">{</span>
+            <span class="token keyword">try</span> <span class="token punctuation">{</span>
+                <span class="token comment" spellcheck="true">//1. 创建一个属性配置对象</span>
+                Properties properties <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Properties</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                InputStream is <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">FileInputStream</span><span class="token punctuation">(</span><span class="token string">"jdbc.properties"</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">//对应文件位于工程根目录</span>
+                 
+                <span class="token comment" spellcheck="true">//使用类加载器，去读取src底下的资源文件。 后面在servlet  //对应文件位于src目录底下</span>
+                <span class="token comment" spellcheck="true">//InputStream is = JDBCUtil.class.getClassLoader().getResourceAsStream("jdbc.properties");</span>
+                <span class="token comment" spellcheck="true">//导入输入流。</span>
+                properties<span class="token punctuation">.</span><span class="token function">load</span><span class="token punctuation">(</span>is<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                
+                <span class="token comment" spellcheck="true">//读取属性</span>
+                driverClass <span class="token operator">=</span> properties<span class="token punctuation">.</span><span class="token function">getProperty</span><span class="token punctuation">(</span><span class="token string">"driverClass"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                url <span class="token operator">=</span> properties<span class="token punctuation">.</span><span class="token function">getProperty</span><span class="token punctuation">(</span><span class="token string">"url"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                name <span class="token operator">=</span> properties<span class="token punctuation">.</span><span class="token function">getProperty</span><span class="token punctuation">(</span><span class="token string">"name"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                password <span class="token operator">=</span> properties<span class="token punctuation">.</span><span class="token function">getProperty</span><span class="token punctuation">(</span><span class="token string">"password"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                
+            <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><strong>源代码如下：</strong></p>
+<pre class="line-numbers language-java"><code class="language-java">
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">JDBCUtil</span> <span class="token punctuation">{</span>
+    
+    <span class="token keyword">static</span> String driverClass <span class="token operator">=</span> null<span class="token punctuation">;</span>
+    <span class="token keyword">static</span> String url <span class="token operator">=</span> null<span class="token punctuation">;</span>
+    <span class="token keyword">static</span> String name <span class="token operator">=</span> null<span class="token punctuation">;</span>
+    <span class="token keyword">static</span> String password<span class="token operator">=</span> null<span class="token punctuation">;</span>
+    
+    <span class="token keyword">static</span><span class="token punctuation">{</span>
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            <span class="token comment" spellcheck="true">//1. 创建一个属性配置对象</span>
+            Properties properties <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Properties</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            InputStream is <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">FileInputStream</span><span class="token punctuation">(</span><span class="token string">"jdbc.properties"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            
+            <span class="token comment" spellcheck="true">//使用类加载器，去读取src底下的资源文件。 后面在servlet</span>
+<span class="token comment" spellcheck="true">//            InputStream is = JDBCUtil.class.getClassLoader().getResourceAsStream("jdbc.properties");</span>
+            <span class="token comment" spellcheck="true">//导入输入流。</span>
+            properties<span class="token punctuation">.</span><span class="token function">load</span><span class="token punctuation">(</span>is<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            
+            <span class="token comment" spellcheck="true">//读取属性</span>
+            driverClass <span class="token operator">=</span> properties<span class="token punctuation">.</span><span class="token function">getProperty</span><span class="token punctuation">(</span><span class="token string">"driverClass"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            url <span class="token operator">=</span> properties<span class="token punctuation">.</span><span class="token function">getProperty</span><span class="token punctuation">(</span><span class="token string">"url"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            name <span class="token operator">=</span> properties<span class="token punctuation">.</span><span class="token function">getProperty</span><span class="token punctuation">(</span><span class="token string">"name"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            password <span class="token operator">=</span> properties<span class="token punctuation">.</span><span class="token function">getProperty</span><span class="token punctuation">(</span><span class="token string">"password"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            
+        <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token comment" spellcheck="true">/**
+     * 获取连接对象
+     * @return
+     */</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> Connection <span class="token function">getConn</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        Connection conn <span class="token operator">=</span> null<span class="token punctuation">;</span>
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            Class<span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span>driverClass<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token comment" spellcheck="true">//静态代码块 ---> 类加载了，就执行。 java.sql.DriverManager.registerDriver(new Driver());</span>
+            <span class="token comment" spellcheck="true">//DriverManager.registerDriver(new com.mysql.jdbc.Driver());</span>
+            <span class="token comment" spellcheck="true">//DriverManager.getConnection("jdbc:mysql://localhost/test?user=monty&amp;password=greatsqldb");</span>
+            <span class="token comment" spellcheck="true">//2. 建立连接 参数一： 协议 + 访问的数据库 ， 参数二： 用户名 ， 参数三： 密码。</span>
+            conn <span class="token operator">=</span> DriverManager<span class="token punctuation">.</span><span class="token function">getConnection</span><span class="token punctuation">(</span>url<span class="token punctuation">,</span> name<span class="token punctuation">,</span> password<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span> conn<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token comment" spellcheck="true">/**
+     * 释放资源
+     * @param conn
+     * @param st
+     * @param rs
+     */</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">release</span><span class="token punctuation">(</span>Connection conn <span class="token punctuation">,</span> Statement st <span class="token punctuation">,</span> ResultSet rs<span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token function">closeRs</span><span class="token punctuation">(</span>rs<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">closeSt</span><span class="token punctuation">(</span>st<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">closeConn</span><span class="token punctuation">(</span>conn<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">closeRs</span><span class="token punctuation">(</span>ResultSet rs<span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            <span class="token keyword">if</span><span class="token punctuation">(</span>rs <span class="token operator">!=</span> null<span class="token punctuation">)</span><span class="token punctuation">{</span>
+                rs<span class="token punctuation">.</span><span class="token function">close</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">SQLException</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span><span class="token keyword">finally</span><span class="token punctuation">{</span>
+            rs <span class="token operator">=</span> null<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">closeSt</span><span class="token punctuation">(</span>Statement st<span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            <span class="token keyword">if</span><span class="token punctuation">(</span>st <span class="token operator">!=</span> null<span class="token punctuation">)</span><span class="token punctuation">{</span>
+                st<span class="token punctuation">.</span><span class="token function">close</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">SQLException</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span><span class="token keyword">finally</span><span class="token punctuation">{</span>
+            st <span class="token operator">=</span> null<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">closeConn</span><span class="token punctuation">(</span>Connection conn<span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            <span class="token keyword">if</span><span class="token punctuation">(</span>conn <span class="token operator">!=</span> null<span class="token punctuation">)</span><span class="token punctuation">{</span>
+                conn<span class="token punctuation">.</span><span class="token function">close</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">SQLException</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span><span class="token keyword">finally</span><span class="token punctuation">{</span>
+            conn <span class="token operator">=</span> null<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>​    </p>
+<h3 id="七、数据库的CRUD"><a href="#七、数据库的CRUD" class="headerlink" title="七、数据库的CRUD"></a>七、数据库的CRUD</h3><ul>
+<li>insert操作</li>
+</ul>
+<pre class="line-numbers language-java"><code class="language-java">
+INSERT INTO <span class="token function">t_stu</span> <span class="token punctuation">(</span>NAME <span class="token punctuation">,</span> age<span class="token punctuation">)</span> <span class="token function">VALUES</span> <span class="token punctuation">(</span><span class="token string">'wangqiang'</span><span class="token punctuation">,</span><span class="token number">28</span><span class="token punctuation">)</span>
+
+INSERT INTO t_stu <span class="token function">VALUES</span> <span class="token punctuation">(</span>NULL<span class="token punctuation">,</span><span class="token string">'wangqiang2'</span><span class="token punctuation">,</span><span class="token number">28</span><span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-java"><code class="language-java">
+<span class="token comment" spellcheck="true">// 1. 获取连接对象</span>
+conn <span class="token operator">=</span> JDBCUtil<span class="token punctuation">.</span><span class="token function">getConn</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment" spellcheck="true">// 2. 根据连接对象，得到statement</span>
+st <span class="token operator">=</span> conn<span class="token punctuation">.</span><span class="token function">createStatement</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment" spellcheck="true">//3. 执行添加</span>
+String sql <span class="token operator">=</span> <span class="token string">"insert into t_stu values(null , 'aobama' , 59)"</span><span class="token punctuation">;</span>
+<span class="token comment" spellcheck="true">//影响的行数， ，如果大于0 表明操作成功。 否则失败</span>
+<span class="token keyword">int</span> result <span class="token operator">=</span> st<span class="token punctuation">.</span><span class="token function">executeUpdate</span><span class="token punctuation">(</span>sql<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">if</span><span class="token punctuation">(</span>result <span class="token operator">></span><span class="token number">0</span> <span class="token punctuation">)</span><span class="token punctuation">{</span>
+    System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"添加成功"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+    System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"添加失败"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<ul>
+<li>delete操作</li>
+</ul>
+<pre class="line-numbers language-java"><code class="language-java">
+DELETE FROM t_stu WHERE id <span class="token operator">=</span> <span class="token number">6</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-java"><code class="language-java">
+<span class="token comment" spellcheck="true">// 1. 获取连接对象</span>
+conn <span class="token operator">=</span> JDBCUtil<span class="token punctuation">.</span><span class="token function">getConn</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment" spellcheck="true">// 2. 根据连接对象，得到statement</span>
+st <span class="token operator">=</span> conn<span class="token punctuation">.</span><span class="token function">createStatement</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment" spellcheck="true">//3. 执行添加</span>
+String sql <span class="token operator">=</span> <span class="token string">"delete from t_stu where name='aobama'"</span><span class="token punctuation">;</span>
+<span class="token comment" spellcheck="true">//影响的行数， ，如果大于0 表明操作成功。 否则失败</span>
+<span class="token keyword">int</span> result <span class="token operator">=</span> st<span class="token punctuation">.</span><span class="token function">executeUpdate</span><span class="token punctuation">(</span>sql<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">if</span><span class="token punctuation">(</span>result <span class="token operator">></span><span class="token number">0</span> <span class="token punctuation">)</span><span class="token punctuation">{</span>
+    System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"删除成功"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+    System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"删除失败"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<ul>
+<li>query操作</li>
+</ul>
+<pre class="line-numbers language-java"><code class="language-java">
+SELECT <span class="token operator">*</span> FROM t_stu
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-java"><code class="language-java">
+    <span class="token comment" spellcheck="true">// 1. 获取连接对象</span>
+    conn <span class="token operator">=</span> JDBCUtil<span class="token punctuation">.</span><span class="token function">getConn</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment" spellcheck="true">// 2. 根据连接对象，得到statement</span>
+    st <span class="token operator">=</span> conn<span class="token punctuation">.</span><span class="token function">createStatement</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment" spellcheck="true">// 3. 执行sql语句，返回ResultSet</span>
+    String sql <span class="token operator">=</span> <span class="token string">"select * from t_stu"</span><span class="token punctuation">;</span>
+    rs <span class="token operator">=</span> st<span class="token punctuation">.</span><span class="token function">executeQuery</span><span class="token punctuation">(</span>sql<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment" spellcheck="true">// 4. 遍历结果集</span>
+    <span class="token keyword">while</span> <span class="token punctuation">(</span>rs<span class="token punctuation">.</span><span class="token function">next</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        String name <span class="token operator">=</span> rs<span class="token punctuation">.</span><span class="token function">getString</span><span class="token punctuation">(</span><span class="token string">"name"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">int</span> age <span class="token operator">=</span> rs<span class="token punctuation">.</span><span class="token function">getInt</span><span class="token punctuation">(</span><span class="token string">"age"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>name <span class="token operator">+</span> <span class="token string">"   "</span> <span class="token operator">+</span> age<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<ul>
+<li>update操作</li>
+</ul>
+<pre class="line-numbers language-java"><code class="language-java">
+UPDATE t_stu SET age <span class="token operator">=</span> <span class="token number">38</span> WHERE id <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-java"><code class="language-java">
+<span class="token comment" spellcheck="true">// 1. 获取连接对象</span>
+conn <span class="token operator">=</span> JDBCUtil<span class="token punctuation">.</span><span class="token function">getConn</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment" spellcheck="true">// 2. 根据连接对象，得到statement</span>
+st <span class="token operator">=</span> conn<span class="token punctuation">.</span><span class="token function">createStatement</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment" spellcheck="true">//3. 执行添加</span>
+String sql <span class="token operator">=</span> <span class="token string">"update t_stu set age = 26 where name ='qyq'"</span><span class="token punctuation">;</span>
+<span class="token comment" spellcheck="true">//影响的行数， ，如果大于0 表明操作成功。 否则失败</span>
+<span class="token keyword">int</span> result <span class="token operator">=</span> st<span class="token punctuation">.</span><span class="token function">executeUpdate</span><span class="token punctuation">(</span>sql<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">if</span><span class="token punctuation">(</span>result <span class="token operator">></span><span class="token number">0</span> <span class="token punctuation">)</span><span class="token punctuation">{</span>
+    System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"更新成功"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+    System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"更新失败"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="八、使用单元测试，测试代码"><a href="#八、使用单元测试，测试代码" class="headerlink" title="八、使用单元测试，测试代码"></a>八、使用单元测试，测试代码</h3><h5 id="1-定义一个类，-TestXXX-里面定义方法-testXXX"><a href="#1-定义一个类，-TestXXX-里面定义方法-testXXX" class="headerlink" title="1. 定义一个类， TestXXX , 里面定义方法 testXXX."></a>1. 定义一个类， TestXXX , 里面定义方法 testXXX.</h5><p>这个命名不一定需要这样，但是这样的命名更容易懂得测试的意思，所以建议命名见名知意。</p>
+<h5 id="2-添加junit的支持。"><a href="#2-添加junit的支持。" class="headerlink" title="2. 添加junit的支持。"></a>2. 添加junit的支持。</h5><p>右键工程 — add Library — Junit — Junit4</p>
+<h5 id="3-在方法的上面加上注解-，-其实就是一个标记。"><a href="#3-在方法的上面加上注解-，-其实就是一个标记。" class="headerlink" title="3. 在方法的上面加上注解 ， 其实就是一个标记。"></a>3. 在方法的上面加上注解 ， 其实就是一个标记。</h5><pre class="line-numbers language-java"><code class="language-java">
+    <span class="token comment" spellcheck="true">/**
+ * 使用junit执行单元测试
+ */</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">TestDemo</span> <span class="token punctuation">{</span>
+
+    <span class="token annotation punctuation">@Test</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">testQuery</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment" spellcheck="true">// 查询</span>
+        Connection conn <span class="token operator">=</span> null<span class="token punctuation">;</span>
+        Statement st <span class="token operator">=</span> null<span class="token punctuation">;</span>
+        ResultSet rs <span class="token operator">=</span> null<span class="token punctuation">;</span>
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            <span class="token comment" spellcheck="true">// 1. 获取连接对象</span>
+            conn <span class="token operator">=</span> JDBCUtil<span class="token punctuation">.</span><span class="token function">getConn</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token comment" spellcheck="true">// 2. 根据连接对象，得到statement</span>
+            st <span class="token operator">=</span> conn<span class="token punctuation">.</span><span class="token function">createStatement</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            <span class="token comment" spellcheck="true">// 3. 执行sql语句，返回ResultSet</span>
+            String sql <span class="token operator">=</span> <span class="token string">"select * from t_stu"</span><span class="token punctuation">;</span>
+            rs <span class="token operator">=</span> st<span class="token punctuation">.</span><span class="token function">executeQuery</span><span class="token punctuation">(</span>sql<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            <span class="token comment" spellcheck="true">// 4. 遍历结果集</span>
+            <span class="token keyword">while</span> <span class="token punctuation">(</span>rs<span class="token punctuation">.</span><span class="token function">next</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                String name <span class="token operator">=</span> rs<span class="token punctuation">.</span><span class="token function">getString</span><span class="token punctuation">(</span><span class="token string">"name"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">int</span> age <span class="token operator">=</span> rs<span class="token punctuation">.</span><span class="token function">getInt</span><span class="token punctuation">(</span><span class="token string">"age"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+                System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>name <span class="token operator">+</span> <span class="token string">"   "</span> <span class="token operator">+</span> age<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">finally</span> <span class="token punctuation">{</span>
+            JDBCUtil<span class="token punctuation">.</span><span class="token function">release</span><span class="token punctuation">(</span>conn<span class="token punctuation">,</span> st<span class="token punctuation">,</span> rs<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+    <span class="token punctuation">}</span>
+
+
+    <span class="token annotation punctuation">@Test</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">testInsert</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        
+        <span class="token comment" spellcheck="true">// 查询</span>
+        Connection conn <span class="token operator">=</span> null<span class="token punctuation">;</span>
+        Statement st <span class="token operator">=</span> null<span class="token punctuation">;</span>
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            <span class="token comment" spellcheck="true">// 1. 获取连接对象</span>
+            conn <span class="token operator">=</span> JDBCUtil<span class="token punctuation">.</span><span class="token function">getConn</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token comment" spellcheck="true">// 2. 根据连接对象，得到statement</span>
+            st <span class="token operator">=</span> conn<span class="token punctuation">.</span><span class="token function">createStatement</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            
+            <span class="token comment" spellcheck="true">//3. 执行添加</span>
+            String sql <span class="token operator">=</span> <span class="token string">"insert into t_stu values(null , 'aobama' , 59)"</span><span class="token punctuation">;</span>
+            <span class="token comment" spellcheck="true">//影响的行数， ，如果大于0 表明操作成功。 否则失败</span>
+            <span class="token keyword">int</span> result <span class="token operator">=</span> st<span class="token punctuation">.</span><span class="token function">executeUpdate</span><span class="token punctuation">(</span>sql<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            
+            <span class="token keyword">if</span><span class="token punctuation">(</span>result <span class="token operator">></span><span class="token number">0</span> <span class="token punctuation">)</span><span class="token punctuation">{</span>
+                System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"添加成功"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+                System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"添加失败"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span><span class="token keyword">finally</span><span class="token punctuation">{</span>
+            JDBCUtil<span class="token punctuation">.</span><span class="token function">release</span><span class="token punctuation">(</span>conn<span class="token punctuation">,</span> st<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+    <span class="token punctuation">}</span>
+    
+    <span class="token annotation punctuation">@Test</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">testDelete</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        
+        <span class="token comment" spellcheck="true">// 查询</span>
+        Connection conn <span class="token operator">=</span> null<span class="token punctuation">;</span>
+        Statement st <span class="token operator">=</span> null<span class="token punctuation">;</span>
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            <span class="token comment" spellcheck="true">// 1. 获取连接对象</span>
+            conn <span class="token operator">=</span> JDBCUtil<span class="token punctuation">.</span><span class="token function">getConn</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token comment" spellcheck="true">// 2. 根据连接对象，得到statement</span>
+            st <span class="token operator">=</span> conn<span class="token punctuation">.</span><span class="token function">createStatement</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            
+            <span class="token comment" spellcheck="true">//3. 执行添加</span>
+            String sql <span class="token operator">=</span> <span class="token string">"delete from t_stu where name='aobama'"</span><span class="token punctuation">;</span>
+            <span class="token comment" spellcheck="true">//影响的行数， ，如果大于0 表明操作成功。 否则失败</span>
+            <span class="token keyword">int</span> result <span class="token operator">=</span> st<span class="token punctuation">.</span><span class="token function">executeUpdate</span><span class="token punctuation">(</span>sql<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            
+            <span class="token keyword">if</span><span class="token punctuation">(</span>result <span class="token operator">></span><span class="token number">0</span> <span class="token punctuation">)</span><span class="token punctuation">{</span>
+                System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"删除成功"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+                System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"删除失败"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span><span class="token keyword">finally</span><span class="token punctuation">{</span>
+            JDBCUtil<span class="token punctuation">.</span><span class="token function">release</span><span class="token punctuation">(</span>conn<span class="token punctuation">,</span> st<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+    <span class="token punctuation">}</span>
+    <span class="token annotation punctuation">@Test</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">testUpdate</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        
+        <span class="token comment" spellcheck="true">// 查询</span>
+        Connection conn <span class="token operator">=</span> null<span class="token punctuation">;</span>
+        Statement st <span class="token operator">=</span> null<span class="token punctuation">;</span>
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            <span class="token comment" spellcheck="true">// 1. 获取连接对象</span>
+            conn <span class="token operator">=</span> JDBCUtil<span class="token punctuation">.</span><span class="token function">getConn</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token comment" spellcheck="true">// 2. 根据连接对象，得到statement</span>
+            st <span class="token operator">=</span> conn<span class="token punctuation">.</span><span class="token function">createStatement</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            
+            <span class="token comment" spellcheck="true">//3. 执行添加</span>
+            String sql <span class="token operator">=</span> <span class="token string">"update t_stu set age = 26 where name ='qyq'"</span><span class="token punctuation">;</span>
+            <span class="token comment" spellcheck="true">//影响的行数， ，如果大于0 表明操作成功。 否则失败</span>
+            <span class="token keyword">int</span> result <span class="token operator">=</span> st<span class="token punctuation">.</span><span class="token function">executeUpdate</span><span class="token punctuation">(</span>sql<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            
+            <span class="token keyword">if</span><span class="token punctuation">(</span>result <span class="token operator">></span><span class="token number">0</span> <span class="token punctuation">)</span><span class="token punctuation">{</span>
+                System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"更新成功"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+                System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"更新失败"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span><span class="token keyword">finally</span><span class="token punctuation">{</span>
+            JDBCUtil<span class="token punctuation">.</span><span class="token function">release</span><span class="token punctuation">(</span>conn<span class="token punctuation">,</span> st<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h5 id="4-光标选中方法名字，然后右键执行单元测试。-或者是打开outline视图，-然后选择方法右键执行。"><a href="#4-光标选中方法名字，然后右键执行单元测试。-或者是打开outline视图，-然后选择方法右键执行。" class="headerlink" title="4. 光标选中方法名字，然后右键执行单元测试。  或者是打开outline视图， 然后选择方法右键执行。"></a>4. 光标选中方法名字，然后右键执行单元测试。  或者是打开outline视图， 然后选择方法右键执行。</h5><h3 id="九、Dao模式"><a href="#九、Dao模式" class="headerlink" title="九、Dao模式"></a>九、Dao模式</h3><p>Data Access Object 数据访问对象</p>
+<p>DAO(Data Access Object) 数据访问对象是一个面向对象的数据库接口，它显露了 Microsoft Jet 数据库引擎（由 Microsoft Access 所使用），并允许 Visual Basic 开发者通过 ODBC 像直接连接到其他数据库一样，直接连接到 Access 表。DAO 最适用于单系统应用程序或小范围本地分布使用。</p>
+<h5 id="1-新建一个dao的接口，-里面声明数据库访问规则"><a href="#1-新建一个dao的接口，-里面声明数据库访问规则" class="headerlink" title="1. 新建一个dao的接口， 里面声明数据库访问规则"></a>1. 新建一个dao的接口， 里面声明数据库访问规则</h5><pre class="line-numbers language-java"><code class="language-java">
+    <span class="token comment" spellcheck="true">/**
+    * 定义操作数据库的方法
+     */</span>
+    <span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">UserDao</span> <span class="token punctuation">{</span>
+    
+        <span class="token comment" spellcheck="true">/**
+         * 查询所有
+         */</span>
+        <span class="token keyword">void</span> <span class="token function">findAll</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h5 id="2-新建一个dao的实现类，具体实现早前定义的规则"><a href="#2-新建一个dao的实现类，具体实现早前定义的规则" class="headerlink" title="2. 新建一个dao的实现类，具体实现早前定义的规则"></a>2. 新建一个dao的实现类，具体实现早前定义的规则</h5><pre class="line-numbers language-java"><code class="language-java">
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">UserDaoImpl</span> <span class="token keyword">implements</span> <span class="token class-name">UserDao</span><span class="token punctuation">{</span>
+
+        <span class="token annotation punctuation">@Override</span>
+        <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">findAll</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            Connection conn <span class="token operator">=</span> null<span class="token punctuation">;</span>
+            Statement st <span class="token operator">=</span> null<span class="token punctuation">;</span>
+            ResultSet rs <span class="token operator">=</span> null<span class="token punctuation">;</span>
+            <span class="token keyword">try</span> <span class="token punctuation">{</span>
+                <span class="token comment" spellcheck="true">//1. 获取连接对象</span>
+                conn <span class="token operator">=</span> JDBCUtil<span class="token punctuation">.</span><span class="token function">getConn</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token comment" spellcheck="true">//2. 创建statement对象</span>
+                st <span class="token operator">=</span> conn<span class="token punctuation">.</span><span class="token function">createStatement</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                String sql <span class="token operator">=</span> <span class="token string">"select * from t_user"</span><span class="token punctuation">;</span>
+                rs <span class="token operator">=</span> st<span class="token punctuation">.</span><span class="token function">executeQuery</span><span class="token punctuation">(</span>sql<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                
+                <span class="token keyword">while</span><span class="token punctuation">(</span>rs<span class="token punctuation">.</span><span class="token function">next</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+                    String userName <span class="token operator">=</span> rs<span class="token punctuation">.</span><span class="token function">getString</span><span class="token punctuation">(</span><span class="token string">"username"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    String password <span class="token operator">=</span> rs<span class="token punctuation">.</span><span class="token function">getString</span><span class="token punctuation">(</span><span class="token string">"password"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    
+                    System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>userName<span class="token operator">+</span><span class="token string">"="</span><span class="token operator">+</span>password<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span>
+                
+            <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span><span class="token keyword">finally</span> <span class="token punctuation">{</span>
+                JDBCUtil<span class="token punctuation">.</span><span class="token function">release</span><span class="token punctuation">(</span>conn<span class="token punctuation">,</span> st<span class="token punctuation">,</span> rs<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    
+    <span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h5 id="3-直接使用实现"><a href="#3-直接使用实现" class="headerlink" title="3. 直接使用实现"></a>3. 直接使用实现</h5><pre class="line-numbers language-java"><code class="language-java">
+    <span class="token annotation punctuation">@Test</span>
+       <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">testFindAll</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+           UserDao dao <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">UserDaoImpl</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+           dao<span class="token punctuation">.</span><span class="token function">findAll</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+       <span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="十、Statement安全问题"><a href="#十、Statement安全问题" class="headerlink" title="十、Statement安全问题"></a>十、Statement安全问题</h3><h5 id="1-Statement执行-，其实是拼接sql语句的。-先拼接sql语句，然后在一起执行。"><a href="#1-Statement执行-，其实是拼接sql语句的。-先拼接sql语句，然后在一起执行。" class="headerlink" title="1. Statement执行 ，其实是拼接sql语句的。  先拼接sql语句，然后在一起执行。"></a>1. Statement执行 ，其实是拼接sql语句的。  先拼接sql语句，然后在一起执行。</h5><pre class="line-numbers language-java"><code class="language-java">
+String sql <span class="token operator">=</span> <span class="token string">"select * from t_user where username='"</span><span class="token operator">+</span> username  <span class="token operator">+</span><span class="token string">"' and password='"</span><span class="token operator">+</span> password <span class="token operator">+</span><span class="token string">"'"</span><span class="token punctuation">;</span>
+
+UserDao dao <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">UserDaoImpl</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+dao<span class="token punctuation">.</span><span class="token function">login</span><span class="token punctuation">(</span><span class="token string">"admin"</span><span class="token punctuation">,</span> <span class="token string">"100234khsdf88' or '1=1"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+SELECT <span class="token operator">*</span> FROM t_user WHERE username<span class="token operator">=</span><span class="token string">'admin'</span> AND PASSWORD<span class="token operator">=</span><span class="token string">'100234khsdf88'</span> or <span class="token string">'1=1'</span> 
+
+<span class="token comment" spellcheck="true">//前面先拼接sql语句， 如果变量里面带有了 数据库的关键字，那么一并认为是关键字。 不认为是普通的字符串。 </span>
+rs <span class="token operator">=</span> st<span class="token punctuation">.</span><span class="token function">executeQuery</span><span class="token punctuation">(</span>sql<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="PrepareStatement"><a href="#PrepareStatement" class="headerlink" title="PrepareStatement"></a>PrepareStatement</h3><p> 该对象就是替换前面的statement对象。</p>
+<ol>
+<li>相比较以前的statement， 预先处理给定的sql语句，对其执行语法检查。 在sql语句里面使用 ? 占位符来替代后续要传递进来的变量。 后面进来的变量值，将会被看成是字符串，不会产生任何的关键字。</li>
+</ol>
+<pre class="line-numbers language-java"><code class="language-java">
+String sql <span class="token operator">=</span> <span class="token string">"insert into t_user values(null , ? , ?)"</span><span class="token punctuation">;</span>
+ps <span class="token operator">=</span> conn<span class="token punctuation">.</span><span class="token function">prepareStatement</span><span class="token punctuation">(</span>sql<span class="token punctuation">)</span><span class="token punctuation">;</span>
+ 
+ <span class="token comment" spellcheck="true">//给占位符赋值 从左到右数过来，1 代表第一个问号， 永远你是1开始。</span>
+ ps<span class="token punctuation">.</span><span class="token function">setString</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> userName<span class="token punctuation">)</span><span class="token punctuation">;</span>
+ ps<span class="token punctuation">.</span><span class="token function">setString</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">,</span> password<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="PreparedStatement与Statement比较"><a href="#PreparedStatement与Statement比较" class="headerlink" title="PreparedStatement与Statement比较"></a>PreparedStatement与Statement比较</h3><p>(1) 使用PreparedStatement，代码的可读性和可维护性比Statement高。</p>
+<p>(2) PreparedStatement 能最大可能提高性能。 </p>
+<p>DBServer会对预编译语句提供性能优化。因为预编译语句有可能被重复调用，所以语句在被DBServer的编译器编译后的执行代码被缓存下来，那么下次调用时只要是相同的预编译语句就不需要编译，只要将参数直接传入编译过的语句执行代码中就会得到执行。 </p>
+<p>在statement语句中,即使是相同操作但因为数据内容不一样，所以整个语句本身不能匹配，没有缓存语句的意义。事实是没有数据库会对普通语句编译后的执行代码缓存。这样每执行一次都要对传入的语句编译一次。 </p>
+<p>(3) PreparedStatement能保证安全性，但 Statement有sql注入等安全问题。 </p>
+<h3 id="十一、数据库事务"><a href="#十一、数据库事务" class="headerlink" title="十一、数据库事务"></a>十一、数据库事务</h3><p><strong>1. 概述</strong></p>
+<p>在数据库中,所谓事务是指一组逻辑操作单元,使数据从一种状态变换到另一种状态。</p>
+<p>为确保数据库中数据的一致性,数据的操纵应当是离散的成组的逻辑单元:当它全部完成时,数据的一致性可以保持,而当这个单元中的一部分操作失败,整个事务应全部视为错误,所有从起始点以后的操作应全部回退到开始状态。 </p>
+<p>事务的操作:先定义开始一个事务,然后对数据作修改操作,这时如果提交(COMMIT),这些修改就永久地保存下来,如果回退(ROLLBACK),数据库管理系统将放弃您所作的所有修改而回到开始事务时的状态。 </p>
+<p><strong>2. 事务的ACID属性</strong></p>
+<p>2.1 原子性（Atomicity）</p>
+<p>原子性是指事务是一个不可分割的工作单位，事务中的操作要么都发生，要么都不发生。 </p>
+<p>2.2 一致性（Consistency）</p>
+<p>事务必须使数据库从一个一致性状态变换到另外一个一致性状态。(数据不被破坏)</p>
+<p>2.3 隔离性（Isolation）</p>
+<p>事务的隔离性是指一个事务的执行不能被其他事务干扰，即一个事务内部的操作及使用的数据对并发的其他事务是隔离的，并发执行的各个事务之间不能互相干扰。</p>
+<p>2.4 持久性（Durability）</p>
+<p>持久性是指一个事务一旦被提交，它对数据库中数据的改变就是永久性的，接下来的其他操作和数据库故障不应该对其有任何影响。 </p>
+<p><strong>3. JDBC 事务处理</strong></p>
+<p>在JDBC中，事务默认是自动提交的，每次执行一个 SQL 语句时，如果执行成功，就会向数据库自动提交，而不能回滚。</p>
+<p>为了让多个 SQL 语句作为一个事务执行，需调用 Connection 对象的 setAutoCommit(false); 以取消自动提交事务：</p>
+<pre class="line-numbers language-java"><code class="language-java">
+conn<span class="token punctuation">.</span><span class="token function">setAutoCommit</span><span class="token punctuation">(</span><span class="token boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>在所有的 SQL 语句都成功执行后，调用 commit(); 方法提交事务 </p>
+<pre class="line-numbers language-java"><code class="language-java">
+conn<span class="token punctuation">.</span><span class="token function">commit</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>在出现异常时，调用 rollback(); 方法回滚事务，一般再catch模块中执行回滚操作。 </p>
+<pre class="line-numbers language-java"><code class="language-java">
+conn<span class="token punctuation">.</span><span class="token function">rollback</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>可以通过Connection的getAutoCommit()方法来获得当前事务的提交方式。</p>
+<p><strong>注意：在MySQL中的数据库存储引擎InnoDB支持事务，MyISAM不支持事务。</strong> </p>
+<h3 id="十二、批量处理JDBC语句"><a href="#十二、批量处理JDBC语句" class="headerlink" title="十二、批量处理JDBC语句"></a>十二、批量处理JDBC语句</h3><p><strong>1. 概述</strong></p>
+<p>当需要批量插入或者更新记录时。可以采用Java的批量更新机制，这一机制允许多条语句一次性提交给数据库批量处理。通常情况下比单独提交处理更有效率。</p>
+<p>JDBC的批量处理语句包括下面两个方法： </p>
+<ul>
+<li>addBatch(String)：添加需要批量处理的SQL语句或是参数； </li>
+<li>executeBatch（）；执行批量处理语句；</li>
+</ul>
+<p>通常我们会遇到两种批量执行SQL语句的情况： </p>
+<ul>
+<li>多条SQL语句的批量处理； </li>
+<li>一个SQL语句的批量传参；</li>
+</ul>
+<p><strong>2. Statement批量处理</strong></p>
+<pre class="line-numbers language-java"><code class="language-java">
+Statement sm <span class="token operator">=</span> conn<span class="token punctuation">.</span><span class="token function">createStatement</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+sm<span class="token punctuation">.</span><span class="token function">addBatch</span><span class="token punctuation">(</span>sql1<span class="token punctuation">)</span><span class="token punctuation">;</span>
+sm<span class="token punctuation">.</span><span class="token function">addBatch</span><span class="token punctuation">(</span>sql2<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+<span class="token comment" spellcheck="true">//批量处理</span>
+sm<span class="token punctuation">.</span><span class="token function">executeBatch</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token comment" spellcheck="true">//清除sm中积攒的参数列表</span>
+sm<span class="token punctuation">.</span><span class="token function">clearBatch</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><strong>3. PreparedStatement批量传参</strong></p>
+<pre class="line-numbers language-java"><code class="language-java">
+preparedStatement ps <span class="token operator">=</span> conn<span class="token punctuation">.</span><span class="token function">preparedStatement</span><span class="token punctuation">(</span>sql<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">for</span><span class="token punctuation">(</span><span class="token keyword">int</span> i<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">;</span>i<span class="token operator">&lt;</span><span class="token number">100000</span><span class="token punctuation">;</span>i<span class="token operator">++</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    ps<span class="token punctuation">.</span><span class="token function">setInt</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> i<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    ps<span class="token punctuation">.</span><span class="token function">setString</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">,</span> <span class="token string">"name"</span><span class="token operator">+</span>i<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    ps<span class="token punctuation">.</span><span class="token function">setString</span><span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">,</span> <span class="token string">"email"</span><span class="token operator">+</span>i<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    ps<span class="token punctuation">.</span><span class="token function">addBatch</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token punctuation">(</span>i<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token operator">%</span><span class="token number">1000</span><span class="token operator">==</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token comment" spellcheck="true">//批量处理</span>
+        ps<span class="token punctuation">.</span><span class="token function">executeBatch</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment" spellcheck="true">//清空ps中积攒的sql</span>
+        ps<span class="token punctuation">.</span><span class="token function">clearBatch</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><strong>注意：MySQL不支持批量处理。</strong></p>
+<p>批量处理应该设置一个上限，当批量处理列表中的sql累积到一定数量后，就应该执行，并在执行完成后，清空批量列表。</p>
+<p>一般在excel导入数据的时候会用到批处理。 </p>
+<h3 id="十三、使用-JDBC-处理元数据"><a href="#十三、使用-JDBC-处理元数据" class="headerlink" title="十三、使用 JDBC 处理元数据"></a>十三、使用 JDBC 处理元数据</h3><p><strong>1. 概述</strong></p>
+<p>Java 通过JDBC获得连接以后，得到一个Connection 对象，可以从这个对象获得有关数据库管理系统的各种信息，包括数据库中的各个表，表中的各个列，数据类型，触发器，存储过程等各方面的信息。根据这些信息，JDBC可以访问一个实现事先并不了解的数据库。</p>
+<p>获取这些信息的方法都是在DatabaseMetaData类的对象上实现的，而DataBaseMetaData对象是在Connection对象上获得的。 </p>
+<p><strong>2. 获取数据库元数据</strong> </p>
+<p>DatabaseMetaData 类中提供了许多方法用于获得数据源的各种信息，通过这些方法可以非常详细的了解数据库的信息：</p>
+<ul>
+<li>getURL()：返回一个String类对象，代表数据库的URL。 </li>
+<li>getUserName()：返回连接当前数据库管理系统的用户名。 </li>
+<li>isReadOnly()：返回一个boolean值，指示数据库是否只允许读操作。 </li>
+<li>getDatabaseProductName()：返回数据库的产品名称。 </li>
+<li>getDatabaseProductVersion()：返回数据库的版本号。 </li>
+<li>getDriverName()：返回驱动驱动程序的名称。 </li>
+<li>getDriverVersion()：返回驱动程序的版本号。</li>
+</ul>
+<p><strong>3. ResultSetMetaData</strong></p>
+<p>可用于获取关于 ResultSet 对象中列的类型和属性信息的对象：</p>
+<ul>
+<li>getColumnName(int column)：获取指定列的名称 </li>
+<li>getColumnCount()：返回当前 ResultSet 对象中的列数。  </li>
+<li>getColumnTypeName(int column)：检索指定列的数据库特定的类型名称。  </li>
+<li>getColumnDisplaySize(int column)：指示指定列的最大标准宽度，以字符为单位。  </li>
+<li>isNullable(int column)：指示指定列中的值是否可以为 null。  </li>
+<li>isAutoIncrement(int column)：指示是否自动为指定列进行编号，这样这些列仍然是只读的。</li>
+</ul>
+<h3 id="十四、创建可滚动、更新的记录集"><a href="#十四、创建可滚动、更新的记录集" class="headerlink" title="十四、创建可滚动、更新的记录集"></a>十四、创建可滚动、更新的记录集</h3><p><strong>1. Statement</strong></p>
+<pre class="line-numbers language-java"><code class="language-java">
+Statement stmt <span class="token operator">=</span> conn<span class="token punctuation">.</span><span class="token function">createStatement</span><span class="token punctuation">(</span>type<span class="token punctuation">,</span>concurrency<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p><strong>2. PreparedStatement</strong></p>
+<pre class="line-numbers language-java"><code class="language-java">
+PreparedStatement stmt <span class="token operator">=</span> conn<span class="token punctuation">.</span><span class="token function">prepareStatement</span><span class="token punctuation">(</span>sql<span class="token punctuation">,</span>type<span class="token punctuation">,</span>concurrency<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p><strong>type说明：</strong></p>
+<table>
+<thead>
+<tr>
+<th>ResultSet的Type</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TYPE_FORWARD_ONLY</td>
+<td>结果集不能滚动,只可向前滚动</td>
+</tr>
+<tr>
+<td>TYPE_SCROLL_INSENSITIVE</td>
+<td>双向滚动，但不及时更新，就是如果数据库里的数据修改过，并不在ResultSet中反应出来</td>
+</tr>
+<tr>
+<td>TYPE_SCROLL_SENSITIVE</td>
+<td>双向滚动，并及时跟踪数据库的更新,以便更改ResultSet中的数据</td>
+</tr>
+</tbody></table>
+<p><strong>Concurrency(并发类型)说明：</strong></p>
+<table>
+<thead>
+<tr>
+<th>ResultSet的Concurrency(并发类型)</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CONCUR_READ_ONLY</td>
+<td>结果集不可用于更新数据库</td>
+</tr>
+<tr>
+<td>CONCUR_UPDATABLE</td>
+<td>结果集可以用于更新数据库</td>
+</tr>
+</tbody></table>
+<p><strong>3. ResultSet滚动的结果集使用</strong></p>
+<p><strong>First:</strong> 将指针移动到此 ResultSet 对象的第一行<br><strong>Last:</strong> 将指针移动到此 ResultSet 对象的最后一行<br><strong>beforeFirst:</strong> 将指针移动到此 ResultSet 对象的开头，正好位于第一行之前<br><strong>afterLast:</strong> 将指针移动到此 ResultSet 对象的末尾，正好位于最后一行之后<br><strong>isFirst:</strong> 检索指针是否位于此 ResultSet 对象的第一行<br><strong>isLast:</strong> 检索指针是否位于此 ResultSet 对象的最后一行<br><strong>isBeforeFirst:</strong> 检索指针是否位于此 ResultSet 对象的第一行之前<br><strong>isAfterLast:</strong> 检索指针是否位于此 ResultSet 对象的最后一行之后<br><strong>Relative:</strong> 按相对行数（或正或负）移动指针<br><strong>Next:</strong> 将指针从当前位置下移一行<br><strong>Previous:</strong> 将指针移动到此 ResultSet 对象的上一行<br><strong>Absolute:</strong> 将指针移动到此 ResultSet 对象的给定行编号  </p>
+<p>如： </p>
+<pre class="line-numbers language-java"><code class="language-java">
+rs<span class="token punctuation">.</span><span class="token function">absolute</span><span class="token punctuation">(</span><span class="token number">80</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">//将指针移动到ResultSet 对象的第80行记录。</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p><strong>注意：</strong>该特性对Oralce数据有效。但是在Mysql数据库中无效，Mysql只支持<code class="java">
+TYPE_SCROLL_INSENSITIVE,CONCUR_READ_ONLY</code>。 </p>
+<h3 id="十五、JDBC连接池"><a href="#十五、JDBC连接池" class="headerlink" title="十五、JDBC连接池"></a>十五、JDBC连接池</h3><p><strong>1. 为什么要使用JDBC连接池</strong></p>
+<p>普通的JDBC数据库连接使用 DriverManager 来获取，每次向数据库建立连接的时候都要将 Connection 加载到内存中，再验证用户名和密码。需要数据库连接的时候，就向数据库要求一个，执行完成后再断开连接。这样的方式将会消耗大量的资源和时间。数据库的连接资源并没有得到很好的重复利用.若同时有几百人甚至几千人在线，频繁的进行数据库连接操作将占用很多的系统资源，严重的甚至会造成服务器的崩溃。</p>
+<p>对于每一次数据库连接，使用完后都得断开。否则，如果程序出现异常而未能关闭，将会导致数据库系统中的内存泄漏，最终将导致重启数据库。</p>
+<p>这种开发不能控制被创建的连接对象数，系统资源会被毫无顾及的分配出去，如连接过多，也可能导致内存泄漏，服务器崩溃。</p>
+<p>为解决传统开发中的数据库连接问题，可以采用数据库连接池技术。</p>
+<p><strong>2. 数据库连接池（connection pool）</strong></p>
+<p>数据库连接池的基本思想就是为数据库连接建立一个“缓冲池”。预先在缓冲池中放入一定数量的连接，当需要建立数据库连接时，只需从“缓冲池”中取出一个，使用完毕之后再放回去。</p>
+<p>数据库连接池负责分配、管理和释放数据库连接，它允许应用程序重复使用一个现有的数据库连接，而不是重新建立一个。</p>
+<p>数据库连接池在初始化时将创建一定数量的数据库连接放到连接池中，这些数据库连接的数量是由最小数据库连接数来设定的。无论这些数据库连接是否被使用，连接池都将一直保证至少拥有这么多的连接数量。连接池的最大数据库连接数量限定了这个连接池能占有的最大连接数，当应用程序向连接池请求的连接数超过最大连接数量时，这些请求将被加入到等待队列中。 </p>
+<p><strong>3. 数据库连接池工作原理</strong></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/5824016-5e21d913ff03fddb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="2.png"></p>
+<p><strong>4. 使用数据库连接池的优点</strong></p>
+<p>(1)资源重用： </p>
+<p>由于数据库连接得以重用，避免了频繁创建，释放连接引起的大量性能开销。在减少系统消耗的基础上，另一方面也增加了系统运行环境的平稳性。</p>
+<p>(2)更快的系统反应速度 </p>
+<p>数据库连接池在初始化过程中，往往已经创建了若干数据库连接置于连接池中备用。此时连接的初始化工作均已完成。对于业务请求处理而言，直接利用现有可用连接，避免了数据库连接初始化和释放过程的时间开销，从而减少了系统的响应时间。</p>
+<p>(3)新的资源分配手段 </p>
+<p>对于多应用共享同一数据库的系统而言，可在应用层通过数据库连接池的配置，实现某一应用最大可用数据库连接数的限制，避免某一应用独占所有的数据库资源。</p>
+<p>(4)统一的连接管理，避免数据库连接泄露<br>在较为完善的数据库连接池实现中，可根据预先的占用超时设定，强制回收被占用连接，从而避免了常规数据库连接操作中可能出现的资源泄露。 </p>
+<p><strong>5. 常用数据库连接池介绍</strong></p>
+<p>JDBC 的数据库连接池使用 javax.sql.DataSource 来表示，DataSource 只是一个接口，该接口通常由服务器(Weblogic, WebSphere, Tomcat)提供实现，也有一些开源组织提供实现，如： </p>
+<ul>
+<li>DBCP 数据库连接池 </li>
+<li>C3P0 数据库连接池 </li>
+<li>Proxpool 数据库连接池</li>
+</ul>
+<p>其中，DBCP和C3P0用得比较多。</p>
+<p>Tomcat 在 7.0 以前的版本都是使用 commons-dbcp 做为连接池的实现。</p>
+<p>数据源和数据库连接不同，数据源无需创建多个，它是产生数据库连接的工厂，因此整个应用只需要一个数据源即可。</p>
+<p>当数据库访问结束后，程序还是像以前一样关闭数据库连接：<code class="java">
+conn.close();</code> 但它并没有关闭数据库的物理连接，它仅仅把数据库连接释放，归还给了数据库连接池。 </p>
+<p>大概基本的就是这么多了，希望能够帮助到大家，有问题可以交流沟通。</p>
+<p>​    </p>
+
+                </div>
+                <!-- 欧阳思海，modify，2020.05.01-->
+<!-- 文章详情详情页面的头部广告位置信息 -->
+<div id="post-head-panel">
+    
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" style="font-size: 18px;" target="_blank">
+        <img src="/icons/hot.gif">
+        本人花费半年的时间总结的《Java面试指南》已拿腾讯等大厂offer，已开源在github ，欢迎star！
+    </a>
+    
+    
+</div>
+<br />
+
+
+
+<blockquote>
+    
+            <p>本文GitHub <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">https://github.com/OUYANGSIHAI/JavaInterview</a> 已收录，这是我花了6个月总结的<b>一线大厂Java面试</b>总结，本人已拿大厂offer，欢迎star</p>
+    
+    <p>原文链接：blog.ouyangsihai.cn &gt;&gt; <a href="/jdbc-jiu-shi-zhe-me-jian-dan.html" target="_blank">jdbc就是这么简单</a></p>
+</blockquote>
+                <hr />
+
+                
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.88rem;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-large waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fa fa-close"></i></a>
+            <h4 class="reward-title">多少都是对我的认可</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="http://image.ouyangsihai.cn/FpbhsOuf3Ar9vY34B97Y2qQ7LVGe" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="http://image.ouyangsihai.cn/FgYlMzms68PH73PWpZBwPfbLTAws" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+                
+
+                <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+
+<div id="article-share">
+    
+    <div class="social-share" data-disabled="qzone" data-wechat-qrcode-helper="<p>微信里点“发现”->“扫一扫”二维码便可查看分享。</p>"></div>
+    
+</div>
+
+<script src="/libs/share/js/social-share.min.js"></script>
+
+                
+
+                
+                <div class="reprint1">
+                    <p>
+                        <span class="reprint1-tip">
+                            <i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;转载请注明:
+                        </span>
+                        <a href="https://blog.ouyangsihai.cn" class="b-link-green">好好学java</a>
+                        <i class="fa fa-angle-right fa-lg fa-fw text-color"></i>
+                        <a href="/jdbc-jiu-shi-zhe-me-jian-dan.html" class="b-link-green">jdbc就是这么简单</a>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        
+
+        
+
+        
+
+        
+
+        
+        <style>
+    .valine-card {
+        margin: 1.5rem auto;
+    }
+
+    .valine-card .card-content {
+        padding: 20px 20px 5px 20px;
+    }
+    /* valine 评论框增加背景图片 */
+    #vcomments textarea {
+        box-sizing: border-box;
+        background: url("") 100% 100% no-repeat;
+    }
+
+    #vcomments input[type=text],
+    #vcomments input[type=email],
+    #vcomments input[type=url],
+    #vcomments textarea {
+        box-sizing: border-box;
+    }
+
+    #vcomments p {
+        margin: 2px 2px 10px;
+        font-size: 1.05rem;
+        line-height: 1.78rem;
+    }
+
+    #vcomments blockquote p {
+        text-indent: 0.2rem;
+    }
+
+    #vcomments a {
+        padding: 0 2px;
+        color: #42b983;
+        font-weight: 500;
+        text-decoration: underline;
+    }
+
+    #vcomments img {
+        max-width: 100%;
+        height: auto;
+        cursor: pointer;
+    }
+
+    #vcomments ol li {
+        list-style-type: decimal;
+    }
+
+    #vcomments ol,
+    ul {
+        display: block;
+        padding-left: 2em;
+        word-spacing: 0.05rem;
+    }
+
+    #vcomments ul li,
+    ol li {
+        display: list-item;
+        line-height: 1.8rem;
+        font-size: 1rem;
+    }
+
+    #vcomments ul li {
+        list-style-type: disc;
+    }
+
+    #vcomments ul ul li {
+        list-style-type: circle;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    #vcomments table, th, td {
+        border: 0;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments h1 {
+        font-size: 1.85rem;
+        font-weight: bold;
+        line-height: 2.2rem;
+    }
+
+    #vcomments h2 {
+        font-size: 1.65rem;
+        font-weight: bold;
+        line-height: 1.9rem;
+    }
+
+    #vcomments h3 {
+        font-size: 1.45rem;
+        font-weight: bold;
+        line-height: 1.7rem;
+    }
+
+    #vcomments h4 {
+        font-size: 1.25rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    #vcomments h5 {
+        font-size: 1.1rem;
+        font-weight: bold;
+        line-height: 1.4rem;
+    }
+
+    #vcomments h6 {
+        font-size: 1rem;
+        line-height: 1.3rem;
+    }
+
+    #vcomments p {
+        font-size: 1rem;
+        line-height: 1.5rem;
+    }
+
+    #vcomments hr {
+        margin: 12px 0;
+        border: 0;
+        border-top: 1px solid #ccc;
+    }
+
+    #vcomments blockquote {
+        margin: 15px 0;
+        border-left: 5px solid #42b983;
+        padding: 1rem 0.8rem 0.3rem 0.8rem;
+        color: #666;
+        background-color: rgba(66, 185, 131, .1);
+    }
+
+    #vcomments pre {
+        font-family: monospace, monospace;
+        padding: 1.2em;
+        margin: .5em 0;
+        background: #272822;
+        overflow: auto;
+        border-radius: 0.3em;
+        tab-size: 4;
+    }
+
+    #vcomments code {
+        font-family: monospace, monospace;
+        padding: 1px 3px;
+        font-size: 0.92rem;
+        color: #e96900;
+        background-color: #f8f8f8;
+        border-radius: 2px;
+    }
+
+    #vcomments pre code {
+        font-family: monospace, monospace;
+        padding: 0;
+        color: #e8eaf6;
+        background-color: #272822;
+    }
+
+    #vcomments pre[class*="language-"] {
+        padding: 1.2em;
+        margin: .5em 0;
+    }
+
+    #vcomments code[class*="language-"],
+    pre[class*="language-"] {
+        color: #e8eaf6;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    #vcomments b,
+    strong {
+        font-weight: bold;
+    }
+
+    #vcomments dfn {
+        font-style: italic;
+    }
+
+    #vcomments small {
+        font-size: 85%;
+    }
+
+    #vcomments cite {
+        font-style: normal;
+    }
+
+    #vcomments mark {
+        background-color: #fcf8e3;
+        padding: .2em;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    /* 修复评论第一行位置错位 */
+    .v .vlist .vcard {
+    padding-top: 2.5em !important ;
+    }
+</style>
+
+<div class="card valine-card" data-aos="fade-up">
+    <div id="vcomments" class="card-content"></div>
+</div>
+
+<script src="/libs/valine/av-min.js"></script>
+<script src="/libs/valine/Valine.min.js"></script>
+<!-- <link rel="stylesheet" type="text/css" href="/libs//libs/jQuery-emoji/dist/css/jquery.emoji.css">
+<script src="/libs//libs/jQuery-emoji/dist/js/jquery.emoji.min.js"></script>
+<script src="/libs//libs/jQuery-emoji/dist/js/emoji.list.js"></script> -->
+<script>
+    new Valine({
+        el: '#vcomments',
+        appId: 'MxSNOS83TYWU3Opsy2GTW1ih-gzGzoHsz',
+        appKey: '4XevOgmAxHEwVDnIKgvEUihB',
+        notify: 'true' === 'true',
+        verify: 'true' === 'true',
+        visitor: 'true' === 'true',
+        avatar: 'mm',
+        pageSize: '10',
+        lang: 'zh-cn',
+        placeholder: '请畅所欲言吧，别害羞~',
+
+    });
+
+//     function parse_emoji() {
+//     jQuery(".vcontent").emojiParse({
+//       basePath: '/libs/jQuery-emoji/images/emoji',
+//       icons: emojiLists   // 注：详见 js/emoji.list.js
+//     });
+//   }
+  
+//   setTimeout(function() {
+//     // jQuery emoji 解析
+//     parse_emoji();
+//     // jquery emoji 初始化
+//     jQuery(".veditor").emoji({
+//       showTab: true,
+//       animation: 'slide',
+//       basePath: '/libs/jQuery-emoji/images/emoji',
+//       icons: emojiLists  // 注：详见 js/emoji.list.js
+//     });
+//     jQuery(".vmore").on("click", function() {
+//       setTimeout(function() {
+//         parse_emoji();
+//       }, 500);
+//     });
+//   }, 800)
+
+</script>
+        
+
+        
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/springmvc-restful-xiang-xi-shi-li-shi-zhan-jiao-cheng-shi-xian-kua-yu-fang-wen.html">
+                    <div class="card-image">
+                        
+                        <img src="http://image.ouyangsihai.cn/Fo9qpM78sByGmE9bq8BpOGlmJlur" class="responsive-img" alt="SpringMVC+RestFul详细示例实战教程（实现跨域访问）">
+                        
+                        <span class="card-title">SpringMVC+RestFul详细示例实战教程（实现跨域访问）</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            一、理解 RESTREST（Representational State Transfer）,中文翻译叫“表述性状态转移”。是 Roy Thomas Fielding 在他2000年的博士论文中提出的。它与传统的 SOAP Web 服务区别
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="fa fa-clock fa-fw icon-date"></i>2019-10-21
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Java%E6%A1%86%E6%9E%B6%E6%B7%B1%E7%A9%B6/" class="post-category" target="_blank">
+                                    Java框架深究
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/SpringMVC/" target="_blank">
+                        <span class="chip bg-color">SpringMVC</span>
+                    </a>
+                    
+                    <a href="/tags/RestFul/" target="_blank">
+                        <span class="chip bg-color">RestFul</span>
+                    </a>
+                    
+                    <a href="/tags/%E8%B7%A8%E5%9F%9F%E8%AE%BF%E9%97%AE/" target="_blank">
+                        <span class="chip bg-color">跨域访问</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fa fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/jsp-kan-zhe-pian-wen-zhang-jiu-gou-liao.html">
+                    <div class="card-image">
+                        
+                        <img src="http://image.ouyangsihai.cn/Fo9qpM78sByGmE9bq8BpOGlmJlur" class="responsive-img" alt="jsp看这篇文章就够了">
+                        
+                        <span class="card-title">jsp看这篇文章就够了</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            一、JSP基础语法1、JSP模板元素JSP页面中的HTML内容称之为JSP模版元素。
+JSP模版元素定义了网页的基本骨架，即定义了页面的结构和外观。
+2、JSP脚本片段JSP脚本片断(scriptlet)用于在JSP页面中编写多行Java代
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="fa fa-clock fa-fw icon-date"></i>2019-10-21
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Java-Web%E9%97%AF%E5%85%B3/" class="post-category" target="_blank">
+                                    Java Web闯关
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/jsp/" target="_blank">
+                        <span class="chip bg-color">jsp</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+    </div>
+</div>
+
+
+<script>
+    $('#articleContent').on('copy', function (e) {
+        // IE8 or earlier browser is 'undefined'
+        if (typeof window.getSelection === 'undefined') return;
+
+        var selection = window.getSelection();
+        // if the selection is short let's not annoy our users.
+        if (('' + selection).length < Number.parseInt('500')) {
+            return;
+        }
+
+        // create a div outside of the visible area and fill it with the selected text.
+        var bodyElement = document.getElementsByTagName('body')[0];
+        var newdiv = document.createElement('div');
+        newdiv.style.position = 'absolute';
+        newdiv.style.left = '-99999px';
+        bodyElement.appendChild(newdiv);
+        newdiv.appendChild(selection.getRangeAt(0).cloneContents());
+
+        // we need a <pre> tag workaround.
+        // otherwise the text inside "pre" loses all the line breaks!
+        if (selection.getRangeAt(0).commonAncestorContainer.nodeName === 'CODE') {
+            newdiv.innerHTML = "<pre>" + newdiv.innerHTML + "</pre>";
+        }
+
+        var url = document.location.href;
+        newdiv.innerHTML += '<br />'
+            + '来源: 好好学java<br />'
+            + '作者: 好好学java<br />'
+            + '链接: <a href="' + url + '">' + url + '</a><br />'
+            + '本文章著作权归作者所有，任何形式的转载都请注明出处。';
+
+        selection.selectAllChildren(newdiv);
+        window.setTimeout(function () { bodyElement.removeChild(newdiv); }, 200);
+    });
+</script>
+
+
+
+<!--
+<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+<script>
+    const btw = new BTWPlugin();
+    btw.init({
+        id: 'container',
+        blogId: '15305-1590684104111-518',
+        name: '程序员的技术圈子',
+        qrcode: 'http://image.ouyangsihai.cn/FtAUOeE5--1JTdcuuZFIhMuEUuJO',
+        keyword: 'vip',
+    });
+</script>
+-->
+
+    </div>
+    <div id="toc-aside" style="width: 310px;" class="expanded col l3 hide-on-med-and-down">
+        <!-- 自定义右侧card：欧阳思海 -->
+        <!-- <div id="my-card" style="background: ">
+            
+        </div> -->
+        <!-- <div class="toc-widget">
+            <div class="toc-title" style="display: none;"><i class="fa fa-list-alt"></i>&nbsp;&nbsp;</div>
+            <div id="toc-content"></div>
+        </div> -->
+
+
+
+
+
+
+
+
+        <aside class="col-lg-3" style="width: 300px;">
+
+            <link rel="stylesheet" type="text/css" href="/css/my-aside.css">
+
+            <!-- 关注公众号信息：欧阳思海 -->
+            <div class="widget-wrap">
+                <div class="widget bg-danger" style="color:whitesmoke; background-color: #419488">
+                    <div class="card-front animated col s12 m12 l8 offset-l2 fadeInUp">
+                        <div class="row">
+                            <div class="col-md-5" style="text-align: center;">
+                                <img class="adv" style="width: 95px; height: 95px;"
+                                    src="http://image.ouyangsihai.cn/FtAUOeE5--1JTdcuuZFIhMuEUuJO">
+                            </div>
+                            <div class="col-md-7" style="text-align: center;">
+                                <h2 style="font-size: 18px; 
+                                    margin: 0; 
+                                    padding: 0;
+                                    border: 0; 
+                                    outline: 0;
+                                    font-weight: inherit;
+                                    font-style: inherit;
+                                    font-family: inherit;
+                                    vertical-align: baseline;">关注公众号</h2>
+                                 
+                                <small style="font-size: 15px;">
+                                    →「技术干货」每日推送 <br>
+                                    →「回复资料」领取资料 <br>
+                                    →「微信加群」每周福利 <br>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div style="font-size: 0.8em;">
+                        <a href="/assets/erweima.jpg" target="_blank"
+                            style="color:orange;font-size: 14px;">点击添加我的微信，加入技术讨论群</a>
+                        除公众号以外，我还会在以下平台发布内容：
+                    </div>
+                    -->
+
+                    <div class="profile-block social-links col-md-7" style="text-align: center;">
+                        <table style="align-items: center; 
+                                        padding-left: 25px;">
+                            <tbody>
+                                <tr>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank" title="GitHub"
+                                            class="tooltip">
+                                            <img style="width: 22px;height: 22px;" src="/icons/github.svg"></a>
+                                    </td>
+
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://www.zhihu.com/people/hai-hai-ren-sheng-50/activities"
+                                            target="_blank" title="知乎" class="tooltip">
+                                            <img style="width: 22px;" src="/icons/zhihu.svg"></a>
+                                    </td>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://blog.csdn.net/sihai12345" target="_blank" title="CSDN"
+                                            class="tooltip">
+                                            <img style="width: 18px;" src="/icons/CSDN.svg"></a>
+                                    </td>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://www.jianshu.com/u/12b0bd4c857c" target="_blank" title="简书"
+                                            class="tooltip">
+                                            <img style="width: 22px;" src="/icons/JianShu.svg"></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            
+
+            <!-- custom rightside_link：热门文章推荐：欧阳思海 -->
+            
+            <div class="widget-wrap widget-panel">
+                <p style="text-align: left;padding-bottom: 10px;line-height: 30px; font-size: 14px;">
+                    
+                    <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        本人花费半年的时间总结的《 Java 面试指南》已拿腾讯等大厂 offer，已开源在 github ，欢迎 star！
+                    </a><br>
+                    
+                    <a href="https://mp.weixin.qq.com/s/I0jimqziHqRNaIy0kXRCnw" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        2020 Java 1000G 最新学习资源，Java基础、Java项目实战、Java分布式等等！
+                    </a><br>
+                    
+                    <a href="http://image.ouyangsihai.cn/FpB-dO6g-XU44mMrVlj7EL1y7Rs7" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        高级 Java 开发微信群，一起搞事情吧！
+                    </a><br>
+                    
+                </p>
+            </div>
+            
+
+            
+
+            <!-- custom rightside_banner：右侧广告或者其他的栏目设置：欧阳思海 -->
+            
+            <div class="widget-wrap">
+                <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">
+                    <img src="http://image.ouyangsihai.cn/FhhoEYMaNr6m0v8KhG8vSPgoREBV" style="width: 100%;">
+                </a>
+            </div>
+            
+            
+
+            
+
+            <!-- 右侧专栏分类：欧阳思海 -->
+            
+            <div class="widget-wrap widget-panel">
+                <ul class="media-list">
+                    
+                    <li class="media">
+                        <a href="/categories/MySQL的艺术世界/" target="_blank">
+                            <div class="media-left">
+                                <img class="media-object" src="http://image.ouyangsihai.cn/Fn3kQurieQ_0QUeqPmx5RW5i6R9n" style="width: 55px;">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading" style="margin-bottom: 10px; font-size: 100%;
+                                                                    margin: 0;
+                                                                    padding: 0;
+                                                                    border: 0;
+                                                                    outline: 0;
+                                                                    font-weight: inherit;
+                                                                    font-style: inherit;
+                                                                    font-family: inherit;
+                                                                    vertical-align: baseline;">
+                                    MySQL 的系列文章，解决全部面试问题！
+                                </h4>
+                                <p>
+                                    总共10篇文章，面试热门的锁、事务，通通解决了！
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    <hr>
+                    
+                    <li class="media">
+                        <a href="/categories/深入理解Java虚拟机/" target="_blank">
+                            <div class="media-left">
+                                <img class="media-object" src="http://image.ouyangsihai.cn/FpcS21VWJOHSgGzKcpW3_xVTSEeN" style="width: 55px;">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading" style="margin-bottom: 10px; font-size: 100%;
+                                                                    margin: 0;
+                                                                    padding: 0;
+                                                                    border: 0;
+                                                                    outline: 0;
+                                                                    font-weight: inherit;
+                                                                    font-style: inherit;
+                                                                    font-family: inherit;
+                                                                    vertical-align: baseline;">
+                                    深入理解 Java 虚拟机，面试必问
+                                </h4>
+                                <p>
+                                    总共10篇文章，包括内存模型、GC算法、GC收集器等。
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    <hr>
+                    
+                </ul>
+            </div>
+            
+
+            <!-- 右侧分类 -->
+            <div class="widget-wrap widget-panel">
+                <h3 class="widget-title">文章分类</h3>
+                <div class="widget">
+                    <ul class="category-list">
+                        
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/趣聊数据结构与算法/">>
+                                趣聊数据结构与算法</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/职业生涯浅谈/">>
+                                职业生涯浅谈</a><span class="category-list-count">33</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java项目分享/">>
+                                Java项目分享</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java面试经验/">>
+                                Java面试经验</a><span class="category-list-count">4</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/我要进大厂/">>
+                                我要进大厂</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/好好学java/">>
+                                好好学java</a><span class="category-list-count">1116</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/剑指offer/">>
+                                剑指offer</a><span class="category-list-count">112</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/css/">>
+                                css</a><span class="category-list-count">12</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/其他框架/">>
+                                其他框架</a><span class="category-list-count">142</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python其他/">>
+                                python其他</a><span class="category-list-count">45</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/数据库相关/">>
+                                数据库相关</a><span class="category-list-count">293</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java核心知识/">>
+                                Java核心知识</a><span class="category-list-count">196</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java面试题/">>
+                                Java面试题</a><span class="category-list-count">308</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/mybatis源码/">>
+                                mybatis源码</a><span class="category-list-count">56</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/spring教程/">>
+                                spring教程</a><span class="category-list-count">173</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springboot教程/">>
+                                springboot教程</a><span class="category-list-count">156</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/实战Activiti工作流/">>
+                                实战Activiti工作流</a><span class="category-list-count">4</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springcloud教程/">>
+                                springcloud教程</a><span class="category-list-count">39</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/linux/">>
+                                linux</a><span class="category-list-count">91</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python框架/">>
+                                python框架</a><span class="category-list-count">43</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python基础/">>
+                                python基础</a><span class="category-list-count">78</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/dubbo/">>
+                                dubbo</a><span class="category-list-count">37</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java源码/">>
+                                Java源码</a><span class="category-list-count">76</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/叽叽喳喳杂七杂八/">>
+                                叽叽喳喳杂七杂八</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/MySQL的艺术世界/">>
+                                MySQL的艺术世界</a><span class="category-list-count">8</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/jquery/">>
+                                jquery</a><span class="category-list-count">14</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java并发/">>
+                                Java并发</a><span class="category-list-count">43</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java文章合辑/">>
+                                Java文章合辑</a><span class="category-list-count">11</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java基础修炼/">>
+                                Java基础修炼</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/不一样的Java8/">>
+                                不一样的Java8</a><span class="category-list-count">3</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/小程序开发的世界/">>
+                                小程序开发的世界</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java学习资源分享/">>
+                                Java学习资源分享</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java小学生漫游/">>
+                                Java小学生漫游</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/rocketmq源码解析/">>
+                                rocketmq源码解析</a><span class="category-list-count">33</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springmvc最新教程/">>
+                                springmvc最新教程</a><span class="category-list-count">9</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java的Exception/">>
+                                Java的Exception</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/vue-js/">>
+                                vue.js</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/实战设计模式/">>
+                                实战设计模式</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python数据处理/">>
+                                python数据处理</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java-Web闯关/">>
+                                Java Web闯关</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springboot2-0最新教程/">>
+                                springboot2.0最新教程</a><span class="category-list-count">11</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/netty/">>
+                                netty</a><span class="category-list-count">16</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/rpc/">>
+                                rpc</a><span class="category-list-count">13</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/拥抱大厂系列/">>
+                                拥抱大厂系列</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/eureka/">>
+                                eureka</a><span class="category-list-count">19</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/分布式/">>
+                                分布式</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/中间件/">>
+                                中间件</a><span class="category-list-count">23</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java基础/">>
+                                Java基础</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/带你学Python/">>
+                                带你学Python</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/使用技术工具/">>
+                                使用技术工具</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/mycat源码/">>
+                                mycat源码</a><span class="category-list-count">5</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/深入理解Java虚拟机/">>
+                                深入理解Java虚拟机</a><span class="category-list-count">8</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/spring源码/">>
+                                spring源码</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java集合源码分析/">>
+                                Java集合源码分析</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/github的repo/">>
+                                github的repo</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java框架深究/">>
+                                Java框架深究</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/分布式架构/">>
+                                分布式架构</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+
+        </aside>
+
+
+
+
+
+
+
+
+
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. 修改成永远不显示：欧阳思海-->
+
+
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h1, h2, h3, h4, h5'
+        });
+
+        console.log('============');
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h1, h2, h3, h4, h5').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+                        
+            /* 修复文章卡片 div 的宽度. */
+            let fixPostCardWidth = function (srcId, targetId) {
+                let srcDiv = $('#' + srcId);
+                if (srcDiv.length === 0) {
+                    return;
+                }
+
+                let w = srcDiv.width();
+                if (w >= 450) {
+                    w = w + 21;
+                } else if (w >= 350 && w < 450) {
+                    w = w + 18;
+                } else if (w >= 300 && w < 350) {
+                    w = w + 16;
+                } else {
+                    w = w + 14;
+                }
+                $('#' + targetId).width(w);
+            };
+
+            // 切换TOC目录展开收缩的相关操作.
+            // 修改右侧边栏功能：欧阳思海
+            const expandedClass = 'expanded';
+            let $tocAside = $('#toc-aside');
+            let $mainContent = $('#main-content');
+
+            $('#floating-toc-btn .btn-floating').click(function () {
+                if ($tocAside.hasClass(expandedClass)) {
+                    $tocAside.removeClass(expandedClass).slideUp(500);
+                    $mainContent.removeClass('l9');
+                } else {
+                    $tocAside.addClass(expandedClass).slideDown(500);
+                    $mainContent.addClass('l9');
+                }
+                fixPostCardWidth('artDetail', 'prenext-posts');
+            });
+                        
+                    });
+</script>
+    
+
+</main>
+
+
+        <footer class="page-footer bg-color">
+    <div class="container row center-align">
+        <div class="col s12 m8 l8 copy-right">
+            
+	    Copyright&copy; 2019 <a href="https://www.java1000.com/" target="_blank"> 好好学java </a>维护. 网站备案/许可证号：赣ICP备17007984号-3
+            <br>
+            <span id="sitetime"></span>
+            <br>
+
+            
+
+            
+                    <!-- 
+                        <span id="busuanzi_container_site_pv" style='display:none'></span>
+                        总访问量: <span id="busuanzi_value_site_pv" class="white-color"></span>
+                    
+        
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'></span>
+                        人次&nbsp; | &nbsp;访客人数: <span id="busuanzi_value_site_uv" class="white-color"></span> 人
+                     -->
+                        <!-- 修改计数：欧阳思海 -->
+                    
+                        <span id="busuanzi_container_site_pv" style='display:inline'>
+                            <i class="fa fa-heart-o"></i>
+                            本站总访问量 <span id="busuanzi_value_site_pv" class="white-color"></span>
+                        </span>
+                    
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'>
+                            人次,&nbsp;访客数 <span id="busuanzi_value_site_uv" class="white-color"></span> 人.
+                        </span>
+                    
+    
+            
+
+            
+                &nbsp; | &nbsp;字数统计:&nbsp;
+                <span class="white-color">8290.3k</span> 字
+            
+
+            
+            <br>
+
+        </div>
+
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fa fa-code-branch"></i>
+    </a>
+
+
+ 
+    <a href="https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=1446037005@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fa fa-envelope-open"></i>
+    </a>
+
+
+
+
+    <a href="https://zhihu.com/people/hai-hai-ren-sheng-50/activities" class="tooltipped" target="_blank" data-tooltip="访问我的知乎" data-position="top" data-delay="50">
+        <i class="fa fa-inverse">知</i>
+    </a>
+
+
+
+
+
+
+
+
+
+    <a href="https://blog.ouyangsihai.cn/sitemap.xml" class="tooltipped" target="_blank" data-tooltip="站点地图" data-position="top" data-delay="50">
+        <i class="fa fa-sitemap"></i>
+    </a>
+
+
+
+    <a href="https://blog.ouyangsihai.cn/friends" class="tooltipped" target="_blank" data-tooltip="友情链接" data-position="top" data-delay="50">
+        <i class="fa fa-address-book"></i>
+    </a>
+</div>
+
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+
+        var t1 = Date.UTC(2019, 08, 10, 00, 00, 00); //北京时间2019-8-1 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes *
+            minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "本站已运行 " + diffYears + " 年 " + diffDays + " 天 " + diffHours +
+            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒" ;
+    } /*因为建站时间还没有一年，就将之注释掉了。需要的可以取消*/
+    siteTime();
+</script>
+
+<!-- 修改计数：欧阳思海 -->
+<script>
+    $(document).ready(function () {
+
+        var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+        var pvcountOffset = 1005469;  // 初始化首次数据
+        var uvcountOffset = 250804;
+
+        function fixCount() {
+            if (document.getElementById("busuanzi_container_site_pv").style.display != "none") {
+                $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + pvcountOffset);
+                clearInterval(int);
+            }
+            if ($("#busuanzi_container_site_pv").css("display") != "none") {
+                $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + uvcountOffset); // 加上初始数据 
+                clearInterval(int); // 停止检测
+            }
+        }
+    });
+</script>
+
+
+
+
+        <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.json", 'searchInput', 'searchResult');
+});
+</script>
+        <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fa fa-angle-up"></i>
+    </a>
+</div>
+
+
+        <script src="/libs/materialize/materialize.min.js"></script>
+        <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+        <script src="/libs/aos/aos.js"></script>
+        <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+        <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+        <script src="/js/matery.js"></script>
+
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-149362573-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    gtag('config', 'UA-149362573-1');
+</script>
+
+
+
+        
+            <script src="/libs/others/clicklove.js"></script>
+        
+
+        
+            <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+        
+
+        <!-- 洪卫 shw2018 add 2019.08.28 -->
+        <script type="text/javascript">
+            var OriginTitile = document.title,
+                st;
+            document.addEventListener("visibilitychange", function () {
+                document.hidden ? (document.title = "看不见我🙈~看不见我🙈~", clearTimeout(st)) : (document.title =
+                    "(๑•̀ㅂ•́) ✧被发现了～", st = setTimeout(function () {
+                        document.title = OriginTitile
+                    }, 3e3))
+            })
+        </script>
+
+        <!-- 鼠标点击烟花爆炸效果  洪卫 shw2018 add 2019.09.09 -->
+        
+
+        <!-- 背景雪花飘落特效洪卫 shw2018 add 2019.09.10 -->
+        
+
+        <!-- 鼠标点击文字特效 洪卫 shw2018 add 2019.09.10-->
+        
+
+        <!-- 背景雪花飘落特效 洪卫 shw2018 add 2019.09.10 -->
+        
+
+        <!-- 在线聊天工具  洪卫 shw2018 add 2019.09.11 -->
+        
+
+        <!-- 背景 canvas-nest  洪卫 shw 2018  add 2019.09.15-->
+        
+
+        <!-- 背景静止彩带  洪卫 shw 2018  add 2019.09.15-->
+        
+
+        <!-- 背景动态彩带 洪卫 shw 2018  add 2019.09.15-->
+        
+
+    </body>
+</html>

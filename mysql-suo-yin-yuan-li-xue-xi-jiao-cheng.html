@@ -1,0 +1,2902 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+    <!-- shw2018 洪卫  modify 2019.08.15-->
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="Spring Boot, Spring Cloud, 微服务, Java技术, 好好学java, Java面试, 分布式, 最新干货分享">
+    <meta name="baidu-site-verification" content="fmlEuI34ir" />
+    <meta name="google-site-verification" content="ZWVq5UvPg33BCEA3LRTUkYe5J854o9lF1_WRTer9l8A" />
+    <meta name="description" content="本站是 好好学java 的技术分享博客。内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、分布式、Java面试、测试开发等相关的研究与知识分享。">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>MySQL索引原理学习教程 | 好好学java | Spring Boot | Spring Cloud | 微服务 | Java技术 | Java面试 | 分布式 | 最新干货分享</title>
+    <link rel="icon" type="image/png" href="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7">
+
+    <!-- <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css"> -->
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    <!-- 自定义fontawesome样式：欧阳思海 -->
+    <link rel="stylesheet" type="text/css" href="/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/brands.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/fontawesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/regular.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/solid.min.css">
+
+
+    <style type="text/css">
+        code[class*="language-"],
+            pre[class*="language-"] {
+                white-space: pre !important;
+            }
+
+            
+
+        /* 将matery.css中的背景颜色修改放到这里：欧阳思海 */
+        .bg-color {
+            background-image: linear-gradient(to right, #ec8585 0%, #419488 100%);
+            opacity: 0.9;
+            // 透明度
+        }
+    </style>
+
+    <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
+    <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+
+    
+    
+    <script>
+        (function () {
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+    
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?6fe466069710c03a563713b507fbaca7";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+    <!-- Google Analytics -->
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-XXXXX-Y', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <!-- End Google Analytics -->
+
+    <script>(function (i, s, o, g, r, a, m) { i["DaoVoiceObject"] = r; i[r] = i[r] || function () { (i[r].q = i[r].q || []).push(arguments) }, i[r].l = 1 * new Date(); a = s.createElement(o), m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; a.charset = "utf-8"; m.parentNode.insertBefore(a, m) })(window, document, "script", ('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/0a804bac.js", "daovoice")</script>
+
+    <script>
+        if (true) {
+            daovoice('init', {
+                app_id: "0a804bac",
+                user_id: "NO_89757", // 必填: 该用户在您系统上的唯一ID
+                email: "daovoice@example.com", // 选填:  该用户在您系统上的主邮箱
+                name: "道客船长", // 选填: 用户名
+                signed_up: 1449821660 // 选填: 用户的注册时间，用Unix时间戳表示
+            });
+            daovoice('update');
+
+            daovoice('init', {
+                app_id: "0a804bac"
+            });
+            daovoice('update');
+        }
+    </script>
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/rss2.xml" title="好好学java" type="application/rss+xml">
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+    <body>
+
+        <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span" style="font-size: 1.4rem;">好好学java</span>
+                </a>
+            </div>
+            
+
+
+<!-- <a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-navicon"></i></a>
+<ul class="right">
+    
+    <li class="hide-on-med-and-down">
+        <a href="" class="waves-effect waves-light">
+            
+            <i class="fa "></i>
+            
+            <span></span>
+        </a>
+    </li>
+    
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title=""></i>
+        </a>
+    </li>
+</ul> -->
+
+<!-- 支持二级菜单特性 洪卫 shw2018 modify 2019.09.17  -->
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-align-justify"></i></a>
+<ul class="right nav-menu">
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-folder-minus"></i>
+                
+                <span style="font-size: 1.1rem;">Java学习</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/" >
+                    
+                    <span>Java入门</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Javaweb/" >
+                    
+                    <span>Java Web</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/spring%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>Spring教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/springboot%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>SpringBoot教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/springcloud%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>SpringCloud教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98/" >
+                    
+                    <span>Java面试</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%89%91%E6%8C%87offer/" >
+                    
+                    <span>剑指offer</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-code-branch"></i>
+                
+                <span style="font-size: 1.1rem;">Java进阶</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97/" >
+                    
+                    <span>设计模式</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" >
+                    
+                    <span>Java并发编程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/" >
+                    
+                    <span>数据库</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/redis/" >
+                    
+                    <span>Redis</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/linux/" >
+                    
+                    <span>Linux</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/" >
+                    
+                    <span>Java实战项目</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-code"></i>
+                
+                <span style="font-size: 1.1rem;">python学习</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/python%E5%9F%BA%E7%A1%80/" >
+                    
+                    <span>python基础</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/python%E6%A1%86%E6%9E%B6/" >
+                    
+                    <span>python框架</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/python%E5%85%B6%E4%BB%96/" >
+                    
+                    <span>python其他</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-coffee"></i>
+                
+                <span style="font-size: 1.1rem;">Java扩展</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/dubbo/" >
+                    
+                    <span>dubbo</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/netty/" >
+                    
+                    <span>netty</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/rpc/" >
+                    
+                    <span>rpc</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/eureka/" >
+                    
+                    <span>eureka</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/" >
+                    
+                    <span>中间件</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" >
+                    
+                    <span>分布式</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-desktop"></i>
+                
+                <span style="font-size: 1.1rem;">计算机核心</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" >
+                    
+                    <span>数据结构</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98/" >
+                    
+                    <span>leetcode刷题</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" >
+                    
+                    <span>计算机网络</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" >
+                    
+                    <span>算法</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/categories/" class="waves-effect waves-light">
+              
+                <i style="font-size: 1.1rem;" class="fa fa-adjust"></i>
+              
+              <span style="font-size: 1.1rem;">学习资源</span>
+            </a>
+
+            
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/contact" class="waves-effect waves-light">
+              
+                <i style="font-size: 1.1rem;" class="fa fa-envelope"></i>
+              
+              <span style="font-size: 1.1rem;">留言</span>
+            </a>
+
+            
+      </li>
+    
+
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title="搜索"></i>
+        </a>
+    </li>
+
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">好好学java</div>
+        <div class="logo-desc">
+            
+            
+            本站是 好好学java 的技术分享博客，涵盖Java后端技术、SpringBoot、微服务架构、分布式、Java面试等知 ...
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-folder-minus"></i>
+			
+			Java学习
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/ " style="margin-left:75px";>
+				  
+		          <span>Java入门</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Javaweb/ " style="margin-left:75px";>
+				  
+		          <span>Java Web</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/spring%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>Spring教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/springboot%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>SpringBoot教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/springcloud%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>SpringCloud教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98/ " style="margin-left:75px";>
+				  
+		          <span>Java面试</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%89%91%E6%8C%87offer/ " style="margin-left:75px";>
+				  
+		          <span>剑指offer</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-code-branch"></i>
+			
+			Java进阶
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97/ " style="margin-left:75px";>
+				  
+		          <span>设计模式</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>Java并发编程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/ " style="margin-left:75px";>
+				  
+		          <span>数据库</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/redis/ " style="margin-left:75px";>
+				  
+		          <span>Redis</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/linux/ " style="margin-left:75px";>
+				  
+		          <span>Linux</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/ " style="margin-left:75px";>
+				  
+		          <span>Java实战项目</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-code"></i>
+			
+			python学习
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/python%E5%9F%BA%E7%A1%80/ " style="margin-left:75px";>
+				  
+		          <span>python基础</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/python%E6%A1%86%E6%9E%B6/ " style="margin-left:75px";>
+				  
+		          <span>python框架</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/python%E5%85%B6%E4%BB%96/ " style="margin-left:75px";>
+				  
+		          <span>python其他</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-coffee"></i>
+			
+			Java扩展
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/dubbo/ " style="margin-left:75px";>
+				  
+		          <span>dubbo</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/netty/ " style="margin-left:75px";>
+				  
+		          <span>netty</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/rpc/ " style="margin-left:75px";>
+				  
+		          <span>rpc</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/eureka/ " style="margin-left:75px";>
+				  
+		          <span>eureka</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/ " style="margin-left:75px";>
+				  
+		          <span>中间件</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/ " style="margin-left:75px";>
+				  
+		          <span>分布式</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-desktop"></i>
+			
+			计算机核心
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/ " style="margin-left:75px";>
+				  
+		          <span>数据结构</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98/ " style="margin-left:75px";>
+				  
+		          <span>leetcode刷题</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/ " style="margin-left:75px";>
+				  
+		          <span>计算机网络</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E7%AE%97%E6%B3%95/ " style="margin-left:75px";>
+				  
+		          <span>算法</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories/" class="waves-effect waves-light">
+			
+			    <i class="fa fa-fw fa-adjust"></i>
+			
+			学习资源
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa fa-fw fa-envelope"></i>
+			
+			留言
+		</a>
+          
+        </li>
+        
+        
+    </ul>
+</div>
+
+        </div>
+
+        
+    </nav>
+
+</header>
+
+        
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/12.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <div class="description center-align post-title">
+                        MySQL索引原理学习教程
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 20px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+
+    /* 自定义mycard：欧阳思海 */
+
+    #my-card {
+        /* position: relative; */
+        width: 310px;
+        height: 300px;
+        /* max-height: 330px; */
+        margin-bottom: 15px;
+        margin-top: 15px;
+        /* text-align: center; */
+        border: 0;
+        border-radius: 3px;
+        color: rgba(0, 0, 0, .87);
+        background: #fff 50%;
+        background-image: none;
+        background-size: auto;
+        background-size: cover;
+        box-shadow: 0 15px 35px rgba(50, 50, 93, .1), 0 5px 15px rgba(0, 0, 0, .07);
+    }
+
+    /* .widget {
+        line-height: 1.6em;
+        word-wrap: break-word;
+        font-size: 0.9em;
+        padding-top: 15px;
+        padding-left: -45px;
+    } */
+</style>
+
+
+
+
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- shw2018 洪卫  modify 2019.08.15-->
+
+<!-- 代码块修改的代码开始 -->
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFunction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+<!-- 代码块折行 -->
+
+<style type="text/css">
+code[class*="language-"], pre[class*="language-"] { white-space: pre !important; }
+</style>
+
+<!-- 代码块修改代码结束 -->
+
+
+<!-- 文章内容详情 -->
+<div id="container">
+    <div id="artDetail">
+        <div class="card">
+            <div class="card-content article-info">
+                <div class="row tag-cate">
+                    <div class="col s7">
+                        
+                        <div class="article-tag">
+                            <!--我修改的地方：欧阳思海-->
+                            
+                            <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93-mysql-oracle-redis/" target="_blank">
+                                <span class="chip bg-color">数据库,mysql,oracle,redis</span>
+                            </a>
+                            
+                        </div>
+                        
+                    </div>
+                    <div class="col s5 right-align">
+                        
+                        <div class="post-cate">
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/" class="post-category" target="_blank">
+                                数据库相关
+                            </a>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <div class="post-info">
+                    <div class="post-date info-break-policy">
+                        <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
+                        2021-04-05
+                    </div>
+
+                    <div class="post-author info-break-policy">
+                        <i class="fa fa-user-o fa-fw"></i>作者:&nbsp;&nbsp;
+                        
+                        欧阳思海
+                        
+                    </div>
+
+                    
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;
+                        10.3k
+                    </div>
+                    
+
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-clock-o fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                        43 分
+                    </div>
+                    
+                    
+
+                    
+                    <span id="busuanzi_container_site_pv" style='display:none'></span>
+                    <i class="fa fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                    <span id="busuanzi_value_page_pv"></span>
+
+                    
+
+                </div>
+            </div>
+            <hr class="clearfix">
+            <div class="card-content article-card-content">
+                <!-- 欧阳思海，modify，2020.05.01-->
+<!-- 文章详情详情页面的头部广告位置信息 -->
+<div id="post-head-panel">
+    
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" style="font-size: 18px;" target="_blank">
+        <img src="/icons/hot.gif">
+        本人花费半年的时间总结的《Java面试指南》已拿腾讯等大厂offer，已开源在github ，欢迎star！
+    </a>
+    
+    
+</div>
+<br />
+
+
+
+<blockquote>
+    
+            <p>本文GitHub <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">https://github.com/OUYANGSIHAI/JavaInterview</a> 已收录，这是我花了6个月总结的<b>一线大厂Java面试</b>总结，本人已拿大厂offer，欢迎star</p>
+    
+    <p>原文链接：blog.ouyangsihai.cn &gt;&gt; <a href="/mysql-suo-yin-yuan-li-xue-xi-jiao-cheng.html" target="_blank">MySQL索引原理学习教程</a></p>
+</blockquote>
+                <div id="articleContent">
+                    <p>目录</p>
+<li>
+<ul>
+- 
+- 
+- 
+
+<h2 id=""><a href="#" class="headerlink" title="- "></a>- </h2><h2 id="-1"><a href="#-1" class="headerlink" title="- "></a>- </h2><h2 id="-2"><a href="#-2" class="headerlink" title="- "></a>- </h2><h2 id="-3"><a href="#-3" class="headerlink" title="- "></a>- </h2><h2 id="-4"><a href="#-4" class="headerlink" title="- "></a>- </h2><h2 id="-5"><a href="#-5" class="headerlink" title="- "></a>- </h2><h2 id="-6"><a href="#-6" class="headerlink" title="- "></a>- </h2><p>- </p>
+<h1 id="一、初识索引"><a href="#一、初识索引" class="headerlink" title="一、初识索引"></a>一、初识索引</h1><h2 id="1-1-为什么要有索引？"><a href="#1-1-为什么要有索引？" class="headerlink" title="1.1 为什么要有索引？"></a>1.1 为什么要有索引？</h2><p>一般的应用系统，读写比例在10:1左右，而且插入操作和一般的更新操作很少出现性能问题，在生产环境中，我们遇到最多的，也是最容易出问题的，还是一些复杂的查询操作，因此对查询语句的优化显然是重中之重。说起加速查询，就不得不提到索引了。</p>
+<h2 id="1-2-什么是索引？"><a href="#1-2-什么是索引？" class="headerlink" title="1.2 什么是索引？"></a>1.2 什么是索引？</h2><p>索引在MySQL中也叫是一种“键”，是存储引擎用于快速找到记录的一种数据结构。索引对于良好的性能非常关键，尤其是当表中的数据量越来越大时，索引对于性能的影响愈发重要。</p>
+<p>索引优化应该是对查询性能优化最有效的手段了。索引能够轻易将查询性能提高好几个数量级。</p>
+<p>索引相当于字典的音序表，如果要查某个字，如果不使用音序表，则需要从几百页中逐页去查。</p>
+<h2 id="1-3-你是否对索引存在误解？"><a href="#1-3-你是否对索引存在误解？" class="headerlink" title="1.3 你是否对索引存在误解？"></a>1.3 你是否对索引存在误解？</h2><p>索引是应用程序设计和开发的一个重要方面。若索引太多，应用程序的性能可能会受到影响。而索引太少，对查询性能又会产生影响，要找到一个平衡点，这对应用程序的性能至关重要。一些开发人员总是在事后才想起添加索引—-我一直认为，这源于一种错误的开发模式。如果知道数据的使用，从一开始就应该在需要处添加索引。开发人员往往对数据库的使用停留在应用的层面，比如编写SQL语句、存储过程之类，他们甚至可能不知道索引的存在，或认为事后让相关DBA加上即可。DBA往往不够了解业务的数据流，而添加索引需要通过监控大量的SQL语句进而从中找到问题，这个步骤所需的时间肯定是远大于初始添加索引所需的时间，并且可能会遗漏一部分的索引。当然索引也并不是越多越好，我曾经遇到过这样一个问题：某台MySQL服务器iostat显示磁盘使用率一直处于100%，经过分析后发现是由于开发人员添加了太多的索引，在删除一些不必要的索引之后，磁盘使用率马上下降为20%。可见索引的添加也是非常有技术含量的。</p>
+<h1 id="二、索引的原理"><a href="#二、索引的原理" class="headerlink" title="二、索引的原理"></a>二、索引的原理</h1><h2 id="2-1-索引原理"><a href="#2-1-索引原理" class="headerlink" title="2.1 索引原理"></a>2.1 索引原理</h2><p>索引的目的在于提高查询效率，与我们查阅图书所用的目录是一个道理：先定位到章，然后定位到该章下的一个小节，然后找到页数。相似的例子还有：查字典，查火车车次，飞机航班等</p>
+<p>本质都是：通过不断地缩小想要获取数据的范围来筛选出最终想要的结果，同时把随机的事件变成顺序的事件，也就是说，有了这种索引机制，我们可以总是用同一种查找方式来锁定数据。</p>
+<p>数据库也是一样，但显然要复杂的多，因为不仅面临着等值查询，还有范围查询(、、between、in)、模糊查询(like)、并集查询(or)等等。数据库应该选择怎么样的方式来应对所有的问题呢？我们回想字典的例子，能不能把数据分成段，然后分段查询呢？最简单的如果1000条数据，1到100分成第一段，101到200分成第二段，201到300分成第三段……这样查第250条数据，只要找第三段就可以了，一下子去除了90%的无效数据。但如果是1千万的记录呢，分成几段比较好？稍有算法基础的同学会想到搜索树，其平均复杂度是lgN，具有不错的查询性能。但这里我们忽略了一个关键的问题，复杂度模型是基于每次相同的操作成本来考虑的。而数据库实现比较复杂，一方面数据是保存在磁盘上的，另外一方面为了提高性能，每次又可以把部分数据读入内存来计算，因为我们知道访问磁盘的成本大概是访问内存的十万倍左右，所以简单的搜索树难以满足复杂的应用场景。</p>
+<h2 id="2-2-磁盘IO与预读"><a href="#2-2-磁盘IO与预读" class="headerlink" title="2.2 磁盘IO与预读"></a>2.2 磁盘IO与预读</h2><p>前面提到了访问磁盘，那么这里先简单介绍一下磁盘IO和预读，磁盘读取数据靠的是机械运动，每次读取数据花费的时间可以分为寻道时间、旋转延迟、传输时间三个部分，寻道时间指的是磁臂移动到指定磁道所需要的时间，主流磁盘一般在5ms以下；旋转延迟就是我们经常听说的磁盘转速，比如一个磁盘7200转，表示每分钟能转7200次，也就是说1秒钟能转120次，旋转延迟就是1&#x2F;120&#x2F;2 &#x3D; 4.17ms；传输时间指的是从磁盘读出或将数据写入磁盘的时间，一般在零点几毫秒，相对于前两个时间可以忽略不计。那么访问一次磁盘的时间，即一次磁盘IO的时间约等于5+4.17 &#x3D; 9ms左右，听起来还挺不错的，但要知道一台500 -MIPS（Million Instructions Per Second）的机器每秒可以执行5亿条指令，因为指令依靠的是电的性质，换句话说执行一次IO的时间可以执行约450万条指令，数据库动辄十万百万乃至千万级数据，每次9毫秒的时间，显然是个灾难。下图是计算机硬件延迟的对比图，供大家参考：</p>
+<img title="MySQL索引原理" src="https://www.javazhiyin.com/wp-content/uploads/2019/07/java8-1562815311.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="MySQL索引原理">
+
+<p>考虑到磁盘IO是非常高昂的操作，计算机操作系统做了一些优化，当一次IO时，不光把当前磁盘地址的数据，而是把相邻的数据也都读取到内存缓冲区内，因为局部预读性原理告诉我们，当计算机访问一个地址的数据的时候，与其相邻的数据也会很快被访问到。每一次IO读取的数据我们称之为一页(page)。具体一页有多大数据跟操作系统有关，一般为4k或8k，也就是我们读取一页内的数据时候，实际上才发生了一次IO，这个理论对于索引的数据结构设计非常有帮助。</p>
+<h1 id="三、索引的数据结构"><a href="#三、索引的数据结构" class="headerlink" title="三、索引的数据结构"></a>三、索引的数据结构</h1><p>MySQL索引的数据结构-B+树介绍：</p>
+<h1 id="四、MySQL索引管理"><a href="#四、MySQL索引管理" class="headerlink" title="四、MySQL索引管理"></a>四、MySQL索引管理</h1><h2 id="4-1-功能"><a href="#4-1-功能" class="headerlink" title="4.1 功能"></a>4.1 功能</h2><ol>
+<li>索引的功能就是加速查找</li>
+<li>mysql中的primary key，unique，联合唯一也都是索引，这些索引除了加速查找以外，还有约束的功能</li>
+</ol>
+<h2 id="4-2-MySQL常用的索引"><a href="#4-2-MySQL常用的索引" class="headerlink" title="4.2 MySQL常用的索引"></a>4.2 MySQL常用的索引</h2><ul>
+<li><p>普通索引INDEX：加速查找</p>
+<li>唯一索引：
+<ul></li>
+<li><p>主键索引PRIMARY KEY：加速查找+约束（不为空、不能重复）</p>
+</li>
+<li><p>唯一索引UNIQUE:加速查找+约束（不能重复）</p>
+</li>
+<li><p>PRIMARY KEY(id,name):联合主键索引</p>
+</li>
+<li><p>UNIQUE(id,name):联合唯一索引</p>
+</li>
+<li><p>INDEX(id,name):联合普通索引</p>
+</li>
+</ul>
+<h2 id="4-3-各个索引应用场景"><a href="#4-3-各个索引应用场景" class="headerlink" title="4.3 各个索引应用场景"></a>4.3 各个索引应用场景</h2><p>举个例子来说，比如你在为某商场做一个会员卡的系统。</p>
+<p>这个系统有一个会员表</p>
+<p>有下列字段：</p>
+<p>会员编号 INT</p>
+<p>会员姓名 VARCHAR(10)</p>
+<p>会员身份证号码 VARCHAR(18)</p>
+<p>会员电话 VARCHAR(10)</p>
+<p>会员住址 VARCHAR(50)</p>
+<p>会员备注信息 TEXT</p>
+<p>那么这个 会员编号，作为主键，使用 PRIMARY</p>
+<p>会员姓名 如果要建索引的话，那么就是普通的 INDEX</p>
+<p>会员身份证号码 如果要建索引的话，那么可以选择 UNIQUE （唯一的，不允许重复）</p>
+<h1 id="除此之外还有全文索引，即FULLTEXT"><a href="#除此之外还有全文索引，即FULLTEXT" class="headerlink" title="除此之外还有全文索引，即FULLTEXT"></a>除此之外还有全文索引，即FULLTEXT</h1><p>会员备注信息 ， 如果需要建索引的话，可以选择全文搜索。</p>
+<p>用于搜索很长一篇文章的时候，效果最好。</p>
+<p>用在比较短的文本，如果就一两行字的，普通的 INDEX 也可以。</p>
+<p>但其实对于全文搜索，我们并不会使用MySQL自带的该索引，而是会选择第三方软件如Sphinx，专门来做全文搜索。</p>
+<h1 id="其他的如空间索引SPATIAL，了解即可，几乎不用"><a href="#其他的如空间索引SPATIAL，了解即可，几乎不用" class="headerlink" title="其他的如空间索引SPATIAL，了解即可，几乎不用"></a>其他的如空间索引SPATIAL，了解即可，几乎不用</h1><p>各个索引的应用场景</p>
+<p>各个索引的应用场景</p>
+<h2 id="4-4-索引的两大类型hash与btree"><a href="#4-4-索引的两大类型hash与btree" class="headerlink" title="4.4 索引的两大类型hash与btree"></a>4.4 索引的两大类型hash与btree</h2><p>我们可以在创建上述索引的时候，为其指定索引类型，分两类：</p>
+<ol>
+<li>hash类型的索引：查询单条快，范围查询慢</li>
+<li>btree类型的索引：b+树，层数越多，数据量指数级增长（我们就用它，因为innodb默认支持它）</li>
+</ol>
+<p>不同的存储引擎支持的索引类型也不一样：</p>
+<ul>
+<li>InnoDB 支持事务，支持行级别锁定，支持 B-tree、Full-text 等索引，不支持 Hash 索引；</li>
+<li>MyISAM 不支持事务，支持表级别锁定，支持 B-tree、Full-text 等索引，不支持 Hash 索引；</li>
+<li>Memory 不支持事务，支持表级别锁定，支持 B-tree、Hash 等索引，不支持 Full-text 索引；</li>
+<li>NDB 支持事务，支持行级别锁定，支持 Hash 索引，不支持 B-tree、Full-text 等索引；</li>
+<li>Archive 不支持事务，支持表级别锁定，不支持 B-tree、Hash、Full-text 等索引；</li>
+</ul>
+<h2 id="4-5-创建-x2F-删除索引的语法"><a href="#4-5-创建-x2F-删除索引的语法" class="headerlink" title="4.5 创建&#x2F;删除索引的语法"></a>4.5 创建&#x2F;删除索引的语法</h2><td class="line_numbers"><pre>12345678910111213141516171819</pre></td><td class="code"><pre class="mysql" style="font-family:monospace;"># 方法一：创建表时    　　CREATE TABLE 表名 (                字段名1  数据类型 [完整性约束条件…],                字段名2  数据类型 [完整性约束条件…],                [UNIQUE | FULLTEXT | SPATIAL ]   INDEX | KEY                [索引名]  (字段名[(长度)]  [ASC |DESC])                 );  # 方法二：CREATE在已存在的表上创建索引        CREATE  [UNIQUE | FULLTEXT | SPATIAL ]  INDEX  索引名                      ON 表名 (字段名[(长度)]  [ASC |DESC]) ;  # 方法三：ALTER TABLE在已存在的表上创建索引        ALTER TABLE 表名 ADD  [UNIQUE | FULLTEXT | SPATIAL ] INDEX                             索引名 (字段名[(长度)]  [ASC |DESC]) ; # 删除索引：DROP INDEX 索引名 ON 表名字;</pre></td>
+
+<h1 id="方法一：创建表时"><a href="#方法一：创建表时" class="headerlink" title="方法一：创建表时"></a>方法一：创建表时</h1><pre class="line-numbers language-java"><code class="language-java">
+　　CREATE TABLE 表名 <span class="token punctuation">(</span>
+            字段名<span class="token number">1</span>  数据类型 <span class="token punctuation">[</span>完整性约束条件…<span class="token punctuation">]</span><span class="token punctuation">,</span>
+            字段名<span class="token number">2</span>  数据类型 <span class="token punctuation">[</span>完整性约束条件…<span class="token punctuation">]</span><span class="token punctuation">,</span>
+            <span class="token punctuation">[</span>UNIQUE <span class="token operator">|</span> FULLTEXT <span class="token operator">|</span> SPATIAL <span class="token punctuation">]</span>   INDEX <span class="token operator">|</span> KEY
+            <span class="token punctuation">[</span>索引名<span class="token punctuation">]</span>  <span class="token punctuation">(</span>字段名<span class="token punctuation">[</span><span class="token punctuation">(</span>长度<span class="token punctuation">)</span><span class="token punctuation">]</span>  <span class="token punctuation">[</span>ASC <span class="token operator">|</span>DESC<span class="token punctuation">]</span><span class="token punctuation">)</span> 
+            <span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h1 id="方法二：CREATE在已存在的表上创建索引"><a href="#方法二：CREATE在已存在的表上创建索引" class="headerlink" title="方法二：CREATE在已存在的表上创建索引"></a>方法二：CREATE在已存在的表上创建索引</h1><pre class="line-numbers language-java"><code class="language-java">
+    CREATE  <span class="token punctuation">[</span>UNIQUE <span class="token operator">|</span> FULLTEXT <span class="token operator">|</span> SPATIAL <span class="token punctuation">]</span>  INDEX  索引名 
+                 ON 表名 <span class="token punctuation">(</span>字段名<span class="token punctuation">[</span><span class="token punctuation">(</span>长度<span class="token punctuation">)</span><span class="token punctuation">]</span>  <span class="token punctuation">[</span>ASC <span class="token operator">|</span>DESC<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<h1 id="方法三：ALTER-TABLE在已存在的表上创建索引"><a href="#方法三：ALTER-TABLE在已存在的表上创建索引" class="headerlink" title="方法三：ALTER TABLE在已存在的表上创建索引"></a>方法三：ALTER TABLE在已存在的表上创建索引</h1><pre class="line-numbers language-java"><code class="language-java">
+    ALTER TABLE 表名 ADD  <span class="token punctuation">[</span>UNIQUE <span class="token operator">|</span> FULLTEXT <span class="token operator">|</span> SPATIAL <span class="token punctuation">]</span> INDEX
+                         索引名 <span class="token punctuation">(</span>字段名<span class="token punctuation">[</span><span class="token punctuation">(</span>长度<span class="token punctuation">)</span><span class="token punctuation">]</span>  <span class="token punctuation">[</span>ASC <span class="token operator">|</span>DESC<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">;</span>
+                         
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<h1 id="删除索引：DROP-INDEX-索引名-ON-表名字"><a href="#删除索引：DROP-INDEX-索引名-ON-表名字" class="headerlink" title="删除索引：DROP INDEX 索引名 ON 表名字;"></a>删除索引：DROP INDEX 索引名 ON 表名字;</h1><h2 id="4-6-示例"><a href="#4-6-示例" class="headerlink" title="4.6 示例"></a>4.6 示例</h2><td class="line_numbers"><pre>123456789101112131415161718192021222324252627282930313233343536373839</pre></td><td class="code"><pre class="mysql" style="font-family:monospace;"># 方式一create table t1(    id int,    name char,    age int,    sex enum('male','female'),    unique key uni_id(id),    index ix_name(name) # index没有key);create table t1(    id int,    name char,    age int,    sex enum('male','female'),    unique key uni_id(id),    index(name) # index没有key);  # 方式二create index ix_age on t1(age);  # 方式三alter table t1 add index ix_sex(sex);alter table t1 add index(sex); # 查看mysql show create table t1;| t1    | CREATE TABLE `t1` (  `id` int(11) DEFAULT NULL,  `name` char(1) DEFAULT NULL,  `age` int(11) DEFAULT NULL,  `sex` enum('male','female') DEFAULT NULL,  UNIQUE KEY `uni_id` (`id`),  KEY `ix_name` (`name`),  KEY `ix_age` (`age`),  KEY `ix_sex` (`sex`)) ENGINE=InnoDB DEFAULT CHARSET=latin1</pre></td>
+
+<h1 id="方式一"><a href="#方式一" class="headerlink" title="方式一"></a>方式一</h1><p>create table t1(<br>    id int,<br>    name char,<br>    age int,<br>    sex enum(‘male’,’female’),<br>    unique key uni_id(id),<br>    index ix_name(name) # index没有key<br>);<br>create table t1(<br>    id int,<br>    name char,<br>    age int,<br>    sex enum(‘male’,’female’),<br>    unique key uni_id(id),<br>    index(name) # index没有key<br>);</p>
+<h1 id="方式二"><a href="#方式二" class="headerlink" title="方式二"></a>方式二</h1><p>create index ix_age on t1(age);</p>
+<h1 id="方式三"><a href="#方式三" class="headerlink" title="方式三"></a>方式三</h1><p>alter table t1 add index ix_sex(sex);<br>alter table t1 add index(sex);</p>
+<h1 id="查看"><a href="#查看" class="headerlink" title="查看"></a>查看</h1><p>mysql show create table t1;<br>| t1    | CREATE TABLE <code class="java">
+t1</code> (<br>  <code class="java">
+id</code> int(11) DEFAULT NULL,<br>  <code class="java">
+name</code> char(1) DEFAULT NULL,<br>  <code class="java">
+age</code> int(11) DEFAULT NULL,<br>  <code class="java">
+sex</code> enum(‘male’,’female’) DEFAULT NULL,<br>  UNIQUE KEY <code class="java">
+uni_id</code> (<code class="java">
+id</code>),<br>  KEY <code class="java">
+ix_name</code> (<code class="java">
+name</code>),<br>  KEY <code class="java">
+ix_age</code> (<code class="java">
+age</code>),<br>  KEY <code class="java">
+ix_sex</code> (<code class="java">
+sex</code>)<br>) ENGINE&#x3D;InnoDB DEFAULT CHARSET&#x3D;latin1</p>
+<h1 id="五、测试索引"><a href="#五、测试索引" class="headerlink" title="五、测试索引"></a>五、测试索引</h1><h2 id="5-1-数据准备"><a href="#5-1-数据准备" class="headerlink" title="5.1 数据准备"></a>5.1 数据准备</h2><td class="line_numbers"><pre>12345678910111213141516171819202122232425</pre></td><td class="code"><pre class="mysql" style="font-family:monospace;"># 1. 准备表create table s1(id int,name varchar(20),gender char(6),email varchar(50)); # 2. 创建存储过程，实现批量插入记录delimiter $$ # 声明存储过程的结束符号为$$create procedure auto_insert1()BEGIN    declare i int default 1;    while(i3000000)do        insert into s1 values(i,'eva','female',concat('eva',i,'@oldboy'));        set i=i+1;    end while;END$$ # $$结束delimiter ; # 重新声明分号为结束符号 # 3. 查看存储过程show create procedure auto_insert1\G  # 4. 调用存储过程call auto_insert1();</pre></td>
+
+<h1 id="1-准备表"><a href="#1-准备表" class="headerlink" title="1. 准备表"></a>1. 准备表</h1><p>create table s1(<br>id int,<br>name varchar(20),<br>gender char(6),<br>email varchar(50)<br>);</p>
+<h1 id="2-创建存储过程，实现批量插入记录"><a href="#2-创建存储过程，实现批量插入记录" class="headerlink" title="2. 创建存储过程，实现批量插入记录"></a>2. 创建存储过程，实现批量插入记录</h1><p>delimiter $$ # 声明存储过程的结束符号为$$<br>create procedure auto_insert1()<br>BEGIN<br>    declare i int default 1;<br>    while(i3000000)do<br>        insert into s1 values(i,’eva’,’female’,concat(‘eva’,i,‘@oldboy’));<br>        set i&#x3D;i+1;<br>    end while;<br>END$$ # $$结束<br>delimiter ; # 重新声明分号为结束符号</p>
+<h1 id="3-查看存储过程"><a href="#3-查看存储过程" class="headerlink" title="3. 查看存储过程"></a>3. 查看存储过程</h1><p>show create procedure auto_insert1\G </p>
+<h1 id="4-调用存储过程"><a href="#4-调用存储过程" class="headerlink" title="4. 调用存储过程"></a>4. 调用存储过程</h1><p>call auto_insert1();</p>
+<p>1、在没有索引的前提下测试查询速度</p>
+<p>无索引：mysql根本就不知道到底是否存在id等于333333333的记录，只能把数据表从头到尾扫描一遍，此时有多少个磁盘块就需要进行多少IO操作，所以查询速度很慢</p>
+<td class="line_numbers"><pre>12</pre></td><td class="code"><pre class="mysql" style="font-family:monospace;">mysql select * from s1 where id=333333333;Empty set (0.33 sec)</pre></td>
+
+<p>mysql select * from s1 where id&#x3D;333333333;<br>Empty set (0.33 sec)</p>
+<p>2、在表中已经存在大量数据的前提下，为某个字段段建立索引，建立速度会很慢</p>
+<img title="MySQL索引原理" src="https://www.javazhiyin.com/wp-content/uploads/2019/07/java2-1562815312.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="MySQL索引原理">
+
+<p>3、在索引建立完毕后，以该字段为查询条件时，查询速度提升明显</p>
+<img title="MySQL索引原理" src="https://www.javazhiyin.com/wp-content/uploads/2019/07/java4-1562815312.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="MySQL索引原理">
+
+<p><strong>注意：</strong></p>
+<ol>
+<li>mysql先去索引表里根据b+树的搜索原理很快搜索到id等于333333333的记录不存在，IO大大降低，因而速度明显提升</li>
+<li>我们可以去mysql的data目录下找到该表，可以看到占用的硬盘空间多了</li>
+<li>需要注意，如下图</li>
+</ol>
+<img title="MySQL索引原理" src="https://www.javazhiyin.com/wp-content/uploads/2019/07/java10-1562815312.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="MySQL索引原理">
+
+<h2 id="5-2-小结"><a href="#5-2-小结" class="headerlink" title="5.2 小结"></a>5.2 小结</h2><ol>
+<li>一定是为搜索条件的字段创建索引，比如<code class="java">
+select * from s1 where id = 333;</code>就需要为id加上索引</li>
+<li>在表中已经有大量数据的情况下，建索引会很慢，且占用硬盘空间，建完后查询速度加快，比如<code class="java">
+create index idx on s1(id);</code>会扫描表中所有的数据，然后以id为数据项，创建索引结构，存放于硬盘的表中。建完以后，再查询就会很快了。</li>
+<li>需要注意的是：innodb表的索引会存放于s1.ibd文件中，而myisam表的索引则会有单独的索引文件table1.MYI</li>
+</ol>
+<p>MySAM索引文件和数据文件是分离的，索引文件仅保存数据记录的地址。而在innodb中，表数据文件本身就是按照B+Tree（BTree即Balance True）组织的一个索引结构，这棵树的叶节点data域保存了完整的数据记录。这个索引的key是数据表的主键，因此innodb表数据文件本身就是主索引。</p>
+<p>因为inndob的数据文件要按照主键聚集，所以innodb要求表必须要有主键（Myisam可以没有），如果没有显式定义，则mysql系统会自动选择一个可以唯一标识数据记录的列作为主键，如果不存在这种列，则mysql会自动为innodb表生成一个隐含字段作为主键，这字段的长度为6个字节，类型为长整型.</p>
+<h1 id="六、正确使用索引"><a href="#六、正确使用索引" class="headerlink" title="六、正确使用索引"></a>六、正确使用索引</h1><h2 id="6-1-索引未命中"><a href="#6-1-索引未命中" class="headerlink" title="6.1 索引未命中"></a>6.1 索引未命中</h2><p>并不是说我们创建了索引就一定会加快查询速度，若想利用索引达到预想的提高查询速度的效果，我们在添加索引时，必须遵循以下问题：</p>
+<p>1、范围问题，或者说条件不明确，条件中出现这些符号或关键字：、&#x3D;、、&#x3D;、!&#x3D; 、between…and…、like、大于号、小于号</p>
+<img title="MySQL索引原理" src="https://www.javazhiyin.com/wp-content/uploads/2019/07/java8-1562815313.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="MySQL索引原理">
+
+<p>不等于！&#x3D;</p>
+<img title="MySQL索引原理" src="https://www.javazhiyin.com/wp-content/uploads/2019/07/java2-1562815313.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="MySQL索引原理">
+
+<p>between …and…</p>
+<img title="MySQL索引原理" src="https://www.javazhiyin.com/wp-content/uploads/2019/07/java10-1562815313.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="MySQL索引原理">
+
+<p>like</p>
+<img title="MySQL索引原理" src="https://www.javazhiyin.com/wp-content/uploads/2019/07/java3-1562815313.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="MySQL索引原理">
+
+<p>2、尽量选择区分度高的列作为索引,区分度的公式是count(distinct col)&#x2F;count(*)，表示字段不重复的比例，比例越大我们扫描的记录数越少，唯一键的区分度是1，而一些状态、性别字段可能在大数据面前区分度就是0，那可能有人会问，这个比例有什么经验值吗？使用场景不同，这个值也很难确定，一般需要join的字段我们都要求是0.1以上，即平均1条扫描10条记录。</p>
+<p><strong>先把表中的索引都删除，让我们专心研究区分度的问题：</strong></p>
+<td class="line_numbers"><pre>1234567891011121314151617181920212223242526272829</pre></td><td class="code"><pre class="mysql" style="font-family:monospace;">mysql desc s1;+--------+-------------+------+-----+---------+-------+| Field  | Type        | Null | Key | Default | Extra |+--------+-------------+------+-----+---------+-------+| id     | int(11)     | YES  | MUL | NULL    |       || name   | varchar(20) | YES  |     | NULL    |       || gender | char(5)     | YES  |     | NULL    |       || email  | varchar(50) | YES  | MUL | NULL    |       |+--------+-------------+------+-----+---------+-------+rows in set (0.00 sec) mysql drop index a on s1;Query OK, 0 rows affected (0.20 sec)Records: 0  Duplicates: 0  Warnings: 0 mysql drop index d on s1;Query OK, 0 rows affected (0.18 sec)Records: 0  Duplicates: 0  Warnings: 0 mysql desc s1;+--------+-------------+------+-----+---------+-------+| Field  | Type        | Null | Key | Default | Extra |+--------+-------------+------+-----+---------+-------+| id     | int(11)     | YES  |     | NULL    |       || name   | varchar(20) | YES  |     | NULL    |       || gender | char(5)     | YES  |     | NULL    |       || email  | varchar(50) | YES  |     | NULL    |       |+--------+-------------+------+-----+---------+-------+rows in set (0.00 sec)</pre></td>
+
+<p>mysql desc s1;<br>+——–+————-+——+—–+———+——-+<br>| Field  | Type        | Null | Key | Default | Extra |<br>+——–+————-+——+—–+———+——-+<br>| id     | int(11)     | YES  | MUL | NULL    |       |<br>| name   | varchar(20) | YES  |     | NULL    |       |<br>| gender | char(5)     | YES  |     | NULL    |       |<br>| email  | varchar(50) | YES  | MUL | NULL    |       |<br>+——–+————-+——+—–+———+——-+<br>rows in set (0.00 sec)</p>
+<p>mysql drop index a on s1;<br>Query OK, 0 rows affected (0.20 sec)<br>Records: 0  Duplicates: 0  Warnings: 0</p>
+<p>mysql drop index d on s1;<br>Query OK, 0 rows affected (0.18 sec)<br>Records: 0  Duplicates: 0  Warnings: 0</p>
+<p>mysql desc s1;<br>+——–+————-+——+—–+———+——-+<br>| Field  | Type        | Null | Key | Default | Extra |<br>+——–+————-+——+—–+———+——-+<br>| id     | int(11)     | YES  |     | NULL    |       |<br>| name   | varchar(20) | YES  |     | NULL    |       |<br>| gender | char(5)     | YES  |     | NULL    |       |<br>| email  | varchar(50) | YES  |     | NULL    |       |<br>+——–+————-+——+—–+———+——-+<br>rows in set (0.00 sec)</p>
+<img title="MySQL索引原理" src="https://www.javazhiyin.com/wp-content/uploads/2019/07/java5-1562815314.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="MySQL索引原理">
+
+<p><strong>分析原因：</strong></p>
+<p>我们编写存储过程为表s1批量添加记录，name字段的值均为egon，也就是说name这个字段的区分度很低（gender字段也是一样的，我们稍后再搭理它）</p>
+<p>回忆b+树的结构，查询的速度与树的高度成反比，要想将树的高低控制的很低，需要保证：在某一层内数据项均是按照从左到右，从小到大的顺序依次排开，即左1左2左3…</p>
+<p>而对于区分度低的字段，无法找到大小关系，因为值都是相等的，毫无疑问，还想要用b+树存放这些等值的数据，只能增加树的高度，字段的区分度越低，则树的高度越高。极端的情况，索引字段的值都一样，那么b+树几乎成了一根棍。本例中就是这种极端的情况，name字段所有的值均为’nick’</p>
+<p>现在我们得出一个结论：为区分度低的字段建立索引，索引树的高度会很高，然而这具体会带来什么影响呢？？？</p>
+<ol>
+<li>如果条件是name&#x3D;’xxxx’,那么肯定是可以第一时间判断出’xxxx’是不在索引树中的（因为树中所有的值均为’nick’），所以查询速度很快</li>
+<li>如果条件正好是name&#x3D;’nick’,查询时，我们永远无法从树的某个位置得到一个明确的范围，只能往下找，往下找，往下找。。。这与全表扫描的IO次数没有多大区别，所以速度很慢</li>
+</ol>
+<p>3、索引列不能在条件中参与计算，保持列“干净”，比如from_unixtime(create_time) &#x3D; ’2014-05-29’就不能使用到索引，原因很简单，b+树中存的都是数据表中的字段值，但进行检索时，需要把所有元素都应用函数才能比较，显然成本太大。所以语句应该写成create_time &#x3D; unix_timestamp(’2014-05-29’)</p>
+<img title="MySQL索引原理" src="https://www.javazhiyin.com/wp-content/uploads/2019/07/java1-1562815315.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="MySQL索引原理">
+
+<p>4、and&#x2F;or</p>
+<li>and与or的逻辑
+<ul>
+1. 条件1 and 条件2：所有条件都成立才算成立，但凡要有一个条件不成立则最终结果不成立
+1. 条件1 or 条件2：只要有一个条件成立则最终结果就成立
+</ul>
+</li>
+<li>and的工作原理
+<ul>
+1. 条件：`a = 10 and b = 'xxx' and c  3 and d =4`
+1. 索引：制作联合索引(d,a,b,c)
+1. 工作原理：对于连续多个and：mysql会按照联合索引，从左到右的顺序找一个区分度高的索引字段(这样便可以快速锁定很小的范围)，加速查询，即按照d—a-b-c的顺序
+</ul>
+</li>
+<li>or的工作原理
+<ul>
+1. 条件：a = 10 or b = 'xxx' or c  3 or d =4
+1. 索引：制作联合索引(d,a,b,c)
+1. 工作原理：对于连续多个or：mysql会按照条件的顺序，从左到右依次判断，即a-b-c-d
+</ul>
+</li>
+
+<img title="MySQL索引原理" src="https://www.javazhiyin.com/wp-content/uploads/2019/07/java7-1562815315.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="MySQL索引原理">
+
+<p>在左边条件成立但是索引字段的区分度低的情况下（name与gender均属于这种情况），会依次往右找到一个区分度高的索引字段，加速查询。</p>
+<img title="MySQL索引原理" src="https://www.javazhiyin.com/wp-content/uploads/2019/07/java9-1562815316.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="MySQL索引原理">
+
+<img title="MySQL索引原理" src="https://www.javazhiyin.com/wp-content/uploads/2019/07/java7-1562815316.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="MySQL索引原理">
+
+<p>经过分析，在条件为name&#x3D;’nick’ and gender&#x3D;’male’ and id333 and email&#x3D;’xxx’的情况下，我们完全没必要为前三个条件的字段加索引，因为只能用上email字段的索引，前三个字段的索引反而会降低我们的查询效率</p>
+<img title="MySQL索引原理" src="https://www.javazhiyin.com/wp-content/uploads/2019/07/java7-1562815318.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="MySQL索引原理">
+
+<p>5、最左前缀匹配原则，非常重要的原则，对于组合索引mysql会一直向右匹配直到遇到范围查询(、、between、like)就停止匹配(指的是范围大了，有索引速度也慢)，比如a &#x3D; 1 and b &#x3D; 2 and c  3 and d &#x3D; 4 如果建立(a,b,c,d)顺序的索引，d是用不到索引的，如果建立(a,b,d,c)的索引则都可以用到，a,b,d的顺序可以任意调整。</p>
+<img title="MySQL索引原理" src="https://www.javazhiyin.com/wp-content/uploads/2019/07/java10-1562815318.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="MySQL索引原理">
+
+<p>6、其他情况</p>
+<td class="line_numbers"><pre>12345678910111213141516171819202122232425</pre></td><td class="code"><pre class="mysql" style="font-family:monospace;">- 使用函数    select * from tb1 where reverse(email) = 'nick'; - 类型不一致    如果列是字符串类型，传入条件是必须用引号引起来，不然...    select * from tb1 where email = 999; #排序条件为索引，则select字段必须也是索引字段，否则无法命中- order by    select name from s1 order by email desc;    当根据索引排序时候，select查询的字段如果不是索引，则速度仍然很慢    select email from s1 order by email desc;    特别的：如果对主键排序，则还是速度很快：        select * from tb1 order by nid desc; - 组合索引最左前缀    如果组合索引为：(name,email)    name and email       -- 命中索引    name                 -- 命中索引    email                -- 未命中索引  - count(1)或count(列)代替count(*)在mysql中没有差别了 - create index xxxx  on tb(title(19)) #text类型，必须制定长度</pre></td>
+
+<ul>
+<li><p>使用函数<br>  select * from tb1 where reverse(email) &#x3D; ‘nick’;</p>
+</li>
+<li><p>类型不一致<br>  如果列是字符串类型，传入条件是必须用引号引起来，不然…<br>  select * from tb1 where email &#x3D; 999;</p>
+</li>
+</ul>
+<p>#排序条件为索引，则select字段必须也是索引字段，否则无法命中</p>
+<ul>
+<li><p>order by<br>  select name from s1 order by email desc;<br>  当根据索引排序时候，select查询的字段如果不是索引，则速度仍然很慢<br>  select email from s1 order by email desc;<br>  特别的：如果对主键排序，则还是速度很快：<br>  select * from tb1 order by nid desc;</p>
+</li>
+<li><p>组合索引最左前缀<br>  如果组合索引为：(name,email)<br>  name and email       – 命中索引<br>  name                 – 命中索引<br>  email                – 未命中索引</p>
+</li>
+<li><p>count(1)或count(列)代替count(*)在mysql中没有差别了</p>
+</li>
+<li><p>create index xxxx  on tb(title(19)) #text类型，必须制定长度</p>
+</li>
+</ul>
+<h2 id="6-2-其他注意事项"><a href="#6-2-其他注意事项" class="headerlink" title="6.2 其他注意事项"></a>6.2 其他注意事项</h2><ul>
+<li>避免使用select *</li>
+<li>使用count(*)</li>
+<li>创建表时尽量使用 char 代替 varchar</li>
+<li>表的字段顺序固定长度的字段优先</li>
+<li>组合索引代替多个单列索引（由于mysql中每次只能使用一个索引，所以经常使用多个条件查询时更适合使用组合索引）</li>
+<li>尽量使用短索引</li>
+<li>使用连接（JOIN）来代替子查询(Sub-Queries)</li>
+<li>连表时注意条件类型需一致</li>
+<li>索引散列值（重复少）不适合建索引，例：性别不适合</li>
+</ul>
+<h1 id="七、联合索引和覆盖索引"><a href="#七、联合索引和覆盖索引" class="headerlink" title="七、联合索引和覆盖索引"></a>七、联合索引和覆盖索引</h1><h2 id="7-1-联合索引"><a href="#7-1-联合索引" class="headerlink" title="7.1 联合索引"></a>7.1 联合索引</h2><p>联合索引是指对表上的多个列合起来做一个索引。联合索引的创建方法与单个索引的创建方法一样，不同之处仅在于有多个索引列，如下：</p>
+<td class="line_numbers"><pre>1234567</pre></td><td class="code"><pre class="mysql" style="font-family:monospace;">mysql create table t(    - a int,    - b int,    - primary key(a),    - key idx_a_b(a,b)    - );Query OK, 0 rows affected (0.11 sec)</pre></td>
+
+<p>mysql create table t(<br>    - a int,<br>    - b int,<br>    - primary key(a),<br>    - key idx_a_b(a,b)<br>    - );<br>Query OK, 0 rows affected (0.11 sec)</p>
+<p>那么何时需要使用联合索引呢？在讨论这个问题之前，先来看一下联合索引内部的结果。从本质上来说，联合索引就是一棵B+树，不同的是联合索引的键值得数量不是1，而是&#x3D;2。接着来讨论两个整型列组成的联合索引，假定两个键值得名称分别为a、b如图：</p>
+<img title="MySQL索引原理" src="https://www.javazhiyin.com/wp-content/uploads/2019/07/java0-1562815318.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="MySQL索引原理">
+
+<p>可以看到这与我们之前看到的单个键的B+树并没有什么不同，键值都是排序的，通过叶子结点可以逻辑上顺序地读出所有数据，就上面的例子来说，即（1,1），（1,2），（2,1），（2,4），（3,1），（3,2），数据按（a,b）的顺序进行了存放。</p>
+<p>因此，对于查询select * from table where a&#x3D;xxx and b&#x3D;xxx, 显然是可以使用(a,b) 这个联合索引的，对于单个列a的查询select * from table where a&#x3D;xxx,也是可以使用（a,b）这个索引的。</p>
+<p>但对于b列的查询select * from table where b&#x3D;xxx,则不可以使用（a,b） 索引，其实你不难发现原因，叶子节点上b的值为1、2、1、4、1、2显然不是排序的，因此对于b列的查询使用不到(a,b) 索引</p>
+<p>联合索引的第二个好处是在第一个键相同的情况下，已经对第二个键进行了排序处理，例如在很多情况下应用程序都需要查询某个用户的购物情况，并按照时间进行排序，最后取出最近三次的购买记录，这时使用联合索引可以帮我们避免多一次的排序操作，因为索引本身在叶子节点已经排序了，如下</p>
+<td class="line_numbers"><pre>123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263</pre></td><td class="code"><pre class="mysql" style="font-family:monospace;"># ===========准备表==============create table buy_log(    userid int unsigned not null,    buy_date date); insert into buy_log values(1,'2009-01-01'),(2,'2009-01-01'),(3,'2009-01-01'),(1,'2009-02-01'),(3,'2009-02-01'),(1,'2009-03-01'),(1,'2009-04-01'); alter table buy_log add key(userid);alter table buy_log add key(userid,buy_date); # ===========验证==============mysql show create table buy_log;| buy_log | CREATE TABLE `buy_log` (  `userid` int(10) unsigned NOT NULL,  `buy_date` date DEFAULT NULL,  KEY `userid` (`userid`),  KEY `userid_2` (`userid`,`buy_date`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 | # 可以看到possible_keys在这里有两个索引可以用，分别是单个索引userid与联合索引userid_2,但是优化器最终选择了使用的key是userid因为该索引的叶子节点包含单个键值，所以理论上一个页能存放的记录应该更多mysql explain select * from buy_log where userid=2;+----+-------------+---------+------+-----------------+--------+---------+-------+------+-------+| id | select_type | table   | type | possible_keys   | key    | key_len | ref   | rows | Extra |+----+-------------+---------+------+-----------------+--------+---------+-------+------+-------+|  1 | SIMPLE      | buy_log | ref  | userid,userid_2 | userid | 4       | const |    1 |       |+----+-------------+---------+------+-----------------+--------+---------+-------+------+-------+row in set (0.00 sec) # 接着假定要取出userid为1的最近3次的购买记录，用的就是联合索引userid_2了，因为在这个索引中，在userid=1的情况下，buy_date都已经排序好了mysql explain select * from buy_log where userid=1 order by buy_date desc limit 3;+--+-----------+-------+----+---------------+--------+-------+-----+----+------------------------+|id|select_type|table  |type|possible_keys  | key    |key_len|ref  |rows| Extra                  |+--+-----------+-------+----+---------------+--------+-------+-----+----+------------------------+| 1|SIMPLE     |buy_log|ref |userid,userid_2|userid_2| 4     |const|  4 |Using where; Using index|+--+-----------+-------+----+---------------+--------+-------+-----+----+------------------------+row in set (0.00 sec) # ps：如果extra的排序显示是Using filesort，则意味着在查出数据后需要二次排序(如下查询语句，没有先用where userid=3先定位范围，于是即便命中索引也没用，需要二次排序)mysql explain select * from buy_log order by buy_date desc limit 3;+--+-----------+-------+-----+-------------+--------+-------+----+----+---------------------------+|id|select_type| table |type |possible_keys|key     |key_len|ref |rows|Extra                      |+--+-----------+-------+-----+-------------+--------+-------+----+----+---------------------------+| 1|SIMPLE     |buy_log|index| NULL        |userid_2| 8     |NULL|  7 |Using index; Using filesort|+--+-----------+-------+-----+-------------+--------+-------+----+----+---------------------------+  # 对于联合索引（a,b）,下述语句可以直接使用该索引，无需二次排序select ... from table where a=xxx order by b; # 然后对于联合索引(a,b,c)来首，下列语句同样可以直接通过索引得到结果select ... from table where a=xxx order by b;select ... from table where a=xxx and b=xxx order by c; # 但是对于联合索引(a,b,c)，下列语句不能通过索引直接得到结果，还需要自己执行一次filesort操作，因为索引（a，c)并未排序select ... from table where a=xxx order by c;</pre></td>
+
+<h1 id="x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-准备表-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D"><a href="#x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-准备表-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D" class="headerlink" title="&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;准备表&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;"></a>&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;准备表&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</h1><p>create table buy_log(<br>    userid int unsigned not null,<br>    buy_date date<br>);</p>
+<p>insert into buy_log values<br>(1,’2009-01-01’),<br>(2,’2009-01-01’),<br>(3,’2009-01-01’),<br>(1,’2009-02-01’),<br>(3,’2009-02-01’),<br>(1,’2009-03-01’),<br>(1,’2009-04-01’);</p>
+<p>alter table buy_log add key(userid);<br>alter table buy_log add key(userid,buy_date);</p>
+<h1 id="x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-验证-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D"><a href="#x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-验证-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D-x3D" class="headerlink" title="&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;验证&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;"></a>&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;验证&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</h1><p>mysql show create table buy_log;<br>| buy_log | CREATE TABLE <code class="java">
+buy_log</code> (<br>  <code class="java">
+userid</code> int(10) unsigned NOT NULL,<br>  <code class="java">
+buy_date</code> date DEFAULT NULL,<br>  KEY <code class="java">
+userid</code> (<code class="java">
+userid</code>),<br>  KEY <code class="java">
+userid_2</code> (<code class="java">
+userid</code>,<code class="java">
+buy_date</code>)<br>) ENGINE&#x3D;InnoDB DEFAULT CHARSET&#x3D;utf8 |</p>
+<h1 id="可以看到possible-keys在这里有两个索引可以用，分别是单个索引userid与联合索引userid-2-但是优化器最终选择了使用的key是userid因为该索引的叶子节点包含单个键值，所以理论上一个页能存放的记录应该更多"><a href="#可以看到possible-keys在这里有两个索引可以用，分别是单个索引userid与联合索引userid-2-但是优化器最终选择了使用的key是userid因为该索引的叶子节点包含单个键值，所以理论上一个页能存放的记录应该更多" class="headerlink" title="可以看到possible_keys在这里有两个索引可以用，分别是单个索引userid与联合索引userid_2,但是优化器最终选择了使用的key是userid因为该索引的叶子节点包含单个键值，所以理论上一个页能存放的记录应该更多"></a>可以看到possible_keys在这里有两个索引可以用，分别是单个索引userid与联合索引userid_2,但是优化器最终选择了使用的key是userid因为该索引的叶子节点包含单个键值，所以理论上一个页能存放的记录应该更多</h1><p>mysql explain select * from buy_log where userid&#x3D;2;<br>+—-+————-+———+——+—————–+——–+———+——-+——+——-+<br>| id | select_type | table   | type | possible_keys   | key    | key_len | ref   | rows | Extra |<br>+—-+————-+———+——+—————–+——–+———+——-+——+——-+<br>|  1 | SIMPLE      | buy_log | ref  | userid,userid_2 | userid | 4       | const |    1 |       |<br>+—-+————-+———+——+—————–+——–+———+——-+——+——-+<br>row in set (0.00 sec)</p>
+<h1 id="接着假定要取出userid为1的最近3次的购买记录，用的就是联合索引userid-2了，因为在这个索引中，在userid-x3D-1的情况下，buy-date都已经排序好了"><a href="#接着假定要取出userid为1的最近3次的购买记录，用的就是联合索引userid-2了，因为在这个索引中，在userid-x3D-1的情况下，buy-date都已经排序好了" class="headerlink" title="接着假定要取出userid为1的最近3次的购买记录，用的就是联合索引userid_2了，因为在这个索引中，在userid&#x3D;1的情况下，buy_date都已经排序好了"></a>接着假定要取出userid为1的最近3次的购买记录，用的就是联合索引userid_2了，因为在这个索引中，在userid&#x3D;1的情况下，buy_date都已经排序好了</h1><p>mysql explain select * from buy_log where userid&#x3D;1 order by buy_date desc limit 3;<br>+–+———–+——-+—-+—————+——–+——-+—–+—-+————————+<br>|id|select_type|table  |type|possible_keys  | key    |key_len|ref  |rows| Extra                  |<br>+–+———–+——-+—-+—————+——–+——-+—–+—-+————————+<br>| 1|SIMPLE     |buy_log|ref |userid,userid_2|userid_2| 4     |const|  4 |Using where; Using index|<br>+–+———–+——-+—-+—————+——–+——-+—–+—-+————————+<br>row in set (0.00 sec)</p>
+<h1 id="ps：如果extra的排序显示是Using-filesort，则意味着在查出数据后需要二次排序-如下查询语句，没有先用where-userid-x3D-3先定位范围，于是即便命中索引也没用，需要二次排序"><a href="#ps：如果extra的排序显示是Using-filesort，则意味着在查出数据后需要二次排序-如下查询语句，没有先用where-userid-x3D-3先定位范围，于是即便命中索引也没用，需要二次排序" class="headerlink" title="ps：如果extra的排序显示是Using filesort，则意味着在查出数据后需要二次排序(如下查询语句，没有先用where userid&#x3D;3先定位范围，于是即便命中索引也没用，需要二次排序)"></a>ps：如果extra的排序显示是Using filesort，则意味着在查出数据后需要二次排序(如下查询语句，没有先用where userid&#x3D;3先定位范围，于是即便命中索引也没用，需要二次排序)</h1><p>mysql explain select * from buy_log order by buy_date desc limit 3;<br>+–+———–+——-+—–+————-+——–+——-+—-+—-+—————————+<br>|id|select_type| table |type |possible_keys|key     |key_len|ref |rows|Extra                      |<br>+–+———–+——-+—–+————-+——–+——-+—-+—-+—————————+<br>| 1|SIMPLE     |buy_log|index| NULL        |userid_2| 8     |NULL|  7 |Using index; Using filesort|<br>+–+———–+——-+—–+————-+——–+——-+—-+—-+—————————+</p>
+<h1 id="对于联合索引（a-b）-下述语句可以直接使用该索引，无需二次排序"><a href="#对于联合索引（a-b）-下述语句可以直接使用该索引，无需二次排序" class="headerlink" title="对于联合索引（a,b）,下述语句可以直接使用该索引，无需二次排序"></a>对于联合索引（a,b）,下述语句可以直接使用该索引，无需二次排序</h1><p>select … from table where a&#x3D;xxx order by b;</p>
+<h1 id="然后对于联合索引-a-b-c-来首，下列语句同样可以直接通过索引得到结果"><a href="#然后对于联合索引-a-b-c-来首，下列语句同样可以直接通过索引得到结果" class="headerlink" title="然后对于联合索引(a,b,c)来首，下列语句同样可以直接通过索引得到结果"></a>然后对于联合索引(a,b,c)来首，下列语句同样可以直接通过索引得到结果</h1><p>select … from table where a&#x3D;xxx order by b;<br>select … from table where a&#x3D;xxx and b&#x3D;xxx order by c;</p>
+<h1 id="但是对于联合索引-a-b-c-，下列语句不能通过索引直接得到结果，还需要自己执行一次filesort操作，因为索引（a，c-并未排序"><a href="#但是对于联合索引-a-b-c-，下列语句不能通过索引直接得到结果，还需要自己执行一次filesort操作，因为索引（a，c-并未排序" class="headerlink" title="但是对于联合索引(a,b,c)，下列语句不能通过索引直接得到结果，还需要自己执行一次filesort操作，因为索引（a，c)并未排序"></a>但是对于联合索引(a,b,c)，下列语句不能通过索引直接得到结果，还需要自己执行一次filesort操作，因为索引（a，c)并未排序</h1><p>select … from table where a&#x3D;xxx order by c;</p>
+<h2 id="7-2-覆盖索引"><a href="#7-2-覆盖索引" class="headerlink" title="7.2 覆盖索引"></a>7.2 覆盖索引</h2><p>InnoDB存储引擎支持覆盖索引（covering index，或称索引覆盖），即从辅助索引中就可以得到查询记录，而不需要查询聚集索引中的记录。</p>
+<p>使用覆盖索引的一个好处是：辅助索引不包含整行记录的所有信息，故其大小要远小于聚集索引，因此可以减少大量的IO操作。</p>
+<p>注意：<strong>覆盖索引技术最早是在InnoDB Plugin中完成并实现，这意味着对于InnoDB版本小于1.0的，或者MySQL数据库版本为5.0以下的，InnoDB存储引擎不支持覆盖索引特性。</strong></p>
+<p>对于InnoDB存储引擎的辅助索引而言，由于其包含了主键信息，因此其叶子节点存放的数据为（primary key1，priamey key2，…,key1，key2，…）。例如：</p>
+<td class="line_numbers"><pre>12345678910111213141516171819202122232425262728293031323334353637383940</pre></td><td class="code"><pre class="mysql" style="font-family:monospace;">select age from s1 where id=123 and name = 'nick'; #id字段有索引，但是name字段没有索引,该sql命中了索引，但未覆盖，需要去聚集索引中再查找详细信息。最牛逼的情况是，索引字段覆盖了所有，那全程通过索引来加速查询以及获取结果就ok了mysql desc s1;+--------+-------------+------+-----+---------+-------+| Field | Type | Null | Key | Default | Extra |+--------+-------------+------+-----+---------+-------+| id | int(11) | NO | | NULL | || name | varchar(20) | YES | | NULL | || gender | char(6) | YES | | NULL | || email | varchar(50) | YES | | NULL | |+--------+-------------+------+-----+---------+-------+rows in set (0.21 sec) mysql explain select name from s1 where id=1000; #没有任何索引+--+-----------+-----+----------+----+-------------+----+-------+----+-------+--------+-----------+|id|select_type|table|partitions|type|possible_keys|key |key_len|ref | rows  |filtered| Extra     |+--+-----------+-----+----------+----+-------------+----+-------+----+-------+--------+-----------+| 1| SIMPLE    | s1  | NULL     |ALL | NULL        |NULL| NULL  |NULL|2688336| 10.00  |Using where|+--+-----------+-----+----------+----+-------------+----+-------+----+-------+--------+-----------+row in set, 1 warning (0.00 sec) mysql create index idx_id on s1(id); #创建索引Query OK, 0 rows affected (4.16 sec)Records: 0 Duplicates: 0 Warnings: 0 mysql explain select name from s1 where id=1000; #命中辅助索引，但是未覆盖索引，还需要从聚集索引中查找name+--+-----------+-----+----------+----+-------------+------+-------+-----+----+--------+-----+|id|select_type|table|partitions|type|possible_keys|   key|key_len| ref |rows|filtered|Extra|+--+-----------+-----+----------+----+-------------+------+-------+-----+----+--------+-----+| 1| SIMPLE    | s1  | NULL     | ref| idx_id      |idx_id| 4     |const| 1  | 100.00 | NULL|+--+-----------+-----+----------+----+-------------+------+-------+-----+----+--------+-----+row in set, 1 warning (0.08 sec) mysql explain select id from s1 where id=1000; #在辅助索引中就找到了全部信息，Using index代表覆盖索引+--+-----------+-----+----------+----+-------------+------+-------+-------+------+----------+-----+|id|select_type|table|partitions|type|possible_keys| key  |key_len| ref |rows|filtered| Extra     |+--+-----------+-----+----------+----+--------------------+-------+-------+------+----------+-----+| 1| SIMPLE    | s1  | NULL     | ref| idx_id      |idx_id|  4    |const| 1  | 100.00 |Using index|+--+-----------+-----+----------+----+-------------+------+-------+-----+----+--------+-----------+row in set, 1 warning (0.03 sec)</pre></td>
+
+<p>select age from s1 where id&#x3D;123 and name &#x3D; ‘nick’; #id字段有索引，但是name字段没有索引,该sql命中了索引，但未覆盖，需要去聚集索引中再查找详细信息。<br>最牛逼的情况是，索引字段覆盖了所有，那全程通过索引来加速查询以及获取结果就ok了<br>mysql desc s1;<br>+——–+————-+——+—–+———+——-+<br>| Field | Type | Null | Key | Default | Extra |<br>+——–+————-+——+—–+———+——-+<br>| id | int(11) | NO | | NULL | |<br>| name | varchar(20) | YES | | NULL | |<br>| gender | char(6) | YES | | NULL | |<br>| email | varchar(50) | YES | | NULL | |<br>+——–+————-+——+—–+———+——-+<br>rows in set (0.21 sec)</p>
+<p>mysql explain select name from s1 where id&#x3D;1000; #没有任何索引<br>+–+———–+—–+———-+—-+————-+—-+——-+—-+——-+——–+———–+<br>|id|select_type|table|partitions|type|possible_keys|key |key_len|ref | rows  |filtered| Extra     |<br>+–+———–+—–+———-+—-+————-+—-+——-+—-+——-+——–+———–+<br>| 1| SIMPLE    | s1  | NULL     |ALL | NULL        |NULL| NULL  |NULL|2688336| 10.00  |Using where|<br>+–+———–+—–+———-+—-+————-+—-+——-+—-+——-+——–+———–+<br>row in set, 1 warning (0.00 sec)</p>
+<p>mysql create index idx_id on s1(id); #创建索引<br>Query OK, 0 rows affected (4.16 sec)<br>Records: 0 Duplicates: 0 Warnings: 0</p>
+<p>mysql explain select name from s1 where id&#x3D;1000; #命中辅助索引，但是未覆盖索引，还需要从聚集索引中查找name<br>+–+———–+—–+———-+—-+————-+——+——-+—–+—-+——–+—–+<br>|id|select_type|table|partitions|type|possible_keys|   key|key_len| ref |rows|filtered|Extra|<br>+–+———–+—–+———-+—-+————-+——+——-+—–+—-+——–+—–+<br>| 1| SIMPLE    | s1  | NULL     | ref| idx_id      |idx_id| 4     |const| 1  | 100.00 | NULL|<br>+–+———–+—–+———-+—-+————-+——+——-+—–+—-+——–+—–+<br>row in set, 1 warning (0.08 sec)</p>
+<p>mysql explain select id from s1 where id&#x3D;1000; #在辅助索引中就找到了全部信息，Using index代表覆盖索引<br>+–+———–+—–+———-+—-+————-+——+——-+——-+——+———-+—–+<br>|id|select_type|table|partitions|type|possible_keys| key  |key_len| ref |rows|filtered| Extra     |<br>+–+———–+—–+———-+—-+——————–+——-+——-+——+———-+—–+<br>| 1| SIMPLE    | s1  | NULL     | ref| idx_id      |idx_id|  4    |const| 1  | 100.00 |Using index|<br>+–+———–+—–+———-+—-+————-+——+——-+—–+—-+——–+———–+<br>row in set, 1 warning (0.03 sec)</p>
+<p>覆盖索引的另外一个好处是对某些统计问题而言的。基于上一小结创建的表buy_log，查询计划如下：</p>
+<td class="line_numbers"><pre>1234567</pre></td><td class="code"><pre class="mysql" style="font-family:monospace;">mysql explain select count(*) from buy_log;+--+-----------+-------+-----+-------------+------+-------+----+----+-----------+|id|select_type|table  | type|possible_keys|key   |key_len|ref |rows|Extra      |+--+-----------+-------+-----+-------------+------+-------+----+----+-----------+| 1| SIMPLE    |buy_log|index| NULL        |userid| 4     |NULL|  7 |Using index|+--+-----------+-------+-----+-------------+------+-------+----+----+-----------+row in set (0.00 sec)</pre></td>
+
+<p>mysql explain select count(*) from buy_log;<br>+–+———–+——-+—–+————-+——+——-+—-+—-+———–+<br>|id|select_type|table  | type|possible_keys|key   |key_len|ref |rows|Extra      |<br>+–+———–+——-+—–+————-+——+——-+—-+—-+———–+<br>| 1| SIMPLE    |buy_log|index| NULL        |userid| 4     |NULL|  7 |Using index|<br>+–+———–+——-+—–+————-+——+——-+—-+—-+———–+<br>row in set (0.00 sec)</p>
+<p>innodb存储引擎并不会选择通过查询聚集索引来进行统计。由于buy_log表有辅助索引，而辅助索引远小于聚集索引，选择辅助索引可以减少IO操作，故优化器的选择如上key为userid辅助索引</p>
+<p>对于（a,b）形式的联合索引，一般是不可以选择b中所谓的查询条件。但如果是统计操作，并且是覆盖索引，则优化器还是会选择使用该索引，如下：</p>
+<td class="line_numbers"><pre>12345678</pre></td><td class="code"><pre class="mysql" style="font-family:monospace;"># 联合索引userid_2（userid,buy_date）,一般情况，我们按照buy_date是无法使用该索引的，但特殊情况下：查询语句是统计操作，且是覆盖索引，则按照buy_date当做查询条件时，也可以使用该联合索引mysql explain select count(*) from buy_log where buy_date = '2011-01-01' and buy_date  '2011-02-01';+--+-----------+-------+-----+-------------+--------+-------+----+----+------------------------+|id|select_type| table |type |possible_keys| key    |key_len|ref |rows|Extra                   |+--+-----------+-------+-----+-------------+--------+-------+----+----+------------------------+| 1| SIMPLE    |buy_log|index| NULL        |userid_2| 8     |NULL|  7 |Using where; Using index|+--+-----------+-------+-----+-------------+--------+-------+----+----+------------------------+row in set (0.00 sec)</pre></td>
+
+<h1 id="联合索引userid-2（userid-buy-date）-一般情况，我们按照buy-date是无法使用该索引的，但特殊情况下：查询语句是统计操作，且是覆盖索引，则按照buy-date当做查询条件时，也可以使用该联合索引"><a href="#联合索引userid-2（userid-buy-date）-一般情况，我们按照buy-date是无法使用该索引的，但特殊情况下：查询语句是统计操作，且是覆盖索引，则按照buy-date当做查询条件时，也可以使用该联合索引" class="headerlink" title="联合索引userid_2（userid,buy_date）,一般情况，我们按照buy_date是无法使用该索引的，但特殊情况下：查询语句是统计操作，且是覆盖索引，则按照buy_date当做查询条件时，也可以使用该联合索引"></a>联合索引userid_2（userid,buy_date）,一般情况，我们按照buy_date是无法使用该索引的，但特殊情况下：查询语句是统计操作，且是覆盖索引，则按照buy_date当做查询条件时，也可以使用该联合索引</h1><p>mysql explain select count(*) from buy_log where buy_date &#x3D; ‘2011-01-01’ and buy_date  ‘2011-02-01’;<br>+–+———–+——-+—–+————-+——–+——-+—-+—-+————————+<br>|id|select_type| table |type |possible_keys| key    |key_len|ref |rows|Extra                   |<br>+–+———–+——-+—–+————-+——–+——-+—-+—-+————————+<br>| 1| SIMPLE    |buy_log|index| NULL        |userid_2| 8     |NULL|  7 |Using where; Using index|<br>+–+———–+——-+—–+————-+——–+——-+—-+—-+————————+<br>row in set (0.00 sec)</p>
+<h2 id="7-3-合并索引"><a href="#7-3-合并索引" class="headerlink" title="7.3 合并索引"></a>7.3 合并索引</h2><td class="line_numbers"><pre>1234567</pre></td><td class="code"><pre class="mysql" style="font-family:monospace;">mysql explain select count(email) from index_t where   id = 1000000  or email='eva100000@oldboy';+--+-----------+------+--------------+--------------------------------+---------------+--------+-----+----+-----------------------------------------+| id | select_type| table  | type                | possible_keys                              | key                   | key_len | ref    |rows | Extra                                                           |+--+-----------+------+--------------+--------------------------------+---------------+--------+-----+----+-----------------------------------------+|  1 | SIMPLE      | index_t| index_merge | PRIMARY,email,ind_id,ind_email | PRIMARY,email | 4,51   |NULL|   2    |Using union(PRIMARY,email); Using where |+--+-----------+------+--------------+--------------------------------+---------------+--------+-----+----+-----------------------------------------+row in set (0.01 sec)</pre></td>
+
+<p>mysql explain select count(email) from index_t where   id &#x3D; 1000000  or email&#x3D;‘eva100000@oldboy’;<br>+–+———–+——+————–+——————————–+—————+——–+—–+—-+—————————————–+<br>| id | select_type| table  | type                | possible_keys                              | key                   | key_len | ref    |rows | Extra                                                           |<br>+–+———–+——+————–+——————————–+—————+——–+—–+—-+—————————————–+<br>|  1 | SIMPLE      | index_t| index_merge | PRIMARY,email,ind_id,ind_email | PRIMARY,email | 4,51   |NULL|   2    |Using union(PRIMARY,email); Using where |<br>+–+———–+——+————–+——————————–+—————+——–+—–+—-+—————————————–+<br>row in set (0.01 sec)</p>
+<h1 id="八、查询优化神器-explain"><a href="#八、查询优化神器-explain" class="headerlink" title="八、查询优化神器-explain"></a>八、查询优化神器-explain</h1><p>MySQL性能分析之Explain：</p>
+<h1 id="九、慢查询优化的基本步骤"><a href="#九、慢查询优化的基本步骤" class="headerlink" title="九、慢查询优化的基本步骤"></a>九、慢查询优化的基本步骤</h1><ol>
+<li>先运行看看是否真的很慢，注意设置SQL_NO_CACHE</li>
+<li>where条件单表查，锁定最小返回记录表。这句话的意思是把查询语句的where都应用到表中返回的记录数最小的表开始查起，单表每个字段分别查询，看哪个字段的区分度最高</li>
+<li>explain查看执行计划，是否与1预期一致（从锁定记录较少的表开始查询）</li>
+<li>order by limit 形式的sql语句让排序的表优先查</li>
+<li>了解业务方使用场景</li>
+<li>加索引时参照建索引的几大原则</li>
+<li>观察结果，不符合预期继续从0分析</li>
+</ol>
+<h1 id="十、慢日志管理"><a href="#十、慢日志管理" class="headerlink" title="十、慢日志管理"></a>十、慢日志管理</h1><td class="line_numbers"><pre>123456789101112131415161718</pre></td><td class="code"><pre class="mysql" style="font-family:monospace;">慢日志            - 执行时间  10            - 未命中索引            - 日志文件路径         配置：            - 内存                show variables like '%query%';                show variables like '%queries%';                set global 变量名 = 值            - 配置文件                mysqld --defaults-file='E:\wupeiqi\mysql-5.7.16-winx64\mysql-5.7.16-winx64\my-default.ini'                 my.conf内容：                    slow_query_log = ON                    slow_query_log_file = D:/....                 注意：修改配置文件之后，需要重启服务</pre></td>
+
+<p>慢日志<br>            - 执行时间  10<br>            - 未命中索引<br>            - 日志文件路径</p>
+<pre class="line-numbers language-java"><code class="language-java">
+    配置：
+        <span class="token operator">-</span> 内存
+            show variables like <span class="token string">'%query%'</span><span class="token punctuation">;</span>
+            show variables like <span class="token string">'%queries%'</span><span class="token punctuation">;</span>
+            set global 变量名 <span class="token operator">=</span> 值
+        <span class="token operator">-</span> 配置文件
+            mysqld <span class="token operator">--</span>defaults<span class="token operator">-</span>file<span class="token operator">=</span><span class="token string">'E:\wupeiqi\mysql-5.7.16-winx64\mysql-5.7.16-winx64\my-default.ini'</span>
+            
+            my<span class="token punctuation">.</span>conf内容：
+                slow_query_log <span class="token operator">=</span> ON
+                slow_query_log_file <span class="token operator">=</span> D<span class="token operator">:</span><span class="token operator">/</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+                
+            注意：修改配置文件之后，需要重启服务
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<td class="line_numbers"><pre>123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960</pre></td><td class="code"><pre class="mysql" style="font-family:monospace;">MySQL日志管理========================================================错误日志: 记录 MySQL 服务器启动、关闭及运行错误等信息二进制日志: 又称binlog日志，以二进制文件的方式记录数据库中除 SELECT 以外的操作查询日志: 记录查询的信息慢查询日志: 记录执行时间超过指定时间的操作中继日志： 备库将主库的二进制日志复制到自己的中继日志中，从而在本地进行重放通用日志： 审计哪个账号、在哪个时段、做了哪些事件事务日志或称redo日志： 记录Innodb事务相关的如事务执行时间、检查点等========================================================一、bin-log1. 启用# vim /etc/my.cnf[mysqld]log-bin[=dir\[filename]]# service mysqld restart2. 暂停//仅当前会话SET SQL_LOG_BIN=0;SET SQL_LOG_BIN=1;3. 查看查看全部：# mysqlbinlog mysql.000002按时间：# mysqlbinlog mysql.000002 --start-datetime="2012-12-05 10:02:56"# mysqlbinlog mysql.000002 --stop-datetime="2012-12-05 11:02:54"# mysqlbinlog mysql.000002 --start-datetime="2012-12-05 10:02:56" --stop-datetime="2012-12-05 11:02:54"  按字节数：# mysqlbinlog mysql.000002 --start-position=260# mysqlbinlog mysql.000002 --stop-position=260# mysqlbinlog mysql.000002 --start-position=260 --stop-position=9304. 截断bin-log（产生新的bin-log文件）a. 重启mysql服务器b. # mysql -uroot -p123 -e 'flush logs'5. 删除bin-log文件# mysql -uroot -p123 -e 'reset master'   二、查询日志启用通用查询日志# vim /etc/my.cnf[mysqld]log[=dir\[filename]]# service mysqld restart 三、慢查询日志启用慢查询日志# vim /etc/my.cnf[mysqld]log-slow-queries[=dir\[filename]]long_query_time=n# service mysqld restartMySQL 5.6:slow-query-log=1slow-query-log-file=slow.loglong_query_time=3  单位为秒查看慢查询日志测试:BENCHMARK(count,expr)SELECT BENCHMARK(50000000,2*3);</pre></td>
+
+<h1 id="MySQL日志管理"><a href="#MySQL日志管理" class="headerlink" title="MySQL日志管理"></a>MySQL日志管理</h1><p>错误日志: 记录 MySQL 服务器启动、关闭及运行错误等信息<br>二进制日志: 又称binlog日志，以二进制文件的方式记录数据库中除 SELECT 以外的操作<br>查询日志: 记录查询的信息<br>慢查询日志: 记录执行时间超过指定时间的操作<br>中继日志： 备库将主库的二进制日志复制到自己的中继日志中，从而在本地进行重放<br>通用日志： 审计哪个账号、在哪个时段、做了哪些事件<br>事务日志或称redo日志： 记录Innodb事务相关的如事务执行时间、检查点等<br>&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;<br>一、bin-log</p>
+<ol>
+<li>启用<h1 id="vim-x2F-etc-x2F-my-cnf"><a href="#vim-x2F-etc-x2F-my-cnf" class="headerlink" title="vim &#x2F;etc&#x2F;my.cnf"></a>vim &#x2F;etc&#x2F;my.cnf</h1>[mysqld]<br>log-bin[&#x3D;dir[filename]]<h1 id="service-mysqld-restart"><a href="#service-mysqld-restart" class="headerlink" title="service mysqld restart"></a>service mysqld restart</h1></li>
+<li>暂停<br>&#x2F;&#x2F;仅当前会话<br>SET SQL_LOG_BIN&#x3D;0;<br>SET SQL_LOG_BIN&#x3D;1;</li>
+<li>查看<br>查看全部：<h1 id="mysqlbinlog-mysql-000002"><a href="#mysqlbinlog-mysql-000002" class="headerlink" title="mysqlbinlog mysql.000002"></a>mysqlbinlog mysql.000002</h1>按时间：<h1 id="mysqlbinlog-mysql-000002-–start-datetime-x3D-”2012-12-05-10-02-56”"><a href="#mysqlbinlog-mysql-000002-–start-datetime-x3D-”2012-12-05-10-02-56”" class="headerlink" title="mysqlbinlog mysql.000002 –start-datetime&#x3D;”2012-12-05 10:02:56”"></a>mysqlbinlog mysql.000002 –start-datetime&#x3D;”2012-12-05 10:02:56”</h1><h1 id="mysqlbinlog-mysql-000002-–stop-datetime-x3D-”2012-12-05-11-02-54”"><a href="#mysqlbinlog-mysql-000002-–stop-datetime-x3D-”2012-12-05-11-02-54”" class="headerlink" title="mysqlbinlog mysql.000002 –stop-datetime&#x3D;”2012-12-05 11:02:54”"></a>mysqlbinlog mysql.000002 –stop-datetime&#x3D;”2012-12-05 11:02:54”</h1><h1 id="mysqlbinlog-mysql-000002-–start-datetime-x3D-”2012-12-05-10-02-56”-–stop-datetime-x3D-”2012-12-05-11-02-54”"><a href="#mysqlbinlog-mysql-000002-–start-datetime-x3D-”2012-12-05-10-02-56”-–stop-datetime-x3D-”2012-12-05-11-02-54”" class="headerlink" title="mysqlbinlog mysql.000002 –start-datetime&#x3D;”2012-12-05 10:02:56” –stop-datetime&#x3D;”2012-12-05 11:02:54”"></a>mysqlbinlog mysql.000002 –start-datetime&#x3D;”2012-12-05 10:02:56” –stop-datetime&#x3D;”2012-12-05 11:02:54”</h1></li>
+</ol>
+<p>按字节数：</p>
+<h1 id="mysqlbinlog-mysql-000002-–start-position-x3D-260"><a href="#mysqlbinlog-mysql-000002-–start-position-x3D-260" class="headerlink" title="mysqlbinlog mysql.000002 –start-position&#x3D;260"></a>mysqlbinlog mysql.000002 –start-position&#x3D;260</h1><h1 id="mysqlbinlog-mysql-000002-–stop-position-x3D-260"><a href="#mysqlbinlog-mysql-000002-–stop-position-x3D-260" class="headerlink" title="mysqlbinlog mysql.000002 –stop-position&#x3D;260"></a>mysqlbinlog mysql.000002 –stop-position&#x3D;260</h1><h1 id="mysqlbinlog-mysql-000002-–start-position-x3D-260-–stop-position-x3D-930"><a href="#mysqlbinlog-mysql-000002-–start-position-x3D-260-–stop-position-x3D-930" class="headerlink" title="mysqlbinlog mysql.000002 –start-position&#x3D;260 –stop-position&#x3D;930"></a>mysqlbinlog mysql.000002 –start-position&#x3D;260 –stop-position&#x3D;930</h1><ol start="4">
+<li>截断bin-log（产生新的bin-log文件）<br>a. 重启mysql服务器<br>b. # mysql -uroot -p123 -e ‘flush logs’</li>
+<li>删除bin-log文件<h1 id="mysql-uroot-p123-e-‘reset-master’"><a href="#mysql-uroot-p123-e-‘reset-master’" class="headerlink" title="mysql -uroot -p123 -e ‘reset master’"></a>mysql -uroot -p123 -e ‘reset master’</h1></li>
+</ol>
+<p>二、查询日志<br>启用通用查询日志</p>
+<h1 id="vim-x2F-etc-x2F-my-cnf-1"><a href="#vim-x2F-etc-x2F-my-cnf-1" class="headerlink" title="vim &#x2F;etc&#x2F;my.cnf"></a>vim &#x2F;etc&#x2F;my.cnf</h1><p>[mysqld]<br>log[&#x3D;dir[filename]]</p>
+<h1 id="service-mysqld-restart-1"><a href="#service-mysqld-restart-1" class="headerlink" title="service mysqld restart"></a>service mysqld restart</h1><p>三、慢查询日志<br>启用慢查询日志</p>
+<h1 id="vim-x2F-etc-x2F-my-cnf-2"><a href="#vim-x2F-etc-x2F-my-cnf-2" class="headerlink" title="vim &#x2F;etc&#x2F;my.cnf"></a>vim &#x2F;etc&#x2F;my.cnf</h1><p>[mysqld]<br>log-slow-queries[&#x3D;dir[filename]]<br>long_query_time&#x3D;n</p>
+<h1 id="service-mysqld-restart-2"><a href="#service-mysqld-restart-2" class="headerlink" title="service mysqld restart"></a>service mysqld restart</h1><p>MySQL 5.6:<br>slow-query-log&#x3D;1<br>slow-query-log-file&#x3D;slow.log<br>long_query_time&#x3D;3  单位为秒<br>查看慢查询日志<br>测试:BENCHMARK(count,expr)<br>SELECT BENCHMARK(50000000,2*3);</p>
+<blockquote>
+<p>原文始发于：</p>
+</blockquote>
+
+                </div>
+                <!-- 欧阳思海，modify，2020.05.01-->
+<!-- 文章详情详情页面的头部广告位置信息 -->
+<div id="post-head-panel">
+    
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" style="font-size: 18px;" target="_blank">
+        <img src="/icons/hot.gif">
+        本人花费半年的时间总结的《Java面试指南》已拿腾讯等大厂offer，已开源在github ，欢迎star！
+    </a>
+    
+    
+</div>
+<br />
+
+
+
+<blockquote>
+    
+            <p>本文GitHub <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">https://github.com/OUYANGSIHAI/JavaInterview</a> 已收录，这是我花了6个月总结的<b>一线大厂Java面试</b>总结，本人已拿大厂offer，欢迎star</p>
+    
+    <p>原文链接：blog.ouyangsihai.cn &gt;&gt; <a href="/mysql-suo-yin-yuan-li-xue-xi-jiao-cheng.html" target="_blank">MySQL索引原理学习教程</a></p>
+</blockquote>
+                <hr />
+
+                
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.88rem;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-large waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fa fa-close"></i></a>
+            <h4 class="reward-title">多少都是对我的认可</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="http://image.ouyangsihai.cn/FpbhsOuf3Ar9vY34B97Y2qQ7LVGe" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="http://image.ouyangsihai.cn/FgYlMzms68PH73PWpZBwPfbLTAws" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+                
+
+                <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+
+<div id="article-share">
+    
+    <div class="social-share" data-disabled="qzone" data-wechat-qrcode-helper="<p>微信里点“发现”->“扫一扫”二维码便可查看分享。</p>"></div>
+    
+</div>
+
+<script src="/libs/share/js/social-share.min.js"></script>
+
+                
+
+                
+                <div class="reprint1">
+                    <p>
+                        <span class="reprint1-tip">
+                            <i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;转载请注明:
+                        </span>
+                        <a href="https://blog.ouyangsihai.cn" class="b-link-green">好好学java</a>
+                        <i class="fa fa-angle-right fa-lg fa-fw text-color"></i>
+                        <a href="/mysql-suo-yin-yuan-li-xue-xi-jiao-cheng.html" class="b-link-green">MySQL索引原理学习教程</a>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        
+
+        
+
+        
+
+        
+
+        
+        <style>
+    .valine-card {
+        margin: 1.5rem auto;
+    }
+
+    .valine-card .card-content {
+        padding: 20px 20px 5px 20px;
+    }
+    /* valine 评论框增加背景图片 */
+    #vcomments textarea {
+        box-sizing: border-box;
+        background: url("") 100% 100% no-repeat;
+    }
+
+    #vcomments input[type=text],
+    #vcomments input[type=email],
+    #vcomments input[type=url],
+    #vcomments textarea {
+        box-sizing: border-box;
+    }
+
+    #vcomments p {
+        margin: 2px 2px 10px;
+        font-size: 1.05rem;
+        line-height: 1.78rem;
+    }
+
+    #vcomments blockquote p {
+        text-indent: 0.2rem;
+    }
+
+    #vcomments a {
+        padding: 0 2px;
+        color: #42b983;
+        font-weight: 500;
+        text-decoration: underline;
+    }
+
+    #vcomments img {
+        max-width: 100%;
+        height: auto;
+        cursor: pointer;
+    }
+
+    #vcomments ol li {
+        list-style-type: decimal;
+    }
+
+    #vcomments ol,
+    ul {
+        display: block;
+        padding-left: 2em;
+        word-spacing: 0.05rem;
+    }
+
+    #vcomments ul li,
+    ol li {
+        display: list-item;
+        line-height: 1.8rem;
+        font-size: 1rem;
+    }
+
+    #vcomments ul li {
+        list-style-type: disc;
+    }
+
+    #vcomments ul ul li {
+        list-style-type: circle;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    #vcomments table, th, td {
+        border: 0;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments h1 {
+        font-size: 1.85rem;
+        font-weight: bold;
+        line-height: 2.2rem;
+    }
+
+    #vcomments h2 {
+        font-size: 1.65rem;
+        font-weight: bold;
+        line-height: 1.9rem;
+    }
+
+    #vcomments h3 {
+        font-size: 1.45rem;
+        font-weight: bold;
+        line-height: 1.7rem;
+    }
+
+    #vcomments h4 {
+        font-size: 1.25rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    #vcomments h5 {
+        font-size: 1.1rem;
+        font-weight: bold;
+        line-height: 1.4rem;
+    }
+
+    #vcomments h6 {
+        font-size: 1rem;
+        line-height: 1.3rem;
+    }
+
+    #vcomments p {
+        font-size: 1rem;
+        line-height: 1.5rem;
+    }
+
+    #vcomments hr {
+        margin: 12px 0;
+        border: 0;
+        border-top: 1px solid #ccc;
+    }
+
+    #vcomments blockquote {
+        margin: 15px 0;
+        border-left: 5px solid #42b983;
+        padding: 1rem 0.8rem 0.3rem 0.8rem;
+        color: #666;
+        background-color: rgba(66, 185, 131, .1);
+    }
+
+    #vcomments pre {
+        font-family: monospace, monospace;
+        padding: 1.2em;
+        margin: .5em 0;
+        background: #272822;
+        overflow: auto;
+        border-radius: 0.3em;
+        tab-size: 4;
+    }
+
+    #vcomments code {
+        font-family: monospace, monospace;
+        padding: 1px 3px;
+        font-size: 0.92rem;
+        color: #e96900;
+        background-color: #f8f8f8;
+        border-radius: 2px;
+    }
+
+    #vcomments pre code {
+        font-family: monospace, monospace;
+        padding: 0;
+        color: #e8eaf6;
+        background-color: #272822;
+    }
+
+    #vcomments pre[class*="language-"] {
+        padding: 1.2em;
+        margin: .5em 0;
+    }
+
+    #vcomments code[class*="language-"],
+    pre[class*="language-"] {
+        color: #e8eaf6;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    #vcomments b,
+    strong {
+        font-weight: bold;
+    }
+
+    #vcomments dfn {
+        font-style: italic;
+    }
+
+    #vcomments small {
+        font-size: 85%;
+    }
+
+    #vcomments cite {
+        font-style: normal;
+    }
+
+    #vcomments mark {
+        background-color: #fcf8e3;
+        padding: .2em;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    /* 修复评论第一行位置错位 */
+    .v .vlist .vcard {
+    padding-top: 2.5em !important ;
+    }
+</style>
+
+<div class="card valine-card" data-aos="fade-up">
+    <div id="vcomments" class="card-content"></div>
+</div>
+
+<script src="/libs/valine/av-min.js"></script>
+<script src="/libs/valine/Valine.min.js"></script>
+<!-- <link rel="stylesheet" type="text/css" href="/libs//libs/jQuery-emoji/dist/css/jquery.emoji.css">
+<script src="/libs//libs/jQuery-emoji/dist/js/jquery.emoji.min.js"></script>
+<script src="/libs//libs/jQuery-emoji/dist/js/emoji.list.js"></script> -->
+<script>
+    new Valine({
+        el: '#vcomments',
+        appId: 'MxSNOS83TYWU3Opsy2GTW1ih-gzGzoHsz',
+        appKey: '4XevOgmAxHEwVDnIKgvEUihB',
+        notify: 'true' === 'true',
+        verify: 'true' === 'true',
+        visitor: 'true' === 'true',
+        avatar: 'mm',
+        pageSize: '10',
+        lang: 'zh-cn',
+        placeholder: '请畅所欲言吧，别害羞~',
+
+    });
+
+//     function parse_emoji() {
+//     jQuery(".vcontent").emojiParse({
+//       basePath: '/libs/jQuery-emoji/images/emoji',
+//       icons: emojiLists   // 注：详见 js/emoji.list.js
+//     });
+//   }
+  
+//   setTimeout(function() {
+//     // jQuery emoji 解析
+//     parse_emoji();
+//     // jquery emoji 初始化
+//     jQuery(".veditor").emoji({
+//       showTab: true,
+//       animation: 'slide',
+//       basePath: '/libs/jQuery-emoji/images/emoji',
+//       icons: emojiLists  // 注：详见 js/emoji.list.js
+//     });
+//     jQuery(".vmore").on("click", function() {
+//       setTimeout(function() {
+//         parse_emoji();
+//       }, 500);
+//     });
+//   }, 800)
+
+</script>
+        
+
+        
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/mian-shi-guan-shen-ru-tan-tan-ni-dui-mysql-suo-yin-de-li-jie.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="面试官——深入谈谈你对MySQL索引的理解">
+                        
+                        <span class="card-title">面试官——深入谈谈你对MySQL索引的理解</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            点击上方“后端技术精选”，选择“置顶公众号”
+技术文章第一时间送达！
+
+
+
+
+作者：浪人~
+cnblogs.com/liqiangchn/p/9060521.html
+
+
+
+
+cnblogs.com&#x2F;liqiangchn&#x2F
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="fa fa-clock fa-fw icon-date"></i>2021-04-05
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/" class="post-category" target="_blank">
+                                    数据库相关
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93-mysql-oracle-redis/" target="_blank">
+                        <span class="chip bg-color">数据库,mysql,oracle,redis</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fa fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/bu-dong-shu-ju-ku-suo-yin-de-di-ceng-yuan-li-na-shi-yin-wei-ni-xin-li-mei-dian-b-shu.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="不懂数据库索引的底层原理？那是因为你心里没点b树">
+                        
+                        <span class="card-title">不懂数据库索引的底层原理？那是因为你心里没点b树</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            点击上方“后端技术精选”，选择“置顶公众号”
+技术文章第一时间送达！
+
+
+
+
+作者：苏苏喂
+cnblogs.com/sujing/p/11110292.html
+
+
+
+
+cnblogs.com&#x2F;sujing&#x2F;p&#x2F
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="fa fa-clock fa-fw icon-date"></i>2021-04-05
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/" class="post-category" target="_blank">
+                                    数据库相关
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93-mysql-oracle-redis/" target="_blank">
+                        <span class="chip bg-color">数据库,mysql,oracle,redis</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+    </div>
+</div>
+
+
+<script>
+    $('#articleContent').on('copy', function (e) {
+        // IE8 or earlier browser is 'undefined'
+        if (typeof window.getSelection === 'undefined') return;
+
+        var selection = window.getSelection();
+        // if the selection is short let's not annoy our users.
+        if (('' + selection).length < Number.parseInt('500')) {
+            return;
+        }
+
+        // create a div outside of the visible area and fill it with the selected text.
+        var bodyElement = document.getElementsByTagName('body')[0];
+        var newdiv = document.createElement('div');
+        newdiv.style.position = 'absolute';
+        newdiv.style.left = '-99999px';
+        bodyElement.appendChild(newdiv);
+        newdiv.appendChild(selection.getRangeAt(0).cloneContents());
+
+        // we need a <pre> tag workaround.
+        // otherwise the text inside "pre" loses all the line breaks!
+        if (selection.getRangeAt(0).commonAncestorContainer.nodeName === 'CODE') {
+            newdiv.innerHTML = "<pre>" + newdiv.innerHTML + "</pre>";
+        }
+
+        var url = document.location.href;
+        newdiv.innerHTML += '<br />'
+            + '来源: 好好学java<br />'
+            + '作者: 好好学java<br />'
+            + '链接: <a href="' + url + '">' + url + '</a><br />'
+            + '本文章著作权归作者所有，任何形式的转载都请注明出处。';
+
+        selection.selectAllChildren(newdiv);
+        window.setTimeout(function () { bodyElement.removeChild(newdiv); }, 200);
+    });
+</script>
+
+
+
+<!--
+<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+<script>
+    const btw = new BTWPlugin();
+    btw.init({
+        id: 'container',
+        blogId: '15305-1590684104111-518',
+        name: '程序员的技术圈子',
+        qrcode: 'http://image.ouyangsihai.cn/FtAUOeE5--1JTdcuuZFIhMuEUuJO',
+        keyword: 'vip',
+    });
+</script>
+-->
+
+    </div>
+    <div id="toc-aside" style="width: 310px;" class="expanded col l3 hide-on-med-and-down">
+        <!-- 自定义右侧card：欧阳思海 -->
+        <!-- <div id="my-card" style="background: ">
+            
+        </div> -->
+        <!-- <div class="toc-widget">
+            <div class="toc-title" style="display: none;"><i class="fa fa-list-alt"></i>&nbsp;&nbsp;</div>
+            <div id="toc-content"></div>
+        </div> -->
+
+
+
+
+
+
+
+
+        <aside class="col-lg-3" style="width: 300px;">
+
+            <link rel="stylesheet" type="text/css" href="/css/my-aside.css">
+
+            <!-- 关注公众号信息：欧阳思海 -->
+            <div class="widget-wrap">
+                <div class="widget bg-danger" style="color:whitesmoke; background-color: #419488">
+                    <div class="card-front animated col s12 m12 l8 offset-l2 fadeInUp">
+                        <div class="row">
+                            <div class="col-md-5" style="text-align: center;">
+                                <img class="adv" style="width: 95px; height: 95px;"
+                                    src="http://image.ouyangsihai.cn/FtAUOeE5--1JTdcuuZFIhMuEUuJO">
+                            </div>
+                            <div class="col-md-7" style="text-align: center;">
+                                <h2 style="font-size: 18px; 
+                                    margin: 0; 
+                                    padding: 0;
+                                    border: 0; 
+                                    outline: 0;
+                                    font-weight: inherit;
+                                    font-style: inherit;
+                                    font-family: inherit;
+                                    vertical-align: baseline;">关注公众号</h2>
+                                 
+                                <small style="font-size: 15px;">
+                                    →「技术干货」每日推送 <br>
+                                    →「回复资料」领取资料 <br>
+                                    →「微信加群」每周福利 <br>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div style="font-size: 0.8em;">
+                        <a href="/assets/erweima.jpg" target="_blank"
+                            style="color:orange;font-size: 14px;">点击添加我的微信，加入技术讨论群</a>
+                        除公众号以外，我还会在以下平台发布内容：
+                    </div>
+                    -->
+
+                    <div class="profile-block social-links col-md-7" style="text-align: center;">
+                        <table style="align-items: center; 
+                                        padding-left: 25px;">
+                            <tbody>
+                                <tr>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank" title="GitHub"
+                                            class="tooltip">
+                                            <img style="width: 22px;height: 22px;" src="/icons/github.svg"></a>
+                                    </td>
+
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://www.zhihu.com/people/hai-hai-ren-sheng-50/activities"
+                                            target="_blank" title="知乎" class="tooltip">
+                                            <img style="width: 22px;" src="/icons/zhihu.svg"></a>
+                                    </td>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://blog.csdn.net/sihai12345" target="_blank" title="CSDN"
+                                            class="tooltip">
+                                            <img style="width: 18px;" src="/icons/CSDN.svg"></a>
+                                    </td>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://www.jianshu.com/u/12b0bd4c857c" target="_blank" title="简书"
+                                            class="tooltip">
+                                            <img style="width: 22px;" src="/icons/JianShu.svg"></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            
+
+            <!-- custom rightside_link：热门文章推荐：欧阳思海 -->
+            
+            <div class="widget-wrap widget-panel">
+                <p style="text-align: left;padding-bottom: 10px;line-height: 30px; font-size: 14px;">
+                    
+                    <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        本人花费半年的时间总结的《 Java 面试指南》已拿腾讯等大厂 offer，已开源在 github ，欢迎 star！
+                    </a><br>
+                    
+                    <a href="https://mp.weixin.qq.com/s/I0jimqziHqRNaIy0kXRCnw" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        2020 Java 1000G 最新学习资源，Java基础、Java项目实战、Java分布式等等！
+                    </a><br>
+                    
+                    <a href="http://image.ouyangsihai.cn/FpB-dO6g-XU44mMrVlj7EL1y7Rs7" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        高级 Java 开发微信群，一起搞事情吧！
+                    </a><br>
+                    
+                </p>
+            </div>
+            
+
+            
+
+            <!-- custom rightside_banner：右侧广告或者其他的栏目设置：欧阳思海 -->
+            
+            <div class="widget-wrap">
+                <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">
+                    <img src="http://image.ouyangsihai.cn/FhhoEYMaNr6m0v8KhG8vSPgoREBV" style="width: 100%;">
+                </a>
+            </div>
+            
+            
+
+            
+
+            <!-- 右侧专栏分类：欧阳思海 -->
+            
+            <div class="widget-wrap widget-panel">
+                <ul class="media-list">
+                    
+                    <li class="media">
+                        <a href="/categories/MySQL的艺术世界/" target="_blank">
+                            <div class="media-left">
+                                <img class="media-object" src="http://image.ouyangsihai.cn/Fn3kQurieQ_0QUeqPmx5RW5i6R9n" style="width: 55px;">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading" style="margin-bottom: 10px; font-size: 100%;
+                                                                    margin: 0;
+                                                                    padding: 0;
+                                                                    border: 0;
+                                                                    outline: 0;
+                                                                    font-weight: inherit;
+                                                                    font-style: inherit;
+                                                                    font-family: inherit;
+                                                                    vertical-align: baseline;">
+                                    MySQL 的系列文章，解决全部面试问题！
+                                </h4>
+                                <p>
+                                    总共10篇文章，面试热门的锁、事务，通通解决了！
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    <hr>
+                    
+                    <li class="media">
+                        <a href="/categories/深入理解Java虚拟机/" target="_blank">
+                            <div class="media-left">
+                                <img class="media-object" src="http://image.ouyangsihai.cn/FpcS21VWJOHSgGzKcpW3_xVTSEeN" style="width: 55px;">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading" style="margin-bottom: 10px; font-size: 100%;
+                                                                    margin: 0;
+                                                                    padding: 0;
+                                                                    border: 0;
+                                                                    outline: 0;
+                                                                    font-weight: inherit;
+                                                                    font-style: inherit;
+                                                                    font-family: inherit;
+                                                                    vertical-align: baseline;">
+                                    深入理解 Java 虚拟机，面试必问
+                                </h4>
+                                <p>
+                                    总共10篇文章，包括内存模型、GC算法、GC收集器等。
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    <hr>
+                    
+                </ul>
+            </div>
+            
+
+            <!-- 右侧分类 -->
+            <div class="widget-wrap widget-panel">
+                <h3 class="widget-title">文章分类</h3>
+                <div class="widget">
+                    <ul class="category-list">
+                        
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/趣聊数据结构与算法/">>
+                                趣聊数据结构与算法</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/职业生涯浅谈/">>
+                                职业生涯浅谈</a><span class="category-list-count">33</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java项目分享/">>
+                                Java项目分享</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java面试经验/">>
+                                Java面试经验</a><span class="category-list-count">4</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/我要进大厂/">>
+                                我要进大厂</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/好好学java/">>
+                                好好学java</a><span class="category-list-count">1116</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/剑指offer/">>
+                                剑指offer</a><span class="category-list-count">112</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/css/">>
+                                css</a><span class="category-list-count">12</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/其他框架/">>
+                                其他框架</a><span class="category-list-count">142</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python其他/">>
+                                python其他</a><span class="category-list-count">45</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/数据库相关/">>
+                                数据库相关</a><span class="category-list-count">293</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java核心知识/">>
+                                Java核心知识</a><span class="category-list-count">196</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java面试题/">>
+                                Java面试题</a><span class="category-list-count">308</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/mybatis源码/">>
+                                mybatis源码</a><span class="category-list-count">56</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/spring教程/">>
+                                spring教程</a><span class="category-list-count">173</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springboot教程/">>
+                                springboot教程</a><span class="category-list-count">156</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/实战Activiti工作流/">>
+                                实战Activiti工作流</a><span class="category-list-count">4</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springcloud教程/">>
+                                springcloud教程</a><span class="category-list-count">39</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/linux/">>
+                                linux</a><span class="category-list-count">91</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python框架/">>
+                                python框架</a><span class="category-list-count">43</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python基础/">>
+                                python基础</a><span class="category-list-count">78</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/dubbo/">>
+                                dubbo</a><span class="category-list-count">37</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java源码/">>
+                                Java源码</a><span class="category-list-count">76</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/叽叽喳喳杂七杂八/">>
+                                叽叽喳喳杂七杂八</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/MySQL的艺术世界/">>
+                                MySQL的艺术世界</a><span class="category-list-count">8</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/jquery/">>
+                                jquery</a><span class="category-list-count">14</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java并发/">>
+                                Java并发</a><span class="category-list-count">43</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java文章合辑/">>
+                                Java文章合辑</a><span class="category-list-count">11</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java基础修炼/">>
+                                Java基础修炼</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/不一样的Java8/">>
+                                不一样的Java8</a><span class="category-list-count">3</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/小程序开发的世界/">>
+                                小程序开发的世界</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java学习资源分享/">>
+                                Java学习资源分享</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java小学生漫游/">>
+                                Java小学生漫游</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/rocketmq源码解析/">>
+                                rocketmq源码解析</a><span class="category-list-count">33</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springmvc最新教程/">>
+                                springmvc最新教程</a><span class="category-list-count">9</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java的Exception/">>
+                                Java的Exception</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/vue-js/">>
+                                vue.js</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/实战设计模式/">>
+                                实战设计模式</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python数据处理/">>
+                                python数据处理</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java-Web闯关/">>
+                                Java Web闯关</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springboot2-0最新教程/">>
+                                springboot2.0最新教程</a><span class="category-list-count">11</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/netty/">>
+                                netty</a><span class="category-list-count">16</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/rpc/">>
+                                rpc</a><span class="category-list-count">13</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/拥抱大厂系列/">>
+                                拥抱大厂系列</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/eureka/">>
+                                eureka</a><span class="category-list-count">19</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/分布式/">>
+                                分布式</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/中间件/">>
+                                中间件</a><span class="category-list-count">23</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java基础/">>
+                                Java基础</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/带你学Python/">>
+                                带你学Python</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/使用技术工具/">>
+                                使用技术工具</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/mycat源码/">>
+                                mycat源码</a><span class="category-list-count">5</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/深入理解Java虚拟机/">>
+                                深入理解Java虚拟机</a><span class="category-list-count">8</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/spring源码/">>
+                                spring源码</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java集合源码分析/">>
+                                Java集合源码分析</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/github的repo/">>
+                                github的repo</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java框架深究/">>
+                                Java框架深究</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/分布式架构/">>
+                                分布式架构</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+
+        </aside>
+
+
+
+
+
+
+
+
+
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. 修改成永远不显示：欧阳思海-->
+
+
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h1, h2, h3, h4, h5'
+        });
+
+        console.log('============');
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h1, h2, h3, h4, h5').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+                        
+            /* 修复文章卡片 div 的宽度. */
+            let fixPostCardWidth = function (srcId, targetId) {
+                let srcDiv = $('#' + srcId);
+                if (srcDiv.length === 0) {
+                    return;
+                }
+
+                let w = srcDiv.width();
+                if (w >= 450) {
+                    w = w + 21;
+                } else if (w >= 350 && w < 450) {
+                    w = w + 18;
+                } else if (w >= 300 && w < 350) {
+                    w = w + 16;
+                } else {
+                    w = w + 14;
+                }
+                $('#' + targetId).width(w);
+            };
+
+            // 切换TOC目录展开收缩的相关操作.
+            // 修改右侧边栏功能：欧阳思海
+            const expandedClass = 'expanded';
+            let $tocAside = $('#toc-aside');
+            let $mainContent = $('#main-content');
+
+            $('#floating-toc-btn .btn-floating').click(function () {
+                if ($tocAside.hasClass(expandedClass)) {
+                    $tocAside.removeClass(expandedClass).slideUp(500);
+                    $mainContent.removeClass('l9');
+                } else {
+                    $tocAside.addClass(expandedClass).slideDown(500);
+                    $mainContent.addClass('l9');
+                }
+                fixPostCardWidth('artDetail', 'prenext-posts');
+            });
+                        
+                    });
+</script>
+    
+
+</main>
+
+
+        <footer class="page-footer bg-color">
+    <div class="container row center-align">
+        <div class="col s12 m8 l8 copy-right">
+            
+	    Copyright&copy; 2019 <a href="https://www.java1000.com/" target="_blank"> 好好学java </a>维护. 网站备案/许可证号：赣ICP备17007984号-3
+            <br>
+            <span id="sitetime"></span>
+            <br>
+
+            
+
+            
+                    <!-- 
+                        <span id="busuanzi_container_site_pv" style='display:none'></span>
+                        总访问量: <span id="busuanzi_value_site_pv" class="white-color"></span>
+                    
+        
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'></span>
+                        人次&nbsp; | &nbsp;访客人数: <span id="busuanzi_value_site_uv" class="white-color"></span> 人
+                     -->
+                        <!-- 修改计数：欧阳思海 -->
+                    
+                        <span id="busuanzi_container_site_pv" style='display:inline'>
+                            <i class="fa fa-heart-o"></i>
+                            本站总访问量 <span id="busuanzi_value_site_pv" class="white-color"></span>
+                        </span>
+                    
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'>
+                            人次,&nbsp;访客数 <span id="busuanzi_value_site_uv" class="white-color"></span> 人.
+                        </span>
+                    
+    
+            
+
+            
+                &nbsp; | &nbsp;字数统计:&nbsp;
+                <span class="white-color">8290.3k</span> 字
+            
+
+            
+            <br>
+
+        </div>
+
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fa fa-code-branch"></i>
+    </a>
+
+
+ 
+    <a href="https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=1446037005@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fa fa-envelope-open"></i>
+    </a>
+
+
+
+
+    <a href="https://zhihu.com/people/hai-hai-ren-sheng-50/activities" class="tooltipped" target="_blank" data-tooltip="访问我的知乎" data-position="top" data-delay="50">
+        <i class="fa fa-inverse">知</i>
+    </a>
+
+
+
+
+
+
+
+
+
+    <a href="https://blog.ouyangsihai.cn/sitemap.xml" class="tooltipped" target="_blank" data-tooltip="站点地图" data-position="top" data-delay="50">
+        <i class="fa fa-sitemap"></i>
+    </a>
+
+
+
+    <a href="https://blog.ouyangsihai.cn/friends" class="tooltipped" target="_blank" data-tooltip="友情链接" data-position="top" data-delay="50">
+        <i class="fa fa-address-book"></i>
+    </a>
+</div>
+
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+
+        var t1 = Date.UTC(2019, 08, 10, 00, 00, 00); //北京时间2019-8-1 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes *
+            minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "本站已运行 " + diffYears + " 年 " + diffDays + " 天 " + diffHours +
+            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒" ;
+    } /*因为建站时间还没有一年，就将之注释掉了。需要的可以取消*/
+    siteTime();
+</script>
+
+<!-- 修改计数：欧阳思海 -->
+<script>
+    $(document).ready(function () {
+
+        var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+        var pvcountOffset = 1005469;  // 初始化首次数据
+        var uvcountOffset = 250804;
+
+        function fixCount() {
+            if (document.getElementById("busuanzi_container_site_pv").style.display != "none") {
+                $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + pvcountOffset);
+                clearInterval(int);
+            }
+            if ($("#busuanzi_container_site_pv").css("display") != "none") {
+                $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + uvcountOffset); // 加上初始数据 
+                clearInterval(int); // 停止检测
+            }
+        }
+    });
+</script>
+
+
+
+
+        <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.json", 'searchInput', 'searchResult');
+});
+</script>
+        <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fa fa-angle-up"></i>
+    </a>
+</div>
+
+
+        <script src="/libs/materialize/materialize.min.js"></script>
+        <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+        <script src="/libs/aos/aos.js"></script>
+        <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+        <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+        <script src="/js/matery.js"></script>
+
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-149362573-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    gtag('config', 'UA-149362573-1');
+</script>
+
+
+
+        
+            <script src="/libs/others/clicklove.js"></script>
+        
+
+        
+            <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+        
+
+        <!-- 洪卫 shw2018 add 2019.08.28 -->
+        <script type="text/javascript">
+            var OriginTitile = document.title,
+                st;
+            document.addEventListener("visibilitychange", function () {
+                document.hidden ? (document.title = "看不见我🙈~看不见我🙈~", clearTimeout(st)) : (document.title =
+                    "(๑•̀ㅂ•́) ✧被发现了～", st = setTimeout(function () {
+                        document.title = OriginTitile
+                    }, 3e3))
+            })
+        </script>
+
+        <!-- 鼠标点击烟花爆炸效果  洪卫 shw2018 add 2019.09.09 -->
+        
+
+        <!-- 背景雪花飘落特效洪卫 shw2018 add 2019.09.10 -->
+        
+
+        <!-- 鼠标点击文字特效 洪卫 shw2018 add 2019.09.10-->
+        
+
+        <!-- 背景雪花飘落特效 洪卫 shw2018 add 2019.09.10 -->
+        
+
+        <!-- 在线聊天工具  洪卫 shw2018 add 2019.09.11 -->
+        
+
+        <!-- 背景 canvas-nest  洪卫 shw 2018  add 2019.09.15-->
+        
+
+        <!-- 背景静止彩带  洪卫 shw 2018  add 2019.09.15-->
+        
+
+        <!-- 背景动态彩带 洪卫 shw 2018  add 2019.09.15-->
+        
+
+    </body>
+</html>

@@ -1,0 +1,2969 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+    <!-- shw2018 洪卫  modify 2019.08.15-->
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="Spring Boot, Spring Cloud, 微服务, Java技术, 好好学java, Java面试, 分布式, 最新干货分享">
+    <meta name="baidu-site-verification" content="fmlEuI34ir" />
+    <meta name="google-site-verification" content="ZWVq5UvPg33BCEA3LRTUkYe5J854o9lF1_WRTer9l8A" />
+    <meta name="description" content="本站是 好好学java 的技术分享博客。内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、分布式、Java面试、测试开发等相关的研究与知识分享。">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>SpringBoot 操作 ElasticSearch 详解（万字长文） | 好好学java | Spring Boot | Spring Cloud | 微服务 | Java技术 | Java面试 | 分布式 | 最新干货分享</title>
+    <link rel="icon" type="image/png" href="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7">
+
+    <!-- <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css"> -->
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    <!-- 自定义fontawesome样式：欧阳思海 -->
+    <link rel="stylesheet" type="text/css" href="/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/brands.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/fontawesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/regular.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/solid.min.css">
+
+
+    <style type="text/css">
+        code[class*="language-"],
+            pre[class*="language-"] {
+                white-space: pre !important;
+            }
+
+            
+
+        /* 将matery.css中的背景颜色修改放到这里：欧阳思海 */
+        .bg-color {
+            background-image: linear-gradient(to right, #ec8585 0%, #419488 100%);
+            opacity: 0.9;
+            // 透明度
+        }
+    </style>
+
+    <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
+    <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+
+    
+    
+    <script>
+        (function () {
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+    
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?6fe466069710c03a563713b507fbaca7";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+    <!-- Google Analytics -->
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-XXXXX-Y', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <!-- End Google Analytics -->
+
+    <script>(function (i, s, o, g, r, a, m) { i["DaoVoiceObject"] = r; i[r] = i[r] || function () { (i[r].q = i[r].q || []).push(arguments) }, i[r].l = 1 * new Date(); a = s.createElement(o), m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; a.charset = "utf-8"; m.parentNode.insertBefore(a, m) })(window, document, "script", ('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/0a804bac.js", "daovoice")</script>
+
+    <script>
+        if (true) {
+            daovoice('init', {
+                app_id: "0a804bac",
+                user_id: "NO_89757", // 必填: 该用户在您系统上的唯一ID
+                email: "daovoice@example.com", // 选填:  该用户在您系统上的主邮箱
+                name: "道客船长", // 选填: 用户名
+                signed_up: 1449821660 // 选填: 用户的注册时间，用Unix时间戳表示
+            });
+            daovoice('update');
+
+            daovoice('init', {
+                app_id: "0a804bac"
+            });
+            daovoice('update');
+        }
+    </script>
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/rss2.xml" title="好好学java" type="application/rss+xml">
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+    <body>
+
+        <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span" style="font-size: 1.4rem;">好好学java</span>
+                </a>
+            </div>
+            
+
+
+<!-- <a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-navicon"></i></a>
+<ul class="right">
+    
+    <li class="hide-on-med-and-down">
+        <a href="" class="waves-effect waves-light">
+            
+            <i class="fa "></i>
+            
+            <span></span>
+        </a>
+    </li>
+    
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title=""></i>
+        </a>
+    </li>
+</ul> -->
+
+<!-- 支持二级菜单特性 洪卫 shw2018 modify 2019.09.17  -->
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-align-justify"></i></a>
+<ul class="right nav-menu">
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-folder-minus"></i>
+                
+                <span style="font-size: 1.1rem;">Java学习</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/" >
+                    
+                    <span>Java入门</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Javaweb/" >
+                    
+                    <span>Java Web</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/spring%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>Spring教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/springboot%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>SpringBoot教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/springcloud%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>SpringCloud教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98/" >
+                    
+                    <span>Java面试</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%89%91%E6%8C%87offer/" >
+                    
+                    <span>剑指offer</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-code-branch"></i>
+                
+                <span style="font-size: 1.1rem;">Java进阶</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97/" >
+                    
+                    <span>设计模式</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" >
+                    
+                    <span>Java并发编程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/" >
+                    
+                    <span>数据库</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/redis/" >
+                    
+                    <span>Redis</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/linux/" >
+                    
+                    <span>Linux</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/" >
+                    
+                    <span>Java实战项目</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-code"></i>
+                
+                <span style="font-size: 1.1rem;">python学习</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/python%E5%9F%BA%E7%A1%80/" >
+                    
+                    <span>python基础</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/python%E6%A1%86%E6%9E%B6/" >
+                    
+                    <span>python框架</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/python%E5%85%B6%E4%BB%96/" >
+                    
+                    <span>python其他</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-coffee"></i>
+                
+                <span style="font-size: 1.1rem;">Java扩展</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/dubbo/" >
+                    
+                    <span>dubbo</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/netty/" >
+                    
+                    <span>netty</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/rpc/" >
+                    
+                    <span>rpc</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/eureka/" >
+                    
+                    <span>eureka</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/" >
+                    
+                    <span>中间件</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" >
+                    
+                    <span>分布式</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-desktop"></i>
+                
+                <span style="font-size: 1.1rem;">计算机核心</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" >
+                    
+                    <span>数据结构</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98/" >
+                    
+                    <span>leetcode刷题</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" >
+                    
+                    <span>计算机网络</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" >
+                    
+                    <span>算法</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/categories/" class="waves-effect waves-light">
+              
+                <i style="font-size: 1.1rem;" class="fa fa-adjust"></i>
+              
+              <span style="font-size: 1.1rem;">学习资源</span>
+            </a>
+
+            
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/contact" class="waves-effect waves-light">
+              
+                <i style="font-size: 1.1rem;" class="fa fa-envelope"></i>
+              
+              <span style="font-size: 1.1rem;">留言</span>
+            </a>
+
+            
+      </li>
+    
+
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title="搜索"></i>
+        </a>
+    </li>
+
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">好好学java</div>
+        <div class="logo-desc">
+            
+            
+            本站是 好好学java 的技术分享博客，涵盖Java后端技术、SpringBoot、微服务架构、分布式、Java面试等知 ...
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-folder-minus"></i>
+			
+			Java学习
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/ " style="margin-left:75px";>
+				  
+		          <span>Java入门</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Javaweb/ " style="margin-left:75px";>
+				  
+		          <span>Java Web</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/spring%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>Spring教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/springboot%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>SpringBoot教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/springcloud%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>SpringCloud教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98/ " style="margin-left:75px";>
+				  
+		          <span>Java面试</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%89%91%E6%8C%87offer/ " style="margin-left:75px";>
+				  
+		          <span>剑指offer</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-code-branch"></i>
+			
+			Java进阶
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97/ " style="margin-left:75px";>
+				  
+		          <span>设计模式</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>Java并发编程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/ " style="margin-left:75px";>
+				  
+		          <span>数据库</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/redis/ " style="margin-left:75px";>
+				  
+		          <span>Redis</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/linux/ " style="margin-left:75px";>
+				  
+		          <span>Linux</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/ " style="margin-left:75px";>
+				  
+		          <span>Java实战项目</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-code"></i>
+			
+			python学习
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/python%E5%9F%BA%E7%A1%80/ " style="margin-left:75px";>
+				  
+		          <span>python基础</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/python%E6%A1%86%E6%9E%B6/ " style="margin-left:75px";>
+				  
+		          <span>python框架</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/python%E5%85%B6%E4%BB%96/ " style="margin-left:75px";>
+				  
+		          <span>python其他</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-coffee"></i>
+			
+			Java扩展
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/dubbo/ " style="margin-left:75px";>
+				  
+		          <span>dubbo</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/netty/ " style="margin-left:75px";>
+				  
+		          <span>netty</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/rpc/ " style="margin-left:75px";>
+				  
+		          <span>rpc</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/eureka/ " style="margin-left:75px";>
+				  
+		          <span>eureka</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/ " style="margin-left:75px";>
+				  
+		          <span>中间件</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/ " style="margin-left:75px";>
+				  
+		          <span>分布式</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-desktop"></i>
+			
+			计算机核心
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/ " style="margin-left:75px";>
+				  
+		          <span>数据结构</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98/ " style="margin-left:75px";>
+				  
+		          <span>leetcode刷题</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/ " style="margin-left:75px";>
+				  
+		          <span>计算机网络</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E7%AE%97%E6%B3%95/ " style="margin-left:75px";>
+				  
+		          <span>算法</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories/" class="waves-effect waves-light">
+			
+			    <i class="fa fa-fw fa-adjust"></i>
+			
+			学习资源
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa fa-fw fa-envelope"></i>
+			
+			留言
+		</a>
+          
+        </li>
+        
+        
+    </ul>
+</div>
+
+        </div>
+
+        
+    </nav>
+
+</header>
+
+        
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/6.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <div class="description center-align post-title">
+                        SpringBoot 操作 ElasticSearch 详解（万字长文）
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 20px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+
+    /* 自定义mycard：欧阳思海 */
+
+    #my-card {
+        /* position: relative; */
+        width: 310px;
+        height: 300px;
+        /* max-height: 330px; */
+        margin-bottom: 15px;
+        margin-top: 15px;
+        /* text-align: center; */
+        border: 0;
+        border-radius: 3px;
+        color: rgba(0, 0, 0, .87);
+        background: #fff 50%;
+        background-image: none;
+        background-size: auto;
+        background-size: cover;
+        box-shadow: 0 15px 35px rgba(50, 50, 93, .1), 0 5px 15px rgba(0, 0, 0, .07);
+    }
+
+    /* .widget {
+        line-height: 1.6em;
+        word-wrap: break-word;
+        font-size: 0.9em;
+        padding-top: 15px;
+        padding-left: -45px;
+    } */
+</style>
+
+
+
+
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- shw2018 洪卫  modify 2019.08.15-->
+
+<!-- 代码块修改的代码开始 -->
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFunction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+<!-- 代码块折行 -->
+
+<style type="text/css">
+code[class*="language-"], pre[class*="language-"] { white-space: pre !important; }
+</style>
+
+<!-- 代码块修改代码结束 -->
+
+
+<!-- 文章内容详情 -->
+<div id="container">
+    <div id="artDetail">
+        <div class="card">
+            <div class="card-content article-info">
+                <div class="row tag-cate">
+                    <div class="col s7">
+                        
+                        <div class="article-tag">
+                            <span class="chip bg-color">无标签</span>
+                        </div>
+                        
+                    </div>
+                    <div class="col s5 right-align">
+                        
+                        <div class="post-cate">
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E5%A5%BD%E5%A5%BD%E5%AD%A6java/" class="post-category" target="_blank">
+                                好好学java
+                            </a>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <div class="post-info">
+                    <div class="post-date info-break-policy">
+                        <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
+                        2021-04-04
+                    </div>
+
+                    <div class="post-author info-break-policy">
+                        <i class="fa fa-user-o fa-fw"></i>作者:&nbsp;&nbsp;
+                        
+                        欧阳思海
+                        
+                    </div>
+
+                    
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;
+                        11.7k
+                    </div>
+                    
+
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-clock-o fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                        57 分
+                    </div>
+                    
+                    
+
+                    
+                    <span id="busuanzi_container_site_pv" style='display:none'></span>
+                    <i class="fa fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                    <span id="busuanzi_value_page_pv"></span>
+
+                    
+
+                </div>
+            </div>
+            <hr class="clearfix">
+            <div class="card-content article-card-content">
+                <!-- 欧阳思海，modify，2020.05.01-->
+<!-- 文章详情详情页面的头部广告位置信息 -->
+<div id="post-head-panel">
+    
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" style="font-size: 18px;" target="_blank">
+        <img src="/icons/hot.gif">
+        本人花费半年的时间总结的《Java面试指南》已拿腾讯等大厂offer，已开源在github ，欢迎star！
+    </a>
+    
+    
+</div>
+<br />
+
+
+
+<blockquote>
+    
+            <p>本文GitHub <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">https://github.com/OUYANGSIHAI/JavaInterview</a> 已收录，这是我花了6个月总结的<b>一线大厂Java面试</b>总结，本人已拿大厂offer，欢迎star</p>
+    
+    <p>原文链接：blog.ouyangsihai.cn &gt;&gt; <a href="/springboot-cao-zuo-elasticsearch-xiang-jie-wan-zi-chang-wen.html" target="_blank">SpringBoot 操作 ElasticSearch 详解（万字长文）</a></p>
+</blockquote>
+                <div id="articleContent">
+                    <pre class="line-numbers language-java"><code class="language-java">
+点击上方 好好学java ，选择 星标 公众号
+
+重磅资讯，干货，第一时间送达今日推荐：分享一套基于SpringBoot和Vue的企业级中后台开源项目，这个项目有点哇塞！个人原创100W <span class="token operator">+</span>访问量博客：点击前往，查看更多
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>来源 | <a target="_blank" rel="noopener" href="http://www.mydlq.club/article/64/">http://www.mydlq.club/article/64/</a></p>
+<h2 id="一、ElasticSearch-简介"><a href="#一、ElasticSearch-简介" class="headerlink" title="一、ElasticSearch 简介"></a>一、ElasticSearch 简介</h2><h3 id="1、简介"><a href="#1、简介" class="headerlink" title="1、简介"></a>1、简介</h3><p>ElasticSearch 是一个基于 Lucene 的搜索服务器。它提供了一个分布式多员工能力的全文搜索引擎，基于 RESTful web 接口。Elasticsearch 是用 Java 语言开发的，并作为 Apache 许可条款下的开放源码发布，是一种流行的企业级搜索引擎。</p>
+<p>ElasticSearch 用于云计算中，能够达到实时搜索，稳定，可靠，快速，安装使用方便。</p>
+<h3 id="2、特性"><a href="#2、特性" class="headerlink" title="2、特性"></a>2、特性</h3><ul>
+<li>分布式的文档存储引擎- 分布式的搜索引擎和分析引擎- 分布式，支持PB级数据<h3 id="3、使用场景"><a href="#3、使用场景" class="headerlink" title="3、使用场景"></a>3、使用场景</h3></li>
+<li>搜索领域：如百度、谷歌，全文检索等。- 门户网站：访问统计、文章点赞、留言评论等。- 广告推广：记录员工行为数据、消费趋势、员工群体进行定制推广等。- 信息采集：记录应用的埋点数据、访问日志数据等，方便大数据进行分析。<h2 id="二、ElasticSearch-基础概念"><a href="#二、ElasticSearch-基础概念" class="headerlink" title="二、ElasticSearch 基础概念"></a>二、ElasticSearch 基础概念</h2></li>
+</ul>
+<h3 id="1、ElaticSearch-和-DB-的关系"><a href="#1、ElaticSearch-和-DB-的关系" class="headerlink" title="1、ElaticSearch 和 DB 的关系"></a>1、ElaticSearch 和 DB 的关系</h3><p>在 Elasticsearch 中，文档归属于一种类型 type，而这些类型存在于索引 index 中，我们可以列一些简单的不同点，来类比传统关系型数据库：</p>
+<ul>
+<li>Relational DB -&gt; Databases -&gt; Tables -&gt; Rows -&gt; Columns- Elasticsearch -&gt; Indices -&gt; Types -&gt; Documents -&gt; Fields<br>Elasticsearch 集群可以包含多个索引 indices，每一个索引可以包含多个类型 types，每一个类型包含多个文档 documents，然后每个文档包含多个字段 Fields。而在 DB 中可以有多个数据库 Databases，每个库中可以有多张表 Tables，没个表中又包含多行Rows，每行包含多列Columns。</li>
+</ul>
+<h3 id="2、索引"><a href="#2、索引" class="headerlink" title="2、索引"></a>2、索引</h3><p><strong>索引基本概念（indices）：</strong></p>
+<p>索引是含义相同属性的文档集合，是 ElasticSearch 的一个逻辑存储，可以理解为关系型数据库中的数据库，ElasticSearch 可以把索引数据存放到一台服务器上，也可以 sharding 后存到多台服务器上，每个索引有一个或多个分片，每个分片可以有多个副本。</p>
+<p><strong>索引类型（index_type）：</strong></p>
+<p>索引可以定义一个或多个类型，文档必须属于一个类型。在 ElasticSearch 中，一个索引对象可以存储多个不同用途的对象，通过索引类型可以区分单个索引中的不同对象，可以理解为关系型数据库中的表。每个索引类型可以有不同的结构，但是不同的索引类型不能为相同的属性设置不同的类型。</p>
+<h3 id="3、文档"><a href="#3、文档" class="headerlink" title="3、文档"></a>3、文档</h3><p><strong>文档（document）：</strong></p>
+<p>文档是可以被索引的基本数据单位。存储在 ElasticSearch 中的主要实体叫文档 document，可以理解为关系型数据库中表的一行记录。每个文档由多个字段构成，ElasticSearch 是一个非结构化的数据库，每个文档可以有不同的字段，并且有一个唯一的标识符。</p>
+<h3 id="4、映射"><a href="#4、映射" class="headerlink" title="4、映射"></a>4、映射</h3><p><strong>映射（mapping）:</strong></p>
+<p>ElasticSearch 的 Mapping 非常类似于静态语言中的数据类型：声明一个变量为 int 类型的变量，以后这个变量都只能存储 int 类型的数据。同样的，一个 number 类型的 mapping 字段只能存储 number 类型的数据。</p>
+<p>同语言的数据类型相比，Mapping 还有一些其他的含义，Mapping 不仅告诉 ElasticSearch 一个 Field 中是什么类型的值， 它还告诉 ElasticSearch 如何索引数据以及数据是否能被搜索到。</p>
+<p>ElaticSearch 默认是动态创建索引和索引类型的 Mapping 的。这就相当于无需定义 Solr 中的 Schema，无需指定各个字段的索引规则就可以索引文件，很方便。但有时方便就代表着不灵活。比如，ElasticSearch 默认一个字段是要做分词的，但我们有时要搜索匹配整个字段却不行。如有统计工作要记录每个城市出现的次数。对于 name 字段，若记录 new york 文本，ElasticSearch 可能会把它拆分成 new 和 york 这两个词，分别计算这个两个单词的次数，而不是我们期望的 new york。</p>
+<h2 id="三、SpringBoot-项目引入-ElasticSearch-依赖"><a href="#三、SpringBoot-项目引入-ElasticSearch-依赖" class="headerlink" title="三、SpringBoot 项目引入 ElasticSearch 依赖"></a>三、SpringBoot 项目引入 ElasticSearch 依赖</h2><p>下面介绍下 SpringBoot 如何通过 elasticsearch-rest-high-level-client 工具操作 ElasticSearch，这里需要说一下，为什么没有使用 Spring 家族封装的 spring-data-elasticsearch。</p>
+<p>主要原因是灵活性和更新速度，Spring 将 ElasticSearch 过度封装，让开发者很难跟 ES 的 DSL 查询语句进行关联。再者就是更新速度，ES 的更新速度是非常快，但是 spring-data-elasticsearch 更新速度比较缓慢。</p>
+<p>由于上面两点，所以选择了官方推出的 Java 客户端 elasticsearch-rest-high-level-client，它的代码写法跟 DSL 语句很相似，懂 ES 查询的使用其上手很快。</p>
+<blockquote>
+</blockquote>
+<p>  示例项目地址：<a target="_blank" rel="noopener" href="https://github.com/my-dlq/blog-example/tree/master/springboot/springboot-elasticsearch-example">https://github.com/my-dlq/blog-example/tree/master/springboot/springboot-elasticsearch-example</a></p>
+<h3 id="1、Maven-引入相关依赖"><a href="#1、Maven-引入相关依赖" class="headerlink" title="1、Maven 引入相关依赖"></a>1、Maven 引入相关依赖</h3><ul>
+<li>：lombok 工具依赖。- fastjson：用于将 JSON 转换对象的依赖。- spring-boot-starter-web：  的 Web 依赖。- elasticsearch：ElasticSearch：依赖，需要和 ES 版本保持一致。- elasticsearch-rest-high-level-client：用于操作 ES 的 Java 客户端。<br>&#96;&#96;&#96;<br>&lt;?xml version&#x3D;”1.0” encoding&#x3D;”UTF-8”?&gt;<br>&lt;project xmlns&#x3D;”<a target="_blank" rel="noopener" href="http://maven.apache.org/POM/4.0.0&quot;">http://maven.apache.org/POM/4.0.0&quot;</a> xmlns:xsi&#x3D;”<a target="_blank" rel="noopener" href="http://www.w3.org/2001/XMLSchema-instance&quot;">http://www.w3.org/2001/XMLSchema-instance&quot;</a><br>         xsi:schemaLocation&#x3D;”<a target="_blank" rel="noopener" href="http://maven.apache.org/POM/4.0.0">http://maven.apache.org/POM/4.0.0</a> <a target="_blank" rel="noopener" href="https://maven.apache.org/xsd/maven-4.0.0.xsd&quot;">https://maven.apache.org/xsd/maven-4.0.0.xsd&quot;</a>&gt;<br>    &lt;modelVersion&gt;4.0.0&lt;&#x2F;modelVersion&gt;<br>    &lt;parent&gt;<br>        &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;<br>        &lt;artifactId&gt;spring-boot-starter-parent&lt;&#x2F;artifactId&gt;<br>        &lt;version&gt;2.2.4.RELEASE&lt;&#x2F;version&gt;<br>        &lt;relativePath&#x2F;&gt; &lt;!– lookup parent from repository –&gt;<br>    &lt;&#x2F;parent&gt;<br>    &lt;groupId&gt;club.mydlq&lt;&#x2F;groupId&gt;<br>    &lt;artifactId&gt;springboot-elasticsearch-example&lt;&#x2F;artifactId&gt;<br>    &lt;version&gt;0.0.1-SNAPSHOT&lt;&#x2F;version&gt;<br>    &lt;name&gt;springboot-elasticsearch-example&lt;&#x2F;name&gt;<br>    &lt;description&gt;Demo project for Spring Boot ElasticSearch&lt;&#x2F;description&gt;</li>
+</ul>
+<p>    &lt;properties&gt;<br>        &lt;java.version&gt;1.8&lt;&#x2F;java.version&gt;<br>    &lt;&#x2F;properties&gt;<br>    &lt;dependencies&gt;<br>        &lt;!–web–&gt;<br>        &lt;dependency&gt;<br>            &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;<br>            &lt;artifactId&gt;spring-boot-starter-web&lt;&#x2F;artifactId&gt;<br>        &lt;&#x2F;dependency&gt;<br>        &lt;!–lombok–&gt;<br>        &lt;dependency&gt;<br>            &lt;groupId&gt;org.projectlombok&lt;&#x2F;groupId&gt;<br>            &lt;artifactId&gt;lombok&lt;&#x2F;artifactId&gt;<br>            &lt;optional&gt;true&lt;&#x2F;optional&gt;<br>        &lt;&#x2F;dependency&gt;<br>        &lt;!–fastjson–&gt;<br>        &lt;dependency&gt;<br>            &lt;groupId&gt;com.alibaba&lt;&#x2F;groupId&gt;<br>            &lt;artifactId&gt;fastjson&lt;&#x2F;artifactId&gt;<br>            &lt;version&gt;1.2.61&lt;&#x2F;version&gt;<br>        &lt;&#x2F;dependency&gt;<br>        &lt;!–elasticsearch–&gt;<br>        &lt;dependency&gt;<br>            &lt;groupId&gt;org.elasticsearch.client&lt;&#x2F;groupId&gt;<br>            &lt;artifactId&gt;elasticsearch-rest-high-level-client&lt;&#x2F;artifactId&gt;<br>            &lt;version&gt;6.5.4&lt;&#x2F;version&gt;<br>        &lt;&#x2F;dependency&gt;<br>        &lt;dependency&gt;<br>            &lt;groupId&gt;org.elasticsearch&lt;&#x2F;groupId&gt;<br>            &lt;artifactId&gt;elasticsearch&lt;&#x2F;artifactId&gt;<br>            &lt;version&gt;6.5.4&lt;&#x2F;version&gt;<br>        &lt;&#x2F;dependency&gt;<br>    &lt;&#x2F;dependencies&gt;</p>
+<p>    &lt;build&gt;<br>        &lt;plugins&gt;<br>            &lt;plugin&gt;<br>                &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;<br>                &lt;artifactId&gt;spring-boot-maven-plugin&lt;&#x2F;artifactId&gt;<br>            &lt;&#x2F;plugin&gt;<br>        &lt;&#x2F;plugins&gt;<br>    &lt;&#x2F;build&gt;</p>
+<p>&lt;&#x2F;project&gt;</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+### <span class="token number">2</span>、ElasticSearch 连接配置
+
+<span class="token operator">*</span><span class="token operator">*</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>、application<span class="token punctuation">.</span>yml 配置文件<span class="token operator">*</span><span class="token operator">*</span>
+
+为了方便更改连接 ES 的连接配置，所以我们将配置信息放置于 application<span class="token punctuation">.</span>yaml 中：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>#base<br>server:<br>  port: 8080<br>#spring<br>spring:<br>  application:<br>    name: springboot-elasticsearch-example<br>#elasticsearch<br>elasticsearch:<br>  schema: http<br>  address: 127.0.0.1:9200<br>  connectTimeout: 5000<br>  socketTimeout: 5000<br>  connectionRequestTimeout: 5000<br>  maxConnectNum: 100<br>  maxConnectPerRoute: 100</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+<span class="token operator">*</span><span class="token operator">*</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span>、java 连接配置类<span class="token operator">*</span><span class="token operator">*</span>
+
+这里需要写一个 Java 配置类读取 application 中的配置信息：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>import org.apache.http.HttpHost;<br>import org.elasticsearch.client.RestClient;<br>import org.elasticsearch.client.RestClientBuilder;<br>import org.elasticsearch.client.RestHighLevelClient;<br>import org.springframework.beans.factory.annotation.Value;<br>import org.springframework.context.annotation.Bean;<br>import org.springframework.context.annotation.Configuration;<br>import java.util.ArrayList;<br>import java.util.List;</p>
+<p>&#x2F;**<br> * ElasticSearch 配置<br> *&#x2F;<br>@Configuration<br>public class ElasticSearchConfig {</p>
+<p>    &#x2F;** 协议 *&#x2F;<br>    @Value(“${elasticsearch.schema:http}”)<br>    private String schema;</p>
+<p>    &#x2F;** 集群地址，如果有多个用“,”隔开 *&#x2F;<br>    @Value(“${elasticsearch.address}”)<br>    private String address;</p>
+<p>    &#x2F;** 连接超时时间 *&#x2F;<br>    @Value(“${elasticsearch.connectTimeout:5000}”)<br>    private int connectTimeout;</p>
+<p>    &#x2F;** Socket 连接超时时间 *&#x2F;<br>    @Value(“${elasticsearch.socketTimeout:10000}”)<br>    private int socketTimeout;</p>
+<p>    &#x2F;** 获取连接的超时时间 *&#x2F;<br>    @Value(“${elasticsearch.connectionRequestTimeout:5000}”)<br>    private int connectionRequestTimeout;</p>
+<p>    &#x2F;** 最大连接数 *&#x2F;<br>    @Value(“${elasticsearch.maxConnectNum:100}”)<br>    private int maxConnectNum;</p>
+<p>    &#x2F;** 最大路由连接数 *&#x2F;<br>    @Value(“${elasticsearch.maxConnectPerRoute:100}”)<br>    private int maxConnectPerRoute;</p>
+<p>    @Bean<br>    public RestHighLevelClient restHighLevelClient() {<br>        &#x2F;&#x2F; 拆分地址<br>        List&lt;HttpHost&gt; hostLists &#x3D; new ArrayList&lt;&gt;();<br>        String[] hostList &#x3D; address.split(“,”);<br>        for (String addr : hostList) {<br>            String host &#x3D; addr.split(“:”)[0];<br>            String port &#x3D; addr.split(“:”)[1];<br>            hostLists.add(new HttpHost(host, Integer.parseInt(port), schema));<br>        }<br>        &#x2F;&#x2F; 转换成 HttpHost 数组<br>        HttpHost[] httpHost &#x3D; hostLists.toArray(new HttpHost[]{});<br>        &#x2F;&#x2F; 构建连接对象<br>        RestClientBuilder builder &#x3D; RestClient.builder(httpHost);<br>        &#x2F;&#x2F; 异步连接延时配置<br>        builder.setRequestConfigCallback(requestConfigBuilder -&gt; {<br>            requestConfigBuilder.setConnectTimeout(connectTimeout);<br>            requestConfigBuilder.setSocketTimeout(socketTimeout);<br>            requestConfigBuilder.setConnectionRequestTimeout(connectionRequestTimeout);<br>            return requestConfigBuilder;<br>        });<br>        &#x2F;&#x2F; 异步连接数配置<br>        builder.setHttpClientConfigCallback(httpClientBuilder -&gt; {<br>            httpClientBuilder.setMaxConnTotal(maxConnectNum);<br>            httpClientBuilder.setMaxConnPerRoute(maxConnectPerRoute);<br>            return httpClientBuilder;<br>        });<br>        return new RestHighLevelClient(builder);<br>    }</p>
+<p>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+## 四、索引操作示例
+
+这里示例会指出通过 Kibana 的  工具操作与对应的 Java 代码操作的两个示例。扩展<span class="token operator">:</span>
+
+### <span class="token number">1</span>、Restful 操作示例
+
+<span class="token operator">*</span><span class="token operator">*</span>创建索引<span class="token operator">*</span><span class="token operator">*</span>
+
+创建名为 mydlq<span class="token operator">-</span>user 的索引与对应 Mapping。
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>PUT &#x2F;mydlq-user<br>{<br>  “mappings”: {<br>    “doc”: {<br>      “dynamic”: true,<br>      “properties”: {<br>        “name”: {<br>          “type”: “text”,<br>          “fields”: {<br>            “keyword”: {<br>              “type”: “keyword”<br>            }<br>          }<br>        },<br>        “address”: {<br>          “type”: “text”,<br>          “fields”: {<br>            “keyword”: {<br>              “type”: “keyword”<br>            }<br>          }<br>        },<br>        “remark”: {<br>          “type”: “text”,<br>          “fields”: {<br>            “keyword”: {<br>              “type”: “keyword”<br>            }<br>          }<br>        },<br>        “age”: {<br>          “type”: “integer”<br>        },<br>        “salary”: {<br>          “type”: “float”<br>        },<br>        “birthDate”: {<br>          “type”: “date”,<br>          “format”: “yyyy-MM-dd”<br>        },<br>        “createTime”: {<br>          “type”: “date”<br>        }<br>      }<br>    }<br>  }<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+<span class="token operator">*</span><span class="token operator">*</span>删除索引<span class="token operator">*</span><span class="token operator">*</span>
+
+删除 mydlq<span class="token operator">-</span>user 索引。
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>DELETE &#x2F;mydlq-user</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+### <span class="token number">2</span>、Java 代码示例
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>import lombok.extern.slf4j.Slf4j;<br>import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;<br>import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;<br>import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;<br>import org.elasticsearch.action.support.master.AcknowledgedResponse;<br>import org.elasticsearch.client.RequestOptions;<br>import org.elasticsearch.client.RestHighLevelClient;<br>import org.elasticsearch.common.settings.Settings;<br>import org.elasticsearch.common.xcontent.XContentBuilder;<br>import org.elasticsearch.common.xcontent.XContentFactory;<br>import org.springframework.beans.factory.annotation.Autowired;<br>import org.springframework.stereotype.Service;<br>import java.io.IOException;</p>
+<p>@Slf4j<br>@Service<br>public class IndexService2 {</p>
+<p>    @Autowired<br>    private RestHighLevelClient restHighLevelClient;</p>
+<p>    &#x2F;**<br>     * 创建索引<br>     *&#x2F;<br>    public void createIndex() {<br>        try {<br>            &#x2F;&#x2F; 创建 Mapping<br>            XContentBuilder mapping &#x3D; XContentFactory.jsonBuilder()<br>                .startObject()<br>                    .field(“dynamic”, true)<br>                    .startObject(“properties”)<br>                        .startObject(“name”)<br>                            .field(“type”,”text”)<br>                            .startObject(“fields”)<br>                                .startObject(“keyword”)<br>                                    .field(“type”,”keyword”)<br>                                .endObject()<br>                            .endObject()<br>                        .endObject()<br>                        .startObject(“address”)<br>                            .field(“type”,”text”)<br>                            .startObject(“fields”)<br>                                .startObject(“keyword”)<br>                                    .field(“type”,”keyword”)<br>                                .endObject()<br>                            .endObject()<br>                        .endObject()<br>                        .startObject(“remark”)<br>                            .field(“type”,”text”)<br>                            .startObject(“fields”)<br>                                .startObject(“keyword”)<br>                                    .field(“type”,”keyword”)<br>                                .endObject()<br>                            .endObject()<br>                        .endObject()<br>                        .startObject(“age”)<br>                            .field(“type”,”integer”)<br>                        .endObject()<br>                        .startObject(“salary”)<br>                            .field(“type”,”float”)<br>                        .endObject()<br>                        .startObject(“birthDate”)<br>                            .field(“type”,”date”)<br>                            .field(“format”, “yyyy-MM-dd”)<br>                        .endObject()<br>                        .startObject(“createTime”)<br>                            .field(“type”,”date”)<br>                        .endObject()<br>                    .endObject()<br>                .endObject();<br>            &#x2F;&#x2F; 创建索引配置信息，配置<br>            Settings settings &#x3D; Settings.builder()<br>                    .put(“index.number_of_shards”, 1)<br>                    .put(“index.number_of_replicas”, 0)<br>                    .build();<br>            &#x2F;&#x2F; 新建创建索引请求对象，然后设置索引类型（ES 7.0 将不存在索引类型）和 mapping 与 index 配置<br>            CreateIndexRequest request &#x3D; new CreateIndexRequest(“mydlq-user”, settings);<br>            request.mapping(“doc”, mapping);<br>            &#x2F;&#x2F; RestHighLevelClient 执行创建索引<br>            CreateIndexResponse createIndexResponse &#x3D; restHighLevelClient.indices().create(request, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 判断是否创建成功<br>            boolean isCreated &#x3D; createIndexResponse.isAcknowledged();<br>            log.info(“是否创建成功：{}”, isCreated);<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>    }</p>
+<p>    &#x2F;**<br>     * 删除索引<br>     *&#x2F;<br>    public void deleteIndex() {<br>        try {<br>            &#x2F;&#x2F; 新建删除索引请求对象<br>            DeleteIndexRequest request &#x3D; new DeleteIndexRequest(“mydlq-user”);<br>            &#x2F;&#x2F; 执行删除索引<br>            AcknowledgedResponse acknowledgedResponse &#x3D; restHighLevelClient.indices().delete(request, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 判断是否删除成功<br>            boolean siDeleted &#x3D; acknowledgedResponse.isAcknowledged();<br>            log.info(“是否删除成功：{}”, siDeleted);<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>    }</p>
+<p>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+## 五、文档操作示例
+
+### <span class="token number">1</span>、Restful 操作示例
+
+<span class="token operator">*</span><span class="token operator">*</span>增加文档信息<span class="token operator">*</span><span class="token operator">*</span>
+
+在索引 mydlq<span class="token operator">-</span>user 中增加一条文档信息。
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>POST &#x2F;mydlq-user&#x2F;doc<br>{<br>    “address”: “北京市”,<br>    “age”: 29,<br>    “birthDate”: “1990-01-10”,<br>    “createTime”: 1579530727699,<br>    “name”: “张三”,<br>    “remark”: “来自北京市的张先生”,<br>    “salary”: 100<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+<span class="token operator">*</span><span class="token operator">*</span>获取文档信息<span class="token operator">*</span><span class="token operator">*</span>
+
+获取 mydlq<span class="token operator">-</span>user 的索引 id<span class="token operator">=</span><span class="token number">1</span> 的文档信息。
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>GET &#x2F;mydlq-user&#x2F;doc&#x2F;1</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+<span class="token operator">*</span><span class="token operator">*</span>更新文档信息<span class="token operator">*</span><span class="token operator">*</span>
+
+更新之前创建的 id<span class="token operator">=</span><span class="token number">1</span> 的文档信息。
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>PUT &#x2F;mydlq-user&#x2F;doc&#x2F;1<br>{<br>    “address”: “北京市海淀区”,<br>    “age”: 29,<br>    “birthDate”: “1990-01-10”,<br>    “createTime”: 1579530727699,<br>    “name”: “张三”,<br>    “remark”: “来自北京市的张先生”,<br>    “salary”: 100<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+<span class="token operator">*</span><span class="token operator">*</span>删除文档信息<span class="token operator">*</span><span class="token operator">*</span>
+
+删除之前创建的 id<span class="token operator">=</span><span class="token number">1</span> 的文档信息。
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>DELETE &#x2F;mydlq-user&#x2F;doc&#x2F;1</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+### <span class="token number">2</span>、Java 代码示例
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>import club.mydlq.elasticsearch.model.entity.UserInfo;<br>import com.alibaba.fastjson.JSON;<br>import lombok.extern.slf4j.Slf4j;<br>import org.elasticsearch.action.delete.DeleteRequest;<br>import org.elasticsearch.action.delete.DeleteResponse;<br>import org.elasticsearch.action.get.GetRequest;<br>import org.elasticsearch.action.get.GetResponse;<br>import org.elasticsearch.action.index.IndexRequest;<br>import org.elasticsearch.action.index.IndexResponse;<br>import org.elasticsearch.action.update.UpdateRequest;<br>import org.elasticsearch.action.update.UpdateResponse;<br>import org.elasticsearch.client.RequestOptions;<br>import org.elasticsearch.client.RestHighLevelClient;<br>import org.elasticsearch.common.xcontent.XContentType;<br>import org.springframework.beans.factory.annotation.Autowired;<br>import org.springframework.stereotype.Service;<br>import java.io.IOException;<br>import java.util.Date;</p>
+<p>@Slf4j<br>@Service<br>public class IndexService {</p>
+<p>    @Autowired<br>    private RestHighLevelClient restHighLevelClient;</p>
+<p>    &#x2F;**<br>     * 增加文档信息<br>     *&#x2F;<br>    public void addDocument() {<br>        try {<br>            &#x2F;&#x2F; 创建索引请求对象<br>            IndexRequest indexRequest &#x3D; new IndexRequest(“mydlq-user”, “doc”, “1”);<br>            &#x2F;&#x2F; 创建员工信息<br>            UserInfo userInfo &#x3D; new UserInfo();<br>            userInfo.setName(“张三”);<br>            userInfo.setAge(29);<br>            userInfo.setSalary(100.00f);<br>            userInfo.setAddress(“北京市”);<br>            userInfo.setRemark(“来自北京市的张先生”);<br>            userInfo.setCreateTime(new Date());<br>            userInfo.setBirthDate(“1990-01-10”);<br>            &#x2F;&#x2F; 将对象转换为 byte 数组<br>            byte[] json &#x3D; JSON.toJSONBytes(userInfo);<br>            &#x2F;&#x2F; 设置文档内容<br>            indexRequest.source(json, XContentType.JSON);<br>            &#x2F;&#x2F; 执行增加文档<br>            IndexResponse response &#x3D; restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);<br>            log.info(“创建状态：{}”, response.status());<br>        } catch (Exception e) {<br>            log.error(“”, e);<br>        }<br>    }</p>
+<p>    &#x2F;**<br>     * 获取文档信息<br>     *&#x2F;<br>    public void getDocument() {<br>        try {<br>            &#x2F;&#x2F; 获取请求对象<br>            GetRequest getRequest &#x3D; new GetRequest(“mydlq-user”, “doc”, “1”);<br>            &#x2F;&#x2F; 获取文档信息<br>            GetResponse getResponse &#x3D; restHighLevelClient.get(getRequest, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 将 JSON 转换成对象<br>            if (getResponse.isExists()) {<br>                UserInfo userInfo &#x3D; JSON.parseObject(getResponse.getSourceAsBytes(), UserInfo.class);<br>                log.info(“员工信息：{}”, userInfo);<br>            }<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>    }</p>
+<p>    &#x2F;**<br>     * 更新文档信息<br>     *&#x2F;<br>    public void updateDocument() {<br>        try {<br>            &#x2F;&#x2F; 创建索引请求对象<br>            UpdateRequest updateRequest &#x3D; new UpdateRequest(“mydlq-user”, “doc”, “1”);<br>            &#x2F;&#x2F; 设置员工更新信息<br>            UserInfo userInfo &#x3D; new UserInfo();<br>            userInfo.setSalary(200.00f);<br>            userInfo.setAddress(“北京市海淀区”);<br>            &#x2F;&#x2F; 将对象转换为 byte 数组<br>            byte[] json &#x3D; JSON.toJSONBytes(userInfo);<br>            &#x2F;&#x2F; 设置更新文档内容<br>            updateRequest.doc(json, XContentType.JSON);<br>            &#x2F;&#x2F; 执行更新文档<br>            UpdateResponse response &#x3D; restHighLevelClient.update(updateRequest, RequestOptions.DEFAULT);<br>            log.info(“创建状态：{}”, response.status());<br>        } catch (Exception e) {<br>            log.error(“”, e);<br>        }<br>    }</p>
+<p>    &#x2F;**<br>     * 删除文档信息<br>     *&#x2F;<br>    public void deleteDocument() {<br>        try {<br>            &#x2F;&#x2F; 创建删除请求对象<br>            DeleteRequest deleteRequest &#x3D; new DeleteRequest(“mydlq-user”, “doc”, “1”);<br>            &#x2F;&#x2F; 执行删除文档<br>            DeleteResponse response &#x3D; restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT);<br>            log.info(“删除状态：{}”, response.status());<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>    }</p>
+<p>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+## 六、插入初始化数据
+
+执行查询示例前，先往中插入一批数据：
+
+### <span class="token number">1</span>、单条插入
+
+POST mydlq<span class="token operator">-</span>user<span class="token operator">/</span>_doc
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>{“name”:”零零”,”address”:”北京市丰台区”,”remark”:”低层员工”,”age”:29,”salary”:3000,”birthDate”:”1990-11-11”,”createTime”:”2019-11-11T08:18:00.000Z”}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+### <span class="token number">2</span>、批量插入
+
+POST _bulk
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>{“index”:{“_index”:”mydlq-user”,”_type”:”doc”}}<br>{“name”:”刘一”,”address”:”北京市丰台区”,”remark”:”低层员工”,”age”:30,”salary”:3000,”birthDate”:”1989-11-11”,”createTime”:”2019-03-15T08:18:00.000Z”}<br>{“index”:{“_index”:”mydlq-user”,”_type”:”doc”}}<br>{“name”:”陈二”,”address”:”北京市昌平区”,”remark”:”中层员工”,”age”:27,”salary”:7900,”birthDate”:”1992-01-25”,”createTime”:”2019-11-08T11:15:00.000Z”}<br>{“index”:{“_index”:”mydlq-user”,”_type”:”doc”}}<br>{“name”:”张三”,”address”:”北京市房山区”,”remark”:”中层员工”,”age”:28,”salary”:8800,”birthDate”:”1991-10-05”,”createTime”:”2019-07-22T13:22:00.000Z”}<br>{“index”:{“_index”:”mydlq-user”,”_type”:”doc”}}<br>{“name”:”李四”,”address”:”北京市大兴区”,”remark”:”高层员工”,”age”:26,”salary”:9000,”birthDate”:”1993-08-18”,”createTime”:”2019-10-17T15:00:00.000Z”}<br>{“index”:{“_index”:”mydlq-user”,”_type”:”doc”}}<br>{“name”:”王五”,”address”:”北京市密云区”,”remark”:”低层员工”,”age”:31,”salary”:4800,”birthDate”:”1988-07-20”,”createTime”:”2019-05-29T09:00:00.000Z”}<br>{“index”:{“_index”:”mydlq-user”,”_type”:”doc”}}<br>{“name”:”赵六”,”address”:”北京市通州区”,”remark”:”中层员工”,”age”:32,”salary”:6500,”birthDate”:”1987-06-02”,”createTime”:”2019-12-10T18:00:00.000Z”}<br>{“index”:{“_index”:”mydlq-user”,”_type”:”doc”}}<br>{“name”:”孙七”,”address”:”北京市朝阳区”,”remark”:”中层员工”,”age”:33,”salary”:7000,”birthDate”:”1986-04-15”,”createTime”:”2019-06-06T13:00:00.000Z”}<br>{“index”:{“_index”:”mydlq-user”,”_type”:”doc”}}<br>{“name”:”周八”,”address”:”北京市西城区”,”remark”:”低层员工”,”age”:32,”salary”:5000,”birthDate”:”1987-09-26”,”createTime”:”2019-01-26T14:00:00.000Z”}<br>{“index”:{“_index”:”mydlq-user”,”_type”:”doc”}}<br>{“name”:”吴九”,”address”:”北京市海淀区”,”remark”:”高层员工”,”age”:30,”salary”:11000,”birthDate”:”1989-11-25”,”createTime”:”2019-09-07T13:34:00.000Z”}<br>{“index”:{“_index”:”mydlq-user”,”_type”:”doc”}}<br>{“name”:”郑十”,”address”:”北京市东城区”,”remark”:”低层员工”,”age”:29,”salary”:5000,”birthDate”:”1990-12-25”,”createTime”:”2019-03-06T12:08:00.000Z”}<br>{“index”:{“_index”:”mydlq-user”,”_type”:”doc”}}<br>{“name”:”萧十一”,”address”:”北京市平谷区”,”remark”:”低层员工”,”age”:29,”salary”:3300,”birthDate”:”1990-11-11”,”createTime”:”2019-03-10T08:17:00.000Z”}<br>{“index”:{“_index”:”mydlq-user”,”_type”:”doc”}}<br>{“name”:”曹十二”,”address”:”北京市怀柔区”,”remark”:”中层员工”,”age”:27,”salary”:6800,”birthDate”:”1992-01-25”,”createTime”:”2019-12-03T11:09:00.000Z”}<br>{“index”:{“_index”:”mydlq-user”,”_type”:”doc”}}<br>{“name”:”吴十三”,”address”:”北京市延庆区”,”remark”:”中层员工”,”age”:25,”salary”:7000,”birthDate”:”1994-10-05”,”createTime”:”2019-07-27T14:22:00.000Z”}<br>{“index”:{“_index”:”mydlq-user”,”_type”:”doc”}}<br>{“name”:”冯十四”,”address”:”北京市密云区”,”remark”:”低层员工”,”age”:25,”salary”:3000,”birthDate”:”1994-08-18”,”createTime”:”2019-04-22T15:00:00.000Z”}<br>{“index”:{“_index”:”mydlq-user”,”_type”:”doc”}}<br>{“name”:”蒋十五”,”address”:”北京市通州区”,”remark”:”低层员工”,”age”:31,”salary”:2800,”birthDate”:”1988-07-20”,”createTime”:”2019-06-13T10:00:00.000Z”}<br>{“index”:{“_index”:”mydlq-user”,”_type”:”doc”}}<br>{“name”:”苗十六”,”address”:”北京市门头沟区”,”remark”:”高层员工”,”age”:32,”salary”:11500,”birthDate”:”1987-06-02”,”createTime”:”2019-11-11T18:00:00.000Z”}<br>{“index”:{“_index”:”mydlq-user”,”_type”:”doc”}}<br>{“name”:”鲁十七”,”address”:”北京市石景山区”,”remark”:”高员工”,”age”:33,”salary”:9500,”birthDate”:”1986-04-15”,”createTime”:”2019-06-06T14:00:00.000Z”}<br>{“index”:{“_index”:”mydlq-user”,”_type”:”doc”}}<br>{“name”:”沈十八”,”address”:”北京市朝阳区”,”remark”:”中层员工”,”age”:31,”salary”:8300,”birthDate”:”1988-09-26”,”createTime”:”2019-09-25T14:00:00.000Z”}<br>{“index”:{“_index”:”mydlq-user”,”_type”:”doc”}}<br>{“name”:”吕十九”,”address”:”北京市西城区”,”remark”:”低层员工”,”age”:31,”salary”:4500,”birthDate”:”1988-11-25”,”createTime”:”2019-09-22T13:34:00.000Z”}<br>{“index”:{“_index”:”mydlq-user”,”_type”:”doc”}}<br>{“name”:”丁二十”,”address”:”北京市东城区”,”remark”:”低层员工”,”age”:33,”salary”:2100,”birthDate”:”1986-12-25”,”createTime”:”2019-03-07T12:08:00.000Z”}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+### <span class="token number">3</span>、查询数据
+
+插入完成后再查询数据，查看之前插入的数据是否存在：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>GET mydlq-user&#x2F;_search</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+执行后得到下面记录<span class="token operator">:</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>{<br>  “took”: 2,<br>  “timed_out”: false,<br>  “_shards”: {<br>    “total”: 1,<br>    “successful”: 1,<br>    “skipped”: 0,<br>    “failed”: 0<br>  },<br>  “hits”: {<br>    “total”: 20,<br>    “max_score”: 1,<br>    “hits”: [<br>      {<br>        “_index”: “mydlq-user”,<br>        “_type”: “_doc”,<br>        “_id”: “BeN0BW8B7BNodGwRFTRj”,<br>        “_score”: 1,<br>        “_source”: {<br>          “name”: “刘一”,<br>          “address”: “北京市丰台区”,<br>          “remark”: “低层员工”,<br>          “age”: 30,<br>          “salary”: 3000,<br>          “birthDate”: “1989-11-11”,<br>          “createTime”: “2019-03-15T08:18:00.000Z”<br>        }<br>      },<br>      {<br>        “_index”: “mydlq-user”,<br>        “_type”: “_doc”,<br>        “_id”: “BuN0BW8B7BNodGwRFTRj”,<br>        “_score”: 1,<br>        “_source”: {<br>          “name”: “陈二”,<br>          “address”: “北京市昌平区”,<br>          “remark”: “中层员工”,<br>          “age”: 27,<br>          “salary”: 7900,<br>          “birthDate”: “1992-01-25”,<br>          “createTime”: “2019-11-08T11:15:00.000Z”<br>        }<br>      },<br>      {<br>        “_index”: “mydlq-user”,<br>        “_type”: “_doc”,<br>        “_id”: “B-N0BW8B7BNodGwRFTRj”,<br>        “_score”: 1,<br>        “_source”: {<br>          “name”: “张三”,<br>          “address”: “北京市房山区”,<br>          “remark”: “中层员工”,<br>          “age”: 28,<br>          “salary”: 8800,<br>          “birthDate”: “1991-10-05”,<br>          “createTime”: “2019-07-22T13:22:00.000Z”<br>        }<br>      },<br>      {<br>        “_index”: “mydlq-user”,<br>        “_type”: “_doc”,<br>        “_id”: “CON0BW8B7BNodGwRFTRj”,<br>        “_score”: 1,<br>        “_source”: {<br>          “name”: “李四”,<br>          “address”: “北京市大兴区”,<br>          “remark”: “高层员工”,<br>          “age”: 26,<br>          “salary”: 9000,<br>          “birthDate”: “1993-08-18”,<br>          “createTime”: “2019-10-17T15:00:00.000Z”<br>        }<br>      },<br>      {<br>        “_index”: “mydlq-user”,<br>        “_type”: “_doc”,<br>        “_id”: “CeN0BW8B7BNodGwRFTRj”,<br>        “_score”: 1,<br>        “_source”: {<br>          “name”: “王五”,<br>          “address”: “北京市密云区”,<br>          “remark”: “低层员工”,<br>          “age”: 31,<br>          “salary”: 4800,<br>          “birthDate”: “1988-07-20”,<br>          “createTime”: “2019-05-29T09:00:00.000Z”<br>        }<br>      },<br>      {<br>        “_index”: “mydlq-user”,<br>        “_type”: “_doc”,<br>        “_id”: “CuN0BW8B7BNodGwRFTRj”,<br>        “_score”: 1,<br>        “_source”: {<br>          “name”: “赵六”,<br>          “address”: “北京市通州区”,<br>          “remark”: “中层员工”,<br>          “age”: 32,<br>          “salary”: 6500,<br>          “birthDate”: “1987-06-02”,<br>          “createTime”: “2019-12-10T18:00:00.000Z”<br>        }<br>      },<br>      {<br>        “_index”: “mydlq-user”,<br>        “_type”: “_doc”,<br>        “_id”: “C-N0BW8B7BNodGwRFTRj”,<br>        “_score”: 1,<br>        “_source”: {<br>          “name”: “孙七”,<br>          “address”: “北京市朝阳区”,<br>          “remark”: “中层员工”,<br>          “age”: 33,<br>          “salary”: 7000,<br>          “birthDate”: “1986-04-15”,<br>          “createTime”: “2019-06-06T13:00:00.000Z”<br>        }<br>      },<br>      {<br>        “_index”: “mydlq-user”,<br>        “_type”: “_doc”,<br>        “_id”: “DON0BW8B7BNodGwRFTRj”,<br>        “_score”: 1,<br>        “_source”: {<br>          “name”: “周八”,<br>          “address”: “北京市西城区”,<br>          “remark”: “低层员工”,<br>          “age”: 32,<br>          “salary”: 5000,<br>          “birthDate”: “1987-09-26”,<br>          “createTime”: “2019-01-26T14:00:00.000Z”<br>        }<br>      },<br>      {<br>        “_index”: “mydlq-user”,<br>        “_type”: “_doc”,<br>        “_id”: “DeN0BW8B7BNodGwRFTRj”,<br>        “_score”: 1,<br>        “_source”: {<br>          “name”: “吴九”,<br>          “address”: “北京市海淀区”,<br>          “remark”: “高层员工”,<br>          “age”: 30,<br>          “salary”: 11000,<br>          “birthDate”: “1989-11-25”,<br>          “createTime”: “2019-09-07T13:34:00.000Z”<br>        }<br>      },<br>      {<br>        “_index”: “mydlq-user”,<br>        “_type”: “_doc”,<br>        “_id”: “DuN0BW8B7BNodGwRFTRj”,<br>        “_score”: 1,<br>        “_source”: {<br>          “name”: “郑十”,<br>          “address”: “北京市东城区”,<br>          “remark”: “低层员工”,<br>          “age”: 29,<br>          “salary”: 5000,<br>          “birthDate”: “1990-12-25”,<br>          “createTime”: “2019-03-06T12:08:00.000Z”<br>        }<br>      }<br>    ]<br>  }<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+## 七、查询操作示例
+
+### <span class="token number">1</span>、精确查询<span class="token punctuation">(</span>term<span class="token punctuation">)</span>
+
+#### <span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>、Restful 操作示例
+
+<span class="token operator">*</span><span class="token operator">*</span>精确查询<span class="token operator">*</span><span class="token operator">*</span>
+
+精确查询，查询地址为 北京市通州区 的人员信息：
+
+查询条件不会进行分词，但是查询内容可能会分词，导致查询不到。之前在创建索引时设置 Mapping 中 address 字段存在 keyword 字段是专门用于不分词查询的子字段。
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>GET mydlq-user&#x2F;_search<br>{<br>  “query”: {<br>    “term”: {<br>      “address.keyword”: {<br>        “value”: “北京市通州区”<br>      }<br>    }<br>  }<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+<span class="token operator">*</span><span class="token operator">*</span>精确查询<span class="token operator">-</span>多内容查询<span class="token operator">*</span><span class="token operator">*</span>
+
+精确查询，查询地址为 北京市丰台区、北京市昌平区 或 北京市大兴区 的人员信息：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>GET mydlq-user&#x2F;_search<br>{<br>  “query”: {<br>    “terms”: {<br>      “address.keyword”: [<br>        “北京市丰台区”,<br>        “北京市昌平区”,<br>        “北京市大兴区”<br>      ]<br>    }<br>  }<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+#### <span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span>、Java 代码示例
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>import club.mydlq.elasticsearch.model.entity.UserInfo;<br>import com.alibaba.fastjson.JSON;<br>import lombok.extern.slf4j.Slf4j;<br>import org.elasticsearch.action.search.SearchRequest;<br>import org.elasticsearch.action.search.SearchResponse;<br>import org.elasticsearch.client.RequestOptions;<br>import org.elasticsearch.client.RestHighLevelClient;<br>import org.elasticsearch.index.query.QueryBuilders;<br>import org.elasticsearch.rest.RestStatus;<br>import org.elasticsearch.search.SearchHit;<br>import org.elasticsearch.search.SearchHits;<br>import org.elasticsearch.search.builder.SearchSourceBuilder;<br>import org.springframework.beans.factory.annotation.Autowired;<br>import org.springframework.stereotype.Service;<br>import java.io.IOException;</p>
+<p>@Slf4j<br>@Service<br>public class TermQueryService {</p>
+<p>    @Autowired<br>    private RestHighLevelClient restHighLevelClient;</p>
+<p>    &#x2F;**<br>     * 精确查询（查询条件不会进行分词，但是查询内容可能会分词，导致查询不到）<br>     *&#x2F;<br>    public void termQuery() {<br>        try {<br>            &#x2F;&#x2F; 构建查询条件（注意：termQuery 支持多种格式查询，如 boolean、int、double、string 等，这里使用的是 string 的查询）<br>            SearchSourceBuilder searchSourceBuilder &#x3D; new SearchSourceBuilder();<br>            searchSourceBuilder.query(QueryBuilders.termQuery(“address.keyword”, “北京市通州区”));<br>            &#x2F;&#x2F; 创建查询请求对象，将查询对象配置到其中<br>            SearchRequest searchRequest &#x3D; new SearchRequest(“mydlq-user”);<br>            searchRequest.source(searchSourceBuilder);<br>            &#x2F;&#x2F; 执行查询，然后处理响应结果<br>            SearchResponse searchResponse &#x3D; restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 根据状态和数据条数验证是否返回了数据<br>            if (RestStatus.OK.equals(searchResponse.status()) &amp;&amp; searchResponse.getHits().totalHits &gt; 0) {<br>                SearchHits hits &#x3D; searchResponse.getHits();<br>                for (SearchHit hit : hits) {<br>                    &#x2F;&#x2F; 将 JSON 转换成对象<br>                    UserInfo userInfo &#x3D; JSON.parseObject(hit.getSourceAsString(), UserInfo.class);<br>                    &#x2F;&#x2F; 输出查询信息<br>                    log.info(userInfo.toString());<br>                }<br>            }<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>    }</p>
+<p>    &#x2F;**<br>     * 多个内容在一个字段中进行查询<br>     *&#x2F;<br>    public void termsQuery() {<br>        try {<br>            &#x2F;&#x2F; 构建查询条件（注意：termsQuery 支持多种格式查询，如 boolean、int、double、string 等，这里使用的是 string 的查询）<br>            SearchSourceBuilder searchSourceBuilder &#x3D; new SearchSourceBuilder();<br>            searchSourceBuilder.query(QueryBuilders.termsQuery(“address.keyword”, “北京市丰台区”, “北京市昌平区”, “北京市大兴区”));<br>            &#x2F;&#x2F; 创建查询请求对象，将查询对象配置到其中<br>            SearchRequest searchRequest &#x3D; new SearchRequest(“mydlq-user”);<br>            searchRequest.source(searchSourceBuilder);<br>            &#x2F;&#x2F; 执行查询，然后处理响应结果<br>            SearchResponse searchResponse &#x3D; restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 根据状态和数据条数验证是否返回了数据<br>            if (RestStatus.OK.equals(searchResponse.status()) &amp;&amp; searchResponse.getHits().totalHits &gt; 0) {<br>                SearchHits hits &#x3D; searchResponse.getHits();<br>                for (SearchHit hit : hits) {<br>                    &#x2F;&#x2F; 将 JSON 转换成对象<br>                    UserInfo userInfo &#x3D; JSON.parseObject(hit.getSourceAsString(), UserInfo.class);<br>                    &#x2F;&#x2F; 输出查询信息<br>                    log.info(userInfo.toString());<br>                }<br>            }<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>    }</p>
+<p>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+### <span class="token number">2</span>、匹配查询<span class="token punctuation">(</span>match<span class="token punctuation">)</span>
+
+#### <span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>、Restful 操作示例
+
+<span class="token operator">*</span><span class="token operator">*</span>匹配查询全部数据与分页<span class="token operator">*</span><span class="token operator">*</span>
+
+匹配查询符合条件的所有数据，并且设置以 salary 字段升序排序，并设置分页：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>GET mydlq-user&#x2F;_search<br>{<br>  “query”: {<br>    “match_all”: {}<br>  },<br>  “from”: 0,<br>  “size”: 10,<br>  “sort”: [<br>    {<br>      “salary”: {<br>        “order”: “asc”<br>      }<br>    }<br>  ]<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+<span class="token operator">*</span><span class="token operator">*</span>匹配查询数据<span class="token operator">*</span><span class="token operator">*</span>
+
+匹配查询地址为 通州区 的数据：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>GET mydlq-user&#x2F;_search<br>{<br>  “query”: {<br>    “match”: {<br>      “address”: “通州区”<br>    }<br>  }<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+<span class="token operator">*</span><span class="token operator">*</span>词语匹配查询<span class="token operator">*</span><span class="token operator">*</span>
+
+词语匹配进行查询，匹配 address 中为 北京市通州区 的员工信息：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>GET mydlq-user&#x2F;_search<br>{<br>  “query”: {<br>    “match_phrase”: {<br>      “address”: “北京市通州区”<br>    }<br>  }<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+<span class="token operator">*</span><span class="token operator">*</span>内容多字段查询<span class="token operator">*</span><span class="token operator">*</span>
+
+查询在字段 address、remark 中存在 北京 内容的员工信息：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>GET mydlq-user&#x2F;_search<br>{<br>  “query”: {<br>    “multi_match”: {<br>      “query”: “北京”,<br>      “fields”: [“address”,”remark”]<br>    }<br>  }<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+#### <span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span>、Java 代码示例
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>import club.mydlq.elasticsearch.model.entity.UserInfo;<br>import com.alibaba.fastjson.JSON;<br>import lombok.extern.slf4j.Slf4j;<br>import org.elasticsearch.action.search.SearchRequest;<br>import org.elasticsearch.action.search.SearchResponse;<br>import org.elasticsearch.client.RequestOptions;<br>import org.elasticsearch.client.RestHighLevelClient;<br>import org.elasticsearch.index.query.MatchAllQueryBuilder;<br>import org.elasticsearch.index.query.QueryBuilders;<br>import org.elasticsearch.rest.RestStatus;<br>import org.elasticsearch.search.SearchHit;<br>import org.elasticsearch.search.SearchHits;<br>import org.elasticsearch.search.builder.SearchSourceBuilder;<br>import org.elasticsearch.search.sort.SortOrder;<br>import org.springframework.beans.factory.annotation.Autowired;<br>import org.springframework.stereotype.Service;<br>import java.io.IOException;</p>
+<p>@Slf4j<br>@Service<br>public class MatchQueryService {</p>
+<p>    @Autowired<br>    private RestHighLevelClient restHighLevelClient;</p>
+<p>    &#x2F;**<br>     * 匹配查询符合条件的所有数据，并设置分页<br>     *&#x2F;<br>    public Object matchAllQuery() {<br>        try {<br>            &#x2F;&#x2F; 构建查询条件<br>            MatchAllQueryBuilder matchAllQueryBuilder &#x3D; QueryBuilders.matchAllQuery();<br>            &#x2F;&#x2F; 创建查询源构造器<br>            SearchSourceBuilder searchSourceBuilder &#x3D; new SearchSourceBuilder();<br>            searchSourceBuilder.query(matchAllQueryBuilder);<br>            &#x2F;&#x2F; 设置分页<br>            searchSourceBuilder.from(0);<br>            searchSourceBuilder.size(3);<br>            &#x2F;&#x2F; 设置排序<br>            searchSourceBuilder.sort(“salary”, SortOrder.ASC);<br>            &#x2F;&#x2F; 创建查询请求对象，将查询对象配置到其中<br>            SearchRequest searchRequest &#x3D; new SearchRequest(“mydlq-user”);<br>            searchRequest.source(searchSourceBuilder);<br>            &#x2F;&#x2F; 执行查询，然后处理响应结果<br>            SearchResponse searchResponse &#x3D; restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 根据状态和数据条数验证是否返回了数据<br>            if (RestStatus.OK.equals(searchResponse.status()) &amp;&amp; searchResponse.getHits().totalHits &gt; 0) {<br>                SearchHits hits &#x3D; searchResponse.getHits();<br>                for (SearchHit hit : hits) {<br>                    &#x2F;&#x2F; 将 JSON 转换成对象<br>                    UserInfo userInfo &#x3D; JSON.parseObject(hit.getSourceAsString(), UserInfo.class);<br>                    &#x2F;&#x2F; 输出查询信息<br>                    log.info(userInfo.toString());<br>                }<br>            }<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>    }</p>
+<p>    &#x2F;**<br>     * 匹配查询数据<br>     *&#x2F;<br>    public Object matchQuery() {<br>        try {<br>            &#x2F;&#x2F; 构建查询条件<br>            SearchSourceBuilder searchSourceBuilder &#x3D; new SearchSourceBuilder();<br>            searchSourceBuilder.query(QueryBuilders.matchQuery(“address”, “*通州区”));<br>            &#x2F;&#x2F; 创建查询请求对象，将查询对象配置到其中<br>            SearchRequest searchRequest &#x3D; new SearchRequest(“mydlq-user”);<br>            searchRequest.source(searchSourceBuilder);<br>            &#x2F;&#x2F; 执行查询，然后处理响应结果<br>            SearchResponse searchResponse &#x3D; restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 根据状态和数据条数验证是否返回了数据<br>            if (RestStatus.OK.equals(searchResponse.status()) &amp;&amp; searchResponse.getHits().totalHits &gt; 0) {<br>                SearchHits hits &#x3D; searchResponse.getHits();<br>                for (SearchHit hit : hits) {<br>                    &#x2F;&#x2F; 将 JSON 转换成对象<br>                    UserInfo userInfo &#x3D; JSON.parseObject(hit.getSourceAsString(), UserInfo.class);<br>                    &#x2F;&#x2F; 输出查询信息<br>                    log.info(userInfo.toString());<br>                }<br>            }<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>    }</p>
+<p>    &#x2F;**<br>     * 词语匹配查询<br>     *&#x2F;<br>    public Object matchPhraseQuery() {<br>        try {<br>            &#x2F;&#x2F; 构建查询条件<br>            SearchSourceBuilder searchSourceBuilder &#x3D; new SearchSourceBuilder();<br>            searchSourceBuilder.query(QueryBuilders.matchPhraseQuery(“address”, “北京市通州区”));<br>            &#x2F;&#x2F; 创建查询请求对象，将查询对象配置到其中<br>            SearchRequest searchRequest &#x3D; new SearchRequest(“mydlq-user”);<br>            searchRequest.source(searchSourceBuilder);<br>            &#x2F;&#x2F; 执行查询，然后处理响应结果<br>            SearchResponse searchResponse &#x3D; restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 根据状态和数据条数验证是否返回了数据<br>            if (RestStatus.OK.equals(searchResponse.status()) &amp;&amp; searchResponse.getHits().totalHits &gt; 0) {<br>                SearchHits hits &#x3D; searchResponse.getHits();<br>                for (SearchHit hit : hits) {<br>                    &#x2F;&#x2F; 将 JSON 转换成对象<br>                    UserInfo userInfo &#x3D; JSON.parseObject(hit.getSourceAsString(), UserInfo.class);<br>                    &#x2F;&#x2F; 输出查询信息<br>                    log.info(userInfo.toString());<br>                }<br>            }<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>    }</p>
+<p>    &#x2F;**<br>     * 内容在多字段中进行查询<br>     *&#x2F;<br>    public Object matchMultiQuery() {<br>        try {<br>            &#x2F;&#x2F; 构建查询条件<br>            SearchSourceBuilder searchSourceBuilder &#x3D; new SearchSourceBuilder();<br>            searchSourceBuilder.query(QueryBuilders.multiMatchQuery(“北京市”, “address”, “remark”));<br>            &#x2F;&#x2F; 创建查询请求对象，将查询对象配置到其中<br>            SearchRequest searchRequest &#x3D; new SearchRequest(“mydlq-user”);<br>            searchRequest.source(searchSourceBuilder);<br>            &#x2F;&#x2F; 执行查询，然后处理响应结果<br>            SearchResponse searchResponse &#x3D; restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 根据状态和数据条数验证是否返回了数据<br>            if (RestStatus.OK.equals(searchResponse.status()) &amp;&amp; searchResponse.getHits().totalHits &gt; 0) {<br>                SearchHits hits &#x3D; searchResponse.getHits();<br>                for (SearchHit hit : hits) {<br>                    &#x2F;&#x2F; 将 JSON 转换成对象<br>                    UserInfo userInfo &#x3D; JSON.parseObject(hit.getSourceAsString(), UserInfo.class);<br>                    &#x2F;&#x2F; 输出查询信息<br>                    log.info(userInfo.toString());<br>                }<br>            }<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>    }</p>
+<p>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+### <span class="token number">3</span>、模糊查询<span class="token punctuation">(</span>fuzzy<span class="token punctuation">)</span>
+
+#### <span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>、Restful 操作示例
+
+模糊查询所有以 三 结尾的姓名
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>GET mydlq-user&#x2F;_search<br>{<br>  “query”: {<br>    “fuzzy”: {<br>      “name”: “三”<br>    }<br>  }<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+#### <span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span>、Java 代码示例
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>import club.mydlq.elasticsearch.model.entity.UserInfo;<br>import com.alibaba.fastjson.JSON;<br>import lombok.extern.slf4j.Slf4j;<br>import org.elasticsearch.action.search.SearchRequest;<br>import org.elasticsearch.action.search.SearchResponse;<br>import org.elasticsearch.client.RequestOptions;<br>import org.elasticsearch.client.RestHighLevelClient;<br>import org.elasticsearch.common.unit.Fuzziness;<br>import org.elasticsearch.index.query.QueryBuilders;<br>import org.elasticsearch.rest.RestStatus;<br>import org.elasticsearch.search.SearchHit;<br>import org.elasticsearch.search.SearchHits;<br>import org.elasticsearch.search.builder.SearchSourceBuilder;<br>import org.springframework.beans.factory.annotation.Autowired;<br>import org.springframework.stereotype.Service;<br>import java.io.IOException;</p>
+<p>@Slf4j<br>@Service<br>public class FuzzyQueryService {</p>
+<p>    @Autowired<br>    private RestHighLevelClient restHighLevelClient;</p>
+<p>    &#x2F;**<br>     * 模糊查询所有以 “三” 结尾的姓名<br>     *&#x2F;<br>    public Object fuzzyQuery() {<br>        try {<br>            &#x2F;&#x2F; 构建查询条件<br>            SearchSourceBuilder searchSourceBuilder &#x3D; new SearchSourceBuilder();<br>            searchSourceBuilder.query(QueryBuilders.fuzzyQuery(“name”, “三”).fuzziness(Fuzziness.AUTO));<br>            &#x2F;&#x2F; 创建查询请求对象，将查询对象配置到其中<br>            SearchRequest searchRequest &#x3D; new SearchRequest(“mydlq-user”);<br>            searchRequest.source(searchSourceBuilder);<br>            &#x2F;&#x2F; 执行查询，然后处理响应结果<br>            SearchResponse searchResponse &#x3D; restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 根据状态和数据条数验证是否返回了数据<br>            if (RestStatus.OK.equals(searchResponse.status()) &amp;&amp; searchResponse.getHits().totalHits &gt; 0) {<br>                SearchHits hits &#x3D; searchResponse.getHits();<br>                for (SearchHit hit : hits) {<br>                    &#x2F;&#x2F; 将 JSON 转换成对象<br>                    UserInfo userInfo &#x3D; JSON.parseObject(hit.getSourceAsString(), UserInfo.class);<br>                    &#x2F;&#x2F; 输出查询信息<br>                    log.info(userInfo.toString());<br>                }<br>            }<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>    }</p>
+<p>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+### <span class="token number">4</span>、范围查询<span class="token punctuation">(</span>range<span class="token punctuation">)</span>
+
+#### <span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>、Restful 操作示例
+
+查询岁数 ≥ <span class="token number">30</span> 岁的员工数据：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>GET &#x2F;mydlq-user&#x2F;_search<br>{<br>  “query”: {<br>    “range”: {<br>      “age”: {<br>        “gte”: 30<br>      }<br>    }<br>  }<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+查询生日距离现在 <span class="token number">30</span> 年间的员工数据：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>GET mydlq-user&#x2F;_search<br>{<br>  “query”: {<br>    “range”: {<br>      “birthDate”: {<br>        “gte”: “now-30y”<br>      }<br>    }<br>  }<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+#### <span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span>、Java 代码示例
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>import club.mydlq.elasticsearch.model.entity.UserInfo;<br>import com.alibaba.fastjson.JSON;<br>import lombok.extern.slf4j.Slf4j;<br>import org.elasticsearch.action.search.SearchRequest;<br>import org.elasticsearch.action.search.SearchResponse;<br>import org.elasticsearch.client.RequestOptions;<br>import org.elasticsearch.client.RestHighLevelClient;<br>import org.elasticsearch.index.query.QueryBuilders;<br>import org.elasticsearch.rest.RestStatus;<br>import org.elasticsearch.search.SearchHit;<br>import org.elasticsearch.search.SearchHits;<br>import org.elasticsearch.search.builder.SearchSourceBuilder;<br>import org.springframework.beans.factory.annotation.Autowired;<br>import org.springframework.stereotype.Service;<br>import java.io.IOException;</p>
+<p>@Slf4j<br>@Service<br>public class RangeQueryService {</p>
+<p>    @Autowired<br>    private RestHighLevelClient restHighLevelClient;</p>
+<p>    &#x2F;**<br>     * 查询岁数 ≥ 30 岁的员工数据<br>     *&#x2F;<br>    public void rangeQuery() {<br>        try {<br>            &#x2F;&#x2F; 构建查询条件<br>            SearchSourceBuilder searchSourceBuilder &#x3D; new SearchSourceBuilder();<br>            searchSourceBuilder.query(QueryBuilders.rangeQuery(“age”).gte(30));<br>            &#x2F;&#x2F; 创建查询请求对象，将查询对象配置到其中<br>            SearchRequest searchRequest &#x3D; new SearchRequest(“mydlq-user”);<br>            searchRequest.source(searchSourceBuilder);<br>            &#x2F;&#x2F; 执行查询，然后处理响应结果<br>            SearchResponse searchResponse &#x3D; restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 根据状态和数据条数验证是否返回了数据<br>            if (RestStatus.OK.equals(searchResponse.status()) &amp;&amp; searchResponse.getHits().totalHits &gt; 0) {<br>                SearchHits hits &#x3D; searchResponse.getHits();<br>                for (SearchHit hit : hits) {<br>                    &#x2F;&#x2F; 将 JSON 转换成对象<br>                    UserInfo userInfo &#x3D; JSON.parseObject(hit.getSourceAsString(), UserInfo.class);<br>                    &#x2F;&#x2F; 输出查询信息<br>                    log.info(userInfo.toString());<br>                }<br>            }<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>    }</p>
+<p>    &#x2F;**<br>     * 查询距离现在 30 年间的员工数据<br>     * [年(y)、月(M)、星期(w)、天(d)、小时(h)、分钟(m)、秒(s)]<br>     * 例如：<br>     * now-1h 查询一小时内范围<br>     * now-1d 查询一天内时间范围<br>     * now-1y 查询最近一年内的时间范围<br>     *&#x2F;<br>    public void dateRangeQuery() {<br>        try {<br>            &#x2F;&#x2F; 构建查询条件<br>            SearchSourceBuilder searchSourceBuilder &#x3D; new SearchSourceBuilder();<br>            &#x2F;&#x2F; includeLower（是否包含下边界）、includeUpper（是否包含上边界）<br>            searchSourceBuilder.query(QueryBuilders.rangeQuery(“birthDate”)<br>                    .gte(“now-30y”).includeLower(true).includeUpper(true));<br>            &#x2F;&#x2F; 创建查询请求对象，将查询对象配置到其中<br>            SearchRequest searchRequest &#x3D; new SearchRequest(“mydlq-user”);<br>            searchRequest.source(searchSourceBuilder);<br>            &#x2F;&#x2F; 执行查询，然后处理响应结果<br>            SearchResponse searchResponse &#x3D; restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 根据状态和数据条数验证是否返回了数据<br>            if (RestStatus.OK.equals(searchResponse.status()) &amp;&amp; searchResponse.getHits().totalHits &gt; 0) {<br>                SearchHits hits &#x3D; searchResponse.getHits();<br>                for (SearchHit hit : hits) {<br>                    &#x2F;&#x2F; 将 JSON 转换成对象<br>                    UserInfo userInfo &#x3D; JSON.parseObject(hit.getSourceAsString(), UserInfo.class);<br>                    &#x2F;&#x2F; 输出查询信息<br>                    log.info(userInfo.toString());<br>                }<br>            }<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>    }</p>
+<p>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+### <span class="token number">5</span>、通配符查询<span class="token punctuation">(</span>wildcard<span class="token punctuation">)</span>
+
+#### <span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>、Restful 操作示例
+
+查询所有以 “三” 结尾的姓名：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>GET mydlq-user&#x2F;_search<br>{<br>  “query”: {<br>    “wildcard”: {<br>      “name.keyword”: {<br>        “value”: “*三”<br>      }<br>    }<br>  }<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+#### <span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span>、Java 代码示例
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>import club.mydlq.elasticsearch.model.entity.UserInfo;<br>import com.alibaba.fastjson.JSON;<br>import lombok.extern.slf4j.Slf4j;<br>import org.elasticsearch.action.search.SearchRequest;<br>import org.elasticsearch.action.search.SearchResponse;<br>import org.elasticsearch.client.RequestOptions;<br>import org.elasticsearch.client.RestHighLevelClient;<br>import org.elasticsearch.index.query.QueryBuilders;<br>import org.elasticsearch.rest.RestStatus;<br>import org.elasticsearch.search.SearchHit;<br>import org.elasticsearch.search.SearchHits;<br>import org.elasticsearch.search.builder.SearchSourceBuilder;<br>import org.springframework.beans.factory.annotation.Autowired;<br>import org.springframework.stereotype.Service;<br>import java.io.IOException;</p>
+<p>@Slf4j<br>@Service<br>public class WildcardQueryService {</p>
+<p>    @Autowired<br>    private RestHighLevelClient restHighLevelClient;</p>
+<p>    &#x2F;**<br>     * 查询所有以 “三” 结尾的姓名<br>     *<br>     * *：表示多个字符（0个或多个字符）<br>     * ?：表示单个字符<br>     *&#x2F;<br>    public Object wildcardQuery() {<br>        try {<br>            &#x2F;&#x2F; 构建查询条件<br>            SearchSourceBuilder searchSourceBuilder &#x3D; new SearchSourceBuilder();<br>            searchSourceBuilder.query(QueryBuilders.wildcardQuery(“name.keyword”, “*三”));<br>            &#x2F;&#x2F; 创建查询请求对象，将查询对象配置到其中<br>            SearchRequest searchRequest &#x3D; new SearchRequest(“mydlq-user”);<br>            searchRequest.source(searchSourceBuilder);<br>            &#x2F;&#x2F; 执行查询，然后处理响应结果<br>            SearchResponse searchResponse &#x3D; restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 根据状态和数据条数验证是否返回了数据<br>            if (RestStatus.OK.equals(searchResponse.status()) &amp;&amp; searchResponse.getHits().totalHits &gt; 0) {<br>                SearchHits hits &#x3D; searchResponse.getHits();<br>                for (SearchHit hit : hits) {<br>                    &#x2F;&#x2F; 将 JSON 转换成对象<br>                    UserInfo userInfo &#x3D; JSON.parseObject(hit.getSourceAsString(), UserInfo.class);<br>                    &#x2F;&#x2F; 输出查询信息<br>                    log.info(userInfo.toString());<br>                }<br>            }<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>    }</p>
+<p>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+### <span class="token number">6</span>、布尔查询<span class="token punctuation">(</span>bool<span class="token punctuation">)</span>
+
+#### <span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>、Restful 操作示例
+
+查询出生在 <span class="token number">1990</span><span class="token operator">-</span><span class="token number">1995</span> 年期间，且地址在 北京市昌平区、北京市大兴区、北京市房山区 的员工信息：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>GET &#x2F;mydlq-user&#x2F;_search<br>{<br>  “query”: {<br>    “bool”: {<br>      “filter”: {<br>        “range”: {<br>          “birthDate”: {<br>            “format”: “yyyy”, <br>            “gte”: 1990,<br>            “lte”: 1995<br>          }<br>        }<br>      },<br>      “must”: [<br>        {<br>          “terms”: {<br>            “address.keyword”: [<br>              “北京市昌平区”,<br>              “北京市大兴区”,<br>              “北京市房山区”<br>            ]<br>          }<br>        }<br>      ]<br>    }<br>  }<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+#### <span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span>、Java 代码示例
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>import club.mydlq.elasticsearch.model.entity.UserInfo;<br>import com.alibaba.fastjson.JSON;<br>import lombok.extern.slf4j.Slf4j;<br>import org.elasticsearch.action.search.SearchRequest;<br>import org.elasticsearch.action.search.SearchResponse;<br>import org.elasticsearch.client.RequestOptions;<br>import org.elasticsearch.client.RestHighLevelClient;<br>import org.elasticsearch.index.query.BoolQueryBuilder;<br>import org.elasticsearch.index.query.QueryBuilders;<br>import org.elasticsearch.rest.RestStatus;<br>import org.elasticsearch.search.SearchHit;<br>import org.elasticsearch.search.SearchHits;<br>import org.elasticsearch.search.builder.SearchSourceBuilder;<br>import org.springframework.beans.factory.annotation.Autowired;<br>import org.springframework.stereotype.Service;<br>import java.io.IOException;</p>
+<p>@Slf4j<br>@Service<br>public class BoolQueryService {</p>
+<p>    @Autowired<br>    private RestHighLevelClient restHighLevelClient;</p>
+<p>    public Object boolQuery() {<br>        try {<br>            &#x2F;&#x2F; 创建 Bool 查询构建器<br>            BoolQueryBuilder boolQueryBuilder &#x3D; QueryBuilders.boolQuery();<br>            &#x2F;&#x2F; 构建查询条件<br>            boolQueryBuilder.must(QueryBuilders.termsQuery(“address.keyword”, “北京市昌平区”, “北京市大兴区”, “北京市房山区”))<br>                    .filter().add(QueryBuilders.rangeQuery(“birthDate”).format(“yyyy”).gte(“1990”).lte(“1995”));<br>            &#x2F;&#x2F; 构建查询源构建器<br>            SearchSourceBuilder searchSourceBuilder &#x3D; new SearchSourceBuilder();<br>            searchSourceBuilder.query(boolQueryBuilder);<br>            &#x2F;&#x2F; 创建查询请求对象，将查询对象配置到其中<br>            SearchRequest searchRequest &#x3D; new SearchRequest(“mydlq-user”);<br>            searchRequest.source(searchSourceBuilder);<br>            &#x2F;&#x2F; 执行查询，然后处理响应结果<br>            SearchResponse searchResponse &#x3D; restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 根据状态和数据条数验证是否返回了数据<br>            if (RestStatus.OK.equals(searchResponse.status()) &amp;&amp; searchResponse.getHits().totalHits &gt; 0) {<br>                SearchHits hits &#x3D; searchResponse.getHits();<br>                for (SearchHit hit : hits) {<br>                    &#x2F;&#x2F; 将 JSON 转换成对象<br>                    UserInfo userInfo &#x3D; JSON.parseObject(hit.getSourceAsString(), UserInfo.class);<br>                    &#x2F;&#x2F; 输出查询信息<br>                    log.info(userInfo.toString());<br>                }<br>            }<br>        }catch (IOException e){<br>            log.error(“”,e);<br>        }<br>    }</p>
+<p>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+## 八、聚合查询操作示例
+
+### <span class="token number">1</span>、Metric 聚合分析
+
+#### <span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>、Restful 操作示例
+
+统计员工总数、工资最高值、工资最低值、工资平均工资、工资总和：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>GET &#x2F;mydlq-user&#x2F;_search<br>{<br>  “size”: 0,<br>  “aggs”: {<br>    “salary_stats”: {<br>      “stats”: {<br>        “field”: “salary”<br>      }<br>    }<br>  }<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+统计员工工资最低值：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>GET &#x2F;mydlq-user&#x2F;_search<br>{<br>  “size”: 0,<br>  “aggs”: {<br>    “salary_min”: {<br>      “min”: {<br>        “field”: “salary”<br>      }<br>    }<br>  }<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+统计员工工资最高值：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>GET &#x2F;mydlq-user&#x2F;_search<br>{<br>  “size”: 0,<br>  “aggs”: {<br>    “salary_max”: {<br>      “max”: {<br>        “field”: “salary”<br>      }<br>    }<br>  }<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+统计员工工资平均值：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>GET &#x2F;mydlq-user&#x2F;_search<br>{<br>  “size”: 0,<br>  “aggs”: {<br>    “salary_avg”: {<br>      “avg”: {<br>        “field”: “salary”<br>      }<br>    }<br>  }<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+统计员工工资总值：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>GET &#x2F;mydlq-user&#x2F;_search<br>{<br>  “size”: 0,<br>  “aggs”: {<br>    “salary_sum”: {<br>      “sum”: {<br>        “field”: “salary”<br>      }<br>    }<br>  }<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+统计员工总数：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>GET &#x2F;mydlq-user&#x2F;_search<br>{<br>  “size”: 0,<br>  “aggs”: {<br>    “employee_count”: {<br>      “value_count”: {<br>        “field”: “salary”<br>      }<br>    }<br>  }<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+统计员工工资百分位：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>GET &#x2F;mydlq-user&#x2F;_search<br>{<br>  “size”: 0,<br>  “aggs”: {<br>    “salary_percentiles”: {<br>      “percentiles”: {<br>        “field”: “salary”<br>      }<br>    }<br>  }<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+#### <span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span>、Java 代码示例
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>import lombok.extern.slf4j.Slf4j;<br>import org.elasticsearch.action.search.SearchRequest;<br>import org.elasticsearch.action.search.SearchResponse;<br>import org.elasticsearch.client.RequestOptions;<br>import org.elasticsearch.client.RestHighLevelClient;<br>import org.elasticsearch.rest.RestStatus;<br>import org.elasticsearch.search.aggregations.AggregationBuilder;<br>import org.elasticsearch.search.aggregations.AggregationBuilders;<br>import org.elasticsearch.search.aggregations.Aggregations;<br>import org.elasticsearch.search.aggregations.metrics.avg.ParsedAvg;<br>import org.elasticsearch.search.aggregations.metrics.max.ParsedMax;<br>import org.elasticsearch.search.aggregations.metrics.min.ParsedMin;<br>import org.elasticsearch.search.aggregations.metrics.percentiles.ParsedPercentiles;<br>import org.elasticsearch.search.aggregations.metrics.percentiles.Percentile;<br>import org.elasticsearch.search.aggregations.metrics.stats.ParsedStats;<br>import org.elasticsearch.search.aggregations.metrics.sum.ParsedSum;<br>import org.elasticsearch.search.aggregations.metrics.sum.SumAggregationBuilder;<br>import org.elasticsearch.search.aggregations.metrics.valuecount.ParsedValueCount;<br>import org.elasticsearch.search.builder.SearchSourceBuilder;<br>import org.springframework.beans.factory.annotation.Autowired;<br>import org.springframework.stereotype.Service;<br>import java.io.IOException;</p>
+<p>@Slf4j<br>@Service<br>public class AggrMetricService {</p>
+<p>    @Autowired<br>    private RestHighLevelClient restHighLevelClient;</p>
+<p>    &#x2F;**<br>     * stats 统计员工总数、员工工资最高值、员工工资最低值、员工平均工资、员工工资总和<br>     *&#x2F;<br>    public Object aggregationStats() {<br>        String responseResult &#x3D; “”;<br>        try {<br>            &#x2F;&#x2F; 设置聚合条件<br>            AggregationBuilder aggr &#x3D; AggregationBuilders.stats(“salary_stats”).field(“salary”);<br>            &#x2F;&#x2F; 查询源构建器<br>            SearchSourceBuilder searchSourceBuilder &#x3D; new SearchSourceBuilder();<br>            searchSourceBuilder.aggregation(aggr);<br>            &#x2F;&#x2F; 设置查询结果不返回，只返回聚合结果<br>            searchSourceBuilder.size(0);<br>            &#x2F;&#x2F; 创建查询请求对象，将查询条件配置到其中<br>            SearchRequest request &#x3D; new SearchRequest(“mydlq-user”);<br>            request.source(searchSourceBuilder);<br>            &#x2F;&#x2F; 执行请求<br>            SearchResponse response &#x3D; restHighLevelClient.search(request, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 获取响应中的聚合信息<br>            Aggregations aggregations &#x3D; response.getAggregations();<br>            &#x2F;&#x2F; 输出内容<br>            if (RestStatus.OK.equals(response.status()) || aggregations !&#x3D; null) {<br>                &#x2F;&#x2F; 转换为 Stats 对象<br>                ParsedStats aggregation &#x3D; aggregations.get(“salary_stats”);<br>                log.info(“——————————————-“);<br>                log.info(“聚合信息:”);<br>                log.info(“count：{}”, aggregation.getCount());<br>                log.info(“avg：{}”, aggregation.getAvg());<br>                log.info(“max：{}”, aggregation.getMax());<br>                log.info(“min：{}”, aggregation.getMin());<br>                log.info(“sum：{}”, aggregation.getSum());<br>                log.info(“——————————————-“);<br>            }<br>            &#x2F;&#x2F; 根据具体业务逻辑返回不同结果，这里为了方便直接将返回响应对象Json串<br>            responseResult &#x3D; response.toString();<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>        return responseResult;<br>    }</p>
+<p>    &#x2F;**<br>     * min 统计员工工资最低值<br>     *&#x2F;<br>    public Object aggregationMin() {<br>        String responseResult &#x3D; “”;<br>        try {<br>            &#x2F;&#x2F; 设置聚合条件<br>            AggregationBuilder aggr &#x3D; AggregationBuilders.min(“salary_min”).field(“salary”);<br>            &#x2F;&#x2F; 查询源构建器<br>            SearchSourceBuilder searchSourceBuilder &#x3D; new SearchSourceBuilder();<br>            searchSourceBuilder.aggregation(aggr);<br>            searchSourceBuilder.size(0);<br>            &#x2F;&#x2F; 创建查询请求对象，将查询条件配置到其中<br>            SearchRequest request &#x3D; new SearchRequest(“mydlq-user”);<br>            request.source(searchSourceBuilder);<br>            &#x2F;&#x2F; 执行请求<br>            SearchResponse response &#x3D; restHighLevelClient.search(request, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 获取响应中的聚合信息<br>            Aggregations aggregations &#x3D; response.getAggregations();<br>            &#x2F;&#x2F; 输出内容<br>            if (RestStatus.OK.equals(response.status()) || aggregations !&#x3D; null) {<br>                &#x2F;&#x2F; 转换为 Min 对象<br>                ParsedMin aggregation &#x3D; aggregations.get(“salary_min”);<br>                log.info(“——————————————-“);<br>                log.info(“聚合信息:”);<br>                log.info(“min：{}”, aggregation.getValue());<br>                log.info(“——————————————-“);<br>            }<br>            &#x2F;&#x2F; 根据具体业务逻辑返回不同结果，这里为了方便直接将返回响应对象Json串<br>            responseResult &#x3D; response.toString();<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>        return responseResult;<br>    }</p>
+<p>    &#x2F;**<br>     * max 统计员工工资最高值<br>     *&#x2F;<br>    public Object aggregationMax() {<br>        String responseResult &#x3D; “”;<br>        try {<br>            &#x2F;&#x2F; 设置聚合条件<br>            AggregationBuilder aggr &#x3D; AggregationBuilders.max(“salary_max”).field(“salary”);<br>            &#x2F;&#x2F; 查询源构建器<br>            SearchSourceBuilder searchSourceBuilder &#x3D; new SearchSourceBuilder();<br>            searchSourceBuilder.aggregation(aggr);<br>            searchSourceBuilder.size(0);<br>            &#x2F;&#x2F; 创建查询请求对象，将查询条件配置到其中<br>            SearchRequest request &#x3D; new SearchRequest(“mydlq-user”);<br>            request.source(searchSourceBuilder);<br>            &#x2F;&#x2F; 执行请求<br>            SearchResponse response &#x3D; restHighLevelClient.search(request, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 获取响应中的聚合信息<br>            Aggregations aggregations &#x3D; response.getAggregations();<br>            &#x2F;&#x2F; 输出内容<br>            if (RestStatus.OK.equals(response.status()) || aggregations !&#x3D; null) {<br>                &#x2F;&#x2F; 转换为 Max 对象<br>                ParsedMax aggregation &#x3D; aggregations.get(“salary_max”);<br>                log.info(“——————————————-“);<br>                log.info(“聚合信息:”);<br>                log.info(“max：{}”, aggregation.getValue());<br>                log.info(“——————————————-“);<br>            }<br>            &#x2F;&#x2F; 根据具体业务逻辑返回不同结果，这里为了方便直接将返回响应对象Json串<br>            responseResult &#x3D; response.toString();<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>        return responseResult;<br>    }</p>
+<p>    &#x2F;**<br>     * avg 统计员工工资平均值<br>     *&#x2F;<br>    public Object aggregationAvg() {<br>        String responseResult &#x3D; “”;<br>        try {<br>            &#x2F;&#x2F; 设置聚合条件<br>            AggregationBuilder aggr &#x3D; AggregationBuilders.avg(“salary_avg”).field(“salary”);<br>            &#x2F;&#x2F; 查询源构建器<br>            SearchSourceBuilder searchSourceBuilder &#x3D; new SearchSourceBuilder();<br>            searchSourceBuilder.aggregation(aggr);<br>            searchSourceBuilder.size(0);<br>            &#x2F;&#x2F; 创建查询请求对象，将查询条件配置到其中<br>            SearchRequest request &#x3D; new SearchRequest(“mydlq-user”);<br>            request.source(searchSourceBuilder);<br>            &#x2F;&#x2F; 执行请求<br>            SearchResponse response &#x3D; restHighLevelClient.search(request, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 获取响应中的聚合信息<br>            Aggregations aggregations &#x3D; response.getAggregations();<br>            &#x2F;&#x2F; 输出内容<br>            if (RestStatus.OK.equals(response.status()) || aggregations !&#x3D; null) {<br>                &#x2F;&#x2F; 转换为 Avg 对象<br>                ParsedAvg aggregation &#x3D; aggregations.get(“salary_avg”);<br>                log.info(“——————————————-“);<br>                log.info(“聚合信息:”);<br>                log.info(“avg：{}”, aggregation.getValue());<br>                log.info(“——————————————-“);<br>            }<br>            &#x2F;&#x2F; 根据具体业务逻辑返回不同结果，这里为了方便直接将返回响应对象Json串<br>            responseResult &#x3D; response.toString();<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>        return responseResult;<br>    }</p>
+<p>    &#x2F;**<br>     * sum 统计员工工资总值<br>     *&#x2F;<br>    public Object aggregationSum() {<br>        String responseResult &#x3D; “”;<br>        try {<br>            &#x2F;&#x2F; 设置聚合条件<br>            SumAggregationBuilder aggr &#x3D; AggregationBuilders.sum(“salary_sum”).field(“salary”);<br>            &#x2F;&#x2F; 查询源构建器<br>            SearchSourceBuilder searchSourceBuilder &#x3D; new SearchSourceBuilder();<br>            searchSourceBuilder.aggregation(aggr);<br>            searchSourceBuilder.size(0);<br>            &#x2F;&#x2F; 创建查询请求对象，将查询条件配置到其中<br>            SearchRequest request &#x3D; new SearchRequest(“mydlq-user”);<br>            request.source(searchSourceBuilder);<br>            &#x2F;&#x2F; 执行请求<br>            SearchResponse response &#x3D; restHighLevelClient.search(request, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 获取响应中的聚合信息<br>            Aggregations aggregations &#x3D; response.getAggregations();<br>            &#x2F;&#x2F; 输出内容<br>            if (RestStatus.OK.equals(response.status()) || aggregations !&#x3D; null) {<br>                &#x2F;&#x2F; 转换为 Sum 对象<br>                ParsedSum aggregation &#x3D; aggregations.get(“salary_sum”);<br>                log.info(“——————————————-“);<br>                log.info(“聚合信息:”);<br>                log.info(“sum：{}”, String.valueOf((aggregation.getValue())));<br>                log.info(“——————————————-“);<br>            }<br>            &#x2F;&#x2F; 根据具体业务逻辑返回不同结果，这里为了方便直接将返回响应对象Json串<br>            responseResult &#x3D; response.toString();<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>        return responseResult;<br>    }</p>
+<p>    &#x2F;**<br>     * count 统计员工总数<br>     *&#x2F;<br>    public Object aggregationCount() {<br>        String responseResult &#x3D; “”;<br>        try {<br>            &#x2F;&#x2F; 设置聚合条件<br>            AggregationBuilder aggr &#x3D; AggregationBuilders.count(“employee_count”).field(“salary”);<br>            &#x2F;&#x2F; 查询源构建器<br>            SearchSourceBuilder searchSourceBuilder &#x3D; new SearchSourceBuilder();<br>            searchSourceBuilder.aggregation(aggr);<br>            searchSourceBuilder.size(0);<br>            &#x2F;&#x2F; 创建查询请求对象，将查询条件配置到其中<br>            SearchRequest request &#x3D; new SearchRequest(“mydlq-user”);<br>            request.source(searchSourceBuilder);<br>            &#x2F;&#x2F; 执行请求<br>            SearchResponse response &#x3D; restHighLevelClient.search(request, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 获取响应中的聚合信息<br>            Aggregations aggregations &#x3D; response.getAggregations();<br>            &#x2F;&#x2F; 输出内容<br>            if (RestStatus.OK.equals(response.status()) || aggregations !&#x3D; null) {<br>                &#x2F;&#x2F; 转换为 ValueCount 对象<br>                ParsedValueCount aggregation &#x3D; aggregations.get(“employee_count”);<br>                log.info(“——————————————-“);<br>                log.info(“聚合信息:”);<br>                log.info(“count：{}”, aggregation.getValue());<br>                log.info(“——————————————-“);<br>            }<br>            &#x2F;&#x2F; 根据具体业务逻辑返回不同结果，这里为了方便直接将返回响应对象Json串<br>            responseResult &#x3D; response.toString();<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>        return responseResult;<br>    }</p>
+<p>    &#x2F;**<br>     * percentiles 统计员工工资百分位<br>     *&#x2F;<br>    public Object aggregationPercentiles() {<br>        String responseResult &#x3D; “”;<br>        try {<br>            &#x2F;&#x2F; 设置聚合条件<br>            AggregationBuilder aggr &#x3D; AggregationBuilders.percentiles(“salary_percentiles”).field(“salary”);<br>            &#x2F;&#x2F; 查询源构建器<br>            SearchSourceBuilder searchSourceBuilder &#x3D; new SearchSourceBuilder();<br>            searchSourceBuilder.aggregation(aggr);<br>            searchSourceBuilder.size(0);<br>            &#x2F;&#x2F; 创建查询请求对象，将查询条件配置到其中<br>            SearchRequest request &#x3D; new SearchRequest(“mydlq-user”);<br>            request.source(searchSourceBuilder);<br>            &#x2F;&#x2F; 执行请求<br>            SearchResponse response &#x3D; restHighLevelClient.search(request, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 获取响应中的聚合信息<br>            Aggregations aggregations &#x3D; response.getAggregations();<br>            &#x2F;&#x2F; 输出内容<br>            if (RestStatus.OK.equals(response.status()) || aggregations !&#x3D; null) {<br>                &#x2F;&#x2F; 转换为 Percentiles 对象<br>                ParsedPercentiles aggregation &#x3D; aggregations.get(“salary_percentiles”);<br>                log.info(“——————————————-“);<br>                log.info(“聚合信息:”);<br>                for (Percentile percentile : aggregation) {<br>                    log.info(“百分位：{}：{}”, percentile.getPercent(), percentile.getValue());<br>                }<br>                log.info(“——————————————-“);<br>            }<br>            &#x2F;&#x2F; 根据具体业务逻辑返回不同结果，这里为了方便直接将返回响应对象Json串<br>            responseResult &#x3D; response.toString();<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>        return responseResult;<br>    }</p>
+<p>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+### <span class="token number">2</span>、Bucket 聚合分析
+
+#### <span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>、Restful 操作示例
+
+按岁数进行聚合分桶，统计各个岁数员工的人数：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>GET mydlq-user&#x2F;_search<br>{<br>  “size”: 0,<br>  “aggs”: {<br>    “age_bucket”: {<br>      “terms”: {<br>        “field”: “age”,<br>        “size”: “10”<br>      }<br>    }<br>  }<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+按工资范围进行聚合分桶，统计工资在 <span class="token number">3000</span><span class="token operator">-</span><span class="token number">5000</span>、<span class="token number">5000</span><span class="token operator">-</span><span class="token number">9000</span> 和 <span class="token number">9000</span> 以上的员工信息：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>GET mydlq-user&#x2F;_search<br>{<br>  “aggs”: {<br>    “salary_range_bucket”: {<br>      “range”: {<br>        “field”: “salary”,<br>        “ranges”: [<br>          {<br>            “key”: “低级员工”, <br>            “to”: 3000<br>          },{<br>            “key”: “中级员工”,<br>            “from”: 5000,<br>            “to”: 9000<br>          },{<br>            “key”: “高级员工”,<br>            “from”: 9000<br>          }<br>        ]<br>      }<br>    }<br>  }<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+按照时间范围进行分桶，统计 <span class="token number">1985</span><span class="token operator">-</span><span class="token number">1990</span> 年和 <span class="token number">1990</span><span class="token operator">-</span><span class="token number">1995</span> 年出生的员工信息：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>GET mydlq-user&#x2F;_search<br>{<br>  “size”: 10,<br>  “aggs”: {<br>    “date_range_bucket”: {<br>      “date_range”: {<br>        “field”: “birthDate”,<br>        “format”: “yyyy”, <br>        “ranges”: [<br>          {<br>            “key”: “出生日期1985-1990的员工”, <br>            “from”: “1985”,<br>            “to”: “1990”<br>          },{<br>            “key”: “出生日期1990-1995的员工”, <br>            “from”: “1990”,<br>            “to”: “1995”<br>          }<br>        ]<br>      }<br>    }<br>  }<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+按工资多少进行聚合分桶，设置统计的最小值为 <span class="token number">0</span>，最大值为 <span class="token number">12000</span>，区段间隔为 <span class="token number">3000</span>：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>GET mydlq-user&#x2F;_search<br>{<br>  “size”: 0,<br>  “aggs”: {<br>    “salary_histogram”: {<br>      “histogram”: {<br>        “field”: “salary”,<br>        “extended_bounds”: {<br>          “min”: 0,<br>          “max”: 12000<br>        }, <br>        “interval”: 3000<br>      }<br>    }<br>  }<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+按出生日期进行分桶：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>GET mydlq-user&#x2F;_search<br>{<br>  “size”: 0,<br>  “aggs”: {<br>    “birthday_histogram”: {<br>      “date_histogram”: {<br>        “format”: “yyyy”, <br>        “field”: “birthDate”,<br>        “interval”: “year”<br>      }<br>    }<br>  }<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+#### <span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span>、Java 代码示例
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>import lombok.extern.slf4j.Slf4j;<br>import org.elasticsearch.action.search.SearchRequest;<br>import org.elasticsearch.action.search.SearchResponse;<br>import org.elasticsearch.client.RequestOptions;<br>import org.elasticsearch.client.RestHighLevelClient;<br>import org.elasticsearch.rest.RestStatus;<br>import org.elasticsearch.search.aggregations.AggregationBuilder;<br>import org.elasticsearch.search.aggregations.AggregationBuilders;<br>import org.elasticsearch.search.aggregations.Aggregations;<br>import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInterval;<br>import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;<br>import org.elasticsearch.search.aggregations.bucket.range.Range;<br>import org.elasticsearch.search.aggregations.bucket.terms.Terms;<br>import org.elasticsearch.search.builder.SearchSourceBuilder;<br>import org.springframework.beans.factory.annotation.Autowired;<br>import org.springframework.stereotype.Service;<br>import java.io.IOException;<br>import java.util.List;</p>
+<p>@Slf4j<br>@Service<br>public class AggrBucketService {</p>
+<p>    @Autowired<br>    private RestHighLevelClient restHighLevelClient;</p>
+<p>    &#x2F;**<br>     * 按岁数进行聚合分桶<br>     *&#x2F;<br>    public Object aggrBucketTerms() {<br>        try {<br>            AggregationBuilder aggr &#x3D; AggregationBuilders.terms(“age_bucket”).field(“age”);<br>            &#x2F;&#x2F; 查询源构建器<br>            SearchSourceBuilder searchSourceBuilder &#x3D; new SearchSourceBuilder();<br>            searchSourceBuilder.size(10);<br>            searchSourceBuilder.aggregation(aggr);<br>            &#x2F;&#x2F; 创建查询请求对象，将查询条件配置到其中<br>            SearchRequest request &#x3D; new SearchRequest(“mydlq-user”);<br>            request.source(searchSourceBuilder);<br>            &#x2F;&#x2F; 执行请求<br>            SearchResponse response &#x3D; restHighLevelClient.search(request, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 获取响应中的聚合信息<br>            Aggregations aggregations &#x3D; response.getAggregations();<br>            &#x2F;&#x2F; 输出内容<br>            if (RestStatus.OK.equals(response.status())) {<br>                &#x2F;&#x2F; 分桶<br>                Terms byCompanyAggregation &#x3D; aggregations.get(“age_bucket”);<br>                List&lt;? extends Terms.Bucket&gt; buckets &#x3D; byCompanyAggregation.getBuckets();<br>                &#x2F;&#x2F; 输出各个桶的内容<br>                log.info(“——————————————-“);<br>                log.info(“聚合信息:”);<br>                for (Terms.Bucket bucket : buckets) {<br>                    log.info(“桶名：{} | 总数：{}”, bucket.getKeyAsString(), bucket.getDocCount());<br>                }<br>                log.info(“——————————————-“);<br>            }<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>    }</p>
+<p>    &#x2F;**<br>     * 按工资范围进行聚合分桶<br>     *&#x2F;<br>    public Object aggrBucketRange() {<br>        try {<br>            AggregationBuilder aggr &#x3D; AggregationBuilders.range(“salary_range_bucket”)<br>                    .field(“salary”)<br>                    .addUnboundedTo(“低级员工”, 3000)<br>                    .addRange(“中级员工”, 5000, 9000)<br>                    .addUnboundedFrom(“高级员工”, 9000);<br>            &#x2F;&#x2F; 查询源构建器<br>            SearchSourceBuilder searchSourceBuilder &#x3D; new SearchSourceBuilder();<br>            searchSourceBuilder.size(0);<br>            searchSourceBuilder.aggregation(aggr);<br>            &#x2F;&#x2F; 创建查询请求对象，将查询条件配置到其中<br>            SearchRequest request &#x3D; new SearchRequest(“mydlq-user”);<br>            request.source(searchSourceBuilder);<br>            &#x2F;&#x2F; 执行请求<br>            SearchResponse response &#x3D; restHighLevelClient.search(request, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 获取响应中的聚合信息<br>            Aggregations aggregations &#x3D; response.getAggregations();<br>            &#x2F;&#x2F; 输出内容<br>            if (RestStatus.OK.equals(response.status())) {<br>                &#x2F;&#x2F; 分桶<br>                Range byCompanyAggregation &#x3D; aggregations.get(“salary_range_bucket”);<br>                List&lt;? extends Range.Bucket&gt; buckets &#x3D; byCompanyAggregation.getBuckets();<br>                &#x2F;&#x2F; 输出各个桶的内容<br>                log.info(“——————————————-“);<br>                log.info(“聚合信息:”);<br>                for (Range.Bucket bucket : buckets) {<br>                    log.info(“桶名：{} | 总数：{}”, bucket.getKeyAsString(), bucket.getDocCount());<br>                }<br>                log.info(“——————————————-“);<br>            }<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>    }</p>
+<p>    &#x2F;**<br>     * 按照时间范围进行分桶<br>     *&#x2F;<br>    public Object aggrBucketDateRange() {<br>        try {<br>            AggregationBuilder aggr &#x3D; AggregationBuilders.dateRange(“date_range_bucket”)<br>                    .field(“birthDate”)<br>                    .format(“yyyy”)<br>                    .addRange(“1985-1990”, “1985”, “1990”)<br>                    .addRange(“1990-1995”, “1990”, “1995”);<br>            &#x2F;&#x2F; 查询源构建器<br>            SearchSourceBuilder searchSourceBuilder &#x3D; new SearchSourceBuilder();<br>            searchSourceBuilder.size(0);<br>            searchSourceBuilder.aggregation(aggr);<br>            &#x2F;&#x2F; 创建查询请求对象，将查询条件配置到其中<br>            SearchRequest request &#x3D; new SearchRequest(“mydlq-user”);<br>            request.source(searchSourceBuilder);<br>            &#x2F;&#x2F; 执行请求<br>            SearchResponse response &#x3D; restHighLevelClient.search(request, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 获取响应中的聚合信息<br>            Aggregations aggregations &#x3D; response.getAggregations();<br>            &#x2F;&#x2F; 输出内容<br>            if (RestStatus.OK.equals(response.status())) {<br>                &#x2F;&#x2F; 分桶<br>                Range byCompanyAggregation &#x3D; aggregations.get(“date_range_bucket”);<br>                List&lt;? extends Range.Bucket&gt; buckets &#x3D; byCompanyAggregation.getBuckets();<br>                &#x2F;&#x2F; 输出各个桶的内容<br>                log.info(“——————————————-“);<br>                log.info(“聚合信息:”);<br>                for (Range.Bucket bucket : buckets) {<br>                    log.info(“桶名：{} | 总数：{}”, bucket.getKeyAsString(), bucket.getDocCount());<br>                }<br>                log.info(“——————————————-“);<br>            }<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>    }</p>
+<p>    &#x2F;**<br>     * 按工资多少进行聚合分桶<br>     *&#x2F;<br>    public Object aggrBucketHistogram() {<br>        try {<br>            AggregationBuilder aggr &#x3D; AggregationBuilders.histogram(“salary_histogram”)<br>                    .field(“salary”)<br>                    .extendedBounds(0, 12000)<br>                    .interval(3000);<br>            &#x2F;&#x2F; 查询源构建器<br>            SearchSourceBuilder searchSourceBuilder &#x3D; new SearchSourceBuilder();<br>            searchSourceBuilder.size(0);<br>            searchSourceBuilder.aggregation(aggr);<br>            &#x2F;&#x2F; 创建查询请求对象，将查询条件配置到其中<br>            SearchRequest request &#x3D; new SearchRequest(“mydlq-user”);<br>            request.source(searchSourceBuilder);<br>            &#x2F;&#x2F; 执行请求<br>            SearchResponse response &#x3D; restHighLevelClient.search(request, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 获取响应中的聚合信息<br>            Aggregations aggregations &#x3D; response.getAggregations();<br>            &#x2F;&#x2F; 输出内容<br>            if (RestStatus.OK.equals(response.status())) {<br>                &#x2F;&#x2F; 分桶<br>                Histogram byCompanyAggregation &#x3D; aggregations.get(“salary_histogram”);<br>                List&lt;? extends Histogram.Bucket&gt; buckets &#x3D; byCompanyAggregation.getBuckets();<br>                &#x2F;&#x2F; 输出各个桶的内容<br>                log.info(“——————————————-“);<br>                log.info(“聚合信息:”);<br>                for (Histogram.Bucket bucket : buckets) {<br>                    log.info(“桶名：{} | 总数：{}”, bucket.getKeyAsString(), bucket.getDocCount());<br>                }<br>                log.info(“——————————————-“);<br>            }<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>    }</p>
+<p>    &#x2F;**<br>     * 按出生日期进行分桶<br>     *&#x2F;<br>    public Object aggrBucketDateHistogram() {<br>        try {<br>            AggregationBuilder aggr &#x3D; AggregationBuilders.dateHistogram(“birthday_histogram”)<br>                    .field(“birthDate”)<br>                    .interval(1)<br>                    .dateHistogramInterval(DateHistogramInterval.YEAR)<br>                    .format(“yyyy”);<br>            &#x2F;&#x2F; 查询源构建器<br>            SearchSourceBuilder searchSourceBuilder &#x3D; new SearchSourceBuilder();<br>            searchSourceBuilder.size(0);<br>            searchSourceBuilder.aggregation(aggr);<br>            &#x2F;&#x2F; 创建查询请求对象，将查询条件配置到其中<br>            SearchRequest request &#x3D; new SearchRequest(“mydlq-user”);<br>            request.source(searchSourceBuilder);<br>            &#x2F;&#x2F; 执行请求<br>            SearchResponse response &#x3D; restHighLevelClient.search(request, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 获取响应中的聚合信息<br>            Aggregations aggregations &#x3D; response.getAggregations();<br>            &#x2F;&#x2F; 输出内容<br>            if (RestStatus.OK.equals(response.status())) {<br>                &#x2F;&#x2F; 分桶<br>                Histogram byCompanyAggregation &#x3D; aggregations.get(“birthday_histogram”);</p>
+<p>                List&lt;? extends Histogram.Bucket&gt; buckets &#x3D; byCompanyAggregation.getBuckets();<br>                &#x2F;&#x2F; 输出各个桶的内容<br>                log.info(“——————————————-“);<br>                log.info(“聚合信息:”);<br>                for (Histogram.Bucket bucket : buckets) {<br>                    log.info(“桶名：{} | 总数：{}”, bucket.getKeyAsString(), bucket.getDocCount());<br>                }<br>                log.info(“——————————————-“);<br>            }<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>    }</p>
+<p>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+### <span class="token number">3</span>、Metric 与 Bucket 聚合分析
+
+#### <span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>、Restful 操作示例
+
+按照员工岁数分桶、然后统计每个岁数员工工资最高值<span class="token operator">:</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>GET mydlq-user&#x2F;_search<br>{<br>  “size”: 0,<br>  “aggs”: {<br>    “salary_bucket”: {<br>      “terms”: {<br>        “field”: “age”,<br>        “size”: “10”<br>      },<br>      “aggs”: {<br>        “salary_max_user”: {<br>          “top_hits”: {<br>            “size”: 1,<br>            “sort”: [<br>              {<br>                “salary”: {<br>                  “order”: “desc”<br>                }<br>              }<br>            ]<br>          }<br>        }<br>      }<br>    }<br>  }<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+### <span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span>、Java 代码示例
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>import lombok.extern.slf4j.Slf4j;<br>import org.elasticsearch.action.search.SearchRequest;<br>import org.elasticsearch.action.search.SearchResponse;<br>import org.elasticsearch.client.RequestOptions;<br>import org.elasticsearch.client.RestHighLevelClient;<br>import org.elasticsearch.rest.RestStatus;<br>import org.elasticsearch.search.SearchHit;<br>import org.elasticsearch.search.aggregations.AggregationBuilder;<br>import org.elasticsearch.search.aggregations.AggregationBuilders;<br>import org.elasticsearch.search.aggregations.Aggregations;<br>import org.elasticsearch.search.aggregations.bucket.terms.Terms;<br>import org.elasticsearch.search.aggregations.metrics.tophits.ParsedTopHits;<br>import org.elasticsearch.search.builder.SearchSourceBuilder;<br>import org.elasticsearch.search.sort.SortOrder;<br>import org.springframework.beans.factory.annotation.Autowired;<br>import org.springframework.stereotype.Service;<br>import java.io.IOException;<br>import java.util.List;</p>
+<p>@Slf4j<br>@Service<br>public class AggrBucketMetricService {</p>
+<p>    @Autowired<br>    private RestHighLevelClient restHighLevelClient;</p>
+<p>    &#x2F;**<br>     * topHits 按岁数分桶、然后统计每个员工工资最高值<br>     *&#x2F;<br>    public Object aggregationTopHits() {<br>        try {<br>            AggregationBuilder testTop &#x3D; AggregationBuilders.topHits(“salary_max_user”)<br>                    .size(1)<br>                    .sort(“salary”, SortOrder.DESC);<br>            AggregationBuilder salaryBucket &#x3D; AggregationBuilders.terms(“salary_bucket”)<br>                    .field(“age”)<br>                    .size(10);<br>            salaryBucket.subAggregation(testTop);<br>            &#x2F;&#x2F; 查询源构建器<br>            SearchSourceBuilder searchSourceBuilder &#x3D; new SearchSourceBuilder();<br>            searchSourceBuilder.size(0);<br>            searchSourceBuilder.aggregation(salaryBucket);<br>            &#x2F;&#x2F; 创建查询请求对象，将查询条件配置到其中<br>            SearchRequest request &#x3D; new SearchRequest(“mydlq-user”);<br>            request.source(searchSourceBuilder);<br>            &#x2F;&#x2F; 执行请求<br>            SearchResponse response &#x3D; restHighLevelClient.search(request, RequestOptions.DEFAULT);<br>            &#x2F;&#x2F; 获取响应中的聚合信息<br>            Aggregations aggregations &#x3D; response.getAggregations();<br>            &#x2F;&#x2F; 输出内容<br>            if (RestStatus.OK.equals(response.status())) {<br>                &#x2F;&#x2F; 分桶<br>                Terms byCompanyAggregation &#x3D; aggregations.get(“salary_bucket”);<br>                List&lt;? extends Terms.Bucket&gt; buckets &#x3D; byCompanyAggregation.getBuckets();<br>                &#x2F;&#x2F; 输出各个桶的内容<br>                log.info(“——————————————-“);<br>                log.info(“聚合信息:”);<br>                for (Terms.Bucket bucket : buckets) {<br>                    log.info(“桶名：{}”, bucket.getKeyAsString());<br>                    ParsedTopHits topHits &#x3D; bucket.getAggregations().get(“salary_max_user”);<br>                    for (SearchHit hit:topHits.getHits()){<br>                        log.info(hit.getSourceAsString());<br>                    }<br>                }<br>                log.info(“——————————————-“);<br>            }<br>        } catch (IOException e) {<br>            log.error(“”, e);<br>        }<br>    }</p>
+<p>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+最后，再给大家分享一份很好的<span class="token operator">*</span><span class="token operator">*</span>算法刷题指南<span class="token operator">*</span><span class="token operator">*</span>，我们都知道面试的不可避免的就是手撕代码，而且一般都是很难掌握的，我在前面面试中就是每天刷题，很费时间，也是很辛苦的，今天给大家推荐份来自字节跳动大佬的算法手册，我看过，感觉很不错，大家可以先看一下下面的内容：
+
+<span class="token operator">&lt;</span>img width<span class="token operator">=</span><span class="token string">"1070"</span> height<span class="token operator">=</span><span class="token string">"1103"</span> src<span class="token operator">=</span><span class="token string">"https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9GaWF4c1M3T21lQVExV1hXQlFvc2NyUzZlUmljTXFZQkNZazFwYWtpYkQ0UVZhdjdsaWJ4dUJnNTV1aWJobFNIcWpGZk15V3ZyaWF6bnZ6U05yaWFHakxIWWJpY3RRLzY0MA?x-oss-process=image/format,png"</span><span class="token operator">></span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>点击关注下方公众号，回复「算法」获取</p>
+<p>&#96;&#96;&#96;</p>
+<p>原文地址：<a target="_blank" rel="noopener" href="https://sihai.blog.csdn.net/article/details/113733168">https://sihai.blog.csdn.net/article/details/113733168</a></p>
+
+                </div>
+                <!-- 欧阳思海，modify，2020.05.01-->
+<!-- 文章详情详情页面的头部广告位置信息 -->
+<div id="post-head-panel">
+    
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" style="font-size: 18px;" target="_blank">
+        <img src="/icons/hot.gif">
+        本人花费半年的时间总结的《Java面试指南》已拿腾讯等大厂offer，已开源在github ，欢迎star！
+    </a>
+    
+    
+</div>
+<br />
+
+
+
+<blockquote>
+    
+            <p>本文GitHub <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">https://github.com/OUYANGSIHAI/JavaInterview</a> 已收录，这是我花了6个月总结的<b>一线大厂Java面试</b>总结，本人已拿大厂offer，欢迎star</p>
+    
+    <p>原文链接：blog.ouyangsihai.cn &gt;&gt; <a href="/springboot-cao-zuo-elasticsearch-xiang-jie-wan-zi-chang-wen.html" target="_blank">SpringBoot 操作 ElasticSearch 详解（万字长文）</a></p>
+</blockquote>
+                <hr />
+
+                
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.88rem;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-large waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fa fa-close"></i></a>
+            <h4 class="reward-title">多少都是对我的认可</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="http://image.ouyangsihai.cn/FpbhsOuf3Ar9vY34B97Y2qQ7LVGe" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="http://image.ouyangsihai.cn/FgYlMzms68PH73PWpZBwPfbLTAws" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+                
+
+                <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+
+<div id="article-share">
+    
+    <div class="social-share" data-disabled="qzone" data-wechat-qrcode-helper="<p>微信里点“发现”->“扫一扫”二维码便可查看分享。</p>"></div>
+    
+</div>
+
+<script src="/libs/share/js/social-share.min.js"></script>
+
+                
+
+                
+                <div class="reprint1">
+                    <p>
+                        <span class="reprint1-tip">
+                            <i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;转载请注明:
+                        </span>
+                        <a href="https://blog.ouyangsihai.cn" class="b-link-green">好好学java</a>
+                        <i class="fa fa-angle-right fa-lg fa-fw text-color"></i>
+                        <a href="/springboot-cao-zuo-elasticsearch-xiang-jie-wan-zi-chang-wen.html" class="b-link-green">SpringBoot 操作 ElasticSearch 详解（万字长文）</a>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        
+
+        
+
+        
+
+        
+
+        
+        <style>
+    .valine-card {
+        margin: 1.5rem auto;
+    }
+
+    .valine-card .card-content {
+        padding: 20px 20px 5px 20px;
+    }
+    /* valine 评论框增加背景图片 */
+    #vcomments textarea {
+        box-sizing: border-box;
+        background: url("") 100% 100% no-repeat;
+    }
+
+    #vcomments input[type=text],
+    #vcomments input[type=email],
+    #vcomments input[type=url],
+    #vcomments textarea {
+        box-sizing: border-box;
+    }
+
+    #vcomments p {
+        margin: 2px 2px 10px;
+        font-size: 1.05rem;
+        line-height: 1.78rem;
+    }
+
+    #vcomments blockquote p {
+        text-indent: 0.2rem;
+    }
+
+    #vcomments a {
+        padding: 0 2px;
+        color: #42b983;
+        font-weight: 500;
+        text-decoration: underline;
+    }
+
+    #vcomments img {
+        max-width: 100%;
+        height: auto;
+        cursor: pointer;
+    }
+
+    #vcomments ol li {
+        list-style-type: decimal;
+    }
+
+    #vcomments ol,
+    ul {
+        display: block;
+        padding-left: 2em;
+        word-spacing: 0.05rem;
+    }
+
+    #vcomments ul li,
+    ol li {
+        display: list-item;
+        line-height: 1.8rem;
+        font-size: 1rem;
+    }
+
+    #vcomments ul li {
+        list-style-type: disc;
+    }
+
+    #vcomments ul ul li {
+        list-style-type: circle;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    #vcomments table, th, td {
+        border: 0;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments h1 {
+        font-size: 1.85rem;
+        font-weight: bold;
+        line-height: 2.2rem;
+    }
+
+    #vcomments h2 {
+        font-size: 1.65rem;
+        font-weight: bold;
+        line-height: 1.9rem;
+    }
+
+    #vcomments h3 {
+        font-size: 1.45rem;
+        font-weight: bold;
+        line-height: 1.7rem;
+    }
+
+    #vcomments h4 {
+        font-size: 1.25rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    #vcomments h5 {
+        font-size: 1.1rem;
+        font-weight: bold;
+        line-height: 1.4rem;
+    }
+
+    #vcomments h6 {
+        font-size: 1rem;
+        line-height: 1.3rem;
+    }
+
+    #vcomments p {
+        font-size: 1rem;
+        line-height: 1.5rem;
+    }
+
+    #vcomments hr {
+        margin: 12px 0;
+        border: 0;
+        border-top: 1px solid #ccc;
+    }
+
+    #vcomments blockquote {
+        margin: 15px 0;
+        border-left: 5px solid #42b983;
+        padding: 1rem 0.8rem 0.3rem 0.8rem;
+        color: #666;
+        background-color: rgba(66, 185, 131, .1);
+    }
+
+    #vcomments pre {
+        font-family: monospace, monospace;
+        padding: 1.2em;
+        margin: .5em 0;
+        background: #272822;
+        overflow: auto;
+        border-radius: 0.3em;
+        tab-size: 4;
+    }
+
+    #vcomments code {
+        font-family: monospace, monospace;
+        padding: 1px 3px;
+        font-size: 0.92rem;
+        color: #e96900;
+        background-color: #f8f8f8;
+        border-radius: 2px;
+    }
+
+    #vcomments pre code {
+        font-family: monospace, monospace;
+        padding: 0;
+        color: #e8eaf6;
+        background-color: #272822;
+    }
+
+    #vcomments pre[class*="language-"] {
+        padding: 1.2em;
+        margin: .5em 0;
+    }
+
+    #vcomments code[class*="language-"],
+    pre[class*="language-"] {
+        color: #e8eaf6;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    #vcomments b,
+    strong {
+        font-weight: bold;
+    }
+
+    #vcomments dfn {
+        font-style: italic;
+    }
+
+    #vcomments small {
+        font-size: 85%;
+    }
+
+    #vcomments cite {
+        font-style: normal;
+    }
+
+    #vcomments mark {
+        background-color: #fcf8e3;
+        padding: .2em;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    /* 修复评论第一行位置错位 */
+    .v .vlist .vcard {
+    padding-top: 2.5em !important ;
+    }
+</style>
+
+<div class="card valine-card" data-aos="fade-up">
+    <div id="vcomments" class="card-content"></div>
+</div>
+
+<script src="/libs/valine/av-min.js"></script>
+<script src="/libs/valine/Valine.min.js"></script>
+<!-- <link rel="stylesheet" type="text/css" href="/libs//libs/jQuery-emoji/dist/css/jquery.emoji.css">
+<script src="/libs//libs/jQuery-emoji/dist/js/jquery.emoji.min.js"></script>
+<script src="/libs//libs/jQuery-emoji/dist/js/emoji.list.js"></script> -->
+<script>
+    new Valine({
+        el: '#vcomments',
+        appId: 'MxSNOS83TYWU3Opsy2GTW1ih-gzGzoHsz',
+        appKey: '4XevOgmAxHEwVDnIKgvEUihB',
+        notify: 'true' === 'true',
+        verify: 'true' === 'true',
+        visitor: 'true' === 'true',
+        avatar: 'mm',
+        pageSize: '10',
+        lang: 'zh-cn',
+        placeholder: '请畅所欲言吧，别害羞~',
+
+    });
+
+//     function parse_emoji() {
+//     jQuery(".vcontent").emojiParse({
+//       basePath: '/libs/jQuery-emoji/images/emoji',
+//       icons: emojiLists   // 注：详见 js/emoji.list.js
+//     });
+//   }
+  
+//   setTimeout(function() {
+//     // jQuery emoji 解析
+//     parse_emoji();
+//     // jquery emoji 初始化
+//     jQuery(".veditor").emoji({
+//       showTab: true,
+//       animation: 'slide',
+//       basePath: '/libs/jQuery-emoji/images/emoji',
+//       icons: emojiLists  // 注：详见 js/emoji.list.js
+//     });
+//     jQuery(".vmore").on("click", function() {
+//       setTimeout(function() {
+//         parse_emoji();
+//       }, 500);
+//     });
+//   }, 800)
+
+</script>
+        
+
+        
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/2021-zui-xin-ban-spring-boot-su-ji-jiao-cheng.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="2021 最新版 Spring Boot 速记教程">
+                        
+                        <span class="card-title">2021 最新版 Spring Boot 速记教程</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+点击上方 好好学java ，选择 星标 公众号
+
+重磅资讯，干货，第一时间送达
+今日推荐：分享一套基于SpringBoot和Vue的企业级中后台开源项目，这个项目有点哇塞！个人原创100W +访问量博客：点击前往，查看更多
+
+本文来源：h
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="fa fa-clock fa-fw icon-date"></i>2021-04-04
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E5%A5%BD%E5%A5%BD%E5%AD%A6java/" class="post-category" target="_blank">
+                                    好好学java
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fa fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/jetbrains-chu-pin-yi-kuan-hao-yong-dao-bao-de-shu-ju-ku-gong-ju-liang-yan-dao-liao.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/3.jpg" class="responsive-img" alt="JetBrains出品，一款好用到爆的数据库工具，惊艳到了！！！">
+                        
+                        <span class="card-title">JetBrains出品，一款好用到爆的数据库工具，惊艳到了！！！</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+点击上方 好好学java ，选择 星标 公众号
+
+重磅资讯，干货，第一时间送达今日推荐：分享一套基于SpringBoot和Vue的企业级中后台开源项目，这个项目有点哇塞！个人原创100W +访问量博客：点击前往，查看更多
+
+作者：Atzu
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="fa fa-clock fa-fw icon-date"></i>2021-04-04
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E5%A5%BD%E5%A5%BD%E5%AD%A6java/" class="post-category" target="_blank">
+                                    好好学java
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+    </div>
+</div>
+
+
+<script>
+    $('#articleContent').on('copy', function (e) {
+        // IE8 or earlier browser is 'undefined'
+        if (typeof window.getSelection === 'undefined') return;
+
+        var selection = window.getSelection();
+        // if the selection is short let's not annoy our users.
+        if (('' + selection).length < Number.parseInt('500')) {
+            return;
+        }
+
+        // create a div outside of the visible area and fill it with the selected text.
+        var bodyElement = document.getElementsByTagName('body')[0];
+        var newdiv = document.createElement('div');
+        newdiv.style.position = 'absolute';
+        newdiv.style.left = '-99999px';
+        bodyElement.appendChild(newdiv);
+        newdiv.appendChild(selection.getRangeAt(0).cloneContents());
+
+        // we need a <pre> tag workaround.
+        // otherwise the text inside "pre" loses all the line breaks!
+        if (selection.getRangeAt(0).commonAncestorContainer.nodeName === 'CODE') {
+            newdiv.innerHTML = "<pre>" + newdiv.innerHTML + "</pre>";
+        }
+
+        var url = document.location.href;
+        newdiv.innerHTML += '<br />'
+            + '来源: 好好学java<br />'
+            + '作者: 好好学java<br />'
+            + '链接: <a href="' + url + '">' + url + '</a><br />'
+            + '本文章著作权归作者所有，任何形式的转载都请注明出处。';
+
+        selection.selectAllChildren(newdiv);
+        window.setTimeout(function () { bodyElement.removeChild(newdiv); }, 200);
+    });
+</script>
+
+
+
+<!--
+<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+<script>
+    const btw = new BTWPlugin();
+    btw.init({
+        id: 'container',
+        blogId: '15305-1590684104111-518',
+        name: '程序员的技术圈子',
+        qrcode: 'http://image.ouyangsihai.cn/FtAUOeE5--1JTdcuuZFIhMuEUuJO',
+        keyword: 'vip',
+    });
+</script>
+-->
+
+    </div>
+    <div id="toc-aside" style="width: 310px;" class="expanded col l3 hide-on-med-and-down">
+        <!-- 自定义右侧card：欧阳思海 -->
+        <!-- <div id="my-card" style="background: ">
+            
+        </div> -->
+        <!-- <div class="toc-widget">
+            <div class="toc-title" style="display: none;"><i class="fa fa-list-alt"></i>&nbsp;&nbsp;</div>
+            <div id="toc-content"></div>
+        </div> -->
+
+
+
+
+
+
+
+
+        <aside class="col-lg-3" style="width: 300px;">
+
+            <link rel="stylesheet" type="text/css" href="/css/my-aside.css">
+
+            <!-- 关注公众号信息：欧阳思海 -->
+            <div class="widget-wrap">
+                <div class="widget bg-danger" style="color:whitesmoke; background-color: #419488">
+                    <div class="card-front animated col s12 m12 l8 offset-l2 fadeInUp">
+                        <div class="row">
+                            <div class="col-md-5" style="text-align: center;">
+                                <img class="adv" style="width: 95px; height: 95px;"
+                                    src="http://image.ouyangsihai.cn/FtAUOeE5--1JTdcuuZFIhMuEUuJO">
+                            </div>
+                            <div class="col-md-7" style="text-align: center;">
+                                <h2 style="font-size: 18px; 
+                                    margin: 0; 
+                                    padding: 0;
+                                    border: 0; 
+                                    outline: 0;
+                                    font-weight: inherit;
+                                    font-style: inherit;
+                                    font-family: inherit;
+                                    vertical-align: baseline;">关注公众号</h2>
+                                 
+                                <small style="font-size: 15px;">
+                                    →「技术干货」每日推送 <br>
+                                    →「回复资料」领取资料 <br>
+                                    →「微信加群」每周福利 <br>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div style="font-size: 0.8em;">
+                        <a href="/assets/erweima.jpg" target="_blank"
+                            style="color:orange;font-size: 14px;">点击添加我的微信，加入技术讨论群</a>
+                        除公众号以外，我还会在以下平台发布内容：
+                    </div>
+                    -->
+
+                    <div class="profile-block social-links col-md-7" style="text-align: center;">
+                        <table style="align-items: center; 
+                                        padding-left: 25px;">
+                            <tbody>
+                                <tr>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank" title="GitHub"
+                                            class="tooltip">
+                                            <img style="width: 22px;height: 22px;" src="/icons/github.svg"></a>
+                                    </td>
+
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://www.zhihu.com/people/hai-hai-ren-sheng-50/activities"
+                                            target="_blank" title="知乎" class="tooltip">
+                                            <img style="width: 22px;" src="/icons/zhihu.svg"></a>
+                                    </td>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://blog.csdn.net/sihai12345" target="_blank" title="CSDN"
+                                            class="tooltip">
+                                            <img style="width: 18px;" src="/icons/CSDN.svg"></a>
+                                    </td>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://www.jianshu.com/u/12b0bd4c857c" target="_blank" title="简书"
+                                            class="tooltip">
+                                            <img style="width: 22px;" src="/icons/JianShu.svg"></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            
+
+            <!-- custom rightside_link：热门文章推荐：欧阳思海 -->
+            
+            <div class="widget-wrap widget-panel">
+                <p style="text-align: left;padding-bottom: 10px;line-height: 30px; font-size: 14px;">
+                    
+                    <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        本人花费半年的时间总结的《 Java 面试指南》已拿腾讯等大厂 offer，已开源在 github ，欢迎 star！
+                    </a><br>
+                    
+                    <a href="https://mp.weixin.qq.com/s/I0jimqziHqRNaIy0kXRCnw" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        2020 Java 1000G 最新学习资源，Java基础、Java项目实战、Java分布式等等！
+                    </a><br>
+                    
+                    <a href="http://image.ouyangsihai.cn/FpB-dO6g-XU44mMrVlj7EL1y7Rs7" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        高级 Java 开发微信群，一起搞事情吧！
+                    </a><br>
+                    
+                </p>
+            </div>
+            
+
+            
+
+            <!-- custom rightside_banner：右侧广告或者其他的栏目设置：欧阳思海 -->
+            
+            <div class="widget-wrap">
+                <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">
+                    <img src="http://image.ouyangsihai.cn/FhhoEYMaNr6m0v8KhG8vSPgoREBV" style="width: 100%;">
+                </a>
+            </div>
+            
+            
+
+            
+
+            <!-- 右侧专栏分类：欧阳思海 -->
+            
+            <div class="widget-wrap widget-panel">
+                <ul class="media-list">
+                    
+                    <li class="media">
+                        <a href="/categories/MySQL的艺术世界/" target="_blank">
+                            <div class="media-left">
+                                <img class="media-object" src="http://image.ouyangsihai.cn/Fn3kQurieQ_0QUeqPmx5RW5i6R9n" style="width: 55px;">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading" style="margin-bottom: 10px; font-size: 100%;
+                                                                    margin: 0;
+                                                                    padding: 0;
+                                                                    border: 0;
+                                                                    outline: 0;
+                                                                    font-weight: inherit;
+                                                                    font-style: inherit;
+                                                                    font-family: inherit;
+                                                                    vertical-align: baseline;">
+                                    MySQL 的系列文章，解决全部面试问题！
+                                </h4>
+                                <p>
+                                    总共10篇文章，面试热门的锁、事务，通通解决了！
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    <hr>
+                    
+                    <li class="media">
+                        <a href="/categories/深入理解Java虚拟机/" target="_blank">
+                            <div class="media-left">
+                                <img class="media-object" src="http://image.ouyangsihai.cn/FpcS21VWJOHSgGzKcpW3_xVTSEeN" style="width: 55px;">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading" style="margin-bottom: 10px; font-size: 100%;
+                                                                    margin: 0;
+                                                                    padding: 0;
+                                                                    border: 0;
+                                                                    outline: 0;
+                                                                    font-weight: inherit;
+                                                                    font-style: inherit;
+                                                                    font-family: inherit;
+                                                                    vertical-align: baseline;">
+                                    深入理解 Java 虚拟机，面试必问
+                                </h4>
+                                <p>
+                                    总共10篇文章，包括内存模型、GC算法、GC收集器等。
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    <hr>
+                    
+                </ul>
+            </div>
+            
+
+            <!-- 右侧分类 -->
+            <div class="widget-wrap widget-panel">
+                <h3 class="widget-title">文章分类</h3>
+                <div class="widget">
+                    <ul class="category-list">
+                        
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/趣聊数据结构与算法/">>
+                                趣聊数据结构与算法</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/职业生涯浅谈/">>
+                                职业生涯浅谈</a><span class="category-list-count">33</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java项目分享/">>
+                                Java项目分享</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java面试经验/">>
+                                Java面试经验</a><span class="category-list-count">4</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/我要进大厂/">>
+                                我要进大厂</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/好好学java/">>
+                                好好学java</a><span class="category-list-count">1116</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/剑指offer/">>
+                                剑指offer</a><span class="category-list-count">112</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/css/">>
+                                css</a><span class="category-list-count">12</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/其他框架/">>
+                                其他框架</a><span class="category-list-count">142</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python其他/">>
+                                python其他</a><span class="category-list-count">45</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/数据库相关/">>
+                                数据库相关</a><span class="category-list-count">293</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java核心知识/">>
+                                Java核心知识</a><span class="category-list-count">196</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java面试题/">>
+                                Java面试题</a><span class="category-list-count">308</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/mybatis源码/">>
+                                mybatis源码</a><span class="category-list-count">56</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/spring教程/">>
+                                spring教程</a><span class="category-list-count">173</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springboot教程/">>
+                                springboot教程</a><span class="category-list-count">156</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/实战Activiti工作流/">>
+                                实战Activiti工作流</a><span class="category-list-count">4</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springcloud教程/">>
+                                springcloud教程</a><span class="category-list-count">39</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/linux/">>
+                                linux</a><span class="category-list-count">91</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python框架/">>
+                                python框架</a><span class="category-list-count">43</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python基础/">>
+                                python基础</a><span class="category-list-count">78</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/dubbo/">>
+                                dubbo</a><span class="category-list-count">37</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java源码/">>
+                                Java源码</a><span class="category-list-count">76</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/叽叽喳喳杂七杂八/">>
+                                叽叽喳喳杂七杂八</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/MySQL的艺术世界/">>
+                                MySQL的艺术世界</a><span class="category-list-count">8</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/jquery/">>
+                                jquery</a><span class="category-list-count">14</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java并发/">>
+                                Java并发</a><span class="category-list-count">43</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java文章合辑/">>
+                                Java文章合辑</a><span class="category-list-count">11</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java基础修炼/">>
+                                Java基础修炼</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/不一样的Java8/">>
+                                不一样的Java8</a><span class="category-list-count">3</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/小程序开发的世界/">>
+                                小程序开发的世界</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java学习资源分享/">>
+                                Java学习资源分享</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java小学生漫游/">>
+                                Java小学生漫游</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/rocketmq源码解析/">>
+                                rocketmq源码解析</a><span class="category-list-count">33</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springmvc最新教程/">>
+                                springmvc最新教程</a><span class="category-list-count">9</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java的Exception/">>
+                                Java的Exception</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/vue-js/">>
+                                vue.js</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/实战设计模式/">>
+                                实战设计模式</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python数据处理/">>
+                                python数据处理</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java-Web闯关/">>
+                                Java Web闯关</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springboot2-0最新教程/">>
+                                springboot2.0最新教程</a><span class="category-list-count">11</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/netty/">>
+                                netty</a><span class="category-list-count">16</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/rpc/">>
+                                rpc</a><span class="category-list-count">13</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/拥抱大厂系列/">>
+                                拥抱大厂系列</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/eureka/">>
+                                eureka</a><span class="category-list-count">19</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/分布式/">>
+                                分布式</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/中间件/">>
+                                中间件</a><span class="category-list-count">23</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java基础/">>
+                                Java基础</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/带你学Python/">>
+                                带你学Python</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/使用技术工具/">>
+                                使用技术工具</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/mycat源码/">>
+                                mycat源码</a><span class="category-list-count">5</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/深入理解Java虚拟机/">>
+                                深入理解Java虚拟机</a><span class="category-list-count">8</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/spring源码/">>
+                                spring源码</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java集合源码分析/">>
+                                Java集合源码分析</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/github的repo/">>
+                                github的repo</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java框架深究/">>
+                                Java框架深究</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/分布式架构/">>
+                                分布式架构</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+
+        </aside>
+
+
+
+
+
+
+
+
+
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. 修改成永远不显示：欧阳思海-->
+
+
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h1, h2, h3, h4, h5'
+        });
+
+        console.log('============');
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h1, h2, h3, h4, h5').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+                        
+            /* 修复文章卡片 div 的宽度. */
+            let fixPostCardWidth = function (srcId, targetId) {
+                let srcDiv = $('#' + srcId);
+                if (srcDiv.length === 0) {
+                    return;
+                }
+
+                let w = srcDiv.width();
+                if (w >= 450) {
+                    w = w + 21;
+                } else if (w >= 350 && w < 450) {
+                    w = w + 18;
+                } else if (w >= 300 && w < 350) {
+                    w = w + 16;
+                } else {
+                    w = w + 14;
+                }
+                $('#' + targetId).width(w);
+            };
+
+            // 切换TOC目录展开收缩的相关操作.
+            // 修改右侧边栏功能：欧阳思海
+            const expandedClass = 'expanded';
+            let $tocAside = $('#toc-aside');
+            let $mainContent = $('#main-content');
+
+            $('#floating-toc-btn .btn-floating').click(function () {
+                if ($tocAside.hasClass(expandedClass)) {
+                    $tocAside.removeClass(expandedClass).slideUp(500);
+                    $mainContent.removeClass('l9');
+                } else {
+                    $tocAside.addClass(expandedClass).slideDown(500);
+                    $mainContent.addClass('l9');
+                }
+                fixPostCardWidth('artDetail', 'prenext-posts');
+            });
+                        
+                    });
+</script>
+    
+
+</main>
+
+
+        <footer class="page-footer bg-color">
+    <div class="container row center-align">
+        <div class="col s12 m8 l8 copy-right">
+            
+	    Copyright&copy; 2019 <a href="https://www.java1000.com/" target="_blank"> 好好学java </a>维护. 网站备案/许可证号：赣ICP备17007984号-3
+            <br>
+            <span id="sitetime"></span>
+            <br>
+
+            
+
+            
+                    <!-- 
+                        <span id="busuanzi_container_site_pv" style='display:none'></span>
+                        总访问量: <span id="busuanzi_value_site_pv" class="white-color"></span>
+                    
+        
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'></span>
+                        人次&nbsp; | &nbsp;访客人数: <span id="busuanzi_value_site_uv" class="white-color"></span> 人
+                     -->
+                        <!-- 修改计数：欧阳思海 -->
+                    
+                        <span id="busuanzi_container_site_pv" style='display:inline'>
+                            <i class="fa fa-heart-o"></i>
+                            本站总访问量 <span id="busuanzi_value_site_pv" class="white-color"></span>
+                        </span>
+                    
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'>
+                            人次,&nbsp;访客数 <span id="busuanzi_value_site_uv" class="white-color"></span> 人.
+                        </span>
+                    
+    
+            
+
+            
+                &nbsp; | &nbsp;字数统计:&nbsp;
+                <span class="white-color">8290.3k</span> 字
+            
+
+            
+            <br>
+
+        </div>
+
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fa fa-code-branch"></i>
+    </a>
+
+
+ 
+    <a href="https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=1446037005@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fa fa-envelope-open"></i>
+    </a>
+
+
+
+
+    <a href="https://zhihu.com/people/hai-hai-ren-sheng-50/activities" class="tooltipped" target="_blank" data-tooltip="访问我的知乎" data-position="top" data-delay="50">
+        <i class="fa fa-inverse">知</i>
+    </a>
+
+
+
+
+
+
+
+
+
+    <a href="https://blog.ouyangsihai.cn/sitemap.xml" class="tooltipped" target="_blank" data-tooltip="站点地图" data-position="top" data-delay="50">
+        <i class="fa fa-sitemap"></i>
+    </a>
+
+
+
+    <a href="https://blog.ouyangsihai.cn/friends" class="tooltipped" target="_blank" data-tooltip="友情链接" data-position="top" data-delay="50">
+        <i class="fa fa-address-book"></i>
+    </a>
+</div>
+
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+
+        var t1 = Date.UTC(2019, 08, 10, 00, 00, 00); //北京时间2019-8-1 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes *
+            minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "本站已运行 " + diffYears + " 年 " + diffDays + " 天 " + diffHours +
+            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒" ;
+    } /*因为建站时间还没有一年，就将之注释掉了。需要的可以取消*/
+    siteTime();
+</script>
+
+<!-- 修改计数：欧阳思海 -->
+<script>
+    $(document).ready(function () {
+
+        var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+        var pvcountOffset = 1005469;  // 初始化首次数据
+        var uvcountOffset = 250804;
+
+        function fixCount() {
+            if (document.getElementById("busuanzi_container_site_pv").style.display != "none") {
+                $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + pvcountOffset);
+                clearInterval(int);
+            }
+            if ($("#busuanzi_container_site_pv").css("display") != "none") {
+                $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + uvcountOffset); // 加上初始数据 
+                clearInterval(int); // 停止检测
+            }
+        }
+    });
+</script>
+
+
+
+
+        <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.json", 'searchInput', 'searchResult');
+});
+</script>
+        <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fa fa-angle-up"></i>
+    </a>
+</div>
+
+
+        <script src="/libs/materialize/materialize.min.js"></script>
+        <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+        <script src="/libs/aos/aos.js"></script>
+        <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+        <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+        <script src="/js/matery.js"></script>
+
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-149362573-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    gtag('config', 'UA-149362573-1');
+</script>
+
+
+
+        
+            <script src="/libs/others/clicklove.js"></script>
+        
+
+        
+            <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+        
+
+        <!-- 洪卫 shw2018 add 2019.08.28 -->
+        <script type="text/javascript">
+            var OriginTitile = document.title,
+                st;
+            document.addEventListener("visibilitychange", function () {
+                document.hidden ? (document.title = "看不见我🙈~看不见我🙈~", clearTimeout(st)) : (document.title =
+                    "(๑•̀ㅂ•́) ✧被发现了～", st = setTimeout(function () {
+                        document.title = OriginTitile
+                    }, 3e3))
+            })
+        </script>
+
+        <!-- 鼠标点击烟花爆炸效果  洪卫 shw2018 add 2019.09.09 -->
+        
+
+        <!-- 背景雪花飘落特效洪卫 shw2018 add 2019.09.10 -->
+        
+
+        <!-- 鼠标点击文字特效 洪卫 shw2018 add 2019.09.10-->
+        
+
+        <!-- 背景雪花飘落特效 洪卫 shw2018 add 2019.09.10 -->
+        
+
+        <!-- 在线聊天工具  洪卫 shw2018 add 2019.09.11 -->
+        
+
+        <!-- 背景 canvas-nest  洪卫 shw 2018  add 2019.09.15-->
+        
+
+        <!-- 背景静止彩带  洪卫 shw 2018  add 2019.09.15-->
+        
+
+        <!-- 背景动态彩带 洪卫 shw 2018  add 2019.09.15-->
+        
+
+    </body>
+</html>

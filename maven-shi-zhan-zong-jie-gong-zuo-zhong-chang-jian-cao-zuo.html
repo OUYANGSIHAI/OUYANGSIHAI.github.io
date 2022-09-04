@@ -1,0 +1,3057 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+    <!-- shw2018 洪卫  modify 2019.08.15-->
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="Spring Boot, Spring Cloud, 微服务, Java技术, 好好学java, Java面试, 分布式, 最新干货分享">
+    <meta name="baidu-site-verification" content="fmlEuI34ir" />
+    <meta name="google-site-verification" content="ZWVq5UvPg33BCEA3LRTUkYe5J854o9lF1_WRTer9l8A" />
+    <meta name="description" content="本站是 好好学java 的技术分享博客。内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、分布式、Java面试、测试开发等相关的研究与知识分享。">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>maven实战总结，工作中常见操作 | 好好学java | Spring Boot | Spring Cloud | 微服务 | Java技术 | Java面试 | 分布式 | 最新干货分享</title>
+    <link rel="icon" type="image/png" href="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7">
+
+    <!-- <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css"> -->
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    <!-- 自定义fontawesome样式：欧阳思海 -->
+    <link rel="stylesheet" type="text/css" href="/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/brands.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/fontawesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/regular.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/solid.min.css">
+
+
+    <style type="text/css">
+        code[class*="language-"],
+            pre[class*="language-"] {
+                white-space: pre !important;
+            }
+
+            
+
+        /* 将matery.css中的背景颜色修改放到这里：欧阳思海 */
+        .bg-color {
+            background-image: linear-gradient(to right, #ec8585 0%, #419488 100%);
+            opacity: 0.9;
+            // 透明度
+        }
+    </style>
+
+    <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
+    <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+
+    
+    
+    <script>
+        (function () {
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+    
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?6fe466069710c03a563713b507fbaca7";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+    <!-- Google Analytics -->
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-XXXXX-Y', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <!-- End Google Analytics -->
+
+    <script>(function (i, s, o, g, r, a, m) { i["DaoVoiceObject"] = r; i[r] = i[r] || function () { (i[r].q = i[r].q || []).push(arguments) }, i[r].l = 1 * new Date(); a = s.createElement(o), m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; a.charset = "utf-8"; m.parentNode.insertBefore(a, m) })(window, document, "script", ('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/0a804bac.js", "daovoice")</script>
+
+    <script>
+        if (true) {
+            daovoice('init', {
+                app_id: "0a804bac",
+                user_id: "NO_89757", // 必填: 该用户在您系统上的唯一ID
+                email: "daovoice@example.com", // 选填:  该用户在您系统上的主邮箱
+                name: "道客船长", // 选填: 用户名
+                signed_up: 1449821660 // 选填: 用户的注册时间，用Unix时间戳表示
+            });
+            daovoice('update');
+
+            daovoice('init', {
+                app_id: "0a804bac"
+            });
+            daovoice('update');
+        }
+    </script>
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/rss2.xml" title="好好学java" type="application/rss+xml">
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+    <body>
+
+        <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span" style="font-size: 1.4rem;">好好学java</span>
+                </a>
+            </div>
+            
+
+
+<!-- <a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-navicon"></i></a>
+<ul class="right">
+    
+    <li class="hide-on-med-and-down">
+        <a href="" class="waves-effect waves-light">
+            
+            <i class="fa "></i>
+            
+            <span></span>
+        </a>
+    </li>
+    
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title=""></i>
+        </a>
+    </li>
+</ul> -->
+
+<!-- 支持二级菜单特性 洪卫 shw2018 modify 2019.09.17  -->
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-align-justify"></i></a>
+<ul class="right nav-menu">
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-folder-minus"></i>
+                
+                <span style="font-size: 1.1rem;">Java学习</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/" >
+                    
+                    <span>Java入门</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Javaweb/" >
+                    
+                    <span>Java Web</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/spring%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>Spring教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/springboot%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>SpringBoot教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/springcloud%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>SpringCloud教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98/" >
+                    
+                    <span>Java面试</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%89%91%E6%8C%87offer/" >
+                    
+                    <span>剑指offer</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-code-branch"></i>
+                
+                <span style="font-size: 1.1rem;">Java进阶</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97/" >
+                    
+                    <span>设计模式</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" >
+                    
+                    <span>Java并发编程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/" >
+                    
+                    <span>数据库</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/redis/" >
+                    
+                    <span>Redis</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/linux/" >
+                    
+                    <span>Linux</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/" >
+                    
+                    <span>Java实战项目</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-code"></i>
+                
+                <span style="font-size: 1.1rem;">python学习</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/python%E5%9F%BA%E7%A1%80/" >
+                    
+                    <span>python基础</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/python%E6%A1%86%E6%9E%B6/" >
+                    
+                    <span>python框架</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/python%E5%85%B6%E4%BB%96/" >
+                    
+                    <span>python其他</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-coffee"></i>
+                
+                <span style="font-size: 1.1rem;">Java扩展</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/dubbo/" >
+                    
+                    <span>dubbo</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/netty/" >
+                    
+                    <span>netty</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/rpc/" >
+                    
+                    <span>rpc</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/eureka/" >
+                    
+                    <span>eureka</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/" >
+                    
+                    <span>中间件</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" >
+                    
+                    <span>分布式</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-desktop"></i>
+                
+                <span style="font-size: 1.1rem;">计算机核心</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" >
+                    
+                    <span>数据结构</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98/" >
+                    
+                    <span>leetcode刷题</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" >
+                    
+                    <span>计算机网络</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" >
+                    
+                    <span>算法</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/categories/" class="waves-effect waves-light">
+              
+                <i style="font-size: 1.1rem;" class="fa fa-adjust"></i>
+              
+              <span style="font-size: 1.1rem;">学习资源</span>
+            </a>
+
+            
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/contact" class="waves-effect waves-light">
+              
+                <i style="font-size: 1.1rem;" class="fa fa-envelope"></i>
+              
+              <span style="font-size: 1.1rem;">留言</span>
+            </a>
+
+            
+      </li>
+    
+
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title="搜索"></i>
+        </a>
+    </li>
+
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">好好学java</div>
+        <div class="logo-desc">
+            
+            
+            本站是 好好学java 的技术分享博客，涵盖Java后端技术、SpringBoot、微服务架构、分布式、Java面试等知 ...
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-folder-minus"></i>
+			
+			Java学习
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/ " style="margin-left:75px";>
+				  
+		          <span>Java入门</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Javaweb/ " style="margin-left:75px";>
+				  
+		          <span>Java Web</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/spring%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>Spring教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/springboot%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>SpringBoot教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/springcloud%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>SpringCloud教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98/ " style="margin-left:75px";>
+				  
+		          <span>Java面试</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%89%91%E6%8C%87offer/ " style="margin-left:75px";>
+				  
+		          <span>剑指offer</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-code-branch"></i>
+			
+			Java进阶
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97/ " style="margin-left:75px";>
+				  
+		          <span>设计模式</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>Java并发编程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/ " style="margin-left:75px";>
+				  
+		          <span>数据库</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/redis/ " style="margin-left:75px";>
+				  
+		          <span>Redis</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/linux/ " style="margin-left:75px";>
+				  
+		          <span>Linux</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/ " style="margin-left:75px";>
+				  
+		          <span>Java实战项目</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-code"></i>
+			
+			python学习
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/python%E5%9F%BA%E7%A1%80/ " style="margin-left:75px";>
+				  
+		          <span>python基础</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/python%E6%A1%86%E6%9E%B6/ " style="margin-left:75px";>
+				  
+		          <span>python框架</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/python%E5%85%B6%E4%BB%96/ " style="margin-left:75px";>
+				  
+		          <span>python其他</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-coffee"></i>
+			
+			Java扩展
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/dubbo/ " style="margin-left:75px";>
+				  
+		          <span>dubbo</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/netty/ " style="margin-left:75px";>
+				  
+		          <span>netty</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/rpc/ " style="margin-left:75px";>
+				  
+		          <span>rpc</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/eureka/ " style="margin-left:75px";>
+				  
+		          <span>eureka</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/ " style="margin-left:75px";>
+				  
+		          <span>中间件</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/ " style="margin-left:75px";>
+				  
+		          <span>分布式</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-desktop"></i>
+			
+			计算机核心
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/ " style="margin-left:75px";>
+				  
+		          <span>数据结构</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98/ " style="margin-left:75px";>
+				  
+		          <span>leetcode刷题</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/ " style="margin-left:75px";>
+				  
+		          <span>计算机网络</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E7%AE%97%E6%B3%95/ " style="margin-left:75px";>
+				  
+		          <span>算法</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories/" class="waves-effect waves-light">
+			
+			    <i class="fa fa-fw fa-adjust"></i>
+			
+			学习资源
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa fa-fw fa-envelope"></i>
+			
+			留言
+		</a>
+          
+        </li>
+        
+        
+    </ul>
+</div>
+
+        </div>
+
+        
+    </nav>
+
+</header>
+
+        
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/11.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <div class="description center-align post-title">
+                        maven实战总结，工作中常见操作
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 20px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+
+    /* 自定义mycard：欧阳思海 */
+
+    #my-card {
+        /* position: relative; */
+        width: 310px;
+        height: 300px;
+        /* max-height: 330px; */
+        margin-bottom: 15px;
+        margin-top: 15px;
+        /* text-align: center; */
+        border: 0;
+        border-radius: 3px;
+        color: rgba(0, 0, 0, .87);
+        background: #fff 50%;
+        background-image: none;
+        background-size: auto;
+        background-size: cover;
+        box-shadow: 0 15px 35px rgba(50, 50, 93, .1), 0 5px 15px rgba(0, 0, 0, .07);
+    }
+
+    /* .widget {
+        line-height: 1.6em;
+        word-wrap: break-word;
+        font-size: 0.9em;
+        padding-top: 15px;
+        padding-left: -45px;
+    } */
+</style>
+
+
+
+
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- shw2018 洪卫  modify 2019.08.15-->
+
+<!-- 代码块修改的代码开始 -->
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFunction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+<!-- 代码块折行 -->
+
+<style type="text/css">
+code[class*="language-"], pre[class*="language-"] { white-space: pre !important; }
+</style>
+
+<!-- 代码块修改代码结束 -->
+
+
+<!-- 文章内容详情 -->
+<div id="container">
+    <div id="artDetail">
+        <div class="card">
+            <div class="card-content article-info">
+                <div class="row tag-cate">
+                    <div class="col s7">
+                        
+                        <div class="article-tag">
+                            <span class="chip bg-color">无标签</span>
+                        </div>
+                        
+                    </div>
+                    <div class="col s5 right-align">
+                        
+                        <div class="post-cate">
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E5%A5%BD%E5%A5%BD%E5%AD%A6java/" class="post-category" target="_blank">
+                                好好学java
+                            </a>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <div class="post-info">
+                    <div class="post-date info-break-policy">
+                        <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
+                        2021-04-04
+                    </div>
+
+                    <div class="post-author info-break-policy">
+                        <i class="fa fa-user-o fa-fw"></i>作者:&nbsp;&nbsp;
+                        
+                        欧阳思海
+                        
+                    </div>
+
+                    
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;
+                        9.2k
+                    </div>
+                    
+
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-clock-o fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                        44 分
+                    </div>
+                    
+                    
+
+                    
+                    <span id="busuanzi_container_site_pv" style='display:none'></span>
+                    <i class="fa fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                    <span id="busuanzi_value_page_pv"></span>
+
+                    
+
+                </div>
+            </div>
+            <hr class="clearfix">
+            <div class="card-content article-card-content">
+                <!-- 欧阳思海，modify，2020.05.01-->
+<!-- 文章详情详情页面的头部广告位置信息 -->
+<div id="post-head-panel">
+    
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" style="font-size: 18px;" target="_blank">
+        <img src="/icons/hot.gif">
+        本人花费半年的时间总结的《Java面试指南》已拿腾讯等大厂offer，已开源在github ，欢迎star！
+    </a>
+    
+    
+</div>
+<br />
+
+
+
+<blockquote>
+    
+            <p>本文GitHub <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">https://github.com/OUYANGSIHAI/JavaInterview</a> 已收录，这是我花了6个月总结的<b>一线大厂Java面试</b>总结，本人已拿大厂offer，欢迎star</p>
+    
+    <p>原文链接：blog.ouyangsihai.cn &gt;&gt; <a href="/maven-shi-zhan-zong-jie-gong-zuo-zhong-chang-jian-cao-zuo.html" target="_blank">maven实战总结，工作中常见操作</a></p>
+</blockquote>
+                <div id="articleContent">
+                    <p>点击上方 **好好学java **，选择 **星标 **公众号</p>
+<h4 id="重磅资讯、干货，第一时间送达"><a href="#重磅资讯、干货，第一时间送达" class="headerlink" title="重磅资讯、干货，第一时间送达"></a><pre class="has"><code class="language-php">重磅资讯、干货，第一时间送达</h4><p></code></pre></p>
+<h2 id="今日推荐："><a href="#今日推荐：" class="headerlink" title="今日推荐："></a><strong><strong>今日推荐：</strong></strong></h2><h4 id="个人原创100W-访问量博客：点击前往，查看更多"><a href="#个人原创100W-访问量博客：点击前往，查看更多" class="headerlink" title=" 个人原创100W+访问量博客：点击前往，查看更多"></a><pre class="has"><code class="language-php"> 个人原创100W+访问量博客：点击前往，查看更多</h4><p></code></pre></p>
+<h2 id="思维导图"><a href="#思维导图" class="headerlink" title="思维导图"></a>思维导图</h2><h2 id="Maven-与构建"><a href="#Maven-与构建" class="headerlink" title="Maven 与构建"></a>Maven 与构建</h2><h3 id="什么是-Maven"><a href="#什么是-Maven" class="headerlink" title="什么是 Maven"></a>什么是 Maven</h3><p>翻译：知识的积累、专家、内行。跨平台的项目管理工具。Apache 组织的开源项目。主要服务于基于 Java 平台的项目构建、依赖管理和项目信息管理。</p>
+<p>类似于 linux 平台的 yum、apt，前端领域的 npm。Maven 前身为 Ant 目前 tomcat 的源码就是用 Ant 来构建和管理，更先进的工具有 Gradle， Spring 工程在用。</p>
+<h3 id="什么是构建"><a href="#什么是构建" class="headerlink" title="什么是构建"></a>什么是构建</h3><p>何为构建：编译、运行单元测试、生成文档、打包、部署的过程，这就是构建。</p>
+<p><strong>构建的步骤：</strong></p>
+<ul>
+<li><code class="java">
+清理 clean</code>：将以前编译得到的旧文件 class 字节码文件删除。- <code class="java">
+编译 compile</code>：将 java 源程序编译成 class 字节码文件。- <code class="java">
+测试 test</code>：自动测试，自动调用 junit 程序。- <code class="java">
+报告 report</code>：测试程序执行的结果。- <code class="java">
+打包 package</code>：动态 Web 工程打 War 包，java 工程打 jar 包。- <code class="java">
+安装 install</code>：将打包得到的文件复制到 “仓库” 中的指定位置（Maven特定的概念）。- <code class="java">
+部署 deploy</code>：将动态 Web 工程生成的 war 包复制到 Servlet 容器下，使其可以运行。<h3 id="项目骨架"><a href="#项目骨架" class="headerlink" title="项目骨架"></a>项目骨架</h3></li>
+</ul>
+<p>pom：Project Object Model</p>
+<pre class="line-numbers language-java"><code class="language-java">
+根目录：工程名
+<span class="token operator">|</span><span class="token operator">--</span><span class="token operator">-</span>src：源码
+<span class="token operator">|</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">|</span><span class="token operator">--</span><span class="token operator">-</span>main<span class="token operator">:</span>主程序
+<span class="token operator">|</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">|</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">|</span><span class="token operator">--</span><span class="token operator">-</span>java：主程序代码路径
+<span class="token operator">|</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">|</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">|</span><span class="token operator">--</span><span class="token operator">-</span>resource：主程序配置文件路径
+<span class="token operator">|</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">|</span><span class="token operator">--</span><span class="token operator">-</span>test：测试
+<span class="token operator">|</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">|</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">|</span><span class="token operator">--</span><span class="token operator">-</span>java：测试代码路径
+<span class="token operator">|</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">|</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">|</span><span class="token operator">--</span><span class="token operator">-</span>resource：测试配置文件路径
+<span class="token operator">|</span><span class="token operator">--</span><span class="token operator">-</span>pom<span class="token punctuation">.</span>xml：maven 配置文件
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="简单演示"><a href="#简单演示" class="headerlink" title="简单演示"></a>简单演示</h3><pre class="line-numbers language-java"><code class="language-java">
+## <span class="token number">1</span><span class="token punctuation">.</span> 使用 archetype 命令生成 maven 简单骨架
+mvn archetype<span class="token operator">:</span>generate <span class="token operator">-</span>DarchetypeCatalog<span class="token operator">=</span>internal
+
+## <span class="token number">2</span><span class="token punctuation">.</span> 编译当前生成的项目
+mvn compile
+
+## <span class="token number">3</span><span class="token punctuation">.</span> 使用其他命令
+mvn test<span class="token operator">-</span>compile  
+mvn <span class="token keyword">package</span>  
+mvn clean 
+mvn install
+mvn depoly 暂时不演示
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h2 id="坐标与依赖"><a href="#坐标与依赖" class="headerlink" title="坐标与依赖"></a>坐标与依赖</h2><h3 id="什么是坐标"><a href="#什么是坐标" class="headerlink" title="什么是坐标"></a>什么是坐标</h3><p>类比为数学中平面几何，坐标（x、y ），任何一个坐标都能唯一标识该平面中的一个点。</p>
+<p>该点对应到 maven 就是 .jar、.war 等文件的文件。</p>
+<p>Maven 使用 <code class="java">
+groupId</code>、<code class="java">
+artifactId</code>、<code class="java">
+version</code>、<code class="java">
+packaging</code>、<code class="java">
+classifier</code> 等元素来组成自己的坐标，并定义一组这样的规则，只要能提供正确坐标元素 Maven 就能找到对应的构件。</p>
+<h3 id="坐标元素"><a href="#坐标元素" class="headerlink" title="坐标元素"></a>坐标元素</h3><ul>
+<li><code class="java">
+groupId</code>：定义当前 Maven 项目隶属的实际项目。- <code class="java">
+artifactId</code>：定义实际项目中的一个 Maven 项目（模块）。- <code class="java">
+packaging</code>：定义 Maven 项目打包方式。jar、war、pom。默认为 jar。- <code class="java">
+version</code>：定义 Maven 项目当前所处的版本。- <code class="java">
+classifier</code>：区分从同一 artifact 构建的具有不同内容的构件。<h4 id="classifier-使用场景"><a href="#classifier-使用场景" class="headerlink" title="classifier 使用场景"></a>classifier 使用场景</h4></li>
+</ul>
+<p>区分基于不同 JDK 版本的包</p>
+<pre class="line-numbers language-java"><code class="language-java">
+<span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>dependency<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>  
+    <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>groupId<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>net<span class="token punctuation">.</span>sf<span class="token punctuation">.</span>json<span class="token operator">-</span>lib<span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>groupId<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>   
+    <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>artifactId<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>json<span class="token operator">-</span>lib<span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>artifactId<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>   
+    <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>version<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span><span class="token number">2.2</span><span class="token punctuation">.</span><span class="token number">2</span><span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>version<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>  
+    <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>classifier<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>jdk13<span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>classifier<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>    
+    <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">!</span><span class="token operator">--</span><span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>classifier<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>jdk15<span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>classifier<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span><span class="token operator">--</span><span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+<span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>dependency<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span> 
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>区分项目的不同组成部分</p>
+<pre class="line-numbers language-java"><code class="language-java">
+<span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>dependency<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>  
+    <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>groupId<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>net<span class="token punctuation">.</span>sf<span class="token punctuation">.</span>json<span class="token operator">-</span>lib<span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>groupId<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>   
+    <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>artifactId<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>json<span class="token operator">-</span>lib<span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>artifactId<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>   
+    <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>version<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span><span class="token number">2.2</span><span class="token punctuation">.</span><span class="token number">2</span><span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>version<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>  
+    <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>classifier<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>jdk15<span class="token operator">-</span>javadoc<span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>classifier<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>    
+    <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">!</span><span class="token operator">--</span><span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>classifier<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>jdk15<span class="token operator">-</span>sources<span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>classifier<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>  <span class="token operator">--</span><span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+<span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>dependency<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>构件名与坐标是对应的，一般规则是：artifactId-version[-classifier].packaging。</p>
+<h3 id="依赖声明"><a href="#依赖声明" class="headerlink" title="依赖声明"></a>依赖声明</h3><pre class="line-numbers language-java"><code class="language-java">
+<span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>dependencies<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+  <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>dependency<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+    <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>groupId<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span><span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>groupId<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+    <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>artifactId<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span><span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>artifactId<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+    <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>version<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span><span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>version<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+    <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>type<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span><span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>type<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+    <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>optional<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span><span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>optional<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+    <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>exclusions<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+      <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>exclusion<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+        <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>artifactId<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span><span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>artifactId<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+        <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>groupId<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span><span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>groupId<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+      <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>exclusion<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+      <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+    <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>exclusions<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+  <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>dependency<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+  <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+<span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>dependencies<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<ul>
+<li><code class="java">
+groupId</code>、<code class="java">
+artifactId</code>、<code class="java">
+version</code>：依赖的基本坐标。- <code class="java">
+type</code>：依赖的类型，对应项目对应的 packaging，一般不必声明。- <code class="java">
+scope</code>：依赖的范围，后面详解。- <code class="java">
+optional</code>：标记依赖是否可选。- <code class="java">
+exclusions</code>：用来排除传递性依赖。<h3 id="依赖范围"><a href="#依赖范围" class="headerlink" title="依赖范围"></a>依赖范围</h3></li>
+<li><code class="java">
+compile</code>：编译依赖范围如果没有指定，默认使用该依赖范围。对于编译、测试、运行三种 classpath 都有效。如：spring-core。- <code class="java">
+test</code>：测试依赖范围只对于测试 classpath 有效，只需要在编译测试及运行测试才需要，在打包的时候不会打进去。如：JUnit。- <code class="java">
+provided</code>：已提供依赖范围对于编译和测试 classpath 有效，但运行时无效。如：servlet-api 编译和测试项目的时候都需要，但在实际运行中，容器已经提供，不需要 maven 重复的引用。- <code class="java">
+runtime</code>：运行时依赖范围对于测试和运行的 classpath 有效，但在编译主代码时无效。如：JDBC 驱动的实现包。只有在执行测试或者运行项目时，才需要具体的 JDBC 驱动。<li><code class="java">
+system</code>：系统依赖范围与 provided 依赖范围完全一致，但是使用该范围时必须通过 systemPath 元素显式地指定依赖文件的路径。由于此类依赖不是通过 maven 仓库解析的，而且往往与本机系统绑定，可能造成构建不可移植，因此应该谨慎使用。systemPath 元素可以引用环境变量，如：<pre class="has"><code class="language-go">&lt;dependencies&gt;<br>  &lt;dependency&gt;<br>    &lt;groupId&gt;javax.sql&lt;/groupId&gt;<br>    &lt;artifactId&gt;jdbc-stdxt&lt;/artifactId&gt;<br>    &lt;version&gt;2.0&lt;/version&gt;<br>    &lt;scope&gt;system&lt;/scope&gt;<br>    &lt;systemPath&gt;$&#123;java.home&#125;/lib/rt.jar&lt;/systemPath&gt;<br>  &lt;/dependency&gt;<br>&lt;/dependencies&gt;<br></code></pre></li><li>import：导入依赖范围只在 dependencyManagement 标签中生效，导入已经定义好的 pom 文件中 dependencyManagement 节点内容<pre class="has"><code class="language-go">&lt;dependencyManagement&gt;<br>  &lt;dependencies&gt;<br>    &lt;dependency&gt;<br>      &lt;groupId&gt;org.springframework&lt;/groupId&gt;<br>      &lt;artifactId&gt;spring-framework-bom&lt;/artifactId&gt;<br>      &lt;version&gt;4.3.16.RELEASE&lt;/version&gt;<br>      &lt;type&gt;pom&lt;/type&gt;<br>      &lt;scope&gt;import&lt;/scope&gt;<br>    &lt;/dependency&gt;<br>  &lt;/dependencies&gt;<br>&lt;/dependencyManagement&gt;<br></code></pre></li><br>&#96;&#96;&#96;<br>&lt;dependencyManagement&gt;<br>  &lt;dependencies&gt;<br>    &lt;dependency&gt;<br>      &lt;groupId&gt;org.springframework&lt;&#x2F;groupId&gt;<br>      &lt;artifactId&gt;spring-framework-bom&lt;&#x2F;artifactId&gt;<br>      &lt;version&gt;4.3.16.RELEASE&lt;&#x2F;version&gt;<br>      &lt;type&gt;pom&lt;&#x2F;type&gt;<br>      &lt;scope&gt;import&lt;&#x2F;scope&gt;<br>    &lt;&#x2F;dependency&gt;<br>  &lt;&#x2F;dependencies&gt;<br>&lt;&#x2F;dependencyManagement&gt;</li>
+</ul>
+<pre class="line-numbers language-java"><code class="language-java">
+
+### 依赖机制与特性
+
+#### 依赖传递
+<span class="token operator">-</span> A<span class="token operator">-</span><span class="token operator">&amp;</span>gt<span class="token punctuation">;</span><span class="token function">B</span><span class="token punctuation">(</span>compile<span class="token punctuation">)</span>：第一直接依赖<span class="token operator">-</span> B<span class="token operator">-</span><span class="token operator">&amp;</span>gt<span class="token punctuation">;</span><span class="token function">C</span><span class="token punctuation">(</span>compile<span class="token punctuation">)</span>：第二直接依赖<span class="token operator">-</span> A<span class="token operator">-</span><span class="token operator">&amp;</span>gt<span class="token punctuation">;</span><span class="token function">C</span><span class="token punctuation">(</span>compile<span class="token punctuation">)</span>：传递性依赖
+当在A中配置
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>&lt;dependency&gt;  <br>    &lt;groupId&gt;com.B&lt;&#x2F;groupId&gt;  <br>    &lt;artifactId&gt;B&lt;&#x2F;artifactId&gt;  <br>    &lt;version&gt;1.0&lt;&#x2F;version&gt;  <br>&lt;&#x2F;dependency&gt;</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+则会自动导入 C 包。
+
+<span class="token operator">*</span><span class="token operator">*</span>传递性依赖的范围如下图所示：<span class="token operator">*</span><span class="token operator">*</span>
+
+#### 依赖调解
+
+当传递性依赖出现问题时，能够清楚地知道该传递性依赖是从哪条依赖路径中引入的。
+
+一、路径最近者优先原则
+<span class="token operator">-</span> A<span class="token operator">-</span><span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>B<span class="token operator">-</span><span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>C<span class="token operator">-</span><span class="token operator">&amp;</span>gt<span class="token punctuation">;</span><span class="token function">X</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">)</span><span class="token operator">-</span> A<span class="token operator">-</span><span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>D<span class="token operator">-</span><span class="token operator">&amp;</span>gt<span class="token punctuation">;</span><span class="token function">X</span><span class="token punctuation">(</span><span class="token number">2.0</span><span class="token punctuation">)</span>
+A<span class="token operator">-</span><span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>D<span class="token operator">-</span><span class="token operator">&amp;</span>gt<span class="token punctuation">;</span><span class="token function">X</span><span class="token punctuation">(</span><span class="token number">2.0</span><span class="token punctuation">)</span>
+
+由于只能导入一个版本的包，按照最短路径选择导入 <span class="token function">X</span><span class="token punctuation">(</span><span class="token number">2.0</span><span class="token punctuation">)</span>
+
+二、第一声明者优先原则
+<span class="token operator">-</span> A<span class="token operator">-</span><span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>B<span class="token operator">-</span><span class="token operator">&amp;</span>gt<span class="token punctuation">;</span><span class="token function">Y</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">)</span><span class="token operator">-</span> A<span class="token operator">-</span><span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>C<span class="token operator">-</span><span class="token operator">&amp;</span>gt<span class="token punctuation">;</span><span class="token function">Y</span><span class="token punctuation">(</span><span class="token number">2.0</span><span class="token punctuation">)</span>
+A<span class="token operator">-</span><span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>C<span class="token operator">-</span><span class="token operator">&amp;</span>gt<span class="token punctuation">;</span><span class="token function">Y</span><span class="token punctuation">(</span><span class="token number">2.0</span><span class="token punctuation">)</span>
+
+此时由于依赖路径长度一致，按照第一声明者优先原则。在路径长度一致的前提下，如果 B 依赖在 POM 文件中声明顺序在 C 依赖之前，那么 <span class="token function">Y</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">)</span> 则会被引入。如下依赖可用于测试：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>&lt;dependencies&gt;<br>  &lt;dependency&gt;<br>    &lt;groupId&gt;org.apache.httpcomponents&lt;&#x2F;groupId&gt;<br>    &lt;artifactId&gt;httpclient&lt;&#x2F;artifactId&gt;<br>    &lt;version&gt;4.4.1&lt;&#x2F;version&gt;<br>    &lt;exclusions&gt;<br>      &lt;exclusion&gt;<br>        &lt;groupId&gt;commons-codec&lt;&#x2F;groupId&gt;<br>        &lt;artifactId&gt;commons-codec&lt;&#x2F;artifactId&gt;<br>      &lt;&#x2F;exclusion&gt;<br>    &lt;&#x2F;exclusions&gt;<br>  &lt;&#x2F;dependency&gt;</p>
+<p>  &lt;dependency&gt;<br>    &lt;groupId&gt;org.apache.poi&lt;&#x2F;groupId&gt;<br>    &lt;artifactId&gt;poi&lt;&#x2F;artifactId&gt;<br>    &lt;version&gt;3.9&lt;&#x2F;version&gt;<br>    &lt;exclusions&gt;<br>      &lt;exclusion&gt;<br>        &lt;groupId&gt;commons-codec&lt;&#x2F;groupId&gt;<br>        &lt;artifactId&gt;commons-codec&lt;&#x2F;artifactId&gt;<br>      &lt;&#x2F;exclusion&gt;<br>    &lt;&#x2F;exclusions&gt;<br>  &lt;&#x2F;dependency&gt;</p>
+<p>  &lt;dependency&gt;<br>    &lt;groupId&gt;commons-codec&lt;&#x2F;groupId&gt;<br>    &lt;artifactId&gt;commons-codec&lt;&#x2F;artifactId&gt;<br>    &lt;version&gt;1.10&lt;&#x2F;version&gt;<br>  &lt;&#x2F;dependency&gt;</p>
+<p>&lt;&#x2F;dependencies&gt;</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+这里有一点需要特别注意，看如下依赖：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>&lt;dependencies&gt;<br>  &lt;dependency&gt;<br>    &lt;groupId&gt;commons-codec&lt;&#x2F;groupId&gt;<br>    &lt;artifactId&gt;commons-codec&lt;&#x2F;artifactId&gt;<br>    &lt;version&gt;1.11&lt;&#x2F;version&gt;<br>  &lt;&#x2F;dependency&gt;</p>
+<p>  &lt;dependency&gt;<br>    &lt;groupId&gt;commons-codec&lt;&#x2F;groupId&gt;<br>    &lt;artifactId&gt;commons-codec&lt;&#x2F;artifactId&gt;<br>    &lt;version&gt;1.10&lt;&#x2F;version&gt;<br>  &lt;&#x2F;dependency&gt;<br>&lt;&#x2F;dependencies&gt;</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+按照两原则，期望得到的结果应该是 <span class="token number">1.11</span> 版本的构建将被依赖。但实际结果却依赖了 <span class="token number">1.10</span> 版本。what！这不是违反了 maven 依赖调解的最先定义原则？
+
+其实这个是 dependency 插件的功能，默认采用的是复写的策略，当构建声明处于同一 pom 中，且 groupid 和 artifactId 一致时，以最新声明为准，后面的覆盖前面的。
+
+注意这里没涉及到依赖调解的功能。我的理解是依赖调解只发生于构建来自不同 pom 时，而此时构建声明处于同一 pom，故不会触发依赖调解。
+
+#### 可选依赖
+
+A<span class="token operator">-</span><span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>B、B<span class="token operator">-</span><span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>X（可选）、B<span class="token operator">-</span><span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>Y（可选）。
+
+项目 A 依赖于项目 B，项目 B 依赖于项目 X 和 Y。
+
+理论上项目 A 中，会把 B、X、Y 项目都依赖进来。
+
+但是 X、Y 两个依赖对于 B 来讲可能是互斥的，如 B 是数据库隔离包，支持多种数据库 MySQL、Oracle，在构建 B 项目时，需要这两种数据库的支持，但在使用这个工具包时，只会依赖一个数据库。
+
+此时就需要在 B 项目 pom 文件中将 X、Y 声明为可选依赖，如下：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>&lt;dependency&gt;  <br>    &lt;groupId&gt;com.X&lt;&#x2F;groupId&gt;  <br>    &lt;artifactId&gt;X&lt;&#x2F;artifactId&gt;  <br>    &lt;version&gt;1.0&lt;&#x2F;version&gt;  <br>    &lt;optionnal&gt;true&lt;&#x2F;optionnal&gt;<br>&lt;&#x2F;dependency&gt;</p>
+<p>&lt;dependency&gt;  <br>    &lt;groupId&gt;com.Y&lt;&#x2F;groupId&gt;  <br>    &lt;artifactId&gt;Y&lt;&#x2F;artifactId&gt;  <br>    &lt;version&gt;1.0&lt;&#x2F;version&gt;  <br>    &lt;optionnal&gt;true&lt;&#x2F;optionnal&gt;<br>&lt;&#x2F;dependency&gt;</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+使用 optionnal 元素标识以后，只会对当前项目 B 产生影响，当其他的项目依赖 B 项目时，这两个依赖都不会被传递。
+
+项目 A 依赖于项目 B，如果实际应用数据库是 X， 则在 A 的 pom 中就需要显式地声明 X 依赖。
+
+## 仓库
+
+仓库分类：包括本地仓库和远程仓库。其中远程仓库包括：私服和中央仓库。搜索构建的顺序：
+<span class="token operator">-</span> 本地仓库<span class="token operator">-</span> maven settings profile 中的 repository；<span class="token operator">-</span> pom<span class="token punctuation">.</span>xml 中 profile 中定义的repository；<span class="token operator">-</span> pom<span class="token punctuation">.</span>xml 中 <span class="token function">repositorys</span> <span class="token punctuation">(</span>按定义顺序找<span class="token punctuation">)</span>；<span class="token operator">-</span> maven settings mirror；<span class="token operator">-</span> central 中央仓库；
+## 生命周期
+
+Maven 的生命周期是为了对所有构建过程进行的抽象和统一，其中包含项目的`清理`、`初始化`、`编译`、`测试`、`打包`、`集成测试`、`验证`、`部署`和`站点`生成等几乎所有的构建步骤。
+
+Maven 的生命周期是抽象的，本身是不做任何实际的工作。实际的任务都交给插件来完成。
+
+意味着 Maven 只在父类中定义了算法的整体结构，子类通过重写父类的方法，来控制实际行为（设计模式中的模板方法 Template Method）。伪代码如下：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>public abstract class AbstractBuilder {<br>    public void build() {<br>        init();<br>        compile();<br>        test();<br>        package();<br>        integrationTest();<br>        deploy();<br>    }<br>    <br>    protected abstract void init();<br>    protected abstract void compile();<br>    protected abstract void test();<br>    protected abstract void package();<br>    protected abstract void integrationTest();<br>    protected abstract void deploy();<br>}</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+### 三套生命周期
+
+Maven 的生命周期并不是一个整体，Maven 拥有三套相互独立的生命周期，它们分别为 clean、<span class="token keyword">default</span> 和 site。
+<span class="token operator">-</span> `clean` 生命周期的目的是清理项目；<span class="token operator">-</span> `<span class="token keyword">default</span>` 生命周期的目的是构建项目；<span class="token operator">-</span> `site` 生命周期的目的是建立项目站点；
+### 单个生命周期执行顺序
+
+每个生命周期包含一些阶段<span class="token punctuation">(</span>phase<span class="token punctuation">)</span>，这些阶段是有顺序的，并且后面的阶段依赖于前面的阶段。
+
+以 clean 生命周期为例，它包含的阶段有 pre<span class="token operator">-</span>clean、clean和post<span class="token operator">-</span>clean。当调用 pre<span class="token operator">-</span>clean 时，只有 pre<span class="token operator">-</span>clean 阶段得以执行；
+
+当调用 clean 的时候，pre<span class="token operator">-</span>clean和clean阶段会得以顺序执行，以此类推。
+
+### 各个生命周期之间的关系
+
+三套生命周期本身是相互独立的，用户可以仅调用 clean 生命周期的某个阶段，或者仅仅调用 <span class="token keyword">default</span> 生命周期的某个阶段，而不会对其他生命周期产生任何影响。
+
+例如，当用户调用 clean 生命周期的 clean 阶段的时候，不会触发 <span class="token keyword">default</span> 生命周期的任何阶段，反之亦然。
+
+### 生命周期各个阶段详解
+
+#### clean
+
+
+
+<span class="token operator">|</span>生命周期阶段<span class="token operator">|</span>描述
+<span class="token operator">|</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span>
+<span class="token operator">|</span>pre<span class="token operator">-</span>clean<span class="token operator">|</span>执行一些清理前需要完成的工作。
+<span class="token operator">|</span>clean<span class="token operator">|</span>清理上一次构建生成的文件。
+<span class="token operator">|</span>post<span class="token operator">-</span>clean<span class="token operator">|</span>执行一些清理后需要完成的工作。
+
+
+
+#### <span class="token keyword">default</span>
+
+包含 <span class="token number">23</span> 个阶段，此处只介绍重点步骤，如下表：
+
+
+
+<span class="token operator">|</span>生命周期阶段<span class="token operator">|</span>描述
+<span class="token operator">|</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span>
+<span class="token operator">|</span>validate<span class="token operator">|</span>检查工程配置是否正确，完成构建过程的所有必要信息是否能够获取到。
+<span class="token operator">|</span>initialize<span class="token operator">|</span>初始化构建状态，例如设置属性。
+<span class="token operator">|</span>generate<span class="token operator">-</span>sources<span class="token operator">|</span>
+<span class="token operator">|</span>process<span class="token operator">-</span>sources<span class="token operator">|</span>处理项目资源文件，处理项目主资源文件。一般来说，是对src<span class="token operator">/</span>main<span class="token operator">/</span>resources目录的内容进行变量替换等工作后，复制到项目输出的主classpath目录中。
+<span class="token operator">|</span>generate<span class="token operator">-</span>resources<span class="token operator">|</span>
+<span class="token operator">|</span>process<span class="token operator">-</span>resources<span class="token operator">|</span>
+<span class="token operator">|</span>compile<span class="token operator">|</span>编译项目的主源码。一般来说，是编译src<span class="token operator">/</span>main<span class="token operator">/</span>java目录下的Java文件至项目输出的主classpath目录中。
+<span class="token operator">|</span>process<span class="token operator">-</span>classes<span class="token operator">|</span>处理编译生成的文件，例如 Java Class 字节码的加强和优化。
+<span class="token operator">|</span>generate<span class="token operator">-</span>test<span class="token operator">-</span>sources<span class="token operator">|</span>
+<span class="token operator">|</span>process<span class="token operator">-</span>test<span class="token operator">-</span>sources<span class="token operator">|</span>处理项目测试资源文件。一般来说，是对src<span class="token operator">/</span>test<span class="token operator">/</span>resources目录的内容进行变量替换等工作后，复制到项目输出的测试classpath目录中。
+<span class="token operator">|</span>test<span class="token operator">-</span>compile<span class="token operator">|</span>编译项目的测试代码。一般来说，是编译src<span class="token operator">/</span>test<span class="token operator">/</span>java目录下的Java文件至项目输出的测试classpath目录中。
+<span class="token operator">|</span>process<span class="token operator">-</span>test<span class="token operator">-</span>classes<span class="token operator">|</span>
+<span class="token operator">|</span>test<span class="token operator">|</span>使用适当的单元测试框架（例如JUnit）运行测试。
+<span class="token operator">|</span>prepare<span class="token operator">-</span><span class="token keyword">package</span><span class="token operator">|</span>在真正打包之前，为准备打包执行任何必要的操作。
+<span class="token operator">|</span><span class="token keyword">package</span><span class="token operator">|</span>获取编译后的代码，并按照可发布的格式进行打包，例如 JAR、WAR 或者 EAR 文件。
+<span class="token operator">|</span>pre<span class="token operator">-</span>integration<span class="token operator">-</span>test<span class="token operator">|</span>在集成测试执行之前，执行所需的操作。例如，设置所需的环境变量。
+<span class="token operator">|</span>integration<span class="token operator">-</span>test<span class="token operator">|</span>处理和部署必须的工程包到集成测试能够运行的环境中。
+<span class="token operator">|</span>post<span class="token operator">-</span>integration<span class="token operator">-</span>test<span class="token operator">|</span>在集成测试被执行后执行必要的操作。例如，清理环境。
+<span class="token operator">|</span>verify<span class="token operator">|</span>运行检查操作来验证工程包是有效的，并满足质量要求。
+<span class="token operator">|</span>install<span class="token operator">|</span>安装工程包到本地仓库中，该仓库可以作为本地其他工程的依赖。
+<span class="token operator">|</span>deploy<span class="token operator">|</span>拷贝最终的工程包到远程仓库中，以共享给其他开发人员和工程。
+
+
+
+#### site
+
+
+
+<span class="token operator">|</span>生命周期阶段<span class="token operator">|</span>描述
+<span class="token operator">|</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span>
+<span class="token operator">|</span>pre<span class="token operator">-</span>site<span class="token operator">|</span>执行一些在生成项目站点之前需要完成的工作。
+<span class="token operator">|</span>site<span class="token operator">|</span>生成项目站点文档。
+<span class="token operator">|</span>post<span class="token operator">-</span>site<span class="token operator">|</span>执行一些在生成项目站点之后需要完成的工作。
+<span class="token operator">|</span>site<span class="token operator">-</span>deploy<span class="token operator">|</span>将生成的项目站点发布到服务器上。
+
+
+
+## 插件
+
+Maven 三套生命周期定义各个阶段不做任何实际工作，实际工作都是由插件来完成的，每个生命周期阶段都是由插件的目标来完成。在 pom 文件中声明如下（打包源码文件插件）：
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>&lt;build&gt;<br>  &lt;plugins&gt;<br>    &lt;plugin&gt;<br>      &lt;groupId&gt;org.apache.maven.plugins&lt;&#x2F;groupId&gt;<br>      &lt;artifactId&gt;maven-source-plugin&lt;&#x2F;artifactId&gt;<br>      &lt;version&gt;2.1.1&lt;&#x2F;version&gt;<br>      &lt;executions&gt;<br>        &lt;execution&gt;<br>          &lt;id&gt;attach-sources&lt;&#x2F;id&gt;<br>          &lt;phase&gt;verify&lt;&#x2F;phase&gt;<br>          &lt;goals&gt;<br>              &lt;goal&gt;jar-no-fork&lt;&#x2F;goal&gt;<br>          &lt;&#x2F;goals&gt;<br>        &lt;&#x2F;execution&gt;<br>      &lt;&#x2F;executions&gt;<br>    &lt;&#x2F;plugin&gt;<br>  &lt;&#x2F;plugins&gt;<br>&lt;&#x2F;build&gt;</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+### 插件目标
+
+一个插件有可能有多个功能、每个功能就是一个目标。比如 maven<span class="token operator">-</span>dependency<span class="token operator">-</span>plugin 有十多个目标，每个目标对应了一个功能。
+
+插件的目标为 dependency<span class="token operator">:</span>analyze、dependency<span class="token operator">:</span>tree和dependency<span class="token operator">:</span>list。
+
+通用写法：冒号前面是插件前缀，冒号后面是插件的目标。比如 compiler<span class="token operator">:</span>compile。
+
+### 插件绑定
+
+### 内置绑定
+
+为实现快速构建，Maven 有一套内置的插件绑定。三套生命周期的插件绑定具体如下（其实是各个生命周期阶段与插件的目标的绑定）。
+
+其中 <span class="token keyword">default</span> 生命周期的构建方式会其打包类型有关、打包类型在POM中 packaging 指定。一般有 jar、war 两种类型。下面是默认绑定插件与生命周期关系图：
+
+### 自定义绑定
+
+自定义绑定允许我们自己掌控插件目标与生命周期的结合。以生成项目主代码的源码 jar 为例。
+
+使用到的插件和它的目标为：maven<span class="token operator">-</span>source<span class="token operator">-</span>plugin<span class="token operator">:</span>jar<span class="token operator">-</span>no<span class="token operator">-</span>fork。将其绑定到 <span class="token keyword">default</span> 生命周期阶段 verify 上（可以任意指定三套生命周期的任意阶段）。
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>&lt;build&gt;<br>  &lt;plugins&gt;<br>      &lt;plugin&gt;<br>        &lt;groupId&gt;org.apache.maven.plugins&lt;&#x2F;groupId&gt;<br>        &lt;artifactId&gt;maven-source-plugin&lt;&#x2F;artifactId&gt;<br>        &lt;version&gt;2.1.1&lt;&#x2F;version&gt;<br>        &lt;executions&gt;<br>          &lt;execution&gt;<br>            &lt;id&gt;attach-sources&lt;&#x2F;id&gt; <br>            &lt;!– 指定作用在生命周期的哪个阶段 –&gt;<br>            &lt;phase&gt;verify&lt;&#x2F;phase&gt; <br>            &lt;goals&gt;<br>               &lt;!– 指定执行绑定插件的哪些目标 –&gt;<br>                &lt;goal&gt;jar-no-fork&lt;&#x2F;goal&gt;<br>            &lt;&#x2F;goals&gt;<br>          &lt;&#x2F;execution&gt;<br>        &lt;&#x2F;executions&gt;<br>      &lt;&#x2F;plugin&gt;<br>  &lt;&#x2F;plugins&gt;<br>&lt;&#x2F;build&gt;</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+### 插件配置
+<span class="token operator">&lt;</span>li<span class="token operator">></span>使用命令行配置在 maven 命令中加入 <span class="token operator">-</span>D 参数，并伴随一个参数键<span class="token operator">=</span>参数值的形式，来配置插件目标参数。如：maven<span class="token operator">-</span>surefire<span class="token operator">-</span>plugin 插件提供一个 maven<span class="token punctuation">.</span>test<span class="token punctuation">.</span>skip 参数，当值为 <span class="token boolean">true</span> 时会跳过执行测试：<span class="token operator">&lt;</span>pre <span class="token keyword">class</span><span class="token operator">=</span><span class="token string">"has"</span><span class="token operator">></span><span class="token operator">&lt;</span>code <span class="token keyword">class</span><span class="token operator">=</span><span class="token string">"language-go"</span><span class="token operator">></span> <span class="token operator">--</span> 对比 mvn install
+mvn install –Dmaven<span class="token punctuation">.</span>test<span class="token punctuation">.</span>skip<span class="token operator">=</span><span class="token boolean">true</span>
+<span class="token operator">&lt;</span><span class="token operator">/</span>code<span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>pre<span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>li<span class="token operator">></span><span class="token operator">&lt;</span>li<span class="token operator">></span>使用 pom 全局配置在声明插件的时候，对插件进行一个全局配置，后面所有使用该插件的都要遵循这个配置。比如指定 maven<span class="token operator">-</span>compile<span class="token operator">-</span>plugin 编译 <span class="token number">1.7</span> 版本的源文件：<span class="token operator">&lt;</span>pre <span class="token keyword">class</span><span class="token operator">=</span><span class="token string">"has"</span><span class="token operator">></span><span class="token operator">&lt;</span>code <span class="token keyword">class</span><span class="token operator">=</span><span class="token string">"language-go"</span><span class="token operator">></span><span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>plugin<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+   <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>groupId<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>maven<span class="token punctuation">.</span>plugins<span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>groupId<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+   <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>artifactId<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>maven<span class="token operator">-</span>compiler<span class="token operator">-</span>plugin<span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>artifactId<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+   <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>configuration<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+       <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>fork<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span><span class="token boolean">true</span><span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>fork<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+       <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>source<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span><span class="token number">1.7</span><span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>source<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+       <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span>target<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span><span class="token number">1.7</span><span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>target<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+   <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>configuration<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+<span class="token operator">&amp;</span>lt<span class="token punctuation">;</span><span class="token operator">/</span>plugin<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>
+<span class="token operator">&lt;</span><span class="token operator">/</span>code<span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>pre<span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>li<span class="token operator">></span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>&lt;plugin&gt;<br>   &lt;groupId&gt;org.apache.maven.plugins&lt;&#x2F;groupId&gt;<br>   &lt;artifactId&gt;maven-compiler-plugin&lt;&#x2F;artifactId&gt;<br>   &lt;configuration&gt;<br>       &lt;fork&gt;true&lt;&#x2F;fork&gt;<br>       &lt;source&gt;1.7&lt;&#x2F;source&gt;<br>       &lt;target&gt;1.7&lt;&#x2F;target&gt;<br>   &lt;&#x2F;configuration&gt;<br>&lt;&#x2F;plugin&gt;</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+## 聚合与继承
+
+`聚合`：为了一次构建多个项目模块，就需要对多个项目模块进行聚合
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>&lt;modules&gt;<br>    &lt;module&gt;模块一&lt;&#x2F;module&gt;<br>    &lt;module&gt;模块二&lt;&#x2F;module&gt;<br>    &lt;module&gt;模块三&lt;&#x2F;module&gt;<br>&lt;&#x2F;modules&gt;</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+`继承`：为了消除重复，把很多相同的配置提取出来，例如：dependency、grouptId，version 等
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>&lt;parent&gt;  <br>    &lt;groupId&gt;com.xxxx.maven&lt;&#x2F;groupId&gt;<br>    &lt;artifactId&gt;parent-project&lt;&#x2F;artifactId&gt;<br>    &lt;version&gt;0.0.1-SNAPSHOT&lt;&#x2F;version&gt;<br>    &lt;relativePath&gt;..&#x2F;ParentProject&#x2F;pom.xml&lt;&#x2F;relativePath&gt;  <br>&lt;&#x2F;parent&gt;</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+<span class="token operator">*</span><span class="token operator">*</span>以下的元素是可以被继承的：<span class="token operator">*</span><span class="token operator">*</span>
+<span class="token operator">-</span> groupId，项目组ID；<span class="token operator">-</span> version，项目版本；<span class="token operator">-</span> description，项目描述信息；<span class="token operator">-</span> organazation，项目的组织信息；<span class="token operator">-</span> inceptionYear，项目的创始年份；<span class="token operator">-</span> developers，项目开发者信息；<span class="token operator">-</span> contributors，项目的贡献者信息；<span class="token operator">-</span> distributionManagement，项目的部署信息；<span class="token operator">-</span> issueManagement，项目的缺陷跟踪系统信息；<span class="token operator">-</span> ciManagement，项目的持续集成系统信息；<span class="token operator">-</span> scm，项目的版本控制系统信息；<span class="token operator">-</span> mailingLists，项目的邮件列表信息；<span class="token operator">-</span> properties，自定义的Maven属性；<span class="token operator">-</span> dependencies，项目的依赖配置；<span class="token operator">-</span> dependencyManagement，项目的依赖管理配置；<span class="token operator">-</span> repositories，项目的仓库配置；<span class="token operator">-</span> build，包括项目的源码目录配置、输出目录配置、插件配置、插件管理配置等；<span class="token operator">-</span> reporting，包括项目的报告输出目录配置、报告插件配置。
+version，项目版本；
+
+organazation，项目的组织信息；
+
+developers，项目开发者信息；
+
+distributionManagement，项目的部署信息；
+
+ciManagement，项目的持续集成系统信息；
+
+mailingLists，项目的邮件列表信息；
+
+dependencies，项目的依赖配置；
+
+repositories，项目的仓库配置；
+
+reporting，包括项目的报告输出目录配置、报告插件配置。
+
+<span class="token operator">*</span><span class="token operator">*</span>注意下面的元素，这些都是`不能被继承`的：<span class="token operator">*</span><span class="token operator">*</span>
+<span class="token operator">-</span> artifactId<span class="token operator">-</span> name<span class="token operator">-</span> prerequisites
+name
+
+### 聚合与继承之间的关系
+<span class="token operator">-</span> 两者共同点为，打方式必须都是 pom<span class="token operator">-</span> 在实际的项目中，一个 pom 既是聚合 pom 又是父 pom
+`注`：父 pom 中使用 dependencies 引入的依赖也会被子 pom 继承，所以不要将过多的实际依赖放在父 pom，父 pom 只用于管理，使用 dependencyManagement 标签。
+
+## 灵活构建
+
+使用属性、 resources 插件资源过滤功能（filter）和 Maven 的 profile 功能，实现环境的灵活切换
+
+### 属性
+
+通过 properties 元素用户可以自定义一个或者多个 Maven 属性，然后在 pom 其他的地方使用 $<span class="token punctuation">{</span>属性名<span class="token punctuation">}</span> 的方式引用该属性，这种方式最大意义在于消除重复。
+
+#### 一、内置属性
+<span class="token operator">-</span> `$<span class="token punctuation">{</span>basedir<span class="token punctuation">}</span>` 表示项目根目录，即包含 pom<span class="token punctuation">.</span>xml 文件的目录<span class="token operator">&lt;</span>li<span class="token operator">></span><span class="token operator">&lt;</span>p<span class="token operator">></span>`$<span class="token punctuation">{</span>version<span class="token punctuation">}</span>` 等同于 
+      <span class="token operator">&lt;</span>svg xmlns<span class="token operator">=</span><span class="token string">"http://www.w3.org/2000/svg"</span> viewbox<span class="token operator">=</span><span class="token string">"0 -750 9027.9 954"</span> style<span class="token operator">=</span><span class="token string">"vertical-align: -0.462ex;width: 20.425ex;height: 2.158ex;"</span><span class="token operator">></span>
+       <span class="token operator">&lt;</span>g stroke<span class="token operator">=</span><span class="token string">"currentColor"</span> fill<span class="token operator">=</span><span class="token string">"currentColor"</span> stroke<span class="token operator">-</span>width<span class="token operator">=</span><span class="token string">"0"</span> transform<span class="token operator">=</span><span class="token string">"matrix(1 0 0 -1 0 0)"</span><span class="token operator">></span>
+        <span class="token operator">&lt;</span>g<span class="token operator">></span>
+         <span class="token operator">&lt;</span>g<span class="token operator">></span>
+          <span class="token operator">&lt;</span>g<span class="token operator">></span>
+           <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M23 287Q24 290 25 295T30 317T40 348T55 381T75 411T101 433T134 442Q209 442 230 378L240 387Q302 442 358 442Q423 442 460 395T497 281Q497 173 421 82T249 -10Q227 -10 210 -4Q199 1 187 11T168 28L161 36Q160 35 139 -51T118 -138Q118 -144 126 -145T163 -148H188Q194 -155 194 -157T191 -175Q188 -187 185 -190T172 -194Q170 -194 161 -194T127 -193T65 -192Q-5 -192 -24 -194H-32Q-39 -187 -39 -183Q-37 -156 -26 -148H-6Q28 -147 33 -136Q36 -130 94 103T155 350Q156 355 156 364Q156 405 131 405Q109 405 94 377T71 316T59 280Q57 278 43 278H29Q23 284 23 287ZM178 102Q200 26 252 26Q282 26 310 49T356 107Q374 141 392 215T411 325V331Q411 405 350 405Q339 405 328 402T306 393T286 380T269 365T254 350T243 336T235 326L232 322Q232 321 229 308T218 264T204 212Q178 106 178 102Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+          <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+          <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(503, 0)"</span><span class="token operator">></span>
+           <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M21 287Q22 290 23 295T28 317T38 348T53 381T73 411T99 433T132 442Q161 442 183 430T214 408T225 388Q227 382 228 382T236 389Q284 441 347 441H350Q398 441 422 400Q430 381 430 363Q430 333 417 315T391 292T366 288Q346 288 334 299T322 328Q322 376 378 392Q356 405 342 405Q286 405 239 331Q229 315 224 298T190 165Q156 25 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 114 189T154 366Q154 405 128 405Q107 405 92 377T68 316T57 280Q55 278 41 278H27Q21 284 21 287Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+          <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+          <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(954, 0)"</span><span class="token operator">></span>
+           <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M201 -11Q126 -11 80 38T34 156Q34 221 64 279T146 380Q222 441 301 441Q333 441 341 440Q354 437 367 433T402 417T438 387T464 338T476 268Q476 161 390 75T201 -11ZM121 120Q121 70 147 48T206 26Q250 26 289 58T351 142Q360 163 374 216T388 308Q388 352 370 375Q346 405 306 405Q243 405 195 347Q158 303 140 230T121 120Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+          <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+          <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(1439, 0)"</span><span class="token operator">></span>
+           <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M297 596Q297 627 318 644T361 661Q378 661 389 651T403 623Q403 595 384 576T340 557Q322 557 310 567T297 596ZM288 376Q288 405 262 405Q240 405 220 393T185 362T161 325T144 293L137 279Q135 278 121 278H107Q101 284 101 286T105 299Q126 348 164 391T252 441Q253 441 260 441T272 442Q296 441 316 432Q341 418 354 401T367 348V332L318 133Q267 -67 264 -75Q246 -125 194 -164T75 -204Q25 -204 7 -183T-12 -137Q-12 -110 7 -91T53 -71Q70 -71 82 -81T95 -112Q95 -148 63 -167Q69 -168 77 -168Q111 -168 139 -140T182 -74L193 -32Q204 11 219 72T251 197T278 308T289 365Q289 372 288 376Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+          <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+          <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(1851, 0)"</span><span class="token operator">></span>
+           <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M39 168Q39 225 58 272T107 350T174 402T244 433T307 442H310Q355 442 388 420T421 355Q421 265 310 237Q261 224 176 223Q139 223 138 221Q138 219 132 186T125 128Q125 81 146 54T209 26T302 45T394 111Q403 121 406 121Q410 121 419 112T429 98T420 82T390 55T344 24T281 -1T205 -11Q126 -11 83 42T39 168ZM373 353Q367 405 305 405Q272 405 244 391T199 357T170 316T154 280T149 261Q149 260 169 260Q282 260 327 284T373 353Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+          <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+          <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(2317, 0)"</span><span class="token operator">></span>
+           <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M34 159Q34 268 120 355T306 442Q362 442 394 418T427 355Q427 326 408 306T360 285Q341 285 330 295T319 325T330 359T352 380T366 386H367Q367 388 361 392T340 400T306 404Q276 404 249 390Q228 381 206 359Q162 315 142 235T121 119Q121 73 147 50Q169 26 205 26H209Q321 26 394 111Q403 121 406 121Q410 121 419 112T429 98T420 83T391 55T346 25T282 0T202 -11Q127 -11 81 37T34 159Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+          <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+          <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(2750, 0)"</span><span class="token operator">></span>
+           <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+          <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+          <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(3111, 0)"</span><span class="token operator">></span>
+           <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M78 60Q78 84 95 102T138 120Q162 120 180 104T199 61Q199 36 182 18T139 0T96 17T78 60Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+          <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+          <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(3555.7, 0)"</span><span class="token operator">></span>
+           <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M173 380Q173 405 154 405Q130 405 104 376T61 287Q60 286 59 284T58 281T56 279T53 278T49 278T41 278H27Q21 284 21 287Q21 294 29 316T53 368T97 419T160 441Q202 441 225 417T249 361Q249 344 246 335Q246 329 231 291T200 202T182 113Q182 86 187 69Q200 26 250 26Q287 26 319 60T369 139T398 222T409 277Q409 300 401 317T383 343T365 361T357 383Q357 405 376 424T417 443Q436 443 451 425T467 367Q467 340 455 284T418 159T347 40T241 -11Q177 -11 139 22Q102 54 102 117Q102 148 110 181T151 298Q173 362 173 380Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+          <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+          <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(4040.7, 0)"</span><span class="token operator">></span>
+           <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M39 168Q39 225 58 272T107 350T174 402T244 433T307 442H310Q355 442 388 420T421 355Q421 265 310 237Q261 224 176 223Q139 223 138 221Q138 219 132 186T125 128Q125 81 146 54T209 26T302 45T394 111Q403 121 406 121Q410 121 419 112T429 98T420 82T390 55T344 24T281 -1T205 -11Q126 -11 83 42T39 168ZM373 353Q367 405 305 405Q272 405 244 391T199 357T170 316T154 280T149 261Q149 260 169 260Q282 260 327 284T373 353Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+          <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+          <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(4506.7, 0)"</span><span class="token operator">></span>
+           <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M21 287Q22 290 23 295T28 317T38 348T53 381T73 411T99 433T132 442Q161 442 183 430T214 408T225 388Q227 382 228 382T236 389Q284 441 347 441H350Q398 441 422 400Q430 381 430 363Q430 333 417 315T391 292T366 288Q346 288 334 299T322 328Q322 376 378 392Q356 405 342 405Q286 405 239 331Q229 315 224 298T190 165Q156 25 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 114 189T154 366Q154 405 128 405Q107 405 92 377T68 316T57 280Q55 278 41 278H27Q21 284 21 287Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+          <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+          <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(4957.7, 0)"</span><span class="token operator">></span>
+           <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M131 289Q131 321 147 354T203 415T300 442Q362 442 390 415T419 355Q419 323 402 308T364 292Q351 292 340 300T328 326Q328 342 337 354T354 372T367 378Q368 378 368 379Q368 382 361 388T336 399T297 405Q249 405 227 379T204 326Q204 301 223 291T278 274T330 259Q396 230 396 163Q396 135 385 107T352 51T289 7T195 -10Q118 -10 86 19T53 87Q53 126 74 143T118 160Q133 160 146 151T160 120Q160 94 142 76T111 58Q109 57 108 57T107 55Q108 52 115 47T146 34T201 27Q237 27 263 38T301 66T318 97T323 122Q323 150 302 164T254 181T195 196T148 231Q131 256 131 289Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+          <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+          <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(5426.7, 0)"</span><span class="token operator">></span>
+           <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M184 600Q184 624 203 642T247 661Q265 661 277 649T290 619Q290 596 270 577T226 557Q211 557 198 567T184 600ZM21 287Q21 295 30 318T54 369T98 420T158 442Q197 442 223 419T250 357Q250 340 236 301T196 196T154 83Q149 61 149 51Q149 26 166 26Q175 26 185 29T208 43T235 78T260 137Q263 149 265 151T282 153Q302 153 302 143Q302 135 293 112T268 61T223 11T161 -11Q129 -11 102 10T74 74Q74 91 79 106T122 220Q160 321 166 341T173 380Q173 404 156 404H154Q124 404 99 371T61 287Q60 286 59 284T58 281T56 279T53 278T49 278T41 278H27Q21 284 21 287Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+          <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+          <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(5771.7, 0)"</span><span class="token operator">></span>
+           <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M201 -11Q126 -11 80 38T34 156Q34 221 64 279T146 380Q222 441 301 441Q333 441 341 440Q354 437 367 433T402 417T438 387T464 338T476 268Q476 161 390 75T201 -11ZM121 120Q121 70 147 48T206 26Q250 26 289 58T351 142Q360 163 374 216T388 308Q388 352 370 375Q346 405 306 405Q243 405 195 347Q158 303 140 230T121 120Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+          <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+          <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(6256.7, 0)"</span><span class="token operator">></span>
+           <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+          <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+         <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+         <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(7134.4, 0)"</span><span class="token operator">></span>
+          或者
+         <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+        <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+       <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+      <span class="token operator">&lt;</span><span class="token operator">/</span>svg<span class="token operator">></span><span class="token punctuation">{</span>pom<span class="token punctuation">.</span>version<span class="token punctuation">}</span> 表示项目版本<span class="token operator">&lt;</span><span class="token operator">/</span>p<span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>li<span class="token operator">></span>
+#### 二、POM 属性
+
+所有 pom 中的元素都可以用 project<span class="token punctuation">.</span> 例如 $<span class="token punctuation">{</span>project<span class="token punctuation">.</span>artifactId<span class="token punctuation">}</span> 对应了 <span class="token operator">&amp;</span>lt<span class="token punctuation">;</span> project<span class="token operator">&amp;</span>gt<span class="token punctuation">;</span>元素的值。常用的 POM 属性包括：
+<span class="token operator">-</span> `$<span class="token punctuation">{</span>project<span class="token punctuation">.</span>build<span class="token punctuation">.</span>sourceDirectory<span class="token punctuation">}</span>` <span class="token operator">:</span> 项目的主源码目录，默认为 src<span class="token operator">/</span>main<span class="token operator">/</span>java<span class="token operator">/</span><span class="token punctuation">.</span>- `$<span class="token punctuation">{</span>project<span class="token punctuation">.</span>build<span class="token punctuation">.</span>testSourceDirectory<span class="token punctuation">}</span>` <span class="token operator">:</span> 项目的测试源码目录，默认为 <span class="token operator">/</span>src<span class="token operator">/</span>test<span class="token operator">/</span>java<span class="token operator">/</span><span class="token punctuation">.</span>- `$<span class="token punctuation">{</span>project<span class="token punctuation">.</span>build<span class="token punctuation">.</span>directory<span class="token punctuation">}</span>` <span class="token operator">:</span> 项目构建输出目录，默认为 target<span class="token operator">/</span><span class="token punctuation">.</span>- `$<span class="token punctuation">{</span>project<span class="token punctuation">.</span>build<span class="token punctuation">.</span>outputDirectory<span class="token punctuation">}</span>` <span class="token operator">:</span> 项目主代码编译输出目录，默认为 target<span class="token operator">/</span>classes<span class="token operator">/</span><span class="token punctuation">.</span>- `$<span class="token punctuation">{</span>project<span class="token punctuation">.</span>build<span class="token punctuation">.</span>testOutputDirectory<span class="token punctuation">}</span>` <span class="token operator">:</span> 项目测试代码编译输出目录，默认为 target<span class="token operator">/</span>testclasses<span class="token operator">/</span><span class="token punctuation">.</span>- `$<span class="token punctuation">{</span>project<span class="token punctuation">.</span>groupId<span class="token punctuation">}</span>`<span class="token operator">:</span> 项目的 groupId<span class="token punctuation">.</span>- `$<span class="token punctuation">{</span>project<span class="token punctuation">.</span>artifactId<span class="token punctuation">}</span>` <span class="token operator">:</span> 项目的 artifactId<span class="token punctuation">.</span>- `$<span class="token punctuation">{</span>project<span class="token punctuation">.</span>version<span class="token punctuation">}</span>` <span class="token operator">:</span> 项目的 version<span class="token punctuation">,</span> 等同于 $<span class="token punctuation">{</span>version<span class="token punctuation">}</span><span class="token operator">-</span> `$<span class="token punctuation">{</span>project<span class="token punctuation">.</span>build<span class="token punctuation">.</span>finalName<span class="token punctuation">}</span>` <span class="token operator">:</span> 项目打包输出文件的名称，默认为 `$<span class="token punctuation">{</span>project<span class="token punctuation">.</span>artifactId<span class="token punctuation">}</span>$<span class="token punctuation">{</span>project<span class="token punctuation">.</span>version<span class="token punctuation">}</span>`
+#### 三、自定义属性
+
+在 pom 中元素下自定义的 Maven 属性
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>&lt;properties&gt;<br>    &lt;swagger.version&gt;2.2.2&lt;&#x2F;swagger.version&gt;<br>&lt;&#x2F;properties&gt;<br>&lt;dependency&gt;<br>    &lt;groupId&gt;io.springfox&lt;&#x2F;groupId&gt;<br>    &lt;artifactId&gt;springfox-swagger2&lt;&#x2F;artifactId&gt;<br>    &lt;version&gt;${swagger.version}&lt;&#x2F;version&gt;<br>&lt;&#x2F;dependency&gt;</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+#### 四、Settings 属性
+
+所有用的的 settings<span class="token punctuation">.</span>xml 中的设定都可以通过 settings。前缀进行引用与 POM 属性同理。
+
+如 $<span class="token punctuation">{</span>settings<span class="token punctuation">.</span>localRepository<span class="token punctuation">}</span> 指向用户本地仓库的地址
+
+#### 五、Java 系统属性
+
+所有 Java 系统属性都可以使用 Maven 属性引用，例如 $<span class="token punctuation">{</span>user<span class="token punctuation">.</span>home<span class="token punctuation">}</span> 指向了用户目录。
+
+可以通过命令行 mvn help<span class="token operator">:</span>system 查看所有的 Java 系统属性
+
+#### 六、环境变量属性
+
+所有环境变量都可以使用以 env<span class="token punctuation">.</span> 开头的 Maven 属性引用。例如 $<span class="token punctuation">{</span>env<span class="token punctuation">.</span>JAVA_HOME<span class="token punctuation">}</span> 指代了 JAVA_HOME 环境变量的值。
+
+也可以通过命令行 mvn help<span class="token operator">:</span>system 查看所有环境变量。
+
+#### 七、父级工程属性
+
+上级工程的 pom 中的变量用前缀 
+    <span class="token operator">&lt;</span>svg xmlns<span class="token operator">=</span><span class="token string">"http://www.w3.org/2000/svg"</span> viewbox<span class="token operator">=</span><span class="token string">"0 -750 23115.9 954"</span> style<span class="token operator">=</span><span class="token string">"vertical-align: -0.462ex;width: 52.298ex;height: 2.158ex;"</span><span class="token operator">></span>
+     <span class="token operator">&lt;</span>g stroke<span class="token operator">=</span><span class="token string">"currentColor"</span> fill<span class="token operator">=</span><span class="token string">"currentColor"</span> stroke<span class="token operator">-</span>width<span class="token operator">=</span><span class="token string">"0"</span> transform<span class="token operator">=</span><span class="token string">"matrix(1 0 0 -1 0 0)"</span><span class="token operator">></span>
+      <span class="token operator">&lt;</span>g<span class="token operator">></span>
+       <span class="token operator">&lt;</span>g<span class="token operator">></span>
+        <span class="token operator">&lt;</span>g<span class="token operator">></span>
+         <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M23 287Q24 290 25 295T30 317T40 348T55 381T75 411T101 433T134 442Q209 442 230 378L240 387Q302 442 358 442Q423 442 460 395T497 281Q497 173 421 82T249 -10Q227 -10 210 -4Q199 1 187 11T168 28L161 36Q160 35 139 -51T118 -138Q118 -144 126 -145T163 -148H188Q194 -155 194 -157T191 -175Q188 -187 185 -190T172 -194Q170 -194 161 -194T127 -193T65 -192Q-5 -192 -24 -194H-32Q-39 -187 -39 -183Q-37 -156 -26 -148H-6Q28 -147 33 -136Q36 -130 94 103T155 350Q156 355 156 364Q156 405 131 405Q109 405 94 377T71 316T59 280Q57 278 43 278H29Q23 284 23 287ZM178 102Q200 26 252 26Q282 26 310 49T356 107Q374 141 392 215T411 325V331Q411 405 350 405Q339 405 328 402T306 393T286 380T269 365T254 350T243 336T235 326L232 322Q232 321 229 308T218 264T204 212Q178 106 178 102Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+        <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+        <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(503, 0)"</span><span class="token operator">></span>
+         <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M21 287Q22 290 23 295T28 317T38 348T53 381T73 411T99 433T132 442Q161 442 183 430T214 408T225 388Q227 382 228 382T236 389Q284 441 347 441H350Q398 441 422 400Q430 381 430 363Q430 333 417 315T391 292T366 288Q346 288 334 299T322 328Q322 376 378 392Q356 405 342 405Q286 405 239 331Q229 315 224 298T190 165Q156 25 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 114 189T154 366Q154 405 128 405Q107 405 92 377T68 316T57 280Q55 278 41 278H27Q21 284 21 287Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+        <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+        <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(954, 0)"</span><span class="token operator">></span>
+         <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M201 -11Q126 -11 80 38T34 156Q34 221 64 279T146 380Q222 441 301 441Q333 441 341 440Q354 437 367 433T402 417T438 387T464 338T476 268Q476 161 390 75T201 -11ZM121 120Q121 70 147 48T206 26Q250 26 289 58T351 142Q360 163 374 216T388 308Q388 352 370 375Q346 405 306 405Q243 405 195 347Q158 303 140 230T121 120Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+        <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+        <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(1439, 0)"</span><span class="token operator">></span>
+         <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M297 596Q297 627 318 644T361 661Q378 661 389 651T403 623Q403 595 384 576T340 557Q322 557 310 567T297 596ZM288 376Q288 405 262 405Q240 405 220 393T185 362T161 325T144 293L137 279Q135 278 121 278H107Q101 284 101 286T105 299Q126 348 164 391T252 441Q253 441 260 441T272 442Q296 441 316 432Q341 418 354 401T367 348V332L318 133Q267 -67 264 -75Q246 -125 194 -164T75 -204Q25 -204 7 -183T-12 -137Q-12 -110 7 -91T53 -71Q70 -71 82 -81T95 -112Q95 -148 63 -167Q69 -168 77 -168Q111 -168 139 -140T182 -74L193 -32Q204 11 219 72T251 197T278 308T289 365Q289 372 288 376Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+        <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+        <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(1851, 0)"</span><span class="token operator">></span>
+         <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M39 168Q39 225 58 272T107 350T174 402T244 433T307 442H310Q355 442 388 420T421 355Q421 265 310 237Q261 224 176 223Q139 223 138 221Q138 219 132 186T125 128Q125 81 146 54T209 26T302 45T394 111Q403 121 406 121Q410 121 419 112T429 98T420 82T390 55T344 24T281 -1T205 -11Q126 -11 83 42T39 168ZM373 353Q367 405 305 405Q272 405 244 391T199 357T170 316T154 280T149 261Q149 260 169 260Q282 260 327 284T373 353Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+        <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+        <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(2317, 0)"</span><span class="token operator">></span>
+         <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M34 159Q34 268 120 355T306 442Q362 442 394 418T427 355Q427 326 408 306T360 285Q341 285 330 295T319 325T330 359T352 380T366 386H367Q367 388 361 392T340 400T306 404Q276 404 249 390Q228 381 206 359Q162 315 142 235T121 119Q121 73 147 50Q169 26 205 26H209Q321 26 394 111Q403 121 406 121Q410 121 419 112T429 98T420 83T391 55T346 25T282 0T202 -11Q127 -11 81 37T34 159Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+        <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+        <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(2750, 0)"</span><span class="token operator">></span>
+         <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+        <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+        <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(3111, 0)"</span><span class="token operator">></span>
+         <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M78 60Q78 84 95 102T138 120Q162 120 180 104T199 61Q199 36 182 18T139 0T96 17T78 60Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+        <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+        <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(3555.7, 0)"</span><span class="token operator">></span>
+         <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M23 287Q24 290 25 295T30 317T40 348T55 381T75 411T101 433T134 442Q209 442 230 378L240 387Q302 442 358 442Q423 442 460 395T497 281Q497 173 421 82T249 -10Q227 -10 210 -4Q199 1 187 11T168 28L161 36Q160 35 139 -51T118 -138Q118 -144 126 -145T163 -148H188Q194 -155 194 -157T191 -175Q188 -187 185 -190T172 -194Q170 -194 161 -194T127 -193T65 -192Q-5 -192 -24 -194H-32Q-39 -187 -39 -183Q-37 -156 -26 -148H-6Q28 -147 33 -136Q36 -130 94 103T155 350Q156 355 156 364Q156 405 131 405Q109 405 94 377T71 316T59 280Q57 278 43 278H29Q23 284 23 287ZM178 102Q200 26 252 26Q282 26 310 49T356 107Q374 141 392 215T411 325V331Q411 405 350 405Q339 405 328 402T306 393T286 380T269 365T254 350T243 336T235 326L232 322Q232 321 229 308T218 264T204 212Q178 106 178 102Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+        <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+        <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(4058.7, 0)"</span><span class="token operator">></span>
+         <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M33 157Q33 258 109 349T280 441Q331 441 370 392Q386 422 416 422Q429 422 439 414T449 394Q449 381 412 234T374 68Q374 43 381 35T402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487Q506 153 506 144Q506 138 501 117T481 63T449 13Q436 0 417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157ZM351 328Q351 334 346 350T323 385T277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q217 26 254 59T298 110Q300 114 325 217T351 328Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+        <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+        <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(4587.7, 0)"</span><span class="token operator">></span>
+         <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M21 287Q22 290 23 295T28 317T38 348T53 381T73 411T99 433T132 442Q161 442 183 430T214 408T225 388Q227 382 228 382T236 389Q284 441 347 441H350Q398 441 422 400Q430 381 430 363Q430 333 417 315T391 292T366 288Q346 288 334 299T322 328Q322 376 378 392Q356 405 342 405Q286 405 239 331Q229 315 224 298T190 165Q156 25 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 114 189T154 366Q154 405 128 405Q107 405 92 377T68 316T57 280Q55 278 41 278H27Q21 284 21 287Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+        <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+        <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(5038.7, 0)"</span><span class="token operator">></span>
+         <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M39 168Q39 225 58 272T107 350T174 402T244 433T307 442H310Q355 442 388 420T421 355Q421 265 310 237Q261 224 176 223Q139 223 138 221Q138 219 132 186T125 128Q125 81 146 54T209 26T302 45T394 111Q403 121 406 121Q410 121 419 112T429 98T420 82T390 55T344 24T281 -1T205 -11Q126 -11 83 42T39 168ZM373 353Q367 405 305 405Q272 405 244 391T199 357T170 316T154 280T149 261Q149 260 169 260Q282 260 327 284T373 353Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+        <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+        <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(5504.7, 0)"</span><span class="token operator">></span>
+         <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+        <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+        <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(6104.7, 0)"</span><span class="token operator">></span>
+         <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+        <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+       <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+       <span class="token operator">&lt;</span>g transform<span class="token operator">=</span><span class="token string">"translate(6743.4, 0)"</span><span class="token operator">></span>
+        引用。上级工程的版本也可以这样引用
+        <span class="token operator">&lt;</span>path d<span class="token operator">=</span><span class="token string">"M78 370Q78 394 95 412T138 430Q162 430 180 414T199 371Q199 346 182 328T139 310T96 327T78 370ZM78 60Q78 84 95 102T138 120Q162 120 180 104T199 61Q199 36 182 18T139 0T96 17T78 60Z"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>path<span class="token operator">></span>
+       <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+      <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+     <span class="token operator">&lt;</span><span class="token operator">/</span>g<span class="token operator">></span>
+    <span class="token operator">&lt;</span><span class="token operator">/</span>svg<span class="token operator">></span><span class="token punctuation">{</span>parent<span class="token punctuation">.</span>version<span class="token punctuation">}</span>
+
+### Profile
+
+profile 特性可以让我们定义多个 profile，然后每个 profile 对应不同的激活条件和配置信息，从而达到不同环境使用不同配置信息的效果。
+
+profile 可以在以下几个地方声明：
+<span class="token operator">-</span> m<span class="token punctuation">.</span>xml：这里声明的 profile 只对当前项目有效<span class="token operator">-</span> 用户 settings<span class="token punctuation">.</span>xml：<span class="token punctuation">.</span>m2<span class="token operator">/</span>settings<span class="token punctuation">.</span>xml 中的 profile 对该用户的 Maven 项目有效<span class="token operator">-</span> 全局 settings<span class="token punctuation">.</span>xml：conf<span class="token operator">/</span>settings<span class="token punctuation">.</span>xml，对本机上所有 Maven 项目有效
+<span class="token operator">*</span><span class="token operator">*</span>示例：<span class="token operator">*</span><span class="token operator">*</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>&lt;project&gt;<br>  …<br>  &lt;profiles&gt;<br>    &lt;profile&gt;<br>      &lt;id&gt;dev&lt;&#x2F;id&gt;<br>      &lt;properties&gt;<br>        &lt;active.profile&gt;dev&lt;&#x2F;active.profile&gt;<br>        &lt;key1&gt;value1&lt;&#x2F;key1&gt;<br>        &lt;key2&gt;value2&lt;&#x2F;key2&gt;<br>      &lt;&#x2F;properties&gt;</p>
+<p>      &lt;!– 默认激活配置 –&gt;<br>      &lt;activation&gt;<br>        &lt;activeByDefault&gt;true&lt;&#x2F;activeByDefault&gt;<br>      &lt;&#x2F;activation&gt;<br>      &lt;!– 在该 profile 下才会引入的依赖 –&gt;<br>      &lt;dependencies&gt;<br>        &lt;dependency&gt;<br>          &lt;groupId&gt;org.springframework&lt;&#x2F;groupId&gt;<br>          &lt;artifactId&gt;spring-context&lt;&#x2F;artifactId&gt;<br>          &lt;version&gt;3.2.4.RELEASE&lt;&#x2F;version&gt;<br>        &lt;&#x2F;dependency&gt;<br>      &lt;dependencies&gt;<br>      &lt;!– 在该 profile 下才会加载的变量文件 –&gt;<br>      &lt;build&gt;<br>        &lt;filters&gt;<br>          &lt;filter&gt;..&#x2F;profile&#x2F;test-pre.properties&lt;&#x2F;filter&gt;<br>        &lt;&#x2F;filters&gt;<br>      &lt;&#x2F;build&gt;<br>    &lt;&#x2F;profile&gt;<br>  &lt;&#x2F;profiles&gt;<br>  …<br>&lt;&#x2F;project&gt;</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+源于：https<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>juejin<span class="token punctuation">.</span>im<span class="token operator">/</span>post<span class="token operator">/</span><span class="token number">6844903839435341832</span>
+
+推荐文章
+<span class="token operator">-</span> <span class="token operator">-</span> <span class="token operator">-</span> <span class="token operator">-</span> 
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>原创电子书历时整整一年总结的 Java 面试 + Java 后端技术学习指南，这是本人这几年及校招的总结，各种高频面试题已经全部进行总结，按照章节复习即可，已经拿到了大厂offer。<br>原创思维导图扫码或者微信搜 程序员的技术圈子 回复 面试 领取原创电子书和思维导图。</p>
+<p>&#96;&#96;&#96;</p>
+<p>原文地址：<a target="_blank" rel="noopener" href="https://sihai.blog.csdn.net/article/details/110675494">https://sihai.blog.csdn.net/article/details/110675494</a></p>
+
+                </div>
+                <!-- 欧阳思海，modify，2020.05.01-->
+<!-- 文章详情详情页面的头部广告位置信息 -->
+<div id="post-head-panel">
+    
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" style="font-size: 18px;" target="_blank">
+        <img src="/icons/hot.gif">
+        本人花费半年的时间总结的《Java面试指南》已拿腾讯等大厂offer，已开源在github ，欢迎star！
+    </a>
+    
+    
+</div>
+<br />
+
+
+
+<blockquote>
+    
+            <p>本文GitHub <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">https://github.com/OUYANGSIHAI/JavaInterview</a> 已收录，这是我花了6个月总结的<b>一线大厂Java面试</b>总结，本人已拿大厂offer，欢迎star</p>
+    
+    <p>原文链接：blog.ouyangsihai.cn &gt;&gt; <a href="/maven-shi-zhan-zong-jie-gong-zuo-zhong-chang-jian-cao-zuo.html" target="_blank">maven实战总结，工作中常见操作</a></p>
+</blockquote>
+                <hr />
+
+                
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.88rem;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-large waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fa fa-close"></i></a>
+            <h4 class="reward-title">多少都是对我的认可</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="http://image.ouyangsihai.cn/FpbhsOuf3Ar9vY34B97Y2qQ7LVGe" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="http://image.ouyangsihai.cn/FgYlMzms68PH73PWpZBwPfbLTAws" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+                
+
+                <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+
+<div id="article-share">
+    
+    <div class="social-share" data-disabled="qzone" data-wechat-qrcode-helper="<p>微信里点“发现”->“扫一扫”二维码便可查看分享。</p>"></div>
+    
+</div>
+
+<script src="/libs/share/js/social-share.min.js"></script>
+
+                
+
+                
+                <div class="reprint1">
+                    <p>
+                        <span class="reprint1-tip">
+                            <i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;转载请注明:
+                        </span>
+                        <a href="https://blog.ouyangsihai.cn" class="b-link-green">好好学java</a>
+                        <i class="fa fa-angle-right fa-lg fa-fw text-color"></i>
+                        <a href="/maven-shi-zhan-zong-jie-gong-zuo-zhong-chang-jian-cao-zuo.html" class="b-link-green">maven实战总结，工作中常见操作</a>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        
+
+        
+
+        
+
+        
+
+        
+        <style>
+    .valine-card {
+        margin: 1.5rem auto;
+    }
+
+    .valine-card .card-content {
+        padding: 20px 20px 5px 20px;
+    }
+    /* valine 评论框增加背景图片 */
+    #vcomments textarea {
+        box-sizing: border-box;
+        background: url("") 100% 100% no-repeat;
+    }
+
+    #vcomments input[type=text],
+    #vcomments input[type=email],
+    #vcomments input[type=url],
+    #vcomments textarea {
+        box-sizing: border-box;
+    }
+
+    #vcomments p {
+        margin: 2px 2px 10px;
+        font-size: 1.05rem;
+        line-height: 1.78rem;
+    }
+
+    #vcomments blockquote p {
+        text-indent: 0.2rem;
+    }
+
+    #vcomments a {
+        padding: 0 2px;
+        color: #42b983;
+        font-weight: 500;
+        text-decoration: underline;
+    }
+
+    #vcomments img {
+        max-width: 100%;
+        height: auto;
+        cursor: pointer;
+    }
+
+    #vcomments ol li {
+        list-style-type: decimal;
+    }
+
+    #vcomments ol,
+    ul {
+        display: block;
+        padding-left: 2em;
+        word-spacing: 0.05rem;
+    }
+
+    #vcomments ul li,
+    ol li {
+        display: list-item;
+        line-height: 1.8rem;
+        font-size: 1rem;
+    }
+
+    #vcomments ul li {
+        list-style-type: disc;
+    }
+
+    #vcomments ul ul li {
+        list-style-type: circle;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    #vcomments table, th, td {
+        border: 0;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments h1 {
+        font-size: 1.85rem;
+        font-weight: bold;
+        line-height: 2.2rem;
+    }
+
+    #vcomments h2 {
+        font-size: 1.65rem;
+        font-weight: bold;
+        line-height: 1.9rem;
+    }
+
+    #vcomments h3 {
+        font-size: 1.45rem;
+        font-weight: bold;
+        line-height: 1.7rem;
+    }
+
+    #vcomments h4 {
+        font-size: 1.25rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    #vcomments h5 {
+        font-size: 1.1rem;
+        font-weight: bold;
+        line-height: 1.4rem;
+    }
+
+    #vcomments h6 {
+        font-size: 1rem;
+        line-height: 1.3rem;
+    }
+
+    #vcomments p {
+        font-size: 1rem;
+        line-height: 1.5rem;
+    }
+
+    #vcomments hr {
+        margin: 12px 0;
+        border: 0;
+        border-top: 1px solid #ccc;
+    }
+
+    #vcomments blockquote {
+        margin: 15px 0;
+        border-left: 5px solid #42b983;
+        padding: 1rem 0.8rem 0.3rem 0.8rem;
+        color: #666;
+        background-color: rgba(66, 185, 131, .1);
+    }
+
+    #vcomments pre {
+        font-family: monospace, monospace;
+        padding: 1.2em;
+        margin: .5em 0;
+        background: #272822;
+        overflow: auto;
+        border-radius: 0.3em;
+        tab-size: 4;
+    }
+
+    #vcomments code {
+        font-family: monospace, monospace;
+        padding: 1px 3px;
+        font-size: 0.92rem;
+        color: #e96900;
+        background-color: #f8f8f8;
+        border-radius: 2px;
+    }
+
+    #vcomments pre code {
+        font-family: monospace, monospace;
+        padding: 0;
+        color: #e8eaf6;
+        background-color: #272822;
+    }
+
+    #vcomments pre[class*="language-"] {
+        padding: 1.2em;
+        margin: .5em 0;
+    }
+
+    #vcomments code[class*="language-"],
+    pre[class*="language-"] {
+        color: #e8eaf6;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    #vcomments b,
+    strong {
+        font-weight: bold;
+    }
+
+    #vcomments dfn {
+        font-style: italic;
+    }
+
+    #vcomments small {
+        font-size: 85%;
+    }
+
+    #vcomments cite {
+        font-style: normal;
+    }
+
+    #vcomments mark {
+        background-color: #fcf8e3;
+        padding: .2em;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    /* 修复评论第一行位置错位 */
+    .v .vlist .vcard {
+    padding-top: 2.5em !important ;
+    }
+</style>
+
+<div class="card valine-card" data-aos="fade-up">
+    <div id="vcomments" class="card-content"></div>
+</div>
+
+<script src="/libs/valine/av-min.js"></script>
+<script src="/libs/valine/Valine.min.js"></script>
+<!-- <link rel="stylesheet" type="text/css" href="/libs//libs/jQuery-emoji/dist/css/jquery.emoji.css">
+<script src="/libs//libs/jQuery-emoji/dist/js/jquery.emoji.min.js"></script>
+<script src="/libs//libs/jQuery-emoji/dist/js/emoji.list.js"></script> -->
+<script>
+    new Valine({
+        el: '#vcomments',
+        appId: 'MxSNOS83TYWU3Opsy2GTW1ih-gzGzoHsz',
+        appKey: '4XevOgmAxHEwVDnIKgvEUihB',
+        notify: 'true' === 'true',
+        verify: 'true' === 'true',
+        visitor: 'true' === 'true',
+        avatar: 'mm',
+        pageSize: '10',
+        lang: 'zh-cn',
+        placeholder: '请畅所欲言吧，别害羞~',
+
+    });
+
+//     function parse_emoji() {
+//     jQuery(".vcontent").emojiParse({
+//       basePath: '/libs/jQuery-emoji/images/emoji',
+//       icons: emojiLists   // 注：详见 js/emoji.list.js
+//     });
+//   }
+  
+//   setTimeout(function() {
+//     // jQuery emoji 解析
+//     parse_emoji();
+//     // jquery emoji 初始化
+//     jQuery(".veditor").emoji({
+//       showTab: true,
+//       animation: 'slide',
+//       basePath: '/libs/jQuery-emoji/images/emoji',
+//       icons: emojiLists  // 注：详见 js/emoji.list.js
+//     });
+//     jQuery(".vmore").on("click", function() {
+//       setTimeout(function() {
+//         parse_emoji();
+//       }, 500);
+//     });
+//   }, 800)
+
+</script>
+        
+
+        
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/gen-qian-teng-xun-zong-jian-xue-java-shi-zhan-xiang-mu.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/3.jpg" class="responsive-img" alt="跟前腾讯总监学Java实战项目">
+                        
+                        <span class="card-title">跟前腾讯总监学Java实战项目</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            自从我写公众号以来，就一直有读者留言：
+“想要自学Java，却不知道该学什么，也不知道该学到什么深度？”
+可以说，这个问题困扰过所有自学Java的人！
+其实，想要学习Java这门语言并不难，只要你掌握好这3点：
+1、有高质量的资料入门；
+2
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="fa fa-clock fa-fw icon-date"></i>2021-04-04
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E5%A5%BD%E5%A5%BD%E5%AD%A6java/" class="post-category" target="_blank">
+                                    好好学java
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fa fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/idea-shang-wei-bu-eclipse-theia-1.0-fa-bu.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="IDEA 上位？不！Eclipse Theia 1.0 发布！">
+                        
+                        <span class="card-title">IDEA 上位？不！Eclipse Theia 1.0 发布！</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            点击上方 **好好学java **，选择 **星标 **公众号
+重磅资讯、干货，第一时间送达
+今日推荐： 个人原创100W+访问量博客：点击前往，查看更多
+来源：开源中国
+Eclipse 基金会于近日推出 Eclipse Theia 1.0
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="fa fa-clock fa-fw icon-date"></i>2021-04-04
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E5%A5%BD%E5%A5%BD%E5%AD%A6java/" class="post-category" target="_blank">
+                                    好好学java
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+    </div>
+</div>
+
+
+<script>
+    $('#articleContent').on('copy', function (e) {
+        // IE8 or earlier browser is 'undefined'
+        if (typeof window.getSelection === 'undefined') return;
+
+        var selection = window.getSelection();
+        // if the selection is short let's not annoy our users.
+        if (('' + selection).length < Number.parseInt('500')) {
+            return;
+        }
+
+        // create a div outside of the visible area and fill it with the selected text.
+        var bodyElement = document.getElementsByTagName('body')[0];
+        var newdiv = document.createElement('div');
+        newdiv.style.position = 'absolute';
+        newdiv.style.left = '-99999px';
+        bodyElement.appendChild(newdiv);
+        newdiv.appendChild(selection.getRangeAt(0).cloneContents());
+
+        // we need a <pre> tag workaround.
+        // otherwise the text inside "pre" loses all the line breaks!
+        if (selection.getRangeAt(0).commonAncestorContainer.nodeName === 'CODE') {
+            newdiv.innerHTML = "<pre>" + newdiv.innerHTML + "</pre>";
+        }
+
+        var url = document.location.href;
+        newdiv.innerHTML += '<br />'
+            + '来源: 好好学java<br />'
+            + '作者: 好好学java<br />'
+            + '链接: <a href="' + url + '">' + url + '</a><br />'
+            + '本文章著作权归作者所有，任何形式的转载都请注明出处。';
+
+        selection.selectAllChildren(newdiv);
+        window.setTimeout(function () { bodyElement.removeChild(newdiv); }, 200);
+    });
+</script>
+
+
+
+<!--
+<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+<script>
+    const btw = new BTWPlugin();
+    btw.init({
+        id: 'container',
+        blogId: '15305-1590684104111-518',
+        name: '程序员的技术圈子',
+        qrcode: 'http://image.ouyangsihai.cn/FtAUOeE5--1JTdcuuZFIhMuEUuJO',
+        keyword: 'vip',
+    });
+</script>
+-->
+
+    </div>
+    <div id="toc-aside" style="width: 310px;" class="expanded col l3 hide-on-med-and-down">
+        <!-- 自定义右侧card：欧阳思海 -->
+        <!-- <div id="my-card" style="background: ">
+            
+        </div> -->
+        <!-- <div class="toc-widget">
+            <div class="toc-title" style="display: none;"><i class="fa fa-list-alt"></i>&nbsp;&nbsp;</div>
+            <div id="toc-content"></div>
+        </div> -->
+
+
+
+
+
+
+
+
+        <aside class="col-lg-3" style="width: 300px;">
+
+            <link rel="stylesheet" type="text/css" href="/css/my-aside.css">
+
+            <!-- 关注公众号信息：欧阳思海 -->
+            <div class="widget-wrap">
+                <div class="widget bg-danger" style="color:whitesmoke; background-color: #419488">
+                    <div class="card-front animated col s12 m12 l8 offset-l2 fadeInUp">
+                        <div class="row">
+                            <div class="col-md-5" style="text-align: center;">
+                                <img class="adv" style="width: 95px; height: 95px;"
+                                    src="http://image.ouyangsihai.cn/FtAUOeE5--1JTdcuuZFIhMuEUuJO">
+                            </div>
+                            <div class="col-md-7" style="text-align: center;">
+                                <h2 style="font-size: 18px; 
+                                    margin: 0; 
+                                    padding: 0;
+                                    border: 0; 
+                                    outline: 0;
+                                    font-weight: inherit;
+                                    font-style: inherit;
+                                    font-family: inherit;
+                                    vertical-align: baseline;">关注公众号</h2>
+                                 
+                                <small style="font-size: 15px;">
+                                    →「技术干货」每日推送 <br>
+                                    →「回复资料」领取资料 <br>
+                                    →「微信加群」每周福利 <br>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div style="font-size: 0.8em;">
+                        <a href="/assets/erweima.jpg" target="_blank"
+                            style="color:orange;font-size: 14px;">点击添加我的微信，加入技术讨论群</a>
+                        除公众号以外，我还会在以下平台发布内容：
+                    </div>
+                    -->
+
+                    <div class="profile-block social-links col-md-7" style="text-align: center;">
+                        <table style="align-items: center; 
+                                        padding-left: 25px;">
+                            <tbody>
+                                <tr>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank" title="GitHub"
+                                            class="tooltip">
+                                            <img style="width: 22px;height: 22px;" src="/icons/github.svg"></a>
+                                    </td>
+
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://www.zhihu.com/people/hai-hai-ren-sheng-50/activities"
+                                            target="_blank" title="知乎" class="tooltip">
+                                            <img style="width: 22px;" src="/icons/zhihu.svg"></a>
+                                    </td>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://blog.csdn.net/sihai12345" target="_blank" title="CSDN"
+                                            class="tooltip">
+                                            <img style="width: 18px;" src="/icons/CSDN.svg"></a>
+                                    </td>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://www.jianshu.com/u/12b0bd4c857c" target="_blank" title="简书"
+                                            class="tooltip">
+                                            <img style="width: 22px;" src="/icons/JianShu.svg"></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            
+
+            <!-- custom rightside_link：热门文章推荐：欧阳思海 -->
+            
+            <div class="widget-wrap widget-panel">
+                <p style="text-align: left;padding-bottom: 10px;line-height: 30px; font-size: 14px;">
+                    
+                    <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        本人花费半年的时间总结的《 Java 面试指南》已拿腾讯等大厂 offer，已开源在 github ，欢迎 star！
+                    </a><br>
+                    
+                    <a href="https://mp.weixin.qq.com/s/I0jimqziHqRNaIy0kXRCnw" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        2020 Java 1000G 最新学习资源，Java基础、Java项目实战、Java分布式等等！
+                    </a><br>
+                    
+                    <a href="http://image.ouyangsihai.cn/FpB-dO6g-XU44mMrVlj7EL1y7Rs7" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        高级 Java 开发微信群，一起搞事情吧！
+                    </a><br>
+                    
+                </p>
+            </div>
+            
+
+            
+
+            <!-- custom rightside_banner：右侧广告或者其他的栏目设置：欧阳思海 -->
+            
+            <div class="widget-wrap">
+                <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">
+                    <img src="http://image.ouyangsihai.cn/FhhoEYMaNr6m0v8KhG8vSPgoREBV" style="width: 100%;">
+                </a>
+            </div>
+            
+            
+
+            
+
+            <!-- 右侧专栏分类：欧阳思海 -->
+            
+            <div class="widget-wrap widget-panel">
+                <ul class="media-list">
+                    
+                    <li class="media">
+                        <a href="/categories/MySQL的艺术世界/" target="_blank">
+                            <div class="media-left">
+                                <img class="media-object" src="http://image.ouyangsihai.cn/Fn3kQurieQ_0QUeqPmx5RW5i6R9n" style="width: 55px;">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading" style="margin-bottom: 10px; font-size: 100%;
+                                                                    margin: 0;
+                                                                    padding: 0;
+                                                                    border: 0;
+                                                                    outline: 0;
+                                                                    font-weight: inherit;
+                                                                    font-style: inherit;
+                                                                    font-family: inherit;
+                                                                    vertical-align: baseline;">
+                                    MySQL 的系列文章，解决全部面试问题！
+                                </h4>
+                                <p>
+                                    总共10篇文章，面试热门的锁、事务，通通解决了！
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    <hr>
+                    
+                    <li class="media">
+                        <a href="/categories/深入理解Java虚拟机/" target="_blank">
+                            <div class="media-left">
+                                <img class="media-object" src="http://image.ouyangsihai.cn/FpcS21VWJOHSgGzKcpW3_xVTSEeN" style="width: 55px;">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading" style="margin-bottom: 10px; font-size: 100%;
+                                                                    margin: 0;
+                                                                    padding: 0;
+                                                                    border: 0;
+                                                                    outline: 0;
+                                                                    font-weight: inherit;
+                                                                    font-style: inherit;
+                                                                    font-family: inherit;
+                                                                    vertical-align: baseline;">
+                                    深入理解 Java 虚拟机，面试必问
+                                </h4>
+                                <p>
+                                    总共10篇文章，包括内存模型、GC算法、GC收集器等。
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    <hr>
+                    
+                </ul>
+            </div>
+            
+
+            <!-- 右侧分类 -->
+            <div class="widget-wrap widget-panel">
+                <h3 class="widget-title">文章分类</h3>
+                <div class="widget">
+                    <ul class="category-list">
+                        
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/趣聊数据结构与算法/">>
+                                趣聊数据结构与算法</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/职业生涯浅谈/">>
+                                职业生涯浅谈</a><span class="category-list-count">33</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java项目分享/">>
+                                Java项目分享</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java面试经验/">>
+                                Java面试经验</a><span class="category-list-count">4</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/我要进大厂/">>
+                                我要进大厂</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/好好学java/">>
+                                好好学java</a><span class="category-list-count">1116</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/剑指offer/">>
+                                剑指offer</a><span class="category-list-count">112</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/css/">>
+                                css</a><span class="category-list-count">12</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/其他框架/">>
+                                其他框架</a><span class="category-list-count">142</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python其他/">>
+                                python其他</a><span class="category-list-count">45</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/数据库相关/">>
+                                数据库相关</a><span class="category-list-count">293</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java核心知识/">>
+                                Java核心知识</a><span class="category-list-count">196</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java面试题/">>
+                                Java面试题</a><span class="category-list-count">308</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/mybatis源码/">>
+                                mybatis源码</a><span class="category-list-count">56</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/spring教程/">>
+                                spring教程</a><span class="category-list-count">173</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springboot教程/">>
+                                springboot教程</a><span class="category-list-count">156</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/实战Activiti工作流/">>
+                                实战Activiti工作流</a><span class="category-list-count">4</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springcloud教程/">>
+                                springcloud教程</a><span class="category-list-count">39</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/linux/">>
+                                linux</a><span class="category-list-count">91</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python框架/">>
+                                python框架</a><span class="category-list-count">43</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python基础/">>
+                                python基础</a><span class="category-list-count">78</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/dubbo/">>
+                                dubbo</a><span class="category-list-count">37</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java源码/">>
+                                Java源码</a><span class="category-list-count">76</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/叽叽喳喳杂七杂八/">>
+                                叽叽喳喳杂七杂八</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/MySQL的艺术世界/">>
+                                MySQL的艺术世界</a><span class="category-list-count">8</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/jquery/">>
+                                jquery</a><span class="category-list-count">14</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java并发/">>
+                                Java并发</a><span class="category-list-count">43</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java文章合辑/">>
+                                Java文章合辑</a><span class="category-list-count">11</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java基础修炼/">>
+                                Java基础修炼</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/不一样的Java8/">>
+                                不一样的Java8</a><span class="category-list-count">3</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/小程序开发的世界/">>
+                                小程序开发的世界</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java学习资源分享/">>
+                                Java学习资源分享</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java小学生漫游/">>
+                                Java小学生漫游</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/rocketmq源码解析/">>
+                                rocketmq源码解析</a><span class="category-list-count">33</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springmvc最新教程/">>
+                                springmvc最新教程</a><span class="category-list-count">9</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java的Exception/">>
+                                Java的Exception</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/vue-js/">>
+                                vue.js</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/实战设计模式/">>
+                                实战设计模式</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python数据处理/">>
+                                python数据处理</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java-Web闯关/">>
+                                Java Web闯关</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springboot2-0最新教程/">>
+                                springboot2.0最新教程</a><span class="category-list-count">11</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/netty/">>
+                                netty</a><span class="category-list-count">16</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/rpc/">>
+                                rpc</a><span class="category-list-count">13</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/拥抱大厂系列/">>
+                                拥抱大厂系列</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/eureka/">>
+                                eureka</a><span class="category-list-count">19</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/分布式/">>
+                                分布式</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/中间件/">>
+                                中间件</a><span class="category-list-count">23</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java基础/">>
+                                Java基础</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/带你学Python/">>
+                                带你学Python</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/使用技术工具/">>
+                                使用技术工具</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/mycat源码/">>
+                                mycat源码</a><span class="category-list-count">5</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/深入理解Java虚拟机/">>
+                                深入理解Java虚拟机</a><span class="category-list-count">8</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/spring源码/">>
+                                spring源码</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java集合源码分析/">>
+                                Java集合源码分析</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/github的repo/">>
+                                github的repo</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java框架深究/">>
+                                Java框架深究</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/分布式架构/">>
+                                分布式架构</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+
+        </aside>
+
+
+
+
+
+
+
+
+
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. 修改成永远不显示：欧阳思海-->
+
+
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h1, h2, h3, h4, h5'
+        });
+
+        console.log('============');
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h1, h2, h3, h4, h5').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+                        
+            /* 修复文章卡片 div 的宽度. */
+            let fixPostCardWidth = function (srcId, targetId) {
+                let srcDiv = $('#' + srcId);
+                if (srcDiv.length === 0) {
+                    return;
+                }
+
+                let w = srcDiv.width();
+                if (w >= 450) {
+                    w = w + 21;
+                } else if (w >= 350 && w < 450) {
+                    w = w + 18;
+                } else if (w >= 300 && w < 350) {
+                    w = w + 16;
+                } else {
+                    w = w + 14;
+                }
+                $('#' + targetId).width(w);
+            };
+
+            // 切换TOC目录展开收缩的相关操作.
+            // 修改右侧边栏功能：欧阳思海
+            const expandedClass = 'expanded';
+            let $tocAside = $('#toc-aside');
+            let $mainContent = $('#main-content');
+
+            $('#floating-toc-btn .btn-floating').click(function () {
+                if ($tocAside.hasClass(expandedClass)) {
+                    $tocAside.removeClass(expandedClass).slideUp(500);
+                    $mainContent.removeClass('l9');
+                } else {
+                    $tocAside.addClass(expandedClass).slideDown(500);
+                    $mainContent.addClass('l9');
+                }
+                fixPostCardWidth('artDetail', 'prenext-posts');
+            });
+                        
+                    });
+</script>
+    
+
+</main>
+
+
+        <footer class="page-footer bg-color">
+    <div class="container row center-align">
+        <div class="col s12 m8 l8 copy-right">
+            
+	    Copyright&copy; 2019 <a href="https://www.java1000.com/" target="_blank"> 好好学java </a>维护. 网站备案/许可证号：赣ICP备17007984号-3
+            <br>
+            <span id="sitetime"></span>
+            <br>
+
+            
+
+            
+                    <!-- 
+                        <span id="busuanzi_container_site_pv" style='display:none'></span>
+                        总访问量: <span id="busuanzi_value_site_pv" class="white-color"></span>
+                    
+        
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'></span>
+                        人次&nbsp; | &nbsp;访客人数: <span id="busuanzi_value_site_uv" class="white-color"></span> 人
+                     -->
+                        <!-- 修改计数：欧阳思海 -->
+                    
+                        <span id="busuanzi_container_site_pv" style='display:inline'>
+                            <i class="fa fa-heart-o"></i>
+                            本站总访问量 <span id="busuanzi_value_site_pv" class="white-color"></span>
+                        </span>
+                    
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'>
+                            人次,&nbsp;访客数 <span id="busuanzi_value_site_uv" class="white-color"></span> 人.
+                        </span>
+                    
+    
+            
+
+            
+                &nbsp; | &nbsp;字数统计:&nbsp;
+                <span class="white-color">8290.3k</span> 字
+            
+
+            
+            <br>
+
+        </div>
+
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fa fa-code-branch"></i>
+    </a>
+
+
+ 
+    <a href="https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=1446037005@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fa fa-envelope-open"></i>
+    </a>
+
+
+
+
+    <a href="https://zhihu.com/people/hai-hai-ren-sheng-50/activities" class="tooltipped" target="_blank" data-tooltip="访问我的知乎" data-position="top" data-delay="50">
+        <i class="fa fa-inverse">知</i>
+    </a>
+
+
+
+
+
+
+
+
+
+    <a href="https://blog.ouyangsihai.cn/sitemap.xml" class="tooltipped" target="_blank" data-tooltip="站点地图" data-position="top" data-delay="50">
+        <i class="fa fa-sitemap"></i>
+    </a>
+
+
+
+    <a href="https://blog.ouyangsihai.cn/friends" class="tooltipped" target="_blank" data-tooltip="友情链接" data-position="top" data-delay="50">
+        <i class="fa fa-address-book"></i>
+    </a>
+</div>
+
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+
+        var t1 = Date.UTC(2019, 08, 10, 00, 00, 00); //北京时间2019-8-1 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes *
+            minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "本站已运行 " + diffYears + " 年 " + diffDays + " 天 " + diffHours +
+            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒" ;
+    } /*因为建站时间还没有一年，就将之注释掉了。需要的可以取消*/
+    siteTime();
+</script>
+
+<!-- 修改计数：欧阳思海 -->
+<script>
+    $(document).ready(function () {
+
+        var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+        var pvcountOffset = 1005469;  // 初始化首次数据
+        var uvcountOffset = 250804;
+
+        function fixCount() {
+            if (document.getElementById("busuanzi_container_site_pv").style.display != "none") {
+                $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + pvcountOffset);
+                clearInterval(int);
+            }
+            if ($("#busuanzi_container_site_pv").css("display") != "none") {
+                $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + uvcountOffset); // 加上初始数据 
+                clearInterval(int); // 停止检测
+            }
+        }
+    });
+</script>
+
+
+
+
+        <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.json", 'searchInput', 'searchResult');
+});
+</script>
+        <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fa fa-angle-up"></i>
+    </a>
+</div>
+
+
+        <script src="/libs/materialize/materialize.min.js"></script>
+        <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+        <script src="/libs/aos/aos.js"></script>
+        <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+        <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+        <script src="/js/matery.js"></script>
+
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-149362573-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    gtag('config', 'UA-149362573-1');
+</script>
+
+
+
+        
+            <script src="/libs/others/clicklove.js"></script>
+        
+
+        
+            <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+        
+
+        <!-- 洪卫 shw2018 add 2019.08.28 -->
+        <script type="text/javascript">
+            var OriginTitile = document.title,
+                st;
+            document.addEventListener("visibilitychange", function () {
+                document.hidden ? (document.title = "看不见我🙈~看不见我🙈~", clearTimeout(st)) : (document.title =
+                    "(๑•̀ㅂ•́) ✧被发现了～", st = setTimeout(function () {
+                        document.title = OriginTitile
+                    }, 3e3))
+            })
+        </script>
+
+        <!-- 鼠标点击烟花爆炸效果  洪卫 shw2018 add 2019.09.09 -->
+        
+
+        <!-- 背景雪花飘落特效洪卫 shw2018 add 2019.09.10 -->
+        
+
+        <!-- 鼠标点击文字特效 洪卫 shw2018 add 2019.09.10-->
+        
+
+        <!-- 背景雪花飘落特效 洪卫 shw2018 add 2019.09.10 -->
+        
+
+        <!-- 在线聊天工具  洪卫 shw2018 add 2019.09.11 -->
+        
+
+        <!-- 背景 canvas-nest  洪卫 shw 2018  add 2019.09.15-->
+        
+
+        <!-- 背景静止彩带  洪卫 shw 2018  add 2019.09.15-->
+        
+
+        <!-- 背景动态彩带 洪卫 shw 2018  add 2019.09.15-->
+        
+
+    </body>
+</html>

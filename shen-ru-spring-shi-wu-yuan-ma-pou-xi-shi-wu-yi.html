@@ -1,0 +1,2901 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+    <!-- shw2018 洪卫  modify 2019.08.15-->
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="Spring Boot, Spring Cloud, 微服务, Java技术, 好好学java, Java面试, 分布式, 最新干货分享">
+    <meta name="baidu-site-verification" content="fmlEuI34ir" />
+    <meta name="google-site-verification" content="ZWVq5UvPg33BCEA3LRTUkYe5J854o9lF1_WRTer9l8A" />
+    <meta name="description" content="本站是 好好学java 的技术分享博客。内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、分布式、Java面试、测试开发等相关的研究与知识分享。">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>深入Spring事务源码剖析事务（一） | 好好学java | Spring Boot | Spring Cloud | 微服务 | Java技术 | Java面试 | 分布式 | 最新干货分享</title>
+    <link rel="icon" type="image/png" href="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7">
+
+    <!-- <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css"> -->
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    <!-- 自定义fontawesome样式：欧阳思海 -->
+    <link rel="stylesheet" type="text/css" href="/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/brands.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/fontawesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/regular.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/solid.min.css">
+
+
+    <style type="text/css">
+        code[class*="language-"],
+            pre[class*="language-"] {
+                white-space: pre !important;
+            }
+
+            
+
+        /* 将matery.css中的背景颜色修改放到这里：欧阳思海 */
+        .bg-color {
+            background-image: linear-gradient(to right, #ec8585 0%, #419488 100%);
+            opacity: 0.9;
+            // 透明度
+        }
+    </style>
+
+    <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
+    <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+
+    
+    
+    <script>
+        (function () {
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+    
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?6fe466069710c03a563713b507fbaca7";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+    <!-- Google Analytics -->
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-XXXXX-Y', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <!-- End Google Analytics -->
+
+    <script>(function (i, s, o, g, r, a, m) { i["DaoVoiceObject"] = r; i[r] = i[r] || function () { (i[r].q = i[r].q || []).push(arguments) }, i[r].l = 1 * new Date(); a = s.createElement(o), m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; a.charset = "utf-8"; m.parentNode.insertBefore(a, m) })(window, document, "script", ('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/0a804bac.js", "daovoice")</script>
+
+    <script>
+        if (true) {
+            daovoice('init', {
+                app_id: "0a804bac",
+                user_id: "NO_89757", // 必填: 该用户在您系统上的唯一ID
+                email: "daovoice@example.com", // 选填:  该用户在您系统上的主邮箱
+                name: "道客船长", // 选填: 用户名
+                signed_up: 1449821660 // 选填: 用户的注册时间，用Unix时间戳表示
+            });
+            daovoice('update');
+
+            daovoice('init', {
+                app_id: "0a804bac"
+            });
+            daovoice('update');
+        }
+    </script>
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/rss2.xml" title="好好学java" type="application/rss+xml">
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+    <body>
+
+        <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span" style="font-size: 1.4rem;">好好学java</span>
+                </a>
+            </div>
+            
+
+
+<!-- <a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-navicon"></i></a>
+<ul class="right">
+    
+    <li class="hide-on-med-and-down">
+        <a href="" class="waves-effect waves-light">
+            
+            <i class="fa "></i>
+            
+            <span></span>
+        </a>
+    </li>
+    
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title=""></i>
+        </a>
+    </li>
+</ul> -->
+
+<!-- 支持二级菜单特性 洪卫 shw2018 modify 2019.09.17  -->
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-align-justify"></i></a>
+<ul class="right nav-menu">
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-folder-minus"></i>
+                
+                <span style="font-size: 1.1rem;">Java学习</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/" >
+                    
+                    <span>Java入门</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Javaweb/" >
+                    
+                    <span>Java Web</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/spring%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>Spring教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/springboot%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>SpringBoot教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/springcloud%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>SpringCloud教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98/" >
+                    
+                    <span>Java面试</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%89%91%E6%8C%87offer/" >
+                    
+                    <span>剑指offer</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-code-branch"></i>
+                
+                <span style="font-size: 1.1rem;">Java进阶</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97/" >
+                    
+                    <span>设计模式</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" >
+                    
+                    <span>Java并发编程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/" >
+                    
+                    <span>数据库</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/redis/" >
+                    
+                    <span>Redis</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/linux/" >
+                    
+                    <span>Linux</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/" >
+                    
+                    <span>Java实战项目</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-code"></i>
+                
+                <span style="font-size: 1.1rem;">python学习</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/python%E5%9F%BA%E7%A1%80/" >
+                    
+                    <span>python基础</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/python%E6%A1%86%E6%9E%B6/" >
+                    
+                    <span>python框架</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/python%E5%85%B6%E4%BB%96/" >
+                    
+                    <span>python其他</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-coffee"></i>
+                
+                <span style="font-size: 1.1rem;">Java扩展</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/dubbo/" >
+                    
+                    <span>dubbo</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/netty/" >
+                    
+                    <span>netty</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/rpc/" >
+                    
+                    <span>rpc</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/eureka/" >
+                    
+                    <span>eureka</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/" >
+                    
+                    <span>中间件</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" >
+                    
+                    <span>分布式</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-desktop"></i>
+                
+                <span style="font-size: 1.1rem;">计算机核心</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" >
+                    
+                    <span>数据结构</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98/" >
+                    
+                    <span>leetcode刷题</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" >
+                    
+                    <span>计算机网络</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" >
+                    
+                    <span>算法</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/categories/" class="waves-effect waves-light">
+              
+                <i style="font-size: 1.1rem;" class="fa fa-adjust"></i>
+              
+              <span style="font-size: 1.1rem;">学习资源</span>
+            </a>
+
+            
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/contact" class="waves-effect waves-light">
+              
+                <i style="font-size: 1.1rem;" class="fa fa-envelope"></i>
+              
+              <span style="font-size: 1.1rem;">留言</span>
+            </a>
+
+            
+      </li>
+    
+
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title="搜索"></i>
+        </a>
+    </li>
+
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">好好学java</div>
+        <div class="logo-desc">
+            
+            
+            本站是 好好学java 的技术分享博客，涵盖Java后端技术、SpringBoot、微服务架构、分布式、Java面试等知 ...
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-folder-minus"></i>
+			
+			Java学习
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/ " style="margin-left:75px";>
+				  
+		          <span>Java入门</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Javaweb/ " style="margin-left:75px";>
+				  
+		          <span>Java Web</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/spring%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>Spring教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/springboot%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>SpringBoot教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/springcloud%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>SpringCloud教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98/ " style="margin-left:75px";>
+				  
+		          <span>Java面试</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%89%91%E6%8C%87offer/ " style="margin-left:75px";>
+				  
+		          <span>剑指offer</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-code-branch"></i>
+			
+			Java进阶
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97/ " style="margin-left:75px";>
+				  
+		          <span>设计模式</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>Java并发编程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/ " style="margin-left:75px";>
+				  
+		          <span>数据库</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/redis/ " style="margin-left:75px";>
+				  
+		          <span>Redis</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/linux/ " style="margin-left:75px";>
+				  
+		          <span>Linux</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/ " style="margin-left:75px";>
+				  
+		          <span>Java实战项目</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-code"></i>
+			
+			python学习
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/python%E5%9F%BA%E7%A1%80/ " style="margin-left:75px";>
+				  
+		          <span>python基础</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/python%E6%A1%86%E6%9E%B6/ " style="margin-left:75px";>
+				  
+		          <span>python框架</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/python%E5%85%B6%E4%BB%96/ " style="margin-left:75px";>
+				  
+		          <span>python其他</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-coffee"></i>
+			
+			Java扩展
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/dubbo/ " style="margin-left:75px";>
+				  
+		          <span>dubbo</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/netty/ " style="margin-left:75px";>
+				  
+		          <span>netty</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/rpc/ " style="margin-left:75px";>
+				  
+		          <span>rpc</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/eureka/ " style="margin-left:75px";>
+				  
+		          <span>eureka</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/ " style="margin-left:75px";>
+				  
+		          <span>中间件</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/ " style="margin-left:75px";>
+				  
+		          <span>分布式</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-desktop"></i>
+			
+			计算机核心
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/ " style="margin-left:75px";>
+				  
+		          <span>数据结构</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98/ " style="margin-left:75px";>
+				  
+		          <span>leetcode刷题</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/ " style="margin-left:75px";>
+				  
+		          <span>计算机网络</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E7%AE%97%E6%B3%95/ " style="margin-left:75px";>
+				  
+		          <span>算法</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories/" class="waves-effect waves-light">
+			
+			    <i class="fa fa-fw fa-adjust"></i>
+			
+			学习资源
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa fa-fw fa-envelope"></i>
+			
+			留言
+		</a>
+          
+        </li>
+        
+        
+    </ul>
+</div>
+
+        </div>
+
+        
+    </nav>
+
+</header>
+
+        
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/8.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <div class="description center-align post-title">
+                        深入Spring事务源码剖析事务（一）
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 20px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+
+    /* 自定义mycard：欧阳思海 */
+
+    #my-card {
+        /* position: relative; */
+        width: 310px;
+        height: 300px;
+        /* max-height: 330px; */
+        margin-bottom: 15px;
+        margin-top: 15px;
+        /* text-align: center; */
+        border: 0;
+        border-radius: 3px;
+        color: rgba(0, 0, 0, .87);
+        background: #fff 50%;
+        background-image: none;
+        background-size: auto;
+        background-size: cover;
+        box-shadow: 0 15px 35px rgba(50, 50, 93, .1), 0 5px 15px rgba(0, 0, 0, .07);
+    }
+
+    /* .widget {
+        line-height: 1.6em;
+        word-wrap: break-word;
+        font-size: 0.9em;
+        padding-top: 15px;
+        padding-left: -45px;
+    } */
+</style>
+
+
+
+
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- shw2018 洪卫  modify 2019.08.15-->
+
+<!-- 代码块修改的代码开始 -->
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFunction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+<!-- 代码块折行 -->
+
+<style type="text/css">
+code[class*="language-"], pre[class*="language-"] { white-space: pre !important; }
+</style>
+
+<!-- 代码块修改代码结束 -->
+
+
+<!-- 文章内容详情 -->
+<div id="container">
+    <div id="artDetail">
+        <div class="card">
+            <div class="card-content article-info">
+                <div class="row tag-cate">
+                    <div class="col s7">
+                        
+                        <div class="article-tag">
+                            <!--我修改的地方：欧阳思海-->
+                            
+                            <a href="/tags/spring-spring%E6%95%99%E7%A8%8B-spring%E6%BA%90%E7%A0%81/" target="_blank">
+                                <span class="chip bg-color">spring,spring教程,spring源码</span>
+                            </a>
+                            
+                        </div>
+                        
+                    </div>
+                    <div class="col s5 right-align">
+                        
+                        <div class="post-cate">
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/spring%E6%95%99%E7%A8%8B/" class="post-category" target="_blank">
+                                spring教程
+                            </a>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <div class="post-info">
+                    <div class="post-date info-break-policy">
+                        <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
+                        2021-04-05
+                    </div>
+
+                    <div class="post-author info-break-policy">
+                        <i class="fa fa-user-o fa-fw"></i>作者:&nbsp;&nbsp;
+                        
+                        欧阳思海
+                        
+                    </div>
+
+                    
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;
+                        5.5k
+                    </div>
+                    
+
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-clock-o fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                        24 分
+                    </div>
+                    
+                    
+
+                    
+                    <span id="busuanzi_container_site_pv" style='display:none'></span>
+                    <i class="fa fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                    <span id="busuanzi_value_page_pv"></span>
+
+                    
+
+                </div>
+            </div>
+            <hr class="clearfix">
+            <div class="card-content article-card-content">
+                <!-- 欧阳思海，modify，2020.05.01-->
+<!-- 文章详情详情页面的头部广告位置信息 -->
+<div id="post-head-panel">
+    
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" style="font-size: 18px;" target="_blank">
+        <img src="/icons/hot.gif">
+        本人花费半年的时间总结的《Java面试指南》已拿腾讯等大厂offer，已开源在github ，欢迎star！
+    </a>
+    
+    
+</div>
+<br />
+
+
+
+<blockquote>
+    
+            <p>本文GitHub <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">https://github.com/OUYANGSIHAI/JavaInterview</a> 已收录，这是我花了6个月总结的<b>一线大厂Java面试</b>总结，本人已拿大厂offer，欢迎star</p>
+    
+    <p>原文链接：blog.ouyangsihai.cn &gt;&gt; <a href="/shen-ru-spring-shi-wu-yuan-ma-pou-xi-shi-wu-yi.html" target="_blank">深入Spring事务源码剖析事务（一）</a></p>
+</blockquote>
+                <div id="articleContent">
+                    <h1 id="深入Spring事务源码剖析事务之事务介绍与事务开启"><a href="#深入Spring事务源码剖析事务之事务介绍与事务开启" class="headerlink" title="深入Spring事务源码剖析事务之事务介绍与事务开启"></a>深入Spring事务源码剖析事务之事务介绍与事务开启</h1><p> </p>
+<h3 id="文章目录"><a href="#文章目录" class="headerlink" title="文章目录"></a>文章目录</h3><li>
+<ul>
+- 
+<li>
+<ul>
+- 
+- 
+
+<li>
+<ul>
+- 
+- 
+
+<p> </p>
+<h2 id="事务简介"><a href="#事务简介" class="headerlink" title="事务简介"></a>事务简介</h2><p>此篇文章需要有SpringAOP基础，知道AOP底层原理可以更好的理解Spring的事务处理。首先事务是什么呢？必须了解事务到底是什么，才能知道使用事务的场景和必要性。事务具有四个特性，称为ACID，分别是<strong>原子性</strong>、<strong>一致性</strong>、<strong>隔离性</strong>、<strong>持久性</strong>，具体什么意思百度可以得到很多答案，这里简要概括一下。</p>
+<ol>
+<li>就是事务可以保证一个事务内的所有操作，要么全部成功，要么就全部失败，这是<strong>原子性</strong>。</li>
+<li>并发多个事务时需要保证事务的更改要和另一个事务的更改保持一致，例如A、B、C都各有50元，一个事务中A给B转账50元，另一个事务中B给C转账50元，需要保证A中0元、B中50元、C中100元也就是总量还是150元，这就是<strong>一致性</strong>。而如果出现第一个事务中A转B 50元，另一个事务中B的账户不是100元而是50元(事务不一致)，转账之后B变成0元，A也是0元，而C是100元，总量变成了100元，这就是<strong>不一致</strong>了。<li>**隔离性**中有**隔离级别**，其有四个等级，事务的隔离性可以阻止数据的**脏读、幻读、重复读**。
+<ul></li>
+<li>Read-Uncommitted 0 无隔离级别，将会导致脏读</li>
+<li>Read-Committed 1 隔离级别为1，可以避免脏读，但会重复读和幻读</li>
+<li>Repeateable-Read 2 隔离级别为2，可以避免脏读、重复读，但会有幻读<li>Serializable 3 隔离级别最高，所有事务串行执行，可以避免脏读、重复读、幻读
+<ul></li>
+<li>隔离级别越高，越能保证数据的完整和一致性，但对并发的影响也越大</li>
+<li>大多数数据库默认隔离级别为Read-Committed，比如SqlServer、Oracle</li>
+<li>少数数据库默认隔离级别为Repeateable-Read，比如MySQL InnoDB</ul>
+其中最高级别的隔离级别（Serializable）不推荐使用，将导致事务执行效率缓慢，因为每个事务都将一个一个串行执行。</li>
+</ul>
+</li></li>
+<li>持久性很好理解，就是一旦事务提交，数据将持久化保存在磁盘中，就算服务器挂了，数据一样也都会持久化保存。</li>
+</ol>
+<p>Spring封装了事务的所有操作，在我们日常生产环境中，只需要使用声明式事务例如打一个注解@Transaction就可以使用事务，或者也可以使用配置文件的方式来配置事务，就像AOP那样配置需要执行事务的方法即可，这种方式侵入性最低。那么，Spring是怎样实现事务的呢？这就是接下来要讲的，Spring的事务功能建立在AOP的基础上，而AOP功能又建立在IOC的基础之上，这里扯远了，所以，如果有AOP的基础，理解Spring中的事务管理将会很容易。</p>
+<h2 id="Spring事务基本原理与传播属性"><a href="#Spring事务基本原理与传播属性" class="headerlink" title="Spring事务基本原理与传播属性"></a>Spring事务基本原理与传播属性</h2><p>Spring在很多地方其实都不是在重复造轮子，他只是封装了一下现有的技术，例如事务。底层对事务的管理也都是在数据库连接对象Connection上做文章，最后事务的提交、回滚等等都会交给Connection对象去做，而Spring只负责封装操作事务的过程。</p>
+<h3 id="Spring中的传播属性"><a href="#Spring中的传播属性" class="headerlink" title="Spring中的传播属性"></a>Spring中的传播属性</h3><p>首先先说一下传播属性，什么是事务的传播呢？假设一个事务方法调用了另一个事务方法，需要使用事务的传播属性去控制它。对于传播属性，网上也有一堆解释，这里只作简要介绍。</p>
+<ul>
+<li>PROPAGATION_REQUIRED：支持当前存在事务，如果当前没有事务，就新建一个，如果当前有事务，就加入原事务，这是Spring默认的事务传播属性。</li>
+<li>PROPAGATION_REQUIRES_NEW：如果当前存在事务，将此事务挂起，自己在新建一个事务，所以如果在这个传播属性外还有事务的话，两者事务是不一样的（将会存在两个事务），如果内层这个NEW属性抛出异常，外层事务如果CATCH住了，内层将会回滚而外层事务照样进行。</li>
+<li>PROPAGATION_SUPPORTS：支持当前事务，如果当前没有事务，就不以事务方式运行。</li>
+<li>PROGATION_MANDATORY：一定要在事务中运行，调用此方法必须原先就有一个事务，否则运行时抛异常。</li>
+<li>PROGATION_NOT_SUPPORTED：以非事务方式执行，如果之前有事务，将之前事务挂起，此方法内无事务执行。</li>
+<li>PROPAGATION_NEVER：以非事务方式执行，如果之前有事务就抛异常。</li>
+<li>PROPAGATION_NESTED：嵌套事务（曾经我把这个传播属性与REEQUIRES_NEW混淆在一起了，其后会讲解两者到底有什么不同），如果之前有事务，将作为之前事务的子事务，如果之前没事务，将新建一个事务执行，这个传播属性可以创建SavePoint（可以回滚的保存点）。</li>
+</ul>
+<h3 id="Spring事务的基本原理"><a href="#Spring事务的基本原理" class="headerlink" title="Spring事务的基本原理"></a>Spring事务的基本原理</h3><p>开头说到，Spring中的事务是基于AOP做的，也就是说，Spring会将其Bean做一次动态代理，实际执行拥有事务的方法时其实执行的是一个代理类，方法被代理到invoke（如果是JDK动态代理）中执行增强器，这里事务的增强器是TransactionInterceptor，主要的事务逻辑将在这个类的invoke方法中展开。</p>
+<h2 id="深入源码剖析Spring事务的实现原理"><a href="#深入源码剖析Spring事务的实现原理" class="headerlink" title="深入源码剖析Spring事务的实现原理"></a>深入源码剖析Spring事务的实现原理</h2><h3 id="事务配置的起始点（配置文件开启事务）"><a href="#事务配置的起始点（配置文件开启事务）" class="headerlink" title="事务配置的起始点（配置文件开启事务）"></a>事务配置的起始点（配置文件开启事务）</h3><td class="line_numbers"><pre>12345678</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">aop:aspectj-autoproxy proxy-target-class="true" / !-- 配置事务管理器 --bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"    property name="dataSource"        ref bean="dataSource" /    /property/bean</pre></td>
+
+<p>aop:aspectj-autoproxy proxy-target-class&#x3D;”true” &#x2F;</p>
+<p>!– 配置事务管理器 –<br>bean id&#x3D;”transactionManager” class&#x3D;”org.springframework.jdbc.datasource.DataSourceTransactionManager”<br>    property name&#x3D;”dataSource”<br>        ref bean&#x3D;”dataSource” &#x2F;<br>    &#x2F;property<br>&#x2F;bean</p>
+<p>事务管理器的作用下面会讲到，这里先来解析这个标签到底做了什么事。</p>
+<h4 id="自定义标签"><a href="#自定义标签" class="headerlink" title="自定义标签"></a>自定义标签</h4><p>谈到自定义标签，这是大多数对Spring的扩展的基础（起始点）。这里的<code class="java">
+aop/</code>标签是一个自定义标签（关于Spring中自定义标签如何使用自行百度，这里不多赘述，有关于自定义标签改天我将另开一篇文章介绍），它会将<code class="java">
+AnnotationDrivenBeanDefinitionParser</code>这个解析类注册进Spring中，在IOC载入过程中调用其parse方法。</p>
+<td class="line_numbers"><pre>12345678910111213</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">public BeanDefinition parse(Element element, ParserContext parserContext) {    registerTransactionalEventListenerFactory(parserContext);    String mode = element.getAttribute("mode");    if ("aspectj".equals(mode)) {        // mode="aspectj"        registerTransactionAspect(element, parserContext);    }    else {        // mode="proxy"        AopAutoProxyConfigurer.configureAutoProxyCreator(element, parserContext);    }    return null;}</pre></td>
+
+<p>public BeanDefinition parse(Element element, ParserContext parserContext) {<br>    registerTransactionalEventListenerFactory(parserContext);<br>    String mode &#x3D; element.getAttribute(“mode”);<br>    if (“aspectj”.equals(mode)) {<br>        &#x2F;&#x2F; mode&#x3D;”aspectj”<br>        registerTransactionAspect(element, parserContext);<br>    }<br>    else {<br>        &#x2F;&#x2F; mode&#x3D;”proxy”<br>        AopAutoProxyConfigurer.configureAutoProxyCreator(element, parserContext);<br>    }<br>    return null;<br>}</p>
+<p>如果没有设置标签中 <code class="java">
+mode</code>属性，将会使用默认代理模式，这里只分析mode&#x3D;“proxy”的情况。</p>
+<td class="line_numbers"><pre>12345678910111213141516171819202122232425262728293031323334353637383940414243444546</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">        public static void configureAutoProxyCreator(Element element, ParserContext parserContext) {            //向IOC注册InfrastructureAdvisorAutoProxyCreator这个类型的Bean            AopNamespaceUtils.registerAutoProxyCreatorIfNecessary(parserContext, element);             String txAdvisorBeanName = TransactionManagementConfigUtils.TRANSACTION_ADVISOR_BEAN_NAME;            if (!parserContext.getRegistry().containsBeanDefinition(txAdvisorBeanName)) {                Object eleSource = parserContext.extractSource(element);                 // Create the TransactionAttributeSource definition.                // 创建AnnotationTransactionAttributeSource类型的Bean                RootBeanDefinition sourceDef = new RootBeanDefinition(        "org.springframework.transaction.annotation.AnnotationTransactionAttributeSource");                sourceDef.setSource(eleSource);                sourceDef.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);                String sourceName = parserContext.getReaderContext().registerWithGeneratedName(sourceDef);                 // Create the TransactionInterceptor definition.                // 创建TransactionInterceptor类型的Bean                RootBeanDefinition interceptorDef = new RootBeanDefinition(TransactionInterceptor.class);                interceptorDef.setSource(eleSource);                interceptorDef.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);                registerTransactionManager(element, interceptorDef);                interceptorDef.getPropertyValues().add("transactionAttributeSource", new RuntimeBeanReference(sourceName));                String interceptorName = parserContext.getReaderContext().registerWithGeneratedName(interceptorDef);                 // Create the TransactionAttributeSourceAdvisor definition.                // 创建BeanFactoryTransactionAttributeSourceAdvisor类型的Bean                RootBeanDefinition advisorDef = new RootBeanDefinition(BeanFactoryTransactionAttributeSourceAdvisor.class);                advisorDef.setSource(eleSource);                advisorDef.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);                // 将上面AnnotationTransactionAttributeSource类型Bean注入进上面的Advisor                advisorDef.getPropertyValues().add("transactionAttributeSource", new RuntimeBeanReference(sourceName));                // 将上面TransactionInterceptor类型Bean注入进上面的Advisor                advisorDef.getPropertyValues().add("adviceBeanName", interceptorName);                if (element.hasAttribute("order")) {                    advisorDef.getPropertyValues().add("order", element.getAttribute("order"));                }                parserContext.getRegistry().registerBeanDefinition(txAdvisorBeanName, advisorDef);                // 将上面三个Bean注册进IOC中                CompositeComponentDefinition compositeDef = new CompositeComponentDefinition(element.getTagName(), eleSource);                compositeDef.addNestedComponent(new BeanComponentDefinition(sourceDef, sourceName));                compositeDef.addNestedComponent(new BeanComponentDefinition(interceptorDef, interceptorName));                compositeDef.addNestedComponent(new BeanComponentDefinition(advisorDef, txAdvisorBeanName));                parserContext.registerComponent(compositeDef);            }        }</pre></td>
+
+<pre class="line-numbers language-java"><code class="language-java">
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">configureAutoProxyCreator</span><span class="token punctuation">(</span>Element element<span class="token punctuation">,</span> ParserContext parserContext<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment" spellcheck="true">//向IOC注册InfrastructureAdvisorAutoProxyCreator这个类型的Bean</span>
+        AopNamespaceUtils<span class="token punctuation">.</span><span class="token function">registerAutoProxyCreatorIfNecessary</span><span class="token punctuation">(</span>parserContext<span class="token punctuation">,</span> element<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        String txAdvisorBeanName <span class="token operator">=</span> TransactionManagementConfigUtils<span class="token punctuation">.</span>TRANSACTION_ADVISOR_BEAN_NAME<span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>parserContext<span class="token punctuation">.</span><span class="token function">getRegistry</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">containsBeanDefinition</span><span class="token punctuation">(</span>txAdvisorBeanName<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            Object eleSource <span class="token operator">=</span> parserContext<span class="token punctuation">.</span><span class="token function">extractSource</span><span class="token punctuation">(</span>element<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            <span class="token comment" spellcheck="true">// Create the TransactionAttributeSource definition.</span>
+            <span class="token comment" spellcheck="true">// 创建AnnotationTransactionAttributeSource类型的Bean</span>
+            RootBeanDefinition sourceDef <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">RootBeanDefinition</span><span class="token punctuation">(</span>
+    <span class="token string">"org.springframework.transaction.annotation.AnnotationTransactionAttributeSource"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            sourceDef<span class="token punctuation">.</span><span class="token function">setSource</span><span class="token punctuation">(</span>eleSource<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            sourceDef<span class="token punctuation">.</span><span class="token function">setRole</span><span class="token punctuation">(</span>BeanDefinition<span class="token punctuation">.</span>ROLE_INFRASTRUCTURE<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            String sourceName <span class="token operator">=</span> parserContext<span class="token punctuation">.</span><span class="token function">getReaderContext</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">registerWithGeneratedName</span><span class="token punctuation">(</span>sourceDef<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            <span class="token comment" spellcheck="true">// Create the TransactionInterceptor definition.</span>
+            <span class="token comment" spellcheck="true">// 创建TransactionInterceptor类型的Bean</span>
+            RootBeanDefinition interceptorDef <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">RootBeanDefinition</span><span class="token punctuation">(</span>TransactionInterceptor<span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            interceptorDef<span class="token punctuation">.</span><span class="token function">setSource</span><span class="token punctuation">(</span>eleSource<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            interceptorDef<span class="token punctuation">.</span><span class="token function">setRole</span><span class="token punctuation">(</span>BeanDefinition<span class="token punctuation">.</span>ROLE_INFRASTRUCTURE<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token function">registerTransactionManager</span><span class="token punctuation">(</span>element<span class="token punctuation">,</span> interceptorDef<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            interceptorDef<span class="token punctuation">.</span><span class="token function">getPropertyValues</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span><span class="token string">"transactionAttributeSource"</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">RuntimeBeanReference</span><span class="token punctuation">(</span>sourceName<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            String interceptorName <span class="token operator">=</span> parserContext<span class="token punctuation">.</span><span class="token function">getReaderContext</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">registerWithGeneratedName</span><span class="token punctuation">(</span>interceptorDef<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            <span class="token comment" spellcheck="true">// Create the TransactionAttributeSourceAdvisor definition.</span>
+            <span class="token comment" spellcheck="true">// 创建BeanFactoryTransactionAttributeSourceAdvisor类型的Bean</span>
+            RootBeanDefinition advisorDef <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">RootBeanDefinition</span><span class="token punctuation">(</span>BeanFactoryTransactionAttributeSourceAdvisor<span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            advisorDef<span class="token punctuation">.</span><span class="token function">setSource</span><span class="token punctuation">(</span>eleSource<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            advisorDef<span class="token punctuation">.</span><span class="token function">setRole</span><span class="token punctuation">(</span>BeanDefinition<span class="token punctuation">.</span>ROLE_INFRASTRUCTURE<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token comment" spellcheck="true">// 将上面AnnotationTransactionAttributeSource类型Bean注入进上面的Advisor</span>
+            advisorDef<span class="token punctuation">.</span><span class="token function">getPropertyValues</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span><span class="token string">"transactionAttributeSource"</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">RuntimeBeanReference</span><span class="token punctuation">(</span>sourceName<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token comment" spellcheck="true">// 将上面TransactionInterceptor类型Bean注入进上面的Advisor</span>
+            advisorDef<span class="token punctuation">.</span><span class="token function">getPropertyValues</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span><span class="token string">"adviceBeanName"</span><span class="token punctuation">,</span> interceptorName<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>element<span class="token punctuation">.</span><span class="token function">hasAttribute</span><span class="token punctuation">(</span><span class="token string">"order"</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                advisorDef<span class="token punctuation">.</span><span class="token function">getPropertyValues</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span><span class="token string">"order"</span><span class="token punctuation">,</span> element<span class="token punctuation">.</span><span class="token function">getAttribute</span><span class="token punctuation">(</span><span class="token string">"order"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+            parserContext<span class="token punctuation">.</span><span class="token function">getRegistry</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">registerBeanDefinition</span><span class="token punctuation">(</span>txAdvisorBeanName<span class="token punctuation">,</span> advisorDef<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token comment" spellcheck="true">// 将上面三个Bean注册进IOC中</span>
+            CompositeComponentDefinition compositeDef <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">CompositeComponentDefinition</span><span class="token punctuation">(</span>element<span class="token punctuation">.</span><span class="token function">getTagName</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> eleSource<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            compositeDef<span class="token punctuation">.</span><span class="token function">addNestedComponent</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">BeanComponentDefinition</span><span class="token punctuation">(</span>sourceDef<span class="token punctuation">,</span> sourceName<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            compositeDef<span class="token punctuation">.</span><span class="token function">addNestedComponent</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">BeanComponentDefinition</span><span class="token punctuation">(</span>interceptorDef<span class="token punctuation">,</span> interceptorName<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            compositeDef<span class="token punctuation">.</span><span class="token function">addNestedComponent</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">BeanComponentDefinition</span><span class="token punctuation">(</span>advisorDef<span class="token punctuation">,</span> txAdvisorBeanName<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            parserContext<span class="token punctuation">.</span><span class="token function">registerComponent</span><span class="token punctuation">(</span>compositeDef<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>这段代码只需要看我给的注释，有兴趣可以全部看下来。这里分别是注册了三个Bean，和一个<code class="java">
+InfrastructureAdvisorAutoProxyCreator</code>，其中三个Bean支撑了整个事务的功能。</p>
+<p>我们首先需要回顾一下AOP的原理，AOP中有一个 <strong>Advisor</strong> 存放在代理类中，而<strong>Advisor</strong>中有<strong>advise</strong>与<strong>pointcut</strong>信息，每次执行被代理类的方法时都会执行代理类的invoke（如果是JDK代理）方法，而invoke方法会根据<strong>advisor</strong>中的<strong>pointcut</strong>动态匹配这个方法需要执行的<strong>advise链</strong>，遍历执行<strong>advise链</strong>，从而达到AOP切面编程的目的。</p>
+<li>BeanFactoryTransactionAttributeSourceAdvisor：首先看这个类的继承结构，可以看到这个类其实是一个Advisor，其实由名字也能看出来，类中有几个关键地方注意一下，在之前的注册过程中，将两个属性注入进这个Bean中：
+
+<table><tr><td class="line_numbers"><pre>1
+2
+3
+4
+</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">// 将上面AnnotationTransactionAttributeSource类型Bean注入进上面的Advisor
+advisorDef.getPropertyValues().add("transactionAttributeSource", new RuntimeBeanReference(sourceName));
+// 将上面TransactionInterceptor类型Bean注入进上面的Advisor
+advisorDef.getPropertyValues().add("adviceBeanName", interceptorName);</pre></td></tr></table><p class="theCode" style="display:none;">// 将上面AnnotationTransactionAttributeSource类型Bean注入进上面的Advisor
+advisorDef.getPropertyValues().add("transactionAttributeSource", new RuntimeBeanReference(sourceName));
+// 将上面TransactionInterceptor类型Bean注入进上面的Advisor
+advisorDef.getPropertyValues().add("adviceBeanName", interceptorName);</p>
+
+<p>那么它们被注入成什么了呢？进入BeanFactoryTransactionAttributeSourceAdvisor一看便知。</p>
+<table><tr><td class="line_numbers"><pre>1
+2
+</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">@Nullable
+private TransactionAttributeSource transactionAttributeSource;</pre></td></tr></table><p class="theCode" style="display:none;">@Nullable
+private TransactionAttributeSource transactionAttributeSource;</p>
+
+<p>在其父类中有属性：</p>
+<table><tr><td class="line_numbers"><pre>1
+2
+</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">@Nullable
+private String adviceBeanName;</pre></td></tr></table><p class="theCode" style="display:none;">@Nullable
+private String adviceBeanName;</p>
+
+<p>也就是说，这里先将上面的TransactionInterceptor的BeanName传入到Advisor中，然后将AnnotationTransactionAttributeSource这个Bean注入到Advisor中，那么这个Source Bean有什么用呢？可以继续看看BeanFactoryTransactionAttributeSourceAdvisor的源码。</p>
+<table><tr><td class="line_numbers"><pre>1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">private final TransactionAttributeSourcePointcut pointcut = new TransactionAttributeSourcePointcut() {
+    @Override
+    @Nullable
+    protected TransactionAttributeSource getTransactionAttributeSource() {
+        return transactionAttributeSource;
+    }
+};</pre></td></tr></table><p class="theCode" style="display:none;">private final TransactionAttributeSourcePointcut pointcut = new TransactionAttributeSourcePointcut() {
+    @Override
+    @Nullable
+    protected TransactionAttributeSource getTransactionAttributeSource() {
+        return transactionAttributeSource;
+    }
+};</p>
+
+<p>看到这里应该明白了，这里的Source是提供了pointcut信息，作为存放事务属性的一个类注入进Advisor中，到这里应该知道注册这三个Bean的作用了吧？首先注册pointcut、advise、advisor，然后将pointcut和advise注入进advisor中，在之后动态代理的时候会使用这个Advisor去寻找每个Bean是否需要动态代理（取决于是否有开启事务），因为Advisor有pointcut信息。</li></p>
+<td class="line_numbers"><pre>12</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">@Nullableprivate TransactionAttributeSource transactionAttributeSource;</pre></td>
+
+<p>@Nullable<br>private TransactionAttributeSource transactionAttributeSource;</p>
+<td class="line_numbers"><pre>1234567</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">private final TransactionAttributeSourcePointcut pointcut = new TransactionAttributeSourcePointcut() {    @Override    @Nullable    protected TransactionAttributeSource getTransactionAttributeSource() {        return transactionAttributeSource;    }};</pre></td>
+
+<p>private final TransactionAttributeSourcePointcut pointcut &#x3D; new TransactionAttributeSourcePointcut() {<br>    @Override<br>    @Nullable<br>    protected TransactionAttributeSource getTransactionAttributeSource() {<br>        return transactionAttributeSource;<br>    }<br>};</p>
+<p> </p>
+<ol>
+<li>InfrastructureAdvisorAutoProxyCreator：在方法开头，首先就调用了AopNamespeceUtils去注册了这个Bean，那么这个Bean是干什么用的呢？还是先看看这个类的结构。这个类继承了AbstractAutoProxyCreator，看到这个名字，熟悉AOP的话应该已经知道它是怎么做的了吧？其次这个类还实现了BeanPostProcessor接口，凡事实现了这个BeanPost接口的类，我们首先关注的就是它的postProcessAfterInitialization方法，这里在其父类也就是刚刚提到的AbstractAutoProxyCreator这里去实现。（这里需要知道Spring容器初始化Bean的过程，关于BeanPostProcessor的使用我会另开一篇讲解。如果不知道只需了解如果一个Bean实现了BeanPostProcessor接口，当所有Bean实例化且依赖注入之后初始化方法之后会执行这个实现Bean的postProcessAfterInitialization方法）</li>
+</ol>
+<h4 id="深入源码分析代理流程"><a href="#深入源码分析代理流程" class="headerlink" title="深入源码分析代理流程"></a>深入源码分析代理流程</h4><p>这里将分析<code class="java">
+InfrastructureAdvisorAutoProxyCreator</code>是如何对Bean进行代理的。下面是代理入口：</p>
+<td class="line_numbers"><pre>1234567891011121314151617</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">   /**   * Create a proxy with the configured interceptors if the bean is   * identified as one to proxy by the subclass.   * @see #getAdvicesAndAdvisorsForBean   */   @Override   public Object postProcessAfterInitialization(@Nullable Object bean, String beanName) throws BeansException {       if (bean != null) {           // 这里将bean的class与beanName结合做一个cacheKey           Object cacheKey = getCacheKey(bean.getClass(), beanName);           if (!this.earlyProxyReferences.contains(cacheKey)) {                   //如果需要，将会代理这个bean                   return wrapIfNecessary(bean, beanName, cacheKey);               }           }       return bean;   }</pre></td>
+
+<p>   &#x2F;**</p>
+<ul>
+<li>Create a proxy with the configured interceptors if the bean is</li>
+<li>identified as one to proxy by the subclass.</li>
+<li>@see #getAdvicesAndAdvisorsForBean</li>
+</ul>
+<p>   *&#x2F;<br>   @Override<br>   public Object postProcessAfterInitialization(@Nullable Object bean, String beanName) throws BeansException {<br>       if (bean !&#x3D; null) {<br>           &#x2F;&#x2F; 这里将bean的class与beanName结合做一个cacheKey<br>           Object cacheKey &#x3D; getCacheKey(bean.getClass(), beanName);<br>           if (!this.earlyProxyReferences.contains(cacheKey)) {<br>                   &#x2F;&#x2F;如果需要，将会代理这个bean<br>                   return wrapIfNecessary(bean, beanName, cacheKey);<br>               }<br>           }<br>       return bean;<br>   }</p>
+<td class="line_numbers"><pre>12345678910111213141516171819202122232425262728293031323334353637</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">   protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {           // 如果处理过这个bean的话直接返回           if (StringUtils.hasLength(beanName) && this.targetSourcedBeans.contains(beanName)) {               return bean;           }           // 之后如果Bean匹配不成功，会将Bean的cacheKey放入advisedBeans中           // value为false，所以这里可以用cacheKey判断此bean是否之前已经代理不成功了           if (Boolean.FALSE.equals(this.advisedBeans.get(cacheKey))) {               return bean;           }           // 这里会将Advise、Pointcut、Advisor类型的类过滤，直接不进行代理，return           if (isInfrastructureClass(bean.getClass()) || shouldSkip(bean.getClass(), beanName)) {               // 这里即为不成功的情况，将false放入Map中               this.advisedBeans.put(cacheKey, Boolean.FALSE);               return bean;           }            // Create proxy if we have advice.           // 这里是主要验证的地方，传入Bean的class与beanName去判断此Bean有哪些Advisor           Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);           // 如果有相应的advisor被找到，则用advisor与此bean做一个动态代理，将这两个的信息           // 放入代理类中进行代理           if (specificInterceptors != DO_NOT_PROXY) {               this.advisedBeans.put(cacheKey, Boolean.TRUE);               // 创建代理的地方               Object proxy = createProxy(                       bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));               this.proxyTypes.put(cacheKey, proxy.getClass());               // 返回代理对象               return proxy;           }           // 如果此Bean没有一个Advisor匹配，将返回null也就是DO_NOT_PROXY           // 也就是会走到这一步，将其cacheKey，false存入Map中           this.advisedBeans.put(cacheKey, Boolean.FALSE);           // 不代理直接返回原bean           return bean;       }</pre></td>
+
+<p>   protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {<br>           &#x2F;&#x2F; 如果处理过这个bean的话直接返回<br>           if (StringUtils.hasLength(beanName) &amp;&amp; this.targetSourcedBeans.contains(beanName)) {<br>               return bean;<br>           }<br>           &#x2F;&#x2F; 之后如果Bean匹配不成功，会将Bean的cacheKey放入advisedBeans中<br>           &#x2F;&#x2F; value为false，所以这里可以用cacheKey判断此bean是否之前已经代理不成功了<br>           if (Boolean.FALSE.equals(this.advisedBeans.get(cacheKey))) {<br>               return bean;<br>           }<br>           &#x2F;&#x2F; 这里会将Advise、Pointcut、Advisor类型的类过滤，直接不进行代理，return<br>           if (isInfrastructureClass(bean.getClass()) || shouldSkip(bean.getClass(), beanName)) {<br>               &#x2F;&#x2F; 这里即为不成功的情况，将false放入Map中<br>               this.advisedBeans.put(cacheKey, Boolean.FALSE);<br>               return bean;<br>           }</p>
+<pre class="line-numbers language-java"><code class="language-java">
+       <span class="token comment" spellcheck="true">// Create proxy if we have advice.</span>
+       <span class="token comment" spellcheck="true">// 这里是主要验证的地方，传入Bean的class与beanName去判断此Bean有哪些Advisor</span>
+       Object<span class="token punctuation">[</span><span class="token punctuation">]</span> specificInterceptors <span class="token operator">=</span> <span class="token function">getAdvicesAndAdvisorsForBean</span><span class="token punctuation">(</span>bean<span class="token punctuation">.</span><span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> beanName<span class="token punctuation">,</span> null<span class="token punctuation">)</span><span class="token punctuation">;</span>
+       <span class="token comment" spellcheck="true">// 如果有相应的advisor被找到，则用advisor与此bean做一个动态代理，将这两个的信息</span>
+       <span class="token comment" spellcheck="true">// 放入代理类中进行代理</span>
+       <span class="token keyword">if</span> <span class="token punctuation">(</span>specificInterceptors <span class="token operator">!=</span> DO_NOT_PROXY<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+           <span class="token keyword">this</span><span class="token punctuation">.</span>advisedBeans<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span>cacheKey<span class="token punctuation">,</span> Boolean<span class="token punctuation">.</span>TRUE<span class="token punctuation">)</span><span class="token punctuation">;</span>
+           <span class="token comment" spellcheck="true">// 创建代理的地方</span>
+           Object proxy <span class="token operator">=</span> <span class="token function">createProxy</span><span class="token punctuation">(</span>
+                   bean<span class="token punctuation">.</span><span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> beanName<span class="token punctuation">,</span> specificInterceptors<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">SingletonTargetSource</span><span class="token punctuation">(</span>bean<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+           <span class="token keyword">this</span><span class="token punctuation">.</span>proxyTypes<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span>cacheKey<span class="token punctuation">,</span> proxy<span class="token punctuation">.</span><span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+           <span class="token comment" spellcheck="true">// 返回代理对象</span>
+           <span class="token keyword">return</span> proxy<span class="token punctuation">;</span>
+       <span class="token punctuation">}</span>
+       <span class="token comment" spellcheck="true">// 如果此Bean没有一个Advisor匹配，将返回null也就是DO_NOT_PROXY</span>
+       <span class="token comment" spellcheck="true">// 也就是会走到这一步，将其cacheKey，false存入Map中</span>
+       <span class="token keyword">this</span><span class="token punctuation">.</span>advisedBeans<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span>cacheKey<span class="token punctuation">,</span> Boolean<span class="token punctuation">.</span>FALSE<span class="token punctuation">)</span><span class="token punctuation">;</span>
+       <span class="token comment" spellcheck="true">// 不代理直接返回原bean</span>
+       <span class="token keyword">return</span> bean<span class="token punctuation">;</span>
+   <span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>这里需要关注的是<strong>getAdvicesAndAdvisorsForBean</strong>这个方法，其去找到了Bean对应的Advisor：</p>
+<td class="line_numbers"><pre>12345678910</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">   @Override   @Nullable   protected Object[] getAdvicesAndAdvisorsForBean(Class? beanClass, String beanName, @Nullable TargetSource targetSource) {       ListAdvisor advisors = findEligibleAdvisors(beanClass, beanName);       // 找不到advisor就返回空       if (advisors.isEmpty()) {           return DO_NOT_PROXY;       }       return advisors.toArray();   }</pre></td>
+
+<p>   @Override<br>   @Nullable<br>   protected Object[] getAdvicesAndAdvisorsForBean(Class? beanClass, String beanName, @Nullable TargetSource targetSource) {<br>       ListAdvisor advisors &#x3D; findEligibleAdvisors(beanClass, beanName);<br>       &#x2F;&#x2F; 找不到advisor就返回空<br>       if (advisors.isEmpty()) {<br>           return DO_NOT_PROXY;<br>       }<br>       return advisors.toArray();<br>   }</p>
+<p>这里需要关注的是<strong>findEligibleAdvisors</strong>这个方法：</p>
+<td class="line_numbers"><pre>123456789101112</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">   protected ListAdvisor findEligibleAdvisors(Class? beanClass, String beanName) {       // 寻找所有的Advisor       ListAdvisor candidateAdvisors = findCandidateAdvisors();       // 根据所有的advisor筛选出此bean可以用的advisor       ListAdvisor eligibleAdvisors = findAdvisorsThatCanApply(candidateAdvisors, beanClass, beanName);       extendAdvisors(eligibleAdvisors);       if (!eligibleAdvisors.isEmpty()) {           // 这里会对找到的advisor做一次sort           eligibleAdvisors = sortAdvisors(eligibleAdvisors);       }       return eligibleAdvisors;   }</pre></td>
+
+<p>   protected ListAdvisor findEligibleAdvisors(Class? beanClass, String beanName) {<br>       &#x2F;&#x2F; 寻找所有的Advisor<br>       ListAdvisor candidateAdvisors &#x3D; findCandidateAdvisors();<br>       &#x2F;&#x2F; 根据所有的advisor筛选出此bean可以用的advisor<br>       ListAdvisor eligibleAdvisors &#x3D; findAdvisorsThatCanApply(candidateAdvisors, beanClass, beanName);<br>       extendAdvisors(eligibleAdvisors);<br>       if (!eligibleAdvisors.isEmpty()) {<br>           &#x2F;&#x2F; 这里会对找到的advisor做一次sort<br>           eligibleAdvisors &#x3D; sortAdvisors(eligibleAdvisors);<br>       }<br>       return eligibleAdvisors;<br>   }</p>
+<p>进入寻找所有Advisor方法看看：</p>
+<td class="line_numbers"><pre>1234</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">protected ListAdvisor findCandidateAdvisors() {    Assert.state(this.advisorRetrievalHelper != null, "No             BeanFactoryAdvisorRetrievalHelper available");    return this.advisorRetrievalHelper.findAdvisorBeans();}</pre></td>
+
+<p>protected ListAdvisor findCandidateAdvisors() {<br>    Assert.state(this.advisorRetrievalHelper !&#x3D; null, “No             BeanFactoryAdvisorRetrievalHelper available”);<br>    return this.advisorRetrievalHelper.findAdvisorBeans();<br>}</p>
+<p>这里委托了一个Helper类去寻找：</p>
+<td class="line_numbers"><pre>1234567891011121314151617181920212223242526272829303132333435363738394041</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">    /**     * Find all eligible Advisor beans in the current bean factory,     * ignoring FactoryBeans and excluding beans that are currently in creation.     * @return the list of {@link org.springframework.aop.Advisor} beans     * @see #isEligibleBean     */    public ListAdvisor findAdvisorBeans() {        // Determine list of advisor bean names, if not cached already.        String[] advisorNames = null;        synchronized (this) {            advisorNames = this.cachedAdvisorBeanNames;            if (advisorNames == null) {                // Do not initialize FactoryBeans here: We need to leave all regular beans                // uninitialized to let the auto-proxy creator apply to them!                // 从BeanFactory中寻找是Advisor类的BeanName出来                advisorNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(                        this.beanFactory, Advisor.class, true, false);                this.cachedAdvisorBeanNames = advisorNames;            }        }        // 没找到返回空        if (advisorNames.length == 0) {            return new LinkedList();        }         ListAdvisor advisors = new LinkedList();        for (String name : advisorNames) {            if (isEligibleBean(name)) {                // 略...                    try {                        // 走到这里BeanName就不是空的了，这里获取Advisor类型的Bean                        advisors.add(this.beanFactory.getBean(name, Advisor.class));                    }                    catch (BeanCreationException ex) {                        // 略...                    }                }            }        }        return advisors;    }</pre></td>
+
+<pre class="line-numbers language-java"><code class="language-java">
+<span class="token comment" spellcheck="true">/**
+ * Find all eligible Advisor beans in the current bean factory,
+ * ignoring FactoryBeans and excluding beans that are currently in creation.
+ * @return the list of {@link org.springframework.aop.Advisor} beans
+ * @see #isEligibleBean
+ */</span>
+<span class="token keyword">public</span> ListAdvisor <span class="token function">findAdvisorBeans</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment" spellcheck="true">// Determine list of advisor bean names, if not cached already.</span>
+    String<span class="token punctuation">[</span><span class="token punctuation">]</span> advisorNames <span class="token operator">=</span> null<span class="token punctuation">;</span>
+    <span class="token keyword">synchronized</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        advisorNames <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>cachedAdvisorBeanNames<span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>advisorNames <span class="token operator">==</span> null<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token comment" spellcheck="true">// Do not initialize FactoryBeans here: We need to leave all regular beans</span>
+            <span class="token comment" spellcheck="true">// uninitialized to let the auto-proxy creator apply to them!</span>
+            <span class="token comment" spellcheck="true">// 从BeanFactory中寻找是Advisor类的BeanName出来</span>
+            advisorNames <span class="token operator">=</span> BeanFactoryUtils<span class="token punctuation">.</span><span class="token function">beanNamesForTypeIncludingAncestors</span><span class="token punctuation">(</span>
+                    <span class="token keyword">this</span><span class="token punctuation">.</span>beanFactory<span class="token punctuation">,</span> Advisor<span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">,</span> <span class="token boolean">true</span><span class="token punctuation">,</span> <span class="token boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">this</span><span class="token punctuation">.</span>cachedAdvisorBeanNames <span class="token operator">=</span> advisorNames<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    <span class="token comment" spellcheck="true">// 没找到返回空</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>advisorNames<span class="token punctuation">.</span>length <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">LinkedList</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    ListAdvisor advisors <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">LinkedList</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span>String name <span class="token operator">:</span> advisorNames<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">isEligibleBean</span><span class="token punctuation">(</span>name<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token comment" spellcheck="true">// 略...</span>
+                <span class="token keyword">try</span> <span class="token punctuation">{</span>
+                    <span class="token comment" spellcheck="true">// 走到这里BeanName就不是空的了，这里获取Advisor类型的Bean</span>
+                    advisors<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>beanFactory<span class="token punctuation">.</span><span class="token function">getBean</span><span class="token punctuation">(</span>name<span class="token punctuation">,</span> Advisor<span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span>
+                <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">BeanCreationException</span> ex<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                    <span class="token comment" spellcheck="true">// 略...</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> advisors<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>我特意调试了一下，可以看到这里从beanFactory中获取了Advisor这个Bean，而这个Bean恰恰就是我们上面提到的，在自定义标签中注册的那个Bean <code class="java">
+BeanFactoryTransactionAttributeSourceAdvisor</code>。</p>
+<img title="深入Spring事务源码剖析事务（一）" src="https://www.javazhiyin.com/wp-content/uploads/2019/01/java2-1546576868.png" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="深入Spring事务源码剖析事务（一）">
+
+<p>获取到Advisor之后，进入方法<strong>findAdvisorsThatCanApply</strong>查询是否可以应用在此时Bean上：</p>
+<td class="line_numbers"><pre>1234567891011121314151617181920</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">    /**     * Search the given candidate Advisors to find all Advisors that     * can apply to the specified bean.     * @param candidateAdvisors the candidate Advisors     * @param beanClass the target's bean class     * @param beanName the target's bean name     * @return the List of applicable Advisors     * @see ProxyCreationContext#getCurrentProxiedBeanName()     */    protected ListAdvisor findAdvisorsThatCanApply(            ListAdvisor candidateAdvisors, Class? beanClass, String beanName) {         ProxyCreationContext.setCurrentProxiedBeanName(beanName);        try {            return AopUtils.findAdvisorsThatCanApply(candidateAdvisors, beanClass);        }        finally {            ProxyCreationContext.setCurrentProxiedBeanName(null);        }    }</pre></td>
+
+<pre class="line-numbers language-java"><code class="language-java">
+<span class="token comment" spellcheck="true">/**
+ * Search the given candidate Advisors to find all Advisors that
+ * can apply to the specified bean.
+ * @param candidateAdvisors the candidate Advisors
+ * @param beanClass the target's bean class
+ * @param beanName the target's bean name
+ * @return the List of applicable Advisors
+ * @see ProxyCreationContext#getCurrentProxiedBeanName()
+ */</span>
+<span class="token keyword">protected</span> ListAdvisor <span class="token function">findAdvisorsThatCanApply</span><span class="token punctuation">(</span>
+        ListAdvisor candidateAdvisors<span class="token punctuation">,</span> Class<span class="token operator">?</span> beanClass<span class="token punctuation">,</span> String beanName<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+
+    ProxyCreationContext<span class="token punctuation">.</span><span class="token function">setCurrentProxiedBeanName</span><span class="token punctuation">(</span>beanName<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">try</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> AopUtils<span class="token punctuation">.</span><span class="token function">findAdvisorsThatCanApply</span><span class="token punctuation">(</span>candidateAdvisors<span class="token punctuation">,</span> beanClass<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">finally</span> <span class="token punctuation">{</span>
+        ProxyCreationContext<span class="token punctuation">.</span><span class="token function">setCurrentProxiedBeanName</span><span class="token punctuation">(</span>null<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<td class="line_numbers"><pre>12345678910111213141516171819202122232425262728293031323334</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">    /**     * Determine the sublist of the {@code candidateAdvisors} list     * that is applicable to the given class.     * @param candidateAdvisors the Advisors to evaluate     * @param clazz the target class     * @return sublist of Advisors that can apply to an object of the given class     * (may be the incoming List as-is)     */    public static ListAdvisor findAdvisorsThatCanApply(ListAdvisor candidateAdvisors, Class? clazz) {        if (candidateAdvisors.isEmpty()) {            return candidateAdvisors;        }        ListAdvisor eligibleAdvisors = new LinkedList();        // 这里先遍历所以的Advisor，看是不是引介增强        for (Advisor candidate : candidateAdvisors) {            if (candidate instanceof IntroductionAdvisor && canApply(candidate, clazz)){                         // 如果是引介增强，先处理                eligibleAdvisors.add(candidate);            }        }        boolean hasIntroductions = !eligibleAdvisors.isEmpty();        for (Advisor candidate : candidateAdvisors) {            if (candidate instanceof IntroductionAdvisor) {                // already processed                // 引介增强已经被处理过了                continue;            }            // 真正验证的地方，合格则放入List中            if (canApply(candidate, clazz, hasIntroductions)) {                eligibleAdvisors.add(candidate);            }        }        return eligibleAdvisors;    }</pre></td>
+
+<pre class="line-numbers language-java"><code class="language-java">
+<span class="token comment" spellcheck="true">/**
+ * Determine the sublist of the {@code candidateAdvisors} list
+ * that is applicable to the given class.
+ * @param candidateAdvisors the Advisors to evaluate
+ * @param clazz the target class
+ * @return sublist of Advisors that can apply to an object of the given class
+ * (may be the incoming List as-is)
+ */</span>
+<span class="token keyword">public</span> <span class="token keyword">static</span> ListAdvisor <span class="token function">findAdvisorsThatCanApply</span><span class="token punctuation">(</span>ListAdvisor candidateAdvisors<span class="token punctuation">,</span> Class<span class="token operator">?</span> clazz<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>candidateAdvisors<span class="token punctuation">.</span><span class="token function">isEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> candidateAdvisors<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    ListAdvisor eligibleAdvisors <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">LinkedList</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment" spellcheck="true">// 这里先遍历所以的Advisor，看是不是引介增强</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span>Advisor candidate <span class="token operator">:</span> candidateAdvisors<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>candidate <span class="token keyword">instanceof</span> <span class="token class-name">IntroductionAdvisor</span> <span class="token operator">&amp;&amp;</span> <span class="token function">canApply</span><span class="token punctuation">(</span>candidate<span class="token punctuation">,</span> clazz<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>    
+                 <span class="token comment" spellcheck="true">// 如果是引介增强，先处理</span>
+            eligibleAdvisors<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span>candidate<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">boolean</span> hasIntroductions <span class="token operator">=</span> <span class="token operator">!</span>eligibleAdvisors<span class="token punctuation">.</span><span class="token function">isEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span>Advisor candidate <span class="token operator">:</span> candidateAdvisors<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>candidate <span class="token keyword">instanceof</span> <span class="token class-name">IntroductionAdvisor</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token comment" spellcheck="true">// already processed</span>
+            <span class="token comment" spellcheck="true">// 引介增强已经被处理过了</span>
+            <span class="token keyword">continue</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token comment" spellcheck="true">// 真正验证的地方，合格则放入List中</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">canApply</span><span class="token punctuation">(</span>candidate<span class="token punctuation">,</span> clazz<span class="token punctuation">,</span> hasIntroductions<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            eligibleAdvisors<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span>candidate<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> eligibleAdvisors<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<td class="line_numbers"><pre>12345678910111213141516171819202122232425</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">    /**     * Can the given advisor apply at all on the given class?     * pThis is an important test as it can be used to optimize out a advisor for a class.     * This version also takes into account introductions (for IntroductionAwareMethodMatchers).     * @param advisor the advisor to check     * @param targetClass class we're testing     * @param hasIntroductions whether or not the advisor chain for this bean includes     * any introductions     * @return whether the pointcut can apply on any method     */    public static boolean canApply(Advisor advisor, Class? targetClass, boolean hasIntroductions) {        if (advisor instanceof IntroductionAdvisor) {            return ((IntroductionAdvisor) advisor).getClassFilter().matches(targetClass);        }        // 我们的事务Advisor是PointcutAdvisor，进入此方法        else if (advisor instanceof PointcutAdvisor) {            PointcutAdvisor pca = (PointcutAdvisor) advisor;            // 这里将Advisor中的pointcut取出，与目标Bean进行匹配，返回匹配结果            return canApply(pca.getPointcut(), targetClass, hasIntroductions);        }        else {            // It doesn't have a pointcut so we assume it applies.            return true;        }    }</pre></td>
+
+<pre class="line-numbers language-java"><code class="language-java">
+<span class="token comment" spellcheck="true">/**
+ * Can the given advisor apply at all on the given class?
+ * pThis is an important test as it can be used to optimize out a advisor for a class.
+ * This version also takes into account introductions (for IntroductionAwareMethodMatchers).
+ * @param advisor the advisor to check
+ * @param targetClass class we're testing
+ * @param hasIntroductions whether or not the advisor chain for this bean includes
+ * any introductions
+ * @return whether the pointcut can apply on any method
+ */</span>
+<span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">boolean</span> <span class="token function">canApply</span><span class="token punctuation">(</span>Advisor advisor<span class="token punctuation">,</span> Class<span class="token operator">?</span> targetClass<span class="token punctuation">,</span> <span class="token keyword">boolean</span> hasIntroductions<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>advisor <span class="token keyword">instanceof</span> <span class="token class-name">IntroductionAdvisor</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>IntroductionAdvisor<span class="token punctuation">)</span> advisor<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getClassFilter</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">matches</span><span class="token punctuation">(</span>targetClass<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token comment" spellcheck="true">// 我们的事务Advisor是PointcutAdvisor，进入此方法</span>
+    <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>advisor <span class="token keyword">instanceof</span> <span class="token class-name">PointcutAdvisor</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        PointcutAdvisor pca <span class="token operator">=</span> <span class="token punctuation">(</span>PointcutAdvisor<span class="token punctuation">)</span> advisor<span class="token punctuation">;</span>
+        <span class="token comment" spellcheck="true">// 这里将Advisor中的pointcut取出，与目标Bean进行匹配，返回匹配结果</span>
+        <span class="token keyword">return</span> <span class="token function">canApply</span><span class="token punctuation">(</span>pca<span class="token punctuation">.</span><span class="token function">getPointcut</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> targetClass<span class="token punctuation">,</span> hasIntroductions<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        <span class="token comment" spellcheck="true">// It doesn't have a pointcut so we assume it applies.</span>
+        <span class="token keyword">return</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>看到这里也大致应证了我前面所说的，这里会利用Advisor这个bean中的pointcut与每个bean进行比对，如果合适pointcut，将会匹配成功，这个bean就会被代理，代理对象中会存放Advisor属性。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>到这里，大致介绍完Spring是如何进行事务了，其实现原理源自与自定义标签，而开启自定义标签之后会注册三个关于Advisor的Bean，和一个<code class="java">
+BeanPostProssor</code>，当Spring中有<code class="java">
+BeanPostProssor</code>时，会在每个Bean实例化与依赖注入之后执行<code class="java">
+BeanPostProssor</code>的<strong>postProcessAfterInitialization</strong>方法，在这个方法中，会对Bean进行验证是否需要进行代理，如果需要则将上面的Advisor与此Bean一起去交给动态代理工厂做一个代理，返回代理类给IOC容器，如果不需要进行代理直接返回原Bean，达到了事务的效果。Advisor中的advice是事务功能实现的关键类，也就是自定义标签注册的Bean中叫做TransactionInterceptor的这个类，由于篇幅问题将放到下一篇来讲，同时下一篇文章也会介绍事务的传播特性使用场景与区别，透过事务的现象看本质。</p>
+
+                </div>
+                <!-- 欧阳思海，modify，2020.05.01-->
+<!-- 文章详情详情页面的头部广告位置信息 -->
+<div id="post-head-panel">
+    
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" style="font-size: 18px;" target="_blank">
+        <img src="/icons/hot.gif">
+        本人花费半年的时间总结的《Java面试指南》已拿腾讯等大厂offer，已开源在github ，欢迎star！
+    </a>
+    
+    
+</div>
+<br />
+
+
+
+<blockquote>
+    
+            <p>本文GitHub <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">https://github.com/OUYANGSIHAI/JavaInterview</a> 已收录，这是我花了6个月总结的<b>一线大厂Java面试</b>总结，本人已拿大厂offer，欢迎star</p>
+    
+    <p>原文链接：blog.ouyangsihai.cn &gt;&gt; <a href="/shen-ru-spring-shi-wu-yuan-ma-pou-xi-shi-wu-yi.html" target="_blank">深入Spring事务源码剖析事务（一）</a></p>
+</blockquote>
+                <hr />
+
+                
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.88rem;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-large waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fa fa-close"></i></a>
+            <h4 class="reward-title">多少都是对我的认可</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="http://image.ouyangsihai.cn/FpbhsOuf3Ar9vY34B97Y2qQ7LVGe" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="http://image.ouyangsihai.cn/FgYlMzms68PH73PWpZBwPfbLTAws" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+                
+
+                <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+
+<div id="article-share">
+    
+    <div class="social-share" data-disabled="qzone" data-wechat-qrcode-helper="<p>微信里点“发现”->“扫一扫”二维码便可查看分享。</p>"></div>
+    
+</div>
+
+<script src="/libs/share/js/social-share.min.js"></script>
+
+                
+
+                
+                <div class="reprint1">
+                    <p>
+                        <span class="reprint1-tip">
+                            <i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;转载请注明:
+                        </span>
+                        <a href="https://blog.ouyangsihai.cn" class="b-link-green">好好学java</a>
+                        <i class="fa fa-angle-right fa-lg fa-fw text-color"></i>
+                        <a href="/shen-ru-spring-shi-wu-yuan-ma-pou-xi-shi-wu-yi.html" class="b-link-green">深入Spring事务源码剖析事务（一）</a>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        
+
+        
+
+        
+
+        
+
+        
+        <style>
+    .valine-card {
+        margin: 1.5rem auto;
+    }
+
+    .valine-card .card-content {
+        padding: 20px 20px 5px 20px;
+    }
+    /* valine 评论框增加背景图片 */
+    #vcomments textarea {
+        box-sizing: border-box;
+        background: url("") 100% 100% no-repeat;
+    }
+
+    #vcomments input[type=text],
+    #vcomments input[type=email],
+    #vcomments input[type=url],
+    #vcomments textarea {
+        box-sizing: border-box;
+    }
+
+    #vcomments p {
+        margin: 2px 2px 10px;
+        font-size: 1.05rem;
+        line-height: 1.78rem;
+    }
+
+    #vcomments blockquote p {
+        text-indent: 0.2rem;
+    }
+
+    #vcomments a {
+        padding: 0 2px;
+        color: #42b983;
+        font-weight: 500;
+        text-decoration: underline;
+    }
+
+    #vcomments img {
+        max-width: 100%;
+        height: auto;
+        cursor: pointer;
+    }
+
+    #vcomments ol li {
+        list-style-type: decimal;
+    }
+
+    #vcomments ol,
+    ul {
+        display: block;
+        padding-left: 2em;
+        word-spacing: 0.05rem;
+    }
+
+    #vcomments ul li,
+    ol li {
+        display: list-item;
+        line-height: 1.8rem;
+        font-size: 1rem;
+    }
+
+    #vcomments ul li {
+        list-style-type: disc;
+    }
+
+    #vcomments ul ul li {
+        list-style-type: circle;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    #vcomments table, th, td {
+        border: 0;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments h1 {
+        font-size: 1.85rem;
+        font-weight: bold;
+        line-height: 2.2rem;
+    }
+
+    #vcomments h2 {
+        font-size: 1.65rem;
+        font-weight: bold;
+        line-height: 1.9rem;
+    }
+
+    #vcomments h3 {
+        font-size: 1.45rem;
+        font-weight: bold;
+        line-height: 1.7rem;
+    }
+
+    #vcomments h4 {
+        font-size: 1.25rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    #vcomments h5 {
+        font-size: 1.1rem;
+        font-weight: bold;
+        line-height: 1.4rem;
+    }
+
+    #vcomments h6 {
+        font-size: 1rem;
+        line-height: 1.3rem;
+    }
+
+    #vcomments p {
+        font-size: 1rem;
+        line-height: 1.5rem;
+    }
+
+    #vcomments hr {
+        margin: 12px 0;
+        border: 0;
+        border-top: 1px solid #ccc;
+    }
+
+    #vcomments blockquote {
+        margin: 15px 0;
+        border-left: 5px solid #42b983;
+        padding: 1rem 0.8rem 0.3rem 0.8rem;
+        color: #666;
+        background-color: rgba(66, 185, 131, .1);
+    }
+
+    #vcomments pre {
+        font-family: monospace, monospace;
+        padding: 1.2em;
+        margin: .5em 0;
+        background: #272822;
+        overflow: auto;
+        border-radius: 0.3em;
+        tab-size: 4;
+    }
+
+    #vcomments code {
+        font-family: monospace, monospace;
+        padding: 1px 3px;
+        font-size: 0.92rem;
+        color: #e96900;
+        background-color: #f8f8f8;
+        border-radius: 2px;
+    }
+
+    #vcomments pre code {
+        font-family: monospace, monospace;
+        padding: 0;
+        color: #e8eaf6;
+        background-color: #272822;
+    }
+
+    #vcomments pre[class*="language-"] {
+        padding: 1.2em;
+        margin: .5em 0;
+    }
+
+    #vcomments code[class*="language-"],
+    pre[class*="language-"] {
+        color: #e8eaf6;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    #vcomments b,
+    strong {
+        font-weight: bold;
+    }
+
+    #vcomments dfn {
+        font-style: italic;
+    }
+
+    #vcomments small {
+        font-size: 85%;
+    }
+
+    #vcomments cite {
+        font-style: normal;
+    }
+
+    #vcomments mark {
+        background-color: #fcf8e3;
+        padding: .2em;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    /* 修复评论第一行位置错位 */
+    .v .vlist .vcard {
+    padding-top: 2.5em !important ;
+    }
+</style>
+
+<div class="card valine-card" data-aos="fade-up">
+    <div id="vcomments" class="card-content"></div>
+</div>
+
+<script src="/libs/valine/av-min.js"></script>
+<script src="/libs/valine/Valine.min.js"></script>
+<!-- <link rel="stylesheet" type="text/css" href="/libs//libs/jQuery-emoji/dist/css/jquery.emoji.css">
+<script src="/libs//libs/jQuery-emoji/dist/js/jquery.emoji.min.js"></script>
+<script src="/libs//libs/jQuery-emoji/dist/js/emoji.list.js"></script> -->
+<script>
+    new Valine({
+        el: '#vcomments',
+        appId: 'MxSNOS83TYWU3Opsy2GTW1ih-gzGzoHsz',
+        appKey: '4XevOgmAxHEwVDnIKgvEUihB',
+        notify: 'true' === 'true',
+        verify: 'true' === 'true',
+        visitor: 'true' === 'true',
+        avatar: 'mm',
+        pageSize: '10',
+        lang: 'zh-cn',
+        placeholder: '请畅所欲言吧，别害羞~',
+
+    });
+
+//     function parse_emoji() {
+//     jQuery(".vcontent").emojiParse({
+//       basePath: '/libs/jQuery-emoji/images/emoji',
+//       icons: emojiLists   // 注：详见 js/emoji.list.js
+//     });
+//   }
+  
+//   setTimeout(function() {
+//     // jQuery emoji 解析
+//     parse_emoji();
+//     // jquery emoji 初始化
+//     jQuery(".veditor").emoji({
+//       showTab: true,
+//       animation: 'slide',
+//       basePath: '/libs/jQuery-emoji/images/emoji',
+//       icons: emojiLists  // 注：详见 js/emoji.list.js
+//     });
+//     jQuery(".vmore").on("click", function() {
+//       setTimeout(function() {
+//         parse_emoji();
+//       }, 500);
+//     });
+//   }, 800)
+
+</script>
+        
+
+        
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/mybatis-yu-spring-ji-cheng-shi-zuo-liao-na-xie-shi-qing.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="Mybatis与Spring集成时做了哪些事情">
+                        
+                        <span class="card-title">Mybatis与Spring集成时做了哪些事情</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            ** 这篇博客主要是来分析MyBatis与Spring集成后Spring帮我们做了哪些事情，以及集成后使用MyBatis有什么变化。**
+首先来看看集成包下有什么东西吧。
+
+第一个模块annotation：这里做了一个注解（MapperSc
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="fa fa-clock fa-fw icon-date"></i>2021-04-05
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/spring%E6%95%99%E7%A8%8B/" class="post-category" target="_blank">
+                                    spring教程
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/spring-spring%E6%95%99%E7%A8%8B-spring%E6%BA%90%E7%A0%81/" target="_blank">
+                        <span class="chip bg-color">spring,spring教程,spring源码</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fa fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/shen-ru-spring-shi-wu-yuan-ma-pou-xi-shi-wu-er.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/6.jpg" class="responsive-img" alt="深入Spring事务源码剖析事务（二）">
+                        
+                        <span class="card-title">深入Spring事务源码剖析事务（二）</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="fa fa-clock fa-fw icon-date"></i>2021-04-05
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/spring%E6%95%99%E7%A8%8B/" class="post-category" target="_blank">
+                                    spring教程
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/spring-spring%E6%95%99%E7%A8%8B-spring%E6%BA%90%E7%A0%81/" target="_blank">
+                        <span class="chip bg-color">spring,spring教程,spring源码</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+    </div>
+</div>
+
+
+<script>
+    $('#articleContent').on('copy', function (e) {
+        // IE8 or earlier browser is 'undefined'
+        if (typeof window.getSelection === 'undefined') return;
+
+        var selection = window.getSelection();
+        // if the selection is short let's not annoy our users.
+        if (('' + selection).length < Number.parseInt('500')) {
+            return;
+        }
+
+        // create a div outside of the visible area and fill it with the selected text.
+        var bodyElement = document.getElementsByTagName('body')[0];
+        var newdiv = document.createElement('div');
+        newdiv.style.position = 'absolute';
+        newdiv.style.left = '-99999px';
+        bodyElement.appendChild(newdiv);
+        newdiv.appendChild(selection.getRangeAt(0).cloneContents());
+
+        // we need a <pre> tag workaround.
+        // otherwise the text inside "pre" loses all the line breaks!
+        if (selection.getRangeAt(0).commonAncestorContainer.nodeName === 'CODE') {
+            newdiv.innerHTML = "<pre>" + newdiv.innerHTML + "</pre>";
+        }
+
+        var url = document.location.href;
+        newdiv.innerHTML += '<br />'
+            + '来源: 好好学java<br />'
+            + '作者: 好好学java<br />'
+            + '链接: <a href="' + url + '">' + url + '</a><br />'
+            + '本文章著作权归作者所有，任何形式的转载都请注明出处。';
+
+        selection.selectAllChildren(newdiv);
+        window.setTimeout(function () { bodyElement.removeChild(newdiv); }, 200);
+    });
+</script>
+
+
+
+<!--
+<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+<script>
+    const btw = new BTWPlugin();
+    btw.init({
+        id: 'container',
+        blogId: '15305-1590684104111-518',
+        name: '程序员的技术圈子',
+        qrcode: 'http://image.ouyangsihai.cn/FtAUOeE5--1JTdcuuZFIhMuEUuJO',
+        keyword: 'vip',
+    });
+</script>
+-->
+
+    </div>
+    <div id="toc-aside" style="width: 310px;" class="expanded col l3 hide-on-med-and-down">
+        <!-- 自定义右侧card：欧阳思海 -->
+        <!-- <div id="my-card" style="background: ">
+            
+        </div> -->
+        <!-- <div class="toc-widget">
+            <div class="toc-title" style="display: none;"><i class="fa fa-list-alt"></i>&nbsp;&nbsp;</div>
+            <div id="toc-content"></div>
+        </div> -->
+
+
+
+
+
+
+
+
+        <aside class="col-lg-3" style="width: 300px;">
+
+            <link rel="stylesheet" type="text/css" href="/css/my-aside.css">
+
+            <!-- 关注公众号信息：欧阳思海 -->
+            <div class="widget-wrap">
+                <div class="widget bg-danger" style="color:whitesmoke; background-color: #419488">
+                    <div class="card-front animated col s12 m12 l8 offset-l2 fadeInUp">
+                        <div class="row">
+                            <div class="col-md-5" style="text-align: center;">
+                                <img class="adv" style="width: 95px; height: 95px;"
+                                    src="http://image.ouyangsihai.cn/FtAUOeE5--1JTdcuuZFIhMuEUuJO">
+                            </div>
+                            <div class="col-md-7" style="text-align: center;">
+                                <h2 style="font-size: 18px; 
+                                    margin: 0; 
+                                    padding: 0;
+                                    border: 0; 
+                                    outline: 0;
+                                    font-weight: inherit;
+                                    font-style: inherit;
+                                    font-family: inherit;
+                                    vertical-align: baseline;">关注公众号</h2>
+                                 
+                                <small style="font-size: 15px;">
+                                    →「技术干货」每日推送 <br>
+                                    →「回复资料」领取资料 <br>
+                                    →「微信加群」每周福利 <br>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div style="font-size: 0.8em;">
+                        <a href="/assets/erweima.jpg" target="_blank"
+                            style="color:orange;font-size: 14px;">点击添加我的微信，加入技术讨论群</a>
+                        除公众号以外，我还会在以下平台发布内容：
+                    </div>
+                    -->
+
+                    <div class="profile-block social-links col-md-7" style="text-align: center;">
+                        <table style="align-items: center; 
+                                        padding-left: 25px;">
+                            <tbody>
+                                <tr>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank" title="GitHub"
+                                            class="tooltip">
+                                            <img style="width: 22px;height: 22px;" src="/icons/github.svg"></a>
+                                    </td>
+
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://www.zhihu.com/people/hai-hai-ren-sheng-50/activities"
+                                            target="_blank" title="知乎" class="tooltip">
+                                            <img style="width: 22px;" src="/icons/zhihu.svg"></a>
+                                    </td>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://blog.csdn.net/sihai12345" target="_blank" title="CSDN"
+                                            class="tooltip">
+                                            <img style="width: 18px;" src="/icons/CSDN.svg"></a>
+                                    </td>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://www.jianshu.com/u/12b0bd4c857c" target="_blank" title="简书"
+                                            class="tooltip">
+                                            <img style="width: 22px;" src="/icons/JianShu.svg"></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            
+
+            <!-- custom rightside_link：热门文章推荐：欧阳思海 -->
+            
+            <div class="widget-wrap widget-panel">
+                <p style="text-align: left;padding-bottom: 10px;line-height: 30px; font-size: 14px;">
+                    
+                    <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        本人花费半年的时间总结的《 Java 面试指南》已拿腾讯等大厂 offer，已开源在 github ，欢迎 star！
+                    </a><br>
+                    
+                    <a href="https://mp.weixin.qq.com/s/I0jimqziHqRNaIy0kXRCnw" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        2020 Java 1000G 最新学习资源，Java基础、Java项目实战、Java分布式等等！
+                    </a><br>
+                    
+                    <a href="http://image.ouyangsihai.cn/FpB-dO6g-XU44mMrVlj7EL1y7Rs7" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        高级 Java 开发微信群，一起搞事情吧！
+                    </a><br>
+                    
+                </p>
+            </div>
+            
+
+            
+
+            <!-- custom rightside_banner：右侧广告或者其他的栏目设置：欧阳思海 -->
+            
+            <div class="widget-wrap">
+                <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">
+                    <img src="http://image.ouyangsihai.cn/FhhoEYMaNr6m0v8KhG8vSPgoREBV" style="width: 100%;">
+                </a>
+            </div>
+            
+            
+
+            
+
+            <!-- 右侧专栏分类：欧阳思海 -->
+            
+            <div class="widget-wrap widget-panel">
+                <ul class="media-list">
+                    
+                    <li class="media">
+                        <a href="/categories/MySQL的艺术世界/" target="_blank">
+                            <div class="media-left">
+                                <img class="media-object" src="http://image.ouyangsihai.cn/Fn3kQurieQ_0QUeqPmx5RW5i6R9n" style="width: 55px;">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading" style="margin-bottom: 10px; font-size: 100%;
+                                                                    margin: 0;
+                                                                    padding: 0;
+                                                                    border: 0;
+                                                                    outline: 0;
+                                                                    font-weight: inherit;
+                                                                    font-style: inherit;
+                                                                    font-family: inherit;
+                                                                    vertical-align: baseline;">
+                                    MySQL 的系列文章，解决全部面试问题！
+                                </h4>
+                                <p>
+                                    总共10篇文章，面试热门的锁、事务，通通解决了！
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    <hr>
+                    
+                    <li class="media">
+                        <a href="/categories/深入理解Java虚拟机/" target="_blank">
+                            <div class="media-left">
+                                <img class="media-object" src="http://image.ouyangsihai.cn/FpcS21VWJOHSgGzKcpW3_xVTSEeN" style="width: 55px;">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading" style="margin-bottom: 10px; font-size: 100%;
+                                                                    margin: 0;
+                                                                    padding: 0;
+                                                                    border: 0;
+                                                                    outline: 0;
+                                                                    font-weight: inherit;
+                                                                    font-style: inherit;
+                                                                    font-family: inherit;
+                                                                    vertical-align: baseline;">
+                                    深入理解 Java 虚拟机，面试必问
+                                </h4>
+                                <p>
+                                    总共10篇文章，包括内存模型、GC算法、GC收集器等。
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    <hr>
+                    
+                </ul>
+            </div>
+            
+
+            <!-- 右侧分类 -->
+            <div class="widget-wrap widget-panel">
+                <h3 class="widget-title">文章分类</h3>
+                <div class="widget">
+                    <ul class="category-list">
+                        
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/趣聊数据结构与算法/">>
+                                趣聊数据结构与算法</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/职业生涯浅谈/">>
+                                职业生涯浅谈</a><span class="category-list-count">33</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java项目分享/">>
+                                Java项目分享</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java面试经验/">>
+                                Java面试经验</a><span class="category-list-count">4</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/我要进大厂/">>
+                                我要进大厂</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/好好学java/">>
+                                好好学java</a><span class="category-list-count">1116</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/剑指offer/">>
+                                剑指offer</a><span class="category-list-count">112</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/css/">>
+                                css</a><span class="category-list-count">12</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/其他框架/">>
+                                其他框架</a><span class="category-list-count">142</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python其他/">>
+                                python其他</a><span class="category-list-count">45</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/数据库相关/">>
+                                数据库相关</a><span class="category-list-count">293</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java核心知识/">>
+                                Java核心知识</a><span class="category-list-count">196</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java面试题/">>
+                                Java面试题</a><span class="category-list-count">308</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/mybatis源码/">>
+                                mybatis源码</a><span class="category-list-count">56</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/spring教程/">>
+                                spring教程</a><span class="category-list-count">173</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springboot教程/">>
+                                springboot教程</a><span class="category-list-count">156</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/实战Activiti工作流/">>
+                                实战Activiti工作流</a><span class="category-list-count">4</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springcloud教程/">>
+                                springcloud教程</a><span class="category-list-count">39</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/linux/">>
+                                linux</a><span class="category-list-count">91</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python框架/">>
+                                python框架</a><span class="category-list-count">43</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python基础/">>
+                                python基础</a><span class="category-list-count">78</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/dubbo/">>
+                                dubbo</a><span class="category-list-count">37</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java源码/">>
+                                Java源码</a><span class="category-list-count">76</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/叽叽喳喳杂七杂八/">>
+                                叽叽喳喳杂七杂八</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/MySQL的艺术世界/">>
+                                MySQL的艺术世界</a><span class="category-list-count">8</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/jquery/">>
+                                jquery</a><span class="category-list-count">14</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java并发/">>
+                                Java并发</a><span class="category-list-count">43</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java文章合辑/">>
+                                Java文章合辑</a><span class="category-list-count">11</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java基础修炼/">>
+                                Java基础修炼</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/不一样的Java8/">>
+                                不一样的Java8</a><span class="category-list-count">3</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/小程序开发的世界/">>
+                                小程序开发的世界</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java学习资源分享/">>
+                                Java学习资源分享</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java小学生漫游/">>
+                                Java小学生漫游</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/rocketmq源码解析/">>
+                                rocketmq源码解析</a><span class="category-list-count">33</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springmvc最新教程/">>
+                                springmvc最新教程</a><span class="category-list-count">9</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java的Exception/">>
+                                Java的Exception</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/vue-js/">>
+                                vue.js</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/实战设计模式/">>
+                                实战设计模式</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python数据处理/">>
+                                python数据处理</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java-Web闯关/">>
+                                Java Web闯关</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springboot2-0最新教程/">>
+                                springboot2.0最新教程</a><span class="category-list-count">11</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/netty/">>
+                                netty</a><span class="category-list-count">16</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/rpc/">>
+                                rpc</a><span class="category-list-count">13</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/拥抱大厂系列/">>
+                                拥抱大厂系列</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/eureka/">>
+                                eureka</a><span class="category-list-count">19</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/分布式/">>
+                                分布式</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/中间件/">>
+                                中间件</a><span class="category-list-count">23</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java基础/">>
+                                Java基础</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/带你学Python/">>
+                                带你学Python</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/使用技术工具/">>
+                                使用技术工具</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/mycat源码/">>
+                                mycat源码</a><span class="category-list-count">5</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/深入理解Java虚拟机/">>
+                                深入理解Java虚拟机</a><span class="category-list-count">8</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/spring源码/">>
+                                spring源码</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java集合源码分析/">>
+                                Java集合源码分析</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/github的repo/">>
+                                github的repo</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java框架深究/">>
+                                Java框架深究</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/分布式架构/">>
+                                分布式架构</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+
+        </aside>
+
+
+
+
+
+
+
+
+
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. 修改成永远不显示：欧阳思海-->
+
+
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h1, h2, h3, h4, h5'
+        });
+
+        console.log('============');
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h1, h2, h3, h4, h5').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+                        
+            /* 修复文章卡片 div 的宽度. */
+            let fixPostCardWidth = function (srcId, targetId) {
+                let srcDiv = $('#' + srcId);
+                if (srcDiv.length === 0) {
+                    return;
+                }
+
+                let w = srcDiv.width();
+                if (w >= 450) {
+                    w = w + 21;
+                } else if (w >= 350 && w < 450) {
+                    w = w + 18;
+                } else if (w >= 300 && w < 350) {
+                    w = w + 16;
+                } else {
+                    w = w + 14;
+                }
+                $('#' + targetId).width(w);
+            };
+
+            // 切换TOC目录展开收缩的相关操作.
+            // 修改右侧边栏功能：欧阳思海
+            const expandedClass = 'expanded';
+            let $tocAside = $('#toc-aside');
+            let $mainContent = $('#main-content');
+
+            $('#floating-toc-btn .btn-floating').click(function () {
+                if ($tocAside.hasClass(expandedClass)) {
+                    $tocAside.removeClass(expandedClass).slideUp(500);
+                    $mainContent.removeClass('l9');
+                } else {
+                    $tocAside.addClass(expandedClass).slideDown(500);
+                    $mainContent.addClass('l9');
+                }
+                fixPostCardWidth('artDetail', 'prenext-posts');
+            });
+                        
+                    });
+</script>
+    
+
+</main>
+
+
+        <footer class="page-footer bg-color">
+    <div class="container row center-align">
+        <div class="col s12 m8 l8 copy-right">
+            
+	    Copyright&copy; 2019 <a href="https://www.java1000.com/" target="_blank"> 好好学java </a>维护. 网站备案/许可证号：赣ICP备17007984号-3
+            <br>
+            <span id="sitetime"></span>
+            <br>
+
+            
+
+            
+                    <!-- 
+                        <span id="busuanzi_container_site_pv" style='display:none'></span>
+                        总访问量: <span id="busuanzi_value_site_pv" class="white-color"></span>
+                    
+        
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'></span>
+                        人次&nbsp; | &nbsp;访客人数: <span id="busuanzi_value_site_uv" class="white-color"></span> 人
+                     -->
+                        <!-- 修改计数：欧阳思海 -->
+                    
+                        <span id="busuanzi_container_site_pv" style='display:inline'>
+                            <i class="fa fa-heart-o"></i>
+                            本站总访问量 <span id="busuanzi_value_site_pv" class="white-color"></span>
+                        </span>
+                    
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'>
+                            人次,&nbsp;访客数 <span id="busuanzi_value_site_uv" class="white-color"></span> 人.
+                        </span>
+                    
+    
+            
+
+            
+                &nbsp; | &nbsp;字数统计:&nbsp;
+                <span class="white-color">8290.3k</span> 字
+            
+
+            
+            <br>
+
+        </div>
+
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fa fa-code-branch"></i>
+    </a>
+
+
+ 
+    <a href="https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=1446037005@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fa fa-envelope-open"></i>
+    </a>
+
+
+
+
+    <a href="https://zhihu.com/people/hai-hai-ren-sheng-50/activities" class="tooltipped" target="_blank" data-tooltip="访问我的知乎" data-position="top" data-delay="50">
+        <i class="fa fa-inverse">知</i>
+    </a>
+
+
+
+
+
+
+
+
+
+    <a href="https://blog.ouyangsihai.cn/sitemap.xml" class="tooltipped" target="_blank" data-tooltip="站点地图" data-position="top" data-delay="50">
+        <i class="fa fa-sitemap"></i>
+    </a>
+
+
+
+    <a href="https://blog.ouyangsihai.cn/friends" class="tooltipped" target="_blank" data-tooltip="友情链接" data-position="top" data-delay="50">
+        <i class="fa fa-address-book"></i>
+    </a>
+</div>
+
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+
+        var t1 = Date.UTC(2019, 08, 10, 00, 00, 00); //北京时间2019-8-1 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes *
+            minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "本站已运行 " + diffYears + " 年 " + diffDays + " 天 " + diffHours +
+            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒" ;
+    } /*因为建站时间还没有一年，就将之注释掉了。需要的可以取消*/
+    siteTime();
+</script>
+
+<!-- 修改计数：欧阳思海 -->
+<script>
+    $(document).ready(function () {
+
+        var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+        var pvcountOffset = 1005469;  // 初始化首次数据
+        var uvcountOffset = 250804;
+
+        function fixCount() {
+            if (document.getElementById("busuanzi_container_site_pv").style.display != "none") {
+                $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + pvcountOffset);
+                clearInterval(int);
+            }
+            if ($("#busuanzi_container_site_pv").css("display") != "none") {
+                $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + uvcountOffset); // 加上初始数据 
+                clearInterval(int); // 停止检测
+            }
+        }
+    });
+</script>
+
+
+
+
+        <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.json", 'searchInput', 'searchResult');
+});
+</script>
+        <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fa fa-angle-up"></i>
+    </a>
+</div>
+
+
+        <script src="/libs/materialize/materialize.min.js"></script>
+        <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+        <script src="/libs/aos/aos.js"></script>
+        <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+        <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+        <script src="/js/matery.js"></script>
+
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-149362573-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    gtag('config', 'UA-149362573-1');
+</script>
+
+
+
+        
+            <script src="/libs/others/clicklove.js"></script>
+        
+
+        
+            <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+        
+
+        <!-- 洪卫 shw2018 add 2019.08.28 -->
+        <script type="text/javascript">
+            var OriginTitile = document.title,
+                st;
+            document.addEventListener("visibilitychange", function () {
+                document.hidden ? (document.title = "看不见我🙈~看不见我🙈~", clearTimeout(st)) : (document.title =
+                    "(๑•̀ㅂ•́) ✧被发现了～", st = setTimeout(function () {
+                        document.title = OriginTitile
+                    }, 3e3))
+            })
+        </script>
+
+        <!-- 鼠标点击烟花爆炸效果  洪卫 shw2018 add 2019.09.09 -->
+        
+
+        <!-- 背景雪花飘落特效洪卫 shw2018 add 2019.09.10 -->
+        
+
+        <!-- 鼠标点击文字特效 洪卫 shw2018 add 2019.09.10-->
+        
+
+        <!-- 背景雪花飘落特效 洪卫 shw2018 add 2019.09.10 -->
+        
+
+        <!-- 在线聊天工具  洪卫 shw2018 add 2019.09.11 -->
+        
+
+        <!-- 背景 canvas-nest  洪卫 shw 2018  add 2019.09.15-->
+        
+
+        <!-- 背景静止彩带  洪卫 shw 2018  add 2019.09.15-->
+        
+
+        <!-- 背景动态彩带 洪卫 shw 2018  add 2019.09.15-->
+        
+
+    </body>
+</html>

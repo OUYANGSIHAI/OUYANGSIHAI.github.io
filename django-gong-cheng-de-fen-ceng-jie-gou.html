@@ -1,0 +1,2799 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+    <!-- shw2018 洪卫  modify 2019.08.15-->
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="Spring Boot, Spring Cloud, 微服务, Java技术, 好好学java, Java面试, 分布式, 最新干货分享">
+    <meta name="baidu-site-verification" content="fmlEuI34ir" />
+    <meta name="google-site-verification" content="ZWVq5UvPg33BCEA3LRTUkYe5J854o9lF1_WRTer9l8A" />
+    <meta name="description" content="本站是 好好学java 的技术分享博客。内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、分布式、Java面试、测试开发等相关的研究与知识分享。">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Django工程的分层结构 | 好好学java | Spring Boot | Spring Cloud | 微服务 | Java技术 | Java面试 | 分布式 | 最新干货分享</title>
+    <link rel="icon" type="image/png" href="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7">
+
+    <!-- <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css"> -->
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    <!-- 自定义fontawesome样式：欧阳思海 -->
+    <link rel="stylesheet" type="text/css" href="/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/brands.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/fontawesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/regular.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/solid.min.css">
+
+
+    <style type="text/css">
+        code[class*="language-"],
+            pre[class*="language-"] {
+                white-space: pre !important;
+            }
+
+            
+
+        /* 将matery.css中的背景颜色修改放到这里：欧阳思海 */
+        .bg-color {
+            background-image: linear-gradient(to right, #ec8585 0%, #419488 100%);
+            opacity: 0.9;
+            // 透明度
+        }
+    </style>
+
+    <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
+    <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+
+    
+    
+    <script>
+        (function () {
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+    
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?6fe466069710c03a563713b507fbaca7";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+    <!-- Google Analytics -->
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-XXXXX-Y', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <!-- End Google Analytics -->
+
+    <script>(function (i, s, o, g, r, a, m) { i["DaoVoiceObject"] = r; i[r] = i[r] || function () { (i[r].q = i[r].q || []).push(arguments) }, i[r].l = 1 * new Date(); a = s.createElement(o), m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; a.charset = "utf-8"; m.parentNode.insertBefore(a, m) })(window, document, "script", ('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/0a804bac.js", "daovoice")</script>
+
+    <script>
+        if (true) {
+            daovoice('init', {
+                app_id: "0a804bac",
+                user_id: "NO_89757", // 必填: 该用户在您系统上的唯一ID
+                email: "daovoice@example.com", // 选填:  该用户在您系统上的主邮箱
+                name: "道客船长", // 选填: 用户名
+                signed_up: 1449821660 // 选填: 用户的注册时间，用Unix时间戳表示
+            });
+            daovoice('update');
+
+            daovoice('init', {
+                app_id: "0a804bac"
+            });
+            daovoice('update');
+        }
+    </script>
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/rss2.xml" title="好好学java" type="application/rss+xml">
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+    <body>
+
+        <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span" style="font-size: 1.4rem;">好好学java</span>
+                </a>
+            </div>
+            
+
+
+<!-- <a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-navicon"></i></a>
+<ul class="right">
+    
+    <li class="hide-on-med-and-down">
+        <a href="" class="waves-effect waves-light">
+            
+            <i class="fa "></i>
+            
+            <span></span>
+        </a>
+    </li>
+    
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title=""></i>
+        </a>
+    </li>
+</ul> -->
+
+<!-- 支持二级菜单特性 洪卫 shw2018 modify 2019.09.17  -->
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-align-justify"></i></a>
+<ul class="right nav-menu">
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-folder-minus"></i>
+                
+                <span style="font-size: 1.1rem;">Java学习</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/" >
+                    
+                    <span>Java入门</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Javaweb/" >
+                    
+                    <span>Java Web</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/spring%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>Spring教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/springboot%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>SpringBoot教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/springcloud%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>SpringCloud教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98/" >
+                    
+                    <span>Java面试</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%89%91%E6%8C%87offer/" >
+                    
+                    <span>剑指offer</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-code-branch"></i>
+                
+                <span style="font-size: 1.1rem;">Java进阶</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97/" >
+                    
+                    <span>设计模式</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" >
+                    
+                    <span>Java并发编程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/" >
+                    
+                    <span>数据库</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/redis/" >
+                    
+                    <span>Redis</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/linux/" >
+                    
+                    <span>Linux</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/" >
+                    
+                    <span>Java实战项目</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-code"></i>
+                
+                <span style="font-size: 1.1rem;">python学习</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/python%E5%9F%BA%E7%A1%80/" >
+                    
+                    <span>python基础</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/python%E6%A1%86%E6%9E%B6/" >
+                    
+                    <span>python框架</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/python%E5%85%B6%E4%BB%96/" >
+                    
+                    <span>python其他</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-coffee"></i>
+                
+                <span style="font-size: 1.1rem;">Java扩展</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/dubbo/" >
+                    
+                    <span>dubbo</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/netty/" >
+                    
+                    <span>netty</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/rpc/" >
+                    
+                    <span>rpc</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/eureka/" >
+                    
+                    <span>eureka</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/" >
+                    
+                    <span>中间件</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" >
+                    
+                    <span>分布式</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-desktop"></i>
+                
+                <span style="font-size: 1.1rem;">计算机核心</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" >
+                    
+                    <span>数据结构</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98/" >
+                    
+                    <span>leetcode刷题</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" >
+                    
+                    <span>计算机网络</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" >
+                    
+                    <span>算法</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/categories/" class="waves-effect waves-light">
+              
+                <i style="font-size: 1.1rem;" class="fa fa-adjust"></i>
+              
+              <span style="font-size: 1.1rem;">学习资源</span>
+            </a>
+
+            
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/contact" class="waves-effect waves-light">
+              
+                <i style="font-size: 1.1rem;" class="fa fa-envelope"></i>
+              
+              <span style="font-size: 1.1rem;">留言</span>
+            </a>
+
+            
+      </li>
+    
+
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title="搜索"></i>
+        </a>
+    </li>
+
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">好好学java</div>
+        <div class="logo-desc">
+            
+            
+            本站是 好好学java 的技术分享博客，涵盖Java后端技术、SpringBoot、微服务架构、分布式、Java面试等知 ...
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-folder-minus"></i>
+			
+			Java学习
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/ " style="margin-left:75px";>
+				  
+		          <span>Java入门</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Javaweb/ " style="margin-left:75px";>
+				  
+		          <span>Java Web</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/spring%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>Spring教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/springboot%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>SpringBoot教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/springcloud%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>SpringCloud教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98/ " style="margin-left:75px";>
+				  
+		          <span>Java面试</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%89%91%E6%8C%87offer/ " style="margin-left:75px";>
+				  
+		          <span>剑指offer</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-code-branch"></i>
+			
+			Java进阶
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97/ " style="margin-left:75px";>
+				  
+		          <span>设计模式</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>Java并发编程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/ " style="margin-left:75px";>
+				  
+		          <span>数据库</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/redis/ " style="margin-left:75px";>
+				  
+		          <span>Redis</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/linux/ " style="margin-left:75px";>
+				  
+		          <span>Linux</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/ " style="margin-left:75px";>
+				  
+		          <span>Java实战项目</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-code"></i>
+			
+			python学习
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/python%E5%9F%BA%E7%A1%80/ " style="margin-left:75px";>
+				  
+		          <span>python基础</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/python%E6%A1%86%E6%9E%B6/ " style="margin-left:75px";>
+				  
+		          <span>python框架</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/python%E5%85%B6%E4%BB%96/ " style="margin-left:75px";>
+				  
+		          <span>python其他</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-coffee"></i>
+			
+			Java扩展
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/dubbo/ " style="margin-left:75px";>
+				  
+		          <span>dubbo</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/netty/ " style="margin-left:75px";>
+				  
+		          <span>netty</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/rpc/ " style="margin-left:75px";>
+				  
+		          <span>rpc</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/eureka/ " style="margin-left:75px";>
+				  
+		          <span>eureka</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/ " style="margin-left:75px";>
+				  
+		          <span>中间件</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/ " style="margin-left:75px";>
+				  
+		          <span>分布式</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-desktop"></i>
+			
+			计算机核心
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/ " style="margin-left:75px";>
+				  
+		          <span>数据结构</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98/ " style="margin-left:75px";>
+				  
+		          <span>leetcode刷题</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/ " style="margin-left:75px";>
+				  
+		          <span>计算机网络</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E7%AE%97%E6%B3%95/ " style="margin-left:75px";>
+				  
+		          <span>算法</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories/" class="waves-effect waves-light">
+			
+			    <i class="fa fa-fw fa-adjust"></i>
+			
+			学习资源
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa fa-fw fa-envelope"></i>
+			
+			留言
+		</a>
+          
+        </li>
+        
+        
+    </ul>
+</div>
+
+        </div>
+
+        
+    </nav>
+
+</header>
+
+        
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/1.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <div class="description center-align post-title">
+                        Django工程的分层结构
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 20px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+
+    /* 自定义mycard：欧阳思海 */
+
+    #my-card {
+        /* position: relative; */
+        width: 310px;
+        height: 300px;
+        /* max-height: 330px; */
+        margin-bottom: 15px;
+        margin-top: 15px;
+        /* text-align: center; */
+        border: 0;
+        border-radius: 3px;
+        color: rgba(0, 0, 0, .87);
+        background: #fff 50%;
+        background-image: none;
+        background-size: auto;
+        background-size: cover;
+        box-shadow: 0 15px 35px rgba(50, 50, 93, .1), 0 5px 15px rgba(0, 0, 0, .07);
+    }
+
+    /* .widget {
+        line-height: 1.6em;
+        word-wrap: break-word;
+        font-size: 0.9em;
+        padding-top: 15px;
+        padding-left: -45px;
+    } */
+</style>
+
+
+
+
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- shw2018 洪卫  modify 2019.08.15-->
+
+<!-- 代码块修改的代码开始 -->
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFunction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+<!-- 代码块折行 -->
+
+<style type="text/css">
+code[class*="language-"], pre[class*="language-"] { white-space: pre !important; }
+</style>
+
+<!-- 代码块修改代码结束 -->
+
+
+<!-- 文章内容详情 -->
+<div id="container">
+    <div id="artDetail">
+        <div class="card">
+            <div class="card-content article-info">
+                <div class="row tag-cate">
+                    <div class="col s7">
+                        
+                        <div class="article-tag">
+                            <!--我修改的地方：欧阳思海-->
+                            
+                            <a href="/tags/python-python-web%E6%A1%86%E6%9E%B6-%E6%A1%86%E6%9E%B6/" target="_blank">
+                                <span class="chip bg-color">python,python_web框架,框架</span>
+                            </a>
+                            
+                        </div>
+                        
+                    </div>
+                    <div class="col s5 right-align">
+                        
+                        <div class="post-cate">
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/python%E6%A1%86%E6%9E%B6/" class="post-category" target="_blank">
+                                python框架
+                            </a>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <div class="post-info">
+                    <div class="post-date info-break-policy">
+                        <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
+                        2021-04-05
+                    </div>
+
+                    <div class="post-author info-break-policy">
+                        <i class="fa fa-user-o fa-fw"></i>作者:&nbsp;&nbsp;
+                        
+                        欧阳思海
+                        
+                    </div>
+
+                    
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;
+                        4.4k
+                    </div>
+                    
+
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-clock-o fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                        19 分
+                    </div>
+                    
+                    
+
+                    
+                    <span id="busuanzi_container_site_pv" style='display:none'></span>
+                    <i class="fa fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                    <span id="busuanzi_value_page_pv"></span>
+
+                    
+
+                </div>
+            </div>
+            <hr class="clearfix">
+            <div class="card-content article-card-content">
+                <!-- 欧阳思海，modify，2020.05.01-->
+<!-- 文章详情详情页面的头部广告位置信息 -->
+<div id="post-head-panel">
+    
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" style="font-size: 18px;" target="_blank">
+        <img src="/icons/hot.gif">
+        本人花费半年的时间总结的《Java面试指南》已拿腾讯等大厂offer，已开源在github ，欢迎star！
+    </a>
+    
+    
+</div>
+<br />
+
+
+
+<blockquote>
+    
+            <p>本文GitHub <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">https://github.com/OUYANGSIHAI/JavaInterview</a> 已收录，这是我花了6个月总结的<b>一线大厂Java面试</b>总结，本人已拿大厂offer，欢迎star</p>
+    
+    <p>原文链接：blog.ouyangsihai.cn &gt;&gt; <a href="/django-gong-cheng-de-fen-ceng-jie-gou.html" target="_blank">Django工程的分层结构</a></p>
+</blockquote>
+                <div id="articleContent">
+                    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>传统上我们都知道在Django中的MTV模式，具体内容含义我们再来回顾一下：</p>
+<ul>
+<li>M：是Model的简称，它的目标就是通过定义模型来处理和数据库进行交互，有了这一层或者这种类型的对象，我们就可以通过对象来操作数据。</li>
+<li>V：是View的简称，它的工作很少，就是接受用户请求换句话说就是通过HTTP请求接受用户的输入；另外把输入信息发送给处理程并获取结果；最后把结果发送给用户，当然最后这一步还可以使用模板来修饰数据。</li>
+<li>T：是Template的简称，这里主要是通过标记语言来定义页面，另外还可以嵌入模板语言让引擎来渲染动态数据。</li>
+</ul>
+<p>这时候我们看到网上大多数的列子包括有些视频课程里面只讲MVT以及语法和其他功能实现等，但大家有没有想过一个问题，你的业务逻辑放在哪里？课程中的逻辑通常放在了View里面，就像下面：</p>
+<td class="line_numbers"><pre>123456789101112131415161718</pre></td><td class="code"><pre class="python" style="font-family:monospace;"># urls.pypath('hello/', Hello),path('helloworld/', HelloWorld.as_view()) # Viewfrom django.views import View # FVBdef Hello(request):    if request.method == "GET":        return HttpResponse("Hello world") # CVBclass HelloWorld(View):    def get(self, request):        pass    def post(self, request):        pass</pre></td>
+
+<h1 id="urls-py"><a href="#urls-py" class="headerlink" title="urls.py"></a>urls.py</h1><p>path(‘hello&#x2F;‘, Hello),<br>path(‘helloworld&#x2F;‘, HelloWorld.as_view())</p>
+<h1 id="View"><a href="#View" class="headerlink" title="View"></a>View</h1><p>from django.views import View</p>
+<h1 id="FVB"><a href="#FVB" class="headerlink" title="FVB"></a>FVB</h1><p>def Hello(request):<br>    if request.method &#x3D;&#x3D; “GET”:<br>        return HttpResponse(“Hello world”)</p>
+<h1 id="CVB"><a href="#CVB" class="headerlink" title="CVB"></a>CVB</h1><p>class HelloWorld(View):<br>    def get(self, request):<br>        pass<br>    def post(self, request):<br>        pass</p>
+<p>无论是FBV还是CBV，当用户请求进来并通过URL路由找到对应的方法或者类，然后对请求进行处理，比如可以直接返回模型数据、验证用户输入或者校验用户名和密码等。在学习阶段或者功能非常简单的时候使用这种写法没问题，但是对于相对大一点的项目来说你很多具体的处理流程开始出现，而这些东西都写到View里显然你自己都看不下去。</p>
+<blockquote>
+<p>FBV全名Function-based views，基于函数的视图；CBV全名Class-based views，基于类的视图</p>
+</blockquote>
+<p>所以View，它就是一个控制器，它不应该包含业务逻辑，事实上它应该是一个很薄的层。</p>
+<h2 id="业务逻辑到底放哪里"><a href="#业务逻辑到底放哪里" class="headerlink" title="业务逻辑到底放哪里"></a>业务逻辑到底放哪里</h2><p>网上也有很多文章回答了这个问题，提到了Form层，这个其实是用于验证用户输入数据的格式，比如邮件地址是否正确、是否填写了用户名和密码，至于这个用户名或者邮箱到底在数据库中是否真实存在则不是它应该关心的，它只是一个数据格式验证器。所以业务逻辑到底放哪里呢？显然要引入另外一层。</p>
+<p>关于这一层的名称有些人叫做UseCase，也有些人叫做Service，至于什么名字无所谓只要是大家一看就明白的名称就好。如果我们使用UseCase这个名字，那么我们的Djaong工程架构就变成了MUVT，如果是Service那么就MSVT。</p>
+<p>这一层的目标是什么呢？它专注于具体业务逻辑，也就是不同用例的具体操作，比如用户注册、登陆和注销都一个用例。所有模型都只是工作流程的一部分并且这一层也知道模型有哪些API。这么说有些空洞，我们用一个例子来说明：</p>
+<p>场景是用户注册：</p>
+<ol>
+<li>信息填写规范且用户不存在则注册成功并发送账户激活邮件</li>
+<li>如果用户已存在则程序引发错误，然后传递到上层并进行告知用户名已被占用</li>
+</ol>
+<blockquote>
+<p>Django 2.2.1、Python 3.7</p>
+</blockquote>
+<p>下图是整个工程的结构</p>
+<img title="Django工程的分层结构" src="https://www.javazhiyin.com/wp-content/uploads/2019/07/java4-1563444804.png" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="Django工程的分层结构">
+
+<h3 id="Models层"><a href="#Models层" class="headerlink" title="Models层"></a>Models层</h3><p>models.py</p>
+<td class="line_numbers"><pre>12345678910111213141516171819202122</pre></td><td class="code"><pre class="python" style="font-family:monospace;">from django.db import modelsfrom django.utils.translation import gettext as _ # Create your models here. from django.contrib.auth.models import AbstractUser, UserManager, User class UserAccountManager(UserManager):    # 管理器    def find_by_username(self, username):        queryset = self.get_queryset()        return queryset.filter(username=username)  class UserAccount(AbstractUser):    # 扩展一个字段，家庭住址    home_address = models.CharField(_('home address'), max_length=150, blank=True)    # 账户是否被激活，与users表里默认的is_active不是一回事    is_activated = models.BooleanField(_('activatition'), default=False, help_text=_('新账户注册后是否通过邮件验证激活。'),)     # 指定该模型的manager类    objects = UserAccountManager()</pre></td>
+
+<p>from django.db import models<br>from django.utils.translation import gettext as _</p>
+<h1 id="Create-your-models-here"><a href="#Create-your-models-here" class="headerlink" title="Create your models here."></a>Create your models here.</h1><p>from django.contrib.auth.models import AbstractUser, UserManager, User</p>
+<p>class UserAccountManager(UserManager):<br>    # 管理器<br>    def find_by_username(self, username):<br>        queryset &#x3D; self.get_queryset()<br>        return queryset.filter(username&#x3D;username)</p>
+<p>class UserAccount(AbstractUser):<br>    # 扩展一个字段，家庭住址<br>    home_address &#x3D; models.CharField(<em>(‘home address’), max_length&#x3D;150, blank&#x3D;True)<br>    # 账户是否被激活，与users表里默认的is_active不是一回事<br>    is_activated &#x3D; models.BooleanField(</em>(‘activatition’), default&#x3D;False, help_text&#x3D;_(‘新账户注册后是否通过邮件验证激活。’),)</p>
+<pre class="line-numbers language-java"><code class="language-java">
+# 指定该模型的manager类
+objects <span class="token operator">=</span> <span class="token function">UserAccountManager</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>我们知道Django会为我们自动建立一个叫做auth_user的表，也就是它自己的认证内容，这个user表本身就是一个模型，它就是继承了AbstractUser类，而这个类有继承了AbstractBaseUser，而这个类继承了models.Model，所以我们这里就是一个模型。再说回AbstractUser类，这个类里面定义了一些username、first_name、email、is_active等用户属性相关的字段，如果你觉得不够用还可以自己扩展。</p>
+<p>为了让Django使用我们扩展的用户模型，所以需要在settings.py中添加如下内容：</p>
+<td class="line_numbers"><pre>1</pre></td><td class="code"><pre class="null" style="font-family:monospace;">AUTH_USER_MODEL = "users.UserAccount"</pre></td>
+
+<p>AUTH_USER_MODEL &#x3D; “users.UserAccount”</p>
+<h3 id="工具类"><a href="#工具类" class="headerlink" title="工具类"></a>工具类</h3><p>这个文件主要是放一些通用工具，比如发送邮件这种公共会调用的功能，utils.py内容如下：</p>
+<td class="line_numbers"><pre>12345678910111213141516171819202122232425262728293031323334353637383940414243</pre></td><td class="code"><pre class="python" style="font-family:monospace;">from django.core.mail import send_mailfrom django.contrib.sites.shortcuts import get_current_sitefrom django.contrib.auth.tokens import PasswordResetTokenGeneratorfrom django.utils import sixfrom django.template.loader import render_to_stringfrom django.utils.http import urlsafe_base64_encode, urlsafe_base64_decodefrom django.utils.encoding import force_bytes, force_textfrom mysite import settings  class TokenGenerator(PasswordResetTokenGenerator):    def __init__(self):        super(TokenGenerator, self).__init__()     # def _make_hash_value(self, user, timestamp):    #     return (    #         six.text_type(user.pk) + six.text_type(timestamp) + six.text_type(user.is_active)    #     )  class WelcomeEmail:    subject = 'Activate Your Account'     @classmethod    def send_to(cls, request, user_account):        try:            current_site = get_current_site(request)            account_activation_token = TokenGenerator()            message = render_to_string('activate_account.html', {                'username': user_account.username,                'domain': current_site.domain,                'uid': urlsafe_base64_encode(force_bytes(user_account.id)),                'token': account_activation_token.make_token(user_account),            })             send_mail(                subject=cls.subject,                message=message,                from_email=settings.EMAIL_HOST_USER,                recipient_list=[user_account.email]            )        except Exception as err:            print(err)</pre></td>
+
+<p>from django.core.mail import send_mail<br>from django.contrib.sites.shortcuts import get_current_site<br>from django.contrib.auth.tokens import PasswordResetTokenGenerator<br>from django.utils import six<br>from django.template.loader import render_to_string<br>from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode<br>from django.utils.encoding import force_bytes, force_text<br>from mysite import settings</p>
+<p>class TokenGenerator(PasswordResetTokenGenerator):<br>    def <strong>init</strong>(self):<br>        super(TokenGenerator, self).<strong>init</strong>()</p>
+<pre class="line-numbers language-java"><code class="language-java">
+# def <span class="token function">_make_hash_value</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> user<span class="token punctuation">,</span> timestamp<span class="token punctuation">)</span><span class="token operator">:</span>
+#     <span class="token keyword">return</span> <span class="token punctuation">(</span>
+#         six<span class="token punctuation">.</span><span class="token function">text_type</span><span class="token punctuation">(</span>user<span class="token punctuation">.</span>pk<span class="token punctuation">)</span> <span class="token operator">+</span> six<span class="token punctuation">.</span><span class="token function">text_type</span><span class="token punctuation">(</span>timestamp<span class="token punctuation">)</span> <span class="token operator">+</span> six<span class="token punctuation">.</span><span class="token function">text_type</span><span class="token punctuation">(</span>user<span class="token punctuation">.</span>is_active<span class="token punctuation">)</span>
+#     <span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>class WelcomeEmail:<br>    subject &#x3D; ‘Activate Your Account’</p>
+<pre class="line-numbers language-java"><code class="language-java">
+<span class="token annotation punctuation">@classmethod</span>
+def <span class="token function">send_to</span><span class="token punctuation">(</span>cls<span class="token punctuation">,</span> request<span class="token punctuation">,</span> user_account<span class="token punctuation">)</span><span class="token operator">:</span>
+    <span class="token keyword">try</span><span class="token operator">:</span>
+        current_site <span class="token operator">=</span> <span class="token function">get_current_site</span><span class="token punctuation">(</span>request<span class="token punctuation">)</span>
+        account_activation_token <span class="token operator">=</span> <span class="token function">TokenGenerator</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        message <span class="token operator">=</span> <span class="token function">render_to_string</span><span class="token punctuation">(</span><span class="token string">'activate_account.html'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+            <span class="token string">'username'</span><span class="token operator">:</span> user_account<span class="token punctuation">.</span>username<span class="token punctuation">,</span>
+            <span class="token string">'domain'</span><span class="token operator">:</span> current_site<span class="token punctuation">.</span>domain<span class="token punctuation">,</span>
+            <span class="token string">'uid'</span><span class="token operator">:</span> <span class="token function">urlsafe_base64_encode</span><span class="token punctuation">(</span><span class="token function">force_bytes</span><span class="token punctuation">(</span>user_account<span class="token punctuation">.</span>id<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+            <span class="token string">'token'</span><span class="token operator">:</span> account_activation_token<span class="token punctuation">.</span><span class="token function">make_token</span><span class="token punctuation">(</span>user_account<span class="token punctuation">)</span><span class="token punctuation">,</span>
+        <span class="token punctuation">}</span><span class="token punctuation">)</span>
+
+        <span class="token function">send_mail</span><span class="token punctuation">(</span>
+            subject<span class="token operator">=</span>cls<span class="token punctuation">.</span>subject<span class="token punctuation">,</span>
+            message<span class="token operator">=</span>message<span class="token punctuation">,</span>
+            from_email<span class="token operator">=</span>settings<span class="token punctuation">.</span>EMAIL_HOST_USER<span class="token punctuation">,</span>
+            recipient_list<span class="token operator">=</span><span class="token punctuation">[</span>user_account<span class="token punctuation">.</span>email<span class="token punctuation">]</span>
+        <span class="token punctuation">)</span>
+    except Exception as err<span class="token operator">:</span>
+        <span class="token function">print</span><span class="token punctuation">(</span>err<span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>TokenGenerator这个东西使用还是它父类本身的功能，之所以这样做是为了在必要的时候可以重写一些功能。父类PasswordResetTokenGenerator的功能主要是根据用户主键来生成token，之后还会根据传递的token和用户主键去检查传递的token是否一致。</p>
+<p>针对邮件发送我这里使用Django提供的封装，你需要在settings.py中添加如下内容：</p>
+<td class="line_numbers"><pre>12345678</pre></td><td class="code"><pre class="python" style="font-family:monospace;"># 邮件设置EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'EMAIL_USE_SSL = TrueEMAIL_HOST = 'smtp.163.com'EMAIL_PORT = 465EMAIL_HOST_USER = ''   # 发件人邮箱地址EMAIL_HOST_PASSWORD = ''  # 发件人邮箱密码DEFAULT_FROM_EMAIL = EMAIL_HOST_USER</pre></td>
+
+<h1 id="邮件设置"><a href="#邮件设置" class="headerlink" title="邮件设置"></a>邮件设置</h1><p>EMAIL_BACKEND &#x3D; ‘django.core.mail.backends.smtp.EmailBackend’<br>EMAIL_USE_SSL &#x3D; True<br>EMAIL_HOST &#x3D; ‘smtp.163.com’<br>EMAIL_PORT &#x3D; 465<br>EMAIL_HOST_USER &#x3D; ‘’   # 发件人邮箱地址<br>EMAIL_HOST_PASSWORD &#x3D; ‘’  # 发件人邮箱密码<br>DEFAULT_FROM_EMAIL &#x3D; EMAIL_HOST_USER</p>
+<h3 id="Services层"><a href="#Services层" class="headerlink" title="Services层"></a>Services层</h3><p>这层主要是根据用例来实现业务逻辑，比如注册用户账号和激活用户账号。</p>
+<td class="line_numbers"><pre>123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107</pre></td><td class="code"><pre class="python" style="font-family:monospace;">"""Service层，针对不同用例实现的业务逻辑代码"""from django.utils.translation import gettext as _from django.shortcuts import renderfrom .utils import (    WelcomeEmail,    TokenGenerator,)from users.models import (    UserAccount)  class UsernameAlreadyExistError(Exception):    pass  class UserIdIsNotExistError(Exception):    """    用户ID，主键不存在    """    pass  class ActivatitionTokenError(Exception):    pass  class RegisterUserAccount:    def __init__(self, request, username, password, confirm_password, email):        self._username = username        self._password = password        self._email = email        self._request = request     def valid_data(self):        """        检查用户名是否已经被注册        :return:        """        user_query_set = UserAccount.objects.find_by_username(username=self._username).first()        if user_query_set:            error_msg = ('用户名 {} 已被注册，请更换。'.format(self._username))            raise UsernameAlreadyExistError(_(error_msg))        return True     def _send_welcome_email_to(self, user_account):        """        注册成功后发送电子邮件        :param user_account:        :return:        """        WelcomeEmail.send_to(self._request, user_account)     def execute(self):        self.valid_data()        user_account = self._factory_user_account()        self._send_welcome_email_to(user_account)        return user_account     def _factory_user_account(self):        """        这里是创建用户        :return:        """         # 这样创建需要调用save()        # ua = UserAccount(username=self._username, password=self._password, email=self._email)        # ua.save()        # return ua         # 直接通过create_user则不需要调用save()        return UserAccount.objects.create_user(            self._username,            self._email,            self._password,        )  class ActivateUserAccount:    def __init__(self, uid, token):        self._uid = uid        self._token = token     def _account_valid(self):        """        验证用户是否存在        :return: 模型对象或者None        """        return UserAccount.objects.all().get(id=self._uid)     def execute(self):        # 查询是否有用户        user_account = self._account_valid()        account_activation_token = TokenGenerator()        if user_account is None:            error_msg = ('激活用户失败，提供的用户标识 {} 不正确，无此用户。'.format(self._uid))            raise UserIdIsNotExistError(_(error_msg))         if not account_activation_token.check_token(user_account, self._token):            error_msg = ('激活用户失败，提供的Token {} 不正确。'.format(self._token))            raise ActivatitionTokenError(_(error_msg))         user_account.is_activated = True        user_account.save()        return True</pre></td>
+
+<p>“””<br>Service层，针对不同用例实现的业务逻辑代码<br>“””<br>from django.utils.translation import gettext as _<br>from django.shortcuts import render<br>from .utils import (<br>    WelcomeEmail,<br>    TokenGenerator,<br>)<br>from users.models import (<br>    UserAccount<br>)</p>
+<p>class UsernameAlreadyExistError(Exception):<br>    pass</p>
+<p>class UserIdIsNotExistError(Exception):<br>    “””<br>    用户ID，主键不存在<br>    “””<br>    pass</p>
+<p>class ActivatitionTokenError(Exception):<br>    pass</p>
+<p>class RegisterUserAccount:<br>    def <strong>init</strong>(self, request, username, password, confirm_password, email):<br>        self._username &#x3D; username<br>        self._password &#x3D; password<br>        self._email &#x3D; email<br>        self._request &#x3D; request</p>
+<pre class="line-numbers language-java"><code class="language-java">
+def <span class="token function">valid_data</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token operator">:</span>
+    <span class="token string">""</span>"
+    检查用户名是否已经被注册
+    <span class="token operator">:</span><span class="token keyword">return</span><span class="token operator">:</span>
+    <span class="token string">""</span>"
+    user_query_set <span class="token operator">=</span> UserAccount<span class="token punctuation">.</span>objects<span class="token punctuation">.</span><span class="token function">find_by_username</span><span class="token punctuation">(</span>username<span class="token operator">=</span>self<span class="token punctuation">.</span>_username<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">first</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">if</span> user_query_set<span class="token operator">:</span>
+        error_msg <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token string">'用户名 {} 已被注册，请更换。'</span><span class="token punctuation">.</span><span class="token function">format</span><span class="token punctuation">(</span>self<span class="token punctuation">.</span>_username<span class="token punctuation">)</span><span class="token punctuation">)</span>
+        raise <span class="token function">UsernameAlreadyExistError</span><span class="token punctuation">(</span><span class="token function">_</span><span class="token punctuation">(</span>error_msg<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> True
+
+def <span class="token function">_send_welcome_email_to</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> user_account<span class="token punctuation">)</span><span class="token operator">:</span>
+    <span class="token string">""</span>"
+    注册成功后发送电子邮件
+    <span class="token operator">:</span>param user_account<span class="token operator">:</span>
+    <span class="token operator">:</span><span class="token keyword">return</span><span class="token operator">:</span>
+    <span class="token string">""</span>"
+    WelcomeEmail<span class="token punctuation">.</span><span class="token function">send_to</span><span class="token punctuation">(</span>self<span class="token punctuation">.</span>_request<span class="token punctuation">,</span> user_account<span class="token punctuation">)</span>
+
+def <span class="token function">execute</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token operator">:</span>
+    self<span class="token punctuation">.</span><span class="token function">valid_data</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    user_account <span class="token operator">=</span> self<span class="token punctuation">.</span><span class="token function">_factory_user_account</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    self<span class="token punctuation">.</span><span class="token function">_send_welcome_email_to</span><span class="token punctuation">(</span>user_account<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> user_account
+
+def <span class="token function">_factory_user_account</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token operator">:</span>
+    <span class="token string">""</span>"
+    这里是创建用户
+    <span class="token operator">:</span><span class="token keyword">return</span><span class="token operator">:</span>
+    <span class="token string">""</span>"
+
+    # 这样创建需要调用<span class="token function">save</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    # ua <span class="token operator">=</span> <span class="token function">UserAccount</span><span class="token punctuation">(</span>username<span class="token operator">=</span>self<span class="token punctuation">.</span>_username<span class="token punctuation">,</span> password<span class="token operator">=</span>self<span class="token punctuation">.</span>_password<span class="token punctuation">,</span> email<span class="token operator">=</span>self<span class="token punctuation">.</span>_email<span class="token punctuation">)</span>
+    # ua<span class="token punctuation">.</span><span class="token function">save</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    # <span class="token keyword">return</span> ua
+
+    # 直接通过create_user则不需要调用<span class="token function">save</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> UserAccount<span class="token punctuation">.</span>objects<span class="token punctuation">.</span><span class="token function">create_user</span><span class="token punctuation">(</span>
+        self<span class="token punctuation">.</span>_username<span class="token punctuation">,</span>
+        self<span class="token punctuation">.</span>_email<span class="token punctuation">,</span>
+        self<span class="token punctuation">.</span>_password<span class="token punctuation">,</span>
+    <span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>class ActivateUserAccount:<br>    def <strong>init</strong>(self, uid, token):<br>        self._uid &#x3D; uid<br>        self._token &#x3D; token</p>
+<pre class="line-numbers language-java"><code class="language-java">
+def <span class="token function">_account_valid</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token operator">:</span>
+    <span class="token string">""</span>"
+    验证用户是否存在
+    <span class="token operator">:</span><span class="token keyword">return</span><span class="token operator">:</span> 模型对象或者None
+    <span class="token string">""</span>"
+    <span class="token keyword">return</span> UserAccount<span class="token punctuation">.</span>objects<span class="token punctuation">.</span><span class="token function">all</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span>id<span class="token operator">=</span>self<span class="token punctuation">.</span>_uid<span class="token punctuation">)</span>
+
+def <span class="token function">execute</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token operator">:</span>
+    # 查询是否有用户
+    user_account <span class="token operator">=</span> self<span class="token punctuation">.</span><span class="token function">_account_valid</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    account_activation_token <span class="token operator">=</span> <span class="token function">TokenGenerator</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">if</span> user_account is None<span class="token operator">:</span>
+        error_msg <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token string">'激活用户失败，提供的用户标识 {} 不正确，无此用户。'</span><span class="token punctuation">.</span><span class="token function">format</span><span class="token punctuation">(</span>self<span class="token punctuation">.</span>_uid<span class="token punctuation">)</span><span class="token punctuation">)</span>
+        raise <span class="token function">UserIdIsNotExistError</span><span class="token punctuation">(</span><span class="token function">_</span><span class="token punctuation">(</span>error_msg<span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">if</span> not account_activation_token<span class="token punctuation">.</span><span class="token function">check_token</span><span class="token punctuation">(</span>user_account<span class="token punctuation">,</span> self<span class="token punctuation">.</span>_token<span class="token punctuation">)</span><span class="token operator">:</span>
+        error_msg <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token string">'激活用户失败，提供的Token {} 不正确。'</span><span class="token punctuation">.</span><span class="token function">format</span><span class="token punctuation">(</span>self<span class="token punctuation">.</span>_token<span class="token punctuation">)</span><span class="token punctuation">)</span>
+        raise <span class="token function">ActivatitionTokenError</span><span class="token punctuation">(</span><span class="token function">_</span><span class="token punctuation">(</span>error_msg<span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+    user_account<span class="token punctuation">.</span>is_activated <span class="token operator">=</span> True
+    user_account<span class="token punctuation">.</span><span class="token function">save</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> True
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>这里定义的异常类比如UsernameAlreadyExistError等里面的内容就是空的，目的是raise异常到自定义的异常中，这样调用方通过try就可以捕获，有些时候代码执行的结果影响调用方后续的处理，通常大家可能认为需要通过返回值来判断，比如True或者False，但通常这不是一个好办法或者说在有些时候不是，因为那样会造成代码冗长，比如下面的代码：</p>
+<p>这是上面代码中的一部分，</p>
+<td class="line_numbers"><pre>12345678910111213141516</pre></td><td class="code"><pre class="python" style="font-family:monospace;">   def valid_data(self):        """        检查用户名是否已经被注册        :return:        """        user_query_set = UserAccount.objects.find_by_username(username=self._username).first()        if user_query_set:            error_msg = ('用户名 {} 已被注册，请更换。'.format(self._username))            raise UsernameAlreadyExistError(_(error_msg))        return True     def execute(self):        self.valid_data()        user_account = self._factory_user_account()        self._send_welcome_email_to(user_account)        return user_account</pre></td>
+
+<p>   def valid_data(self):<br>        “””<br>        检查用户名是否已经被注册<br>        :return:<br>        “””<br>        user_query_set &#x3D; UserAccount.objects.find_by_username(username&#x3D;self._username).first()<br>        if user_query_set:<br>            error_msg &#x3D; (‘用户名 {} 已被注册，请更换。’.format(self.<em>username))<br>            raise UsernameAlreadyExistError(</em>(error_msg))<br>        return True</p>
+<pre class="line-numbers language-java"><code class="language-java">
+def <span class="token function">execute</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token operator">:</span>
+    self<span class="token punctuation">.</span><span class="token function">valid_data</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    user_account <span class="token operator">=</span> self<span class="token punctuation">.</span><span class="token function">_factory_user_account</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    self<span class="token punctuation">.</span><span class="token function">_send_welcome_email_to</span><span class="token punctuation">(</span>user_account<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> user_account
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>execute函数会执行valid_data()函数，如果执行成功我才会向下执行，可是你看我在execute函数中并没有这样的语句，比如：</p>
+<td class="line_numbers"><pre>1234567</pre></td><td class="code"><pre class="python" style="font-family:monospace;">def execute(self):    if self.valid_data():        user_account = self._factory_user_account()        self._send_welcome_email_to(user_account)        return user_account    else:        pass</pre></td>
+
+<p>def execute(self):<br>    if self.valid_data():<br>        user_account &#x3D; self._factory_user_account()<br>        self._send_welcome_email_to(user_account)<br>        return user_account<br>    else:<br>        pass</p>
+<p>换句话说你的每个函数都可能有返回值，如果每一个你都这样写代码就太啰嗦了。其实你可以看到在valid_data函数中我的确返回了True，但是我希望你也应该注意，如果用户存在的话我并没有返回False，而是raise一个异常，这样这个异常就会被调用方获取而且还能获取错误信息，这种方式将是一个很好的处理方式，具体你可以通过views.py中看到。</p>
+<h3 id="Forms表单验证"><a href="#Forms表单验证" class="headerlink" title="Forms表单验证"></a>Forms表单验证</h3><p>这里是对于用户输入做检查</p>
+<td class="line_numbers"><pre>123456789101112131415161718192021222324252627282930</pre></td><td class="code"><pre class="python" style="font-family:monospace;">"""表单验证功能"""from django import formsfrom django.utils.translation import gettext as _  class RegisterAccountForm(forms.Form):    username = forms.CharField(max_length=50, required=True, error_messages={        'max_length': '用户名不能超过50个字符',        'required': '用户名不能为空',    })     email = forms.EmailField(required=True)    password = forms.CharField(min_length=6, max_length=20, required=True, widget=forms.PasswordInput())    confirm_password = forms.CharField(min_length=6, max_length=20, required=True, widget=forms.PasswordInput())     def clean_confirm_password(self) - str:  # - str 表示的含义是函数返回值类型是str，在打印函数annotation的时候回显示。        """        clean_XXXX XXXX是字段名        比如这个方法是判断两次密码是否一致，密码框输入的密码就算符合规则但是也不代表两个密码一致，所以需要自己来进行检测        :return:        """        password = self.cleaned_data.get('password')        confirm_password = self.cleaned_data.get('confirm_password')         if confirm_password != password:            raise forms.ValidationError(message='Password and confirmation do not match each other')         return confirm_password</pre></td>
+
+<p>“””<br>表单验证功能<br>“””<br>from django import forms<br>from django.utils.translation import gettext as _</p>
+<p>class RegisterAccountForm(forms.Form):<br>    username &#x3D; forms.CharField(max_length&#x3D;50, required&#x3D;True, error_messages&#x3D;{<br>        ‘max_length’: ‘用户名不能超过50个字符’,<br>        ‘required’: ‘用户名不能为空’,<br>    })</p>
+<pre class="line-numbers language-java"><code class="language-java">
+email <span class="token operator">=</span> forms<span class="token punctuation">.</span><span class="token function">EmailField</span><span class="token punctuation">(</span>required<span class="token operator">=</span>True<span class="token punctuation">)</span>
+password <span class="token operator">=</span> forms<span class="token punctuation">.</span><span class="token function">CharField</span><span class="token punctuation">(</span>min_length<span class="token operator">=</span><span class="token number">6</span><span class="token punctuation">,</span> max_length<span class="token operator">=</span><span class="token number">20</span><span class="token punctuation">,</span> required<span class="token operator">=</span>True<span class="token punctuation">,</span> widget<span class="token operator">=</span>forms<span class="token punctuation">.</span><span class="token function">PasswordInput</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+confirm_password <span class="token operator">=</span> forms<span class="token punctuation">.</span><span class="token function">CharField</span><span class="token punctuation">(</span>min_length<span class="token operator">=</span><span class="token number">6</span><span class="token punctuation">,</span> max_length<span class="token operator">=</span><span class="token number">20</span><span class="token punctuation">,</span> required<span class="token operator">=</span>True<span class="token punctuation">,</span> widget<span class="token operator">=</span>forms<span class="token punctuation">.</span><span class="token function">PasswordInput</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+def <span class="token function">clean_confirm_password</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span> <span class="token operator">-</span> str<span class="token operator">:</span>  # <span class="token operator">-</span> str 表示的含义是函数返回值类型是str，在打印函数annotation的时候回显示。
+    <span class="token string">""</span>"
+    clean_XXXX XXXX是字段名
+    比如这个方法是判断两次密码是否一致，密码框输入的密码就算符合规则但是也不代表两个密码一致，所以需要自己来进行检测
+    <span class="token operator">:</span><span class="token keyword">return</span><span class="token operator">:</span>
+    <span class="token string">""</span>"
+    password <span class="token operator">=</span> self<span class="token punctuation">.</span>cleaned_data<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'password'</span><span class="token punctuation">)</span>
+    confirm_password <span class="token operator">=</span> self<span class="token punctuation">.</span>cleaned_data<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'confirm_password'</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">if</span> confirm_password <span class="token operator">!=</span> password<span class="token operator">:</span>
+        raise forms<span class="token punctuation">.</span><span class="token function">ValidationError</span><span class="token punctuation">(</span>message<span class="token operator">=</span><span class="token string">'Password and confirmation do not match each other'</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">return</span> confirm_password
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>前端可以实现输入验证，但是也很容易被跳过，所以后端肯定也需要进行操作，当然我这里并没有做预防XSS攻击的措施，因为这个不是我们今天要讨论的主要内容。</p>
+<h3 id="Views"><a href="#Views" class="headerlink" title="Views"></a>Views</h3><td class="line_numbers"><pre>1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465</pre></td><td class="code"><pre class="python" style="font-family:monospace;">from django.shortcuts import render, HttpResponse, HttpResponseRedirectfrom rest_framework.views import APIViewfrom django.utils.http import urlsafe_base64_encode, urlsafe_base64_decodefrom django.utils.encoding import force_bytes, force_textfrom .forms import (    RegisterAccountForm,)from .services import (    RegisterUserAccount,    UsernameAlreadyExistError,    ActivateUserAccount,    ActivatitionTokenError,    UserIdIsNotExistError,)# Create your views here.  class Register(APIView):    def get(self, request):        return render(request, 'register.html')     def post(self, request):        # print("request.data 的内容: ", request.data)        # print("request.POST 的内容: ", request.POST)         # 针对数据输入做检查，是否符合规则        ra_form = RegisterAccountForm(request.POST)        if ra_form.is_valid():            # print("验证过的数据：", ra_form.cleaned_data)            rua = RegisterUserAccount(request=request, **ra_form.cleaned_data)            try:                rua.execute()            except UsernameAlreadyExistError as err:                # 这里就是捕获自定义异常，并给form对象添加一个错误信息，并通过模板渲染然后返回前端页面                ra_form.add_error('username', str(err))                return render(request, 'register.html', {'info': ra_form.errors})             return HttpResponse('We have sent you an email, please confirm your email address to complete registration')            # return HttpResponseRedirect("/account/login/")        else:            return render(request, 'register.html', {'info': ra_form.errors})  class Login(APIView):    def get(self, request):        return render(request, 'login.html')     def post(self, request):        print("request.data 的内容: ", request.data)        print("request.POST 的内容: ", request.POST)        pass  class ActivateAccount(APIView):    # 用户激活账户    def get(self, request, uidb64, token):        try:            # 获取URL中的用户ID            uid = force_bytes(urlsafe_base64_decode(uidb64))            # 激活用户            aua = ActivateUserAccount(uid, token)            aua.execute()            return render(request, 'login.html')        except(ActivatitionTokenError, UserIdIsNotExistError) as err:            return HttpResponse('Activation is failed.')</pre></td>
+
+<p>from django.shortcuts import render, HttpResponse, HttpResponseRedirect<br>from rest_framework.views import APIView<br>from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode<br>from django.utils.encoding import force_bytes, force_text<br>from .forms import (<br>    RegisterAccountForm,<br>)<br>from .services import (<br>    RegisterUserAccount,<br>    UsernameAlreadyExistError,<br>    ActivateUserAccount,<br>    ActivatitionTokenError,<br>    UserIdIsNotExistError,<br>)</p>
+<h1 id="Create-your-views-here"><a href="#Create-your-views-here" class="headerlink" title="Create your views here."></a>Create your views here.</h1><p>class Register(APIView):<br>    def get(self, request):<br>        return render(request, ‘register.html’)</p>
+<pre class="line-numbers language-java"><code class="language-java">
+def <span class="token function">post</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> request<span class="token punctuation">)</span><span class="token operator">:</span>
+    # <span class="token function">print</span><span class="token punctuation">(</span><span class="token string">"request.data 的内容: "</span><span class="token punctuation">,</span> request<span class="token punctuation">.</span>data<span class="token punctuation">)</span>
+    # <span class="token function">print</span><span class="token punctuation">(</span><span class="token string">"request.POST 的内容: "</span><span class="token punctuation">,</span> request<span class="token punctuation">.</span>POST<span class="token punctuation">)</span>
+
+    # 针对数据输入做检查，是否符合规则
+    ra_form <span class="token operator">=</span> <span class="token function">RegisterAccountForm</span><span class="token punctuation">(</span>request<span class="token punctuation">.</span>POST<span class="token punctuation">)</span>
+    <span class="token keyword">if</span> ra_form<span class="token punctuation">.</span><span class="token function">is_valid</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span>
+        # <span class="token function">print</span><span class="token punctuation">(</span><span class="token string">"验证过的数据："</span><span class="token punctuation">,</span> ra_form<span class="token punctuation">.</span>cleaned_data<span class="token punctuation">)</span>
+        rua <span class="token operator">=</span> <span class="token function">RegisterUserAccount</span><span class="token punctuation">(</span>request<span class="token operator">=</span>request<span class="token punctuation">,</span> <span class="token operator">*</span><span class="token operator">*</span>ra_form<span class="token punctuation">.</span>cleaned_data<span class="token punctuation">)</span>
+        <span class="token keyword">try</span><span class="token operator">:</span>
+            rua<span class="token punctuation">.</span><span class="token function">execute</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        except UsernameAlreadyExistError as err<span class="token operator">:</span>
+            # 这里就是捕获自定义异常，并给form对象添加一个错误信息，并通过模板渲染然后返回前端页面
+            ra_form<span class="token punctuation">.</span><span class="token function">add_error</span><span class="token punctuation">(</span><span class="token string">'username'</span><span class="token punctuation">,</span> <span class="token function">str</span><span class="token punctuation">(</span>err<span class="token punctuation">)</span><span class="token punctuation">)</span>
+            <span class="token keyword">return</span> <span class="token function">render</span><span class="token punctuation">(</span>request<span class="token punctuation">,</span> <span class="token string">'register.html'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span><span class="token string">'info'</span><span class="token operator">:</span> ra_form<span class="token punctuation">.</span>errors<span class="token punctuation">}</span><span class="token punctuation">)</span>
+
+        <span class="token keyword">return</span> <span class="token function">HttpResponse</span><span class="token punctuation">(</span><span class="token string">'We have sent you an email, please confirm your email address to complete registration'</span><span class="token punctuation">)</span>
+        # <span class="token keyword">return</span> <span class="token function">HttpResponseRedirect</span><span class="token punctuation">(</span><span class="token string">"/account/login/"</span><span class="token punctuation">)</span>
+    <span class="token keyword">else</span><span class="token operator">:</span>
+        <span class="token keyword">return</span> <span class="token function">render</span><span class="token punctuation">(</span>request<span class="token punctuation">,</span> <span class="token string">'register.html'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span><span class="token string">'info'</span><span class="token operator">:</span> ra_form<span class="token punctuation">.</span>errors<span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>class Login(APIView):<br>    def get(self, request):<br>        return render(request, ‘login.html’)</p>
+<pre class="line-numbers language-java"><code class="language-java">
+def <span class="token function">post</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> request<span class="token punctuation">)</span><span class="token operator">:</span>
+    <span class="token function">print</span><span class="token punctuation">(</span><span class="token string">"request.data 的内容: "</span><span class="token punctuation">,</span> request<span class="token punctuation">.</span>data<span class="token punctuation">)</span>
+    <span class="token function">print</span><span class="token punctuation">(</span><span class="token string">"request.POST 的内容: "</span><span class="token punctuation">,</span> request<span class="token punctuation">.</span>POST<span class="token punctuation">)</span>
+    pass
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>class ActivateAccount(APIView):<br>    # 用户激活账户<br>    def get(self, request, uidb64, token):<br>        try:<br>            # 获取URL中的用户ID<br>            uid &#x3D; force_bytes(urlsafe_base64_decode(uidb64))<br>            # 激活用户<br>            aua &#x3D; ActivateUserAccount(uid, token)<br>            aua.execute()<br>            return render(request, ‘login.html’)<br>        except(ActivatitionTokenError, UserIdIsNotExistError) as err:<br>            return HttpResponse(‘Activation is failed.’)</p>
+<p>这里就是视图层不同URL由不同的类来处理，这里只做基本的接收输入和返回输出功能，至于接收到的输入该如何处理则有其他组件来完成，针对输入格式规范则由forms中的类来处理，针对数据验证过后的具体业务逻辑则由services中的类来处理。</p>
+<h3 id="Urls"><a href="#Urls" class="headerlink" title="Urls"></a>Urls</h3><td class="line_numbers"><pre>123456789101112131415</pre></td><td class="code"><pre class="python" style="font-family:monospace;">from django.urls import path, re_path, includefrom .views import (    Register,    Login,    ActivateAccount,)  app_name = 'users'urlpatterns = [    re_path(r'^register/$', Register.as_view(), name='register'),    re_path(r'^login/$', Login.as_view(), name='login'),    re_path(r'^activate/(?P[0-9A-Za-z_\-]+)/(?P[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',            ActivateAccount.as_view(), name='activate'),]</pre></td>
+
+<p>from django.urls import path, re_path, include<br>from .views import (<br>    Register,<br>    Login,<br>    ActivateAccount,<br>)</p>
+<p>app_name &#x3D; ‘users’<br>urlpatterns &#x3D; [<br>    re_path(r’^register&#x2F;$’, Register.as_view(), name&#x3D;’register’),<br>    re_path(r’^login&#x2F;$’, Login.as_view(), name&#x3D;’login’),<br>    re_path(r’^activate&#x2F;(?P[0-9A-Za-z_-]+)&#x2F;(?P[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})&#x2F;$’,<br>            ActivateAccount.as_view(), name&#x3D;’activate’),<br>]</p>
+<h3 id="Templates"><a href="#Templates" class="headerlink" title="Templates"></a>Templates</h3><p>是我用到的html模板，我就不放在这里了，大家可以去这里<a target="_blank" rel="noopener" href="https://files.cnblogs.com/files/rexcheny/mysite.zip">https://files.cnblogs.com/files/rexcheny/mysite.zip</a></p>
+<p>下载全部的代码</p>
+<h3 id="页面效果"><a href="#页面效果" class="headerlink" title="页面效果"></a>页面效果</h3><img title="Django工程的分层结构" src="https://www.javazhiyin.com/wp-content/uploads/2019/07/java4-1563444804-1.png" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="Django工程的分层结构">
+
+<img title="Django工程的分层结构" src="https://www.javazhiyin.com/wp-content/uploads/2019/07/java6-1563444805.png" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="Django工程的分层结构">
+
+<p>激活邮件内容</p>
+<img title="Django工程的分层结构" src="https://www.javazhiyin.com/wp-content/uploads/2019/07/java6-1563444805-1.png" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="Django工程的分层结构">
+
+<p>点击后就会跳转到登陆页。下面我们从Django admin中查看，2个用户是激活状态的。</p>
+<img title="Django工程的分层结构" src="https://www.javazhiyin.com/wp-content/uploads/2019/07/java5-1563444805.png" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="Django工程的分层结构">
+
+<blockquote>
+<p>原文始发于：</p>
+</blockquote>
+
+                </div>
+                <!-- 欧阳思海，modify，2020.05.01-->
+<!-- 文章详情详情页面的头部广告位置信息 -->
+<div id="post-head-panel">
+    
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" style="font-size: 18px;" target="_blank">
+        <img src="/icons/hot.gif">
+        本人花费半年的时间总结的《Java面试指南》已拿腾讯等大厂offer，已开源在github ，欢迎star！
+    </a>
+    
+    
+</div>
+<br />
+
+
+
+<blockquote>
+    
+            <p>本文GitHub <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">https://github.com/OUYANGSIHAI/JavaInterview</a> 已收录，这是我花了6个月总结的<b>一线大厂Java面试</b>总结，本人已拿大厂offer，欢迎star</p>
+    
+    <p>原文链接：blog.ouyangsihai.cn &gt;&gt; <a href="/django-gong-cheng-de-fen-ceng-jie-gou.html" target="_blank">Django工程的分层结构</a></p>
+</blockquote>
+                <hr />
+
+                
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.88rem;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-large waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fa fa-close"></i></a>
+            <h4 class="reward-title">多少都是对我的认可</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="http://image.ouyangsihai.cn/FpbhsOuf3Ar9vY34B97Y2qQ7LVGe" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="http://image.ouyangsihai.cn/FgYlMzms68PH73PWpZBwPfbLTAws" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+                
+
+                <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+
+<div id="article-share">
+    
+    <div class="social-share" data-disabled="qzone" data-wechat-qrcode-helper="<p>微信里点“发现”->“扫一扫”二维码便可查看分享。</p>"></div>
+    
+</div>
+
+<script src="/libs/share/js/social-share.min.js"></script>
+
+                
+
+                
+                <div class="reprint1">
+                    <p>
+                        <span class="reprint1-tip">
+                            <i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;转载请注明:
+                        </span>
+                        <a href="https://blog.ouyangsihai.cn" class="b-link-green">好好学java</a>
+                        <i class="fa fa-angle-right fa-lg fa-fw text-color"></i>
+                        <a href="/django-gong-cheng-de-fen-ceng-jie-gou.html" class="b-link-green">Django工程的分层结构</a>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        
+
+        
+
+        
+
+        
+
+        
+        <style>
+    .valine-card {
+        margin: 1.5rem auto;
+    }
+
+    .valine-card .card-content {
+        padding: 20px 20px 5px 20px;
+    }
+    /* valine 评论框增加背景图片 */
+    #vcomments textarea {
+        box-sizing: border-box;
+        background: url("") 100% 100% no-repeat;
+    }
+
+    #vcomments input[type=text],
+    #vcomments input[type=email],
+    #vcomments input[type=url],
+    #vcomments textarea {
+        box-sizing: border-box;
+    }
+
+    #vcomments p {
+        margin: 2px 2px 10px;
+        font-size: 1.05rem;
+        line-height: 1.78rem;
+    }
+
+    #vcomments blockquote p {
+        text-indent: 0.2rem;
+    }
+
+    #vcomments a {
+        padding: 0 2px;
+        color: #42b983;
+        font-weight: 500;
+        text-decoration: underline;
+    }
+
+    #vcomments img {
+        max-width: 100%;
+        height: auto;
+        cursor: pointer;
+    }
+
+    #vcomments ol li {
+        list-style-type: decimal;
+    }
+
+    #vcomments ol,
+    ul {
+        display: block;
+        padding-left: 2em;
+        word-spacing: 0.05rem;
+    }
+
+    #vcomments ul li,
+    ol li {
+        display: list-item;
+        line-height: 1.8rem;
+        font-size: 1rem;
+    }
+
+    #vcomments ul li {
+        list-style-type: disc;
+    }
+
+    #vcomments ul ul li {
+        list-style-type: circle;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    #vcomments table, th, td {
+        border: 0;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments h1 {
+        font-size: 1.85rem;
+        font-weight: bold;
+        line-height: 2.2rem;
+    }
+
+    #vcomments h2 {
+        font-size: 1.65rem;
+        font-weight: bold;
+        line-height: 1.9rem;
+    }
+
+    #vcomments h3 {
+        font-size: 1.45rem;
+        font-weight: bold;
+        line-height: 1.7rem;
+    }
+
+    #vcomments h4 {
+        font-size: 1.25rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    #vcomments h5 {
+        font-size: 1.1rem;
+        font-weight: bold;
+        line-height: 1.4rem;
+    }
+
+    #vcomments h6 {
+        font-size: 1rem;
+        line-height: 1.3rem;
+    }
+
+    #vcomments p {
+        font-size: 1rem;
+        line-height: 1.5rem;
+    }
+
+    #vcomments hr {
+        margin: 12px 0;
+        border: 0;
+        border-top: 1px solid #ccc;
+    }
+
+    #vcomments blockquote {
+        margin: 15px 0;
+        border-left: 5px solid #42b983;
+        padding: 1rem 0.8rem 0.3rem 0.8rem;
+        color: #666;
+        background-color: rgba(66, 185, 131, .1);
+    }
+
+    #vcomments pre {
+        font-family: monospace, monospace;
+        padding: 1.2em;
+        margin: .5em 0;
+        background: #272822;
+        overflow: auto;
+        border-radius: 0.3em;
+        tab-size: 4;
+    }
+
+    #vcomments code {
+        font-family: monospace, monospace;
+        padding: 1px 3px;
+        font-size: 0.92rem;
+        color: #e96900;
+        background-color: #f8f8f8;
+        border-radius: 2px;
+    }
+
+    #vcomments pre code {
+        font-family: monospace, monospace;
+        padding: 0;
+        color: #e8eaf6;
+        background-color: #272822;
+    }
+
+    #vcomments pre[class*="language-"] {
+        padding: 1.2em;
+        margin: .5em 0;
+    }
+
+    #vcomments code[class*="language-"],
+    pre[class*="language-"] {
+        color: #e8eaf6;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    #vcomments b,
+    strong {
+        font-weight: bold;
+    }
+
+    #vcomments dfn {
+        font-style: italic;
+    }
+
+    #vcomments small {
+        font-size: 85%;
+    }
+
+    #vcomments cite {
+        font-style: normal;
+    }
+
+    #vcomments mark {
+        background-color: #fcf8e3;
+        padding: .2em;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    /* 修复评论第一行位置错位 */
+    .v .vlist .vcard {
+    padding-top: 2.5em !important ;
+    }
+</style>
+
+<div class="card valine-card" data-aos="fade-up">
+    <div id="vcomments" class="card-content"></div>
+</div>
+
+<script src="/libs/valine/av-min.js"></script>
+<script src="/libs/valine/Valine.min.js"></script>
+<!-- <link rel="stylesheet" type="text/css" href="/libs//libs/jQuery-emoji/dist/css/jquery.emoji.css">
+<script src="/libs//libs/jQuery-emoji/dist/js/jquery.emoji.min.js"></script>
+<script src="/libs//libs/jQuery-emoji/dist/js/emoji.list.js"></script> -->
+<script>
+    new Valine({
+        el: '#vcomments',
+        appId: 'MxSNOS83TYWU3Opsy2GTW1ih-gzGzoHsz',
+        appKey: '4XevOgmAxHEwVDnIKgvEUihB',
+        notify: 'true' === 'true',
+        verify: 'true' === 'true',
+        visitor: 'true' === 'true',
+        avatar: 'mm',
+        pageSize: '10',
+        lang: 'zh-cn',
+        placeholder: '请畅所欲言吧，别害羞~',
+
+    });
+
+//     function parse_emoji() {
+//     jQuery(".vcontent").emojiParse({
+//       basePath: '/libs/jQuery-emoji/images/emoji',
+//       icons: emojiLists   // 注：详见 js/emoji.list.js
+//     });
+//   }
+  
+//   setTimeout(function() {
+//     // jQuery emoji 解析
+//     parse_emoji();
+//     // jquery emoji 初始化
+//     jQuery(".veditor").emoji({
+//       showTab: true,
+//       animation: 'slide',
+//       basePath: '/libs/jQuery-emoji/images/emoji',
+//       icons: emojiLists  // 注：详见 js/emoji.list.js
+//     });
+//     jQuery(".vmore").on("click", function() {
+//       setTimeout(function() {
+//         parse_emoji();
+//       }, 500);
+//     });
+//   }, 800)
+
+</script>
+        
+
+        
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/shu-ju-ku-sql-you-hua-da-zong-jie-zhi-bai-wan-ji-shu-ju-ku-you-hua-fang-an.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/6.jpg" class="responsive-img" alt="数据库 SQL 优化大总结之——百万级数据库优化方案">
+                        
+                        <span class="card-title">数据库 SQL 优化大总结之——百万级数据库优化方案</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            点击上方”python宝典”,关注获取python全套视频，
+技术文章第一时间送达!
+
+
+来源：雲霏霏www.cnblogs.com/yunfeifei/p/3850440.html
+www.cnblogs.com/yunfeifei/p/
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="fa fa-clock fa-fw icon-date"></i>2021-04-05
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/python%E6%A1%86%E6%9E%B6/" class="post-category" target="_blank">
+                                    python框架
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/python-python-web%E6%A1%86%E6%9E%B6-%E6%A1%86%E6%9E%B6/" target="_blank">
+                        <span class="chip bg-color">python,python_web框架,框架</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fa fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/tong-yuan-ce-lue-he-kua-yu-qing-qiu.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/6.jpg" class="responsive-img" alt="同源策略和跨域请求">
+                        
+                        <span class="card-title">同源策略和跨域请求</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            点击上方”python宝典”,关注获取python全套视频，
+技术文章第一时间送达!
+跨域请求同源策略机制
+浏览器有一个很重要的概念——同源策略(Same-Origin Policy)。所谓同源是指，域名，协议，端口相同。不同源的客户端脚本
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="fa fa-clock fa-fw icon-date"></i>2021-04-05
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/python%E5%85%B6%E4%BB%96/" class="post-category" target="_blank">
+                                    python其他
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/python-python%E5%85%B6%E4%BB%96%E6%A1%86%E6%9E%B6%E7%AD%89/" target="_blank">
+                        <span class="chip bg-color">python,python其他框架等</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+    </div>
+</div>
+
+
+<script>
+    $('#articleContent').on('copy', function (e) {
+        // IE8 or earlier browser is 'undefined'
+        if (typeof window.getSelection === 'undefined') return;
+
+        var selection = window.getSelection();
+        // if the selection is short let's not annoy our users.
+        if (('' + selection).length < Number.parseInt('500')) {
+            return;
+        }
+
+        // create a div outside of the visible area and fill it with the selected text.
+        var bodyElement = document.getElementsByTagName('body')[0];
+        var newdiv = document.createElement('div');
+        newdiv.style.position = 'absolute';
+        newdiv.style.left = '-99999px';
+        bodyElement.appendChild(newdiv);
+        newdiv.appendChild(selection.getRangeAt(0).cloneContents());
+
+        // we need a <pre> tag workaround.
+        // otherwise the text inside "pre" loses all the line breaks!
+        if (selection.getRangeAt(0).commonAncestorContainer.nodeName === 'CODE') {
+            newdiv.innerHTML = "<pre>" + newdiv.innerHTML + "</pre>";
+        }
+
+        var url = document.location.href;
+        newdiv.innerHTML += '<br />'
+            + '来源: 好好学java<br />'
+            + '作者: 好好学java<br />'
+            + '链接: <a href="' + url + '">' + url + '</a><br />'
+            + '本文章著作权归作者所有，任何形式的转载都请注明出处。';
+
+        selection.selectAllChildren(newdiv);
+        window.setTimeout(function () { bodyElement.removeChild(newdiv); }, 200);
+    });
+</script>
+
+
+
+<!--
+<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+<script>
+    const btw = new BTWPlugin();
+    btw.init({
+        id: 'container',
+        blogId: '15305-1590684104111-518',
+        name: '程序员的技术圈子',
+        qrcode: 'http://image.ouyangsihai.cn/FtAUOeE5--1JTdcuuZFIhMuEUuJO',
+        keyword: 'vip',
+    });
+</script>
+-->
+
+    </div>
+    <div id="toc-aside" style="width: 310px;" class="expanded col l3 hide-on-med-and-down">
+        <!-- 自定义右侧card：欧阳思海 -->
+        <!-- <div id="my-card" style="background: ">
+            
+        </div> -->
+        <!-- <div class="toc-widget">
+            <div class="toc-title" style="display: none;"><i class="fa fa-list-alt"></i>&nbsp;&nbsp;</div>
+            <div id="toc-content"></div>
+        </div> -->
+
+
+
+
+
+
+
+
+        <aside class="col-lg-3" style="width: 300px;">
+
+            <link rel="stylesheet" type="text/css" href="/css/my-aside.css">
+
+            <!-- 关注公众号信息：欧阳思海 -->
+            <div class="widget-wrap">
+                <div class="widget bg-danger" style="color:whitesmoke; background-color: #419488">
+                    <div class="card-front animated col s12 m12 l8 offset-l2 fadeInUp">
+                        <div class="row">
+                            <div class="col-md-5" style="text-align: center;">
+                                <img class="adv" style="width: 95px; height: 95px;"
+                                    src="http://image.ouyangsihai.cn/FtAUOeE5--1JTdcuuZFIhMuEUuJO">
+                            </div>
+                            <div class="col-md-7" style="text-align: center;">
+                                <h2 style="font-size: 18px; 
+                                    margin: 0; 
+                                    padding: 0;
+                                    border: 0; 
+                                    outline: 0;
+                                    font-weight: inherit;
+                                    font-style: inherit;
+                                    font-family: inherit;
+                                    vertical-align: baseline;">关注公众号</h2>
+                                 
+                                <small style="font-size: 15px;">
+                                    →「技术干货」每日推送 <br>
+                                    →「回复资料」领取资料 <br>
+                                    →「微信加群」每周福利 <br>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div style="font-size: 0.8em;">
+                        <a href="/assets/erweima.jpg" target="_blank"
+                            style="color:orange;font-size: 14px;">点击添加我的微信，加入技术讨论群</a>
+                        除公众号以外，我还会在以下平台发布内容：
+                    </div>
+                    -->
+
+                    <div class="profile-block social-links col-md-7" style="text-align: center;">
+                        <table style="align-items: center; 
+                                        padding-left: 25px;">
+                            <tbody>
+                                <tr>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank" title="GitHub"
+                                            class="tooltip">
+                                            <img style="width: 22px;height: 22px;" src="/icons/github.svg"></a>
+                                    </td>
+
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://www.zhihu.com/people/hai-hai-ren-sheng-50/activities"
+                                            target="_blank" title="知乎" class="tooltip">
+                                            <img style="width: 22px;" src="/icons/zhihu.svg"></a>
+                                    </td>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://blog.csdn.net/sihai12345" target="_blank" title="CSDN"
+                                            class="tooltip">
+                                            <img style="width: 18px;" src="/icons/CSDN.svg"></a>
+                                    </td>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://www.jianshu.com/u/12b0bd4c857c" target="_blank" title="简书"
+                                            class="tooltip">
+                                            <img style="width: 22px;" src="/icons/JianShu.svg"></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            
+
+            <!-- custom rightside_link：热门文章推荐：欧阳思海 -->
+            
+            <div class="widget-wrap widget-panel">
+                <p style="text-align: left;padding-bottom: 10px;line-height: 30px; font-size: 14px;">
+                    
+                    <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        本人花费半年的时间总结的《 Java 面试指南》已拿腾讯等大厂 offer，已开源在 github ，欢迎 star！
+                    </a><br>
+                    
+                    <a href="https://mp.weixin.qq.com/s/I0jimqziHqRNaIy0kXRCnw" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        2020 Java 1000G 最新学习资源，Java基础、Java项目实战、Java分布式等等！
+                    </a><br>
+                    
+                    <a href="http://image.ouyangsihai.cn/FpB-dO6g-XU44mMrVlj7EL1y7Rs7" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        高级 Java 开发微信群，一起搞事情吧！
+                    </a><br>
+                    
+                </p>
+            </div>
+            
+
+            
+
+            <!-- custom rightside_banner：右侧广告或者其他的栏目设置：欧阳思海 -->
+            
+            <div class="widget-wrap">
+                <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">
+                    <img src="http://image.ouyangsihai.cn/FhhoEYMaNr6m0v8KhG8vSPgoREBV" style="width: 100%;">
+                </a>
+            </div>
+            
+            
+
+            
+
+            <!-- 右侧专栏分类：欧阳思海 -->
+            
+            <div class="widget-wrap widget-panel">
+                <ul class="media-list">
+                    
+                    <li class="media">
+                        <a href="/categories/MySQL的艺术世界/" target="_blank">
+                            <div class="media-left">
+                                <img class="media-object" src="http://image.ouyangsihai.cn/Fn3kQurieQ_0QUeqPmx5RW5i6R9n" style="width: 55px;">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading" style="margin-bottom: 10px; font-size: 100%;
+                                                                    margin: 0;
+                                                                    padding: 0;
+                                                                    border: 0;
+                                                                    outline: 0;
+                                                                    font-weight: inherit;
+                                                                    font-style: inherit;
+                                                                    font-family: inherit;
+                                                                    vertical-align: baseline;">
+                                    MySQL 的系列文章，解决全部面试问题！
+                                </h4>
+                                <p>
+                                    总共10篇文章，面试热门的锁、事务，通通解决了！
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    <hr>
+                    
+                    <li class="media">
+                        <a href="/categories/深入理解Java虚拟机/" target="_blank">
+                            <div class="media-left">
+                                <img class="media-object" src="http://image.ouyangsihai.cn/FpcS21VWJOHSgGzKcpW3_xVTSEeN" style="width: 55px;">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading" style="margin-bottom: 10px; font-size: 100%;
+                                                                    margin: 0;
+                                                                    padding: 0;
+                                                                    border: 0;
+                                                                    outline: 0;
+                                                                    font-weight: inherit;
+                                                                    font-style: inherit;
+                                                                    font-family: inherit;
+                                                                    vertical-align: baseline;">
+                                    深入理解 Java 虚拟机，面试必问
+                                </h4>
+                                <p>
+                                    总共10篇文章，包括内存模型、GC算法、GC收集器等。
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    <hr>
+                    
+                </ul>
+            </div>
+            
+
+            <!-- 右侧分类 -->
+            <div class="widget-wrap widget-panel">
+                <h3 class="widget-title">文章分类</h3>
+                <div class="widget">
+                    <ul class="category-list">
+                        
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/趣聊数据结构与算法/">>
+                                趣聊数据结构与算法</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/职业生涯浅谈/">>
+                                职业生涯浅谈</a><span class="category-list-count">33</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java项目分享/">>
+                                Java项目分享</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java面试经验/">>
+                                Java面试经验</a><span class="category-list-count">4</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/我要进大厂/">>
+                                我要进大厂</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/好好学java/">>
+                                好好学java</a><span class="category-list-count">1116</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/剑指offer/">>
+                                剑指offer</a><span class="category-list-count">112</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/css/">>
+                                css</a><span class="category-list-count">12</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/其他框架/">>
+                                其他框架</a><span class="category-list-count">142</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python其他/">>
+                                python其他</a><span class="category-list-count">45</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/数据库相关/">>
+                                数据库相关</a><span class="category-list-count">293</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java核心知识/">>
+                                Java核心知识</a><span class="category-list-count">196</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java面试题/">>
+                                Java面试题</a><span class="category-list-count">308</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/mybatis源码/">>
+                                mybatis源码</a><span class="category-list-count">56</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/spring教程/">>
+                                spring教程</a><span class="category-list-count">173</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springboot教程/">>
+                                springboot教程</a><span class="category-list-count">156</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/实战Activiti工作流/">>
+                                实战Activiti工作流</a><span class="category-list-count">4</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springcloud教程/">>
+                                springcloud教程</a><span class="category-list-count">39</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/linux/">>
+                                linux</a><span class="category-list-count">91</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python框架/">>
+                                python框架</a><span class="category-list-count">43</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python基础/">>
+                                python基础</a><span class="category-list-count">78</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/dubbo/">>
+                                dubbo</a><span class="category-list-count">37</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java源码/">>
+                                Java源码</a><span class="category-list-count">76</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/叽叽喳喳杂七杂八/">>
+                                叽叽喳喳杂七杂八</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/MySQL的艺术世界/">>
+                                MySQL的艺术世界</a><span class="category-list-count">8</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/jquery/">>
+                                jquery</a><span class="category-list-count">14</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java并发/">>
+                                Java并发</a><span class="category-list-count">43</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java文章合辑/">>
+                                Java文章合辑</a><span class="category-list-count">11</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java基础修炼/">>
+                                Java基础修炼</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/不一样的Java8/">>
+                                不一样的Java8</a><span class="category-list-count">3</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/小程序开发的世界/">>
+                                小程序开发的世界</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java学习资源分享/">>
+                                Java学习资源分享</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java小学生漫游/">>
+                                Java小学生漫游</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/rocketmq源码解析/">>
+                                rocketmq源码解析</a><span class="category-list-count">33</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springmvc最新教程/">>
+                                springmvc最新教程</a><span class="category-list-count">9</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java的Exception/">>
+                                Java的Exception</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/vue-js/">>
+                                vue.js</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/实战设计模式/">>
+                                实战设计模式</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python数据处理/">>
+                                python数据处理</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java-Web闯关/">>
+                                Java Web闯关</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springboot2-0最新教程/">>
+                                springboot2.0最新教程</a><span class="category-list-count">11</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/netty/">>
+                                netty</a><span class="category-list-count">16</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/rpc/">>
+                                rpc</a><span class="category-list-count">13</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/拥抱大厂系列/">>
+                                拥抱大厂系列</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/eureka/">>
+                                eureka</a><span class="category-list-count">19</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/分布式/">>
+                                分布式</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/中间件/">>
+                                中间件</a><span class="category-list-count">23</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java基础/">>
+                                Java基础</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/带你学Python/">>
+                                带你学Python</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/使用技术工具/">>
+                                使用技术工具</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/mycat源码/">>
+                                mycat源码</a><span class="category-list-count">5</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/深入理解Java虚拟机/">>
+                                深入理解Java虚拟机</a><span class="category-list-count">8</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/spring源码/">>
+                                spring源码</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java集合源码分析/">>
+                                Java集合源码分析</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/github的repo/">>
+                                github的repo</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java框架深究/">>
+                                Java框架深究</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/分布式架构/">>
+                                分布式架构</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+
+        </aside>
+
+
+
+
+
+
+
+
+
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. 修改成永远不显示：欧阳思海-->
+
+
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h1, h2, h3, h4, h5'
+        });
+
+        console.log('============');
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h1, h2, h3, h4, h5').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+                        
+            /* 修复文章卡片 div 的宽度. */
+            let fixPostCardWidth = function (srcId, targetId) {
+                let srcDiv = $('#' + srcId);
+                if (srcDiv.length === 0) {
+                    return;
+                }
+
+                let w = srcDiv.width();
+                if (w >= 450) {
+                    w = w + 21;
+                } else if (w >= 350 && w < 450) {
+                    w = w + 18;
+                } else if (w >= 300 && w < 350) {
+                    w = w + 16;
+                } else {
+                    w = w + 14;
+                }
+                $('#' + targetId).width(w);
+            };
+
+            // 切换TOC目录展开收缩的相关操作.
+            // 修改右侧边栏功能：欧阳思海
+            const expandedClass = 'expanded';
+            let $tocAside = $('#toc-aside');
+            let $mainContent = $('#main-content');
+
+            $('#floating-toc-btn .btn-floating').click(function () {
+                if ($tocAside.hasClass(expandedClass)) {
+                    $tocAside.removeClass(expandedClass).slideUp(500);
+                    $mainContent.removeClass('l9');
+                } else {
+                    $tocAside.addClass(expandedClass).slideDown(500);
+                    $mainContent.addClass('l9');
+                }
+                fixPostCardWidth('artDetail', 'prenext-posts');
+            });
+                        
+                    });
+</script>
+    
+
+</main>
+
+
+        <footer class="page-footer bg-color">
+    <div class="container row center-align">
+        <div class="col s12 m8 l8 copy-right">
+            
+	    Copyright&copy; 2019 <a href="https://www.java1000.com/" target="_blank"> 好好学java </a>维护. 网站备案/许可证号：赣ICP备17007984号-3
+            <br>
+            <span id="sitetime"></span>
+            <br>
+
+            
+
+            
+                    <!-- 
+                        <span id="busuanzi_container_site_pv" style='display:none'></span>
+                        总访问量: <span id="busuanzi_value_site_pv" class="white-color"></span>
+                    
+        
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'></span>
+                        人次&nbsp; | &nbsp;访客人数: <span id="busuanzi_value_site_uv" class="white-color"></span> 人
+                     -->
+                        <!-- 修改计数：欧阳思海 -->
+                    
+                        <span id="busuanzi_container_site_pv" style='display:inline'>
+                            <i class="fa fa-heart-o"></i>
+                            本站总访问量 <span id="busuanzi_value_site_pv" class="white-color"></span>
+                        </span>
+                    
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'>
+                            人次,&nbsp;访客数 <span id="busuanzi_value_site_uv" class="white-color"></span> 人.
+                        </span>
+                    
+    
+            
+
+            
+                &nbsp; | &nbsp;字数统计:&nbsp;
+                <span class="white-color">8290.3k</span> 字
+            
+
+            
+            <br>
+
+        </div>
+
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fa fa-code-branch"></i>
+    </a>
+
+
+ 
+    <a href="https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=1446037005@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fa fa-envelope-open"></i>
+    </a>
+
+
+
+
+    <a href="https://zhihu.com/people/hai-hai-ren-sheng-50/activities" class="tooltipped" target="_blank" data-tooltip="访问我的知乎" data-position="top" data-delay="50">
+        <i class="fa fa-inverse">知</i>
+    </a>
+
+
+
+
+
+
+
+
+
+    <a href="https://blog.ouyangsihai.cn/sitemap.xml" class="tooltipped" target="_blank" data-tooltip="站点地图" data-position="top" data-delay="50">
+        <i class="fa fa-sitemap"></i>
+    </a>
+
+
+
+    <a href="https://blog.ouyangsihai.cn/friends" class="tooltipped" target="_blank" data-tooltip="友情链接" data-position="top" data-delay="50">
+        <i class="fa fa-address-book"></i>
+    </a>
+</div>
+
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+
+        var t1 = Date.UTC(2019, 08, 10, 00, 00, 00); //北京时间2019-8-1 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes *
+            minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "本站已运行 " + diffYears + " 年 " + diffDays + " 天 " + diffHours +
+            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒" ;
+    } /*因为建站时间还没有一年，就将之注释掉了。需要的可以取消*/
+    siteTime();
+</script>
+
+<!-- 修改计数：欧阳思海 -->
+<script>
+    $(document).ready(function () {
+
+        var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+        var pvcountOffset = 1005469;  // 初始化首次数据
+        var uvcountOffset = 250804;
+
+        function fixCount() {
+            if (document.getElementById("busuanzi_container_site_pv").style.display != "none") {
+                $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + pvcountOffset);
+                clearInterval(int);
+            }
+            if ($("#busuanzi_container_site_pv").css("display") != "none") {
+                $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + uvcountOffset); // 加上初始数据 
+                clearInterval(int); // 停止检测
+            }
+        }
+    });
+</script>
+
+
+
+
+        <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.json", 'searchInput', 'searchResult');
+});
+</script>
+        <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fa fa-angle-up"></i>
+    </a>
+</div>
+
+
+        <script src="/libs/materialize/materialize.min.js"></script>
+        <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+        <script src="/libs/aos/aos.js"></script>
+        <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+        <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+        <script src="/js/matery.js"></script>
+
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-149362573-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    gtag('config', 'UA-149362573-1');
+</script>
+
+
+
+        
+            <script src="/libs/others/clicklove.js"></script>
+        
+
+        
+            <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+        
+
+        <!-- 洪卫 shw2018 add 2019.08.28 -->
+        <script type="text/javascript">
+            var OriginTitile = document.title,
+                st;
+            document.addEventListener("visibilitychange", function () {
+                document.hidden ? (document.title = "看不见我🙈~看不见我🙈~", clearTimeout(st)) : (document.title =
+                    "(๑•̀ㅂ•́) ✧被发现了～", st = setTimeout(function () {
+                        document.title = OriginTitile
+                    }, 3e3))
+            })
+        </script>
+
+        <!-- 鼠标点击烟花爆炸效果  洪卫 shw2018 add 2019.09.09 -->
+        
+
+        <!-- 背景雪花飘落特效洪卫 shw2018 add 2019.09.10 -->
+        
+
+        <!-- 鼠标点击文字特效 洪卫 shw2018 add 2019.09.10-->
+        
+
+        <!-- 背景雪花飘落特效 洪卫 shw2018 add 2019.09.10 -->
+        
+
+        <!-- 在线聊天工具  洪卫 shw2018 add 2019.09.11 -->
+        
+
+        <!-- 背景 canvas-nest  洪卫 shw 2018  add 2019.09.15-->
+        
+
+        <!-- 背景静止彩带  洪卫 shw 2018  add 2019.09.15-->
+        
+
+        <!-- 背景动态彩带 洪卫 shw 2018  add 2019.09.15-->
+        
+
+    </body>
+</html>

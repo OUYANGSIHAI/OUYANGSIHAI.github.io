@@ -1,0 +1,2888 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+    <!-- shw2018 洪卫  modify 2019.08.15-->
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="Spring Boot, Spring Cloud, 微服务, Java技术, 好好学java, Java面试, 分布式, 最新干货分享">
+    <meta name="baidu-site-verification" content="fmlEuI34ir" />
+    <meta name="google-site-verification" content="ZWVq5UvPg33BCEA3LRTUkYe5J854o9lF1_WRTer9l8A" />
+    <meta name="description" content="本站是 好好学java 的技术分享博客。内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、分布式、Java面试、测试开发等相关的研究与知识分享。">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>mybatis 逆向工程使用姿势不对，把表清空了，心里慌的一比，于是写了个插件。 | 好好学java | Spring Boot | Spring Cloud | 微服务 | Java技术 | Java面试 | 分布式 | 最新干货分享</title>
+    <link rel="icon" type="image/png" href="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7">
+
+    <!-- <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css"> -->
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    <!-- 自定义fontawesome样式：欧阳思海 -->
+    <link rel="stylesheet" type="text/css" href="/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/brands.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/fontawesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/regular.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/solid.min.css">
+
+
+    <style type="text/css">
+        code[class*="language-"],
+            pre[class*="language-"] {
+                white-space: pre !important;
+            }
+
+            
+
+        /* 将matery.css中的背景颜色修改放到这里：欧阳思海 */
+        .bg-color {
+            background-image: linear-gradient(to right, #ec8585 0%, #419488 100%);
+            opacity: 0.9;
+            // 透明度
+        }
+    </style>
+
+    <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
+    <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+
+    
+    
+    <script>
+        (function () {
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+    
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?6fe466069710c03a563713b507fbaca7";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+    <!-- Google Analytics -->
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-XXXXX-Y', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <!-- End Google Analytics -->
+
+    <script>(function (i, s, o, g, r, a, m) { i["DaoVoiceObject"] = r; i[r] = i[r] || function () { (i[r].q = i[r].q || []).push(arguments) }, i[r].l = 1 * new Date(); a = s.createElement(o), m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; a.charset = "utf-8"; m.parentNode.insertBefore(a, m) })(window, document, "script", ('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/0a804bac.js", "daovoice")</script>
+
+    <script>
+        if (true) {
+            daovoice('init', {
+                app_id: "0a804bac",
+                user_id: "NO_89757", // 必填: 该用户在您系统上的唯一ID
+                email: "daovoice@example.com", // 选填:  该用户在您系统上的主邮箱
+                name: "道客船长", // 选填: 用户名
+                signed_up: 1449821660 // 选填: 用户的注册时间，用Unix时间戳表示
+            });
+            daovoice('update');
+
+            daovoice('init', {
+                app_id: "0a804bac"
+            });
+            daovoice('update');
+        }
+    </script>
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/rss2.xml" title="好好学java" type="application/rss+xml">
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+    <body>
+
+        <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span" style="font-size: 1.4rem;">好好学java</span>
+                </a>
+            </div>
+            
+
+
+<!-- <a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-navicon"></i></a>
+<ul class="right">
+    
+    <li class="hide-on-med-and-down">
+        <a href="" class="waves-effect waves-light">
+            
+            <i class="fa "></i>
+            
+            <span></span>
+        </a>
+    </li>
+    
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title=""></i>
+        </a>
+    </li>
+</ul> -->
+
+<!-- 支持二级菜单特性 洪卫 shw2018 modify 2019.09.17  -->
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-align-justify"></i></a>
+<ul class="right nav-menu">
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-folder-minus"></i>
+                
+                <span style="font-size: 1.1rem;">Java学习</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/" >
+                    
+                    <span>Java入门</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Javaweb/" >
+                    
+                    <span>Java Web</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/spring%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>Spring教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/springboot%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>SpringBoot教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/springcloud%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>SpringCloud教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98/" >
+                    
+                    <span>Java面试</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%89%91%E6%8C%87offer/" >
+                    
+                    <span>剑指offer</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-code-branch"></i>
+                
+                <span style="font-size: 1.1rem;">Java进阶</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97/" >
+                    
+                    <span>设计模式</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" >
+                    
+                    <span>Java并发编程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/" >
+                    
+                    <span>数据库</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/redis/" >
+                    
+                    <span>Redis</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/linux/" >
+                    
+                    <span>Linux</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/" >
+                    
+                    <span>Java实战项目</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-code"></i>
+                
+                <span style="font-size: 1.1rem;">python学习</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/python%E5%9F%BA%E7%A1%80/" >
+                    
+                    <span>python基础</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/python%E6%A1%86%E6%9E%B6/" >
+                    
+                    <span>python框架</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/python%E5%85%B6%E4%BB%96/" >
+                    
+                    <span>python其他</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-coffee"></i>
+                
+                <span style="font-size: 1.1rem;">Java扩展</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/dubbo/" >
+                    
+                    <span>dubbo</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/netty/" >
+                    
+                    <span>netty</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/rpc/" >
+                    
+                    <span>rpc</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/eureka/" >
+                    
+                    <span>eureka</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/" >
+                    
+                    <span>中间件</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" >
+                    
+                    <span>分布式</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-desktop"></i>
+                
+                <span style="font-size: 1.1rem;">计算机核心</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" >
+                    
+                    <span>数据结构</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98/" >
+                    
+                    <span>leetcode刷题</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" >
+                    
+                    <span>计算机网络</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" >
+                    
+                    <span>算法</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/categories/" class="waves-effect waves-light">
+              
+                <i style="font-size: 1.1rem;" class="fa fa-adjust"></i>
+              
+              <span style="font-size: 1.1rem;">学习资源</span>
+            </a>
+
+            
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/contact" class="waves-effect waves-light">
+              
+                <i style="font-size: 1.1rem;" class="fa fa-envelope"></i>
+              
+              <span style="font-size: 1.1rem;">留言</span>
+            </a>
+
+            
+      </li>
+    
+
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title="搜索"></i>
+        </a>
+    </li>
+
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">好好学java</div>
+        <div class="logo-desc">
+            
+            
+            本站是 好好学java 的技术分享博客，涵盖Java后端技术、SpringBoot、微服务架构、分布式、Java面试等知 ...
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-folder-minus"></i>
+			
+			Java学习
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/ " style="margin-left:75px";>
+				  
+		          <span>Java入门</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Javaweb/ " style="margin-left:75px";>
+				  
+		          <span>Java Web</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/spring%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>Spring教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/springboot%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>SpringBoot教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/springcloud%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>SpringCloud教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98/ " style="margin-left:75px";>
+				  
+		          <span>Java面试</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%89%91%E6%8C%87offer/ " style="margin-left:75px";>
+				  
+		          <span>剑指offer</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-code-branch"></i>
+			
+			Java进阶
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97/ " style="margin-left:75px";>
+				  
+		          <span>设计模式</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>Java并发编程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/ " style="margin-left:75px";>
+				  
+		          <span>数据库</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/redis/ " style="margin-left:75px";>
+				  
+		          <span>Redis</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/linux/ " style="margin-left:75px";>
+				  
+		          <span>Linux</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/ " style="margin-left:75px";>
+				  
+		          <span>Java实战项目</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-code"></i>
+			
+			python学习
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/python%E5%9F%BA%E7%A1%80/ " style="margin-left:75px";>
+				  
+		          <span>python基础</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/python%E6%A1%86%E6%9E%B6/ " style="margin-left:75px";>
+				  
+		          <span>python框架</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/python%E5%85%B6%E4%BB%96/ " style="margin-left:75px";>
+				  
+		          <span>python其他</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-coffee"></i>
+			
+			Java扩展
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/dubbo/ " style="margin-left:75px";>
+				  
+		          <span>dubbo</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/netty/ " style="margin-left:75px";>
+				  
+		          <span>netty</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/rpc/ " style="margin-left:75px";>
+				  
+		          <span>rpc</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/eureka/ " style="margin-left:75px";>
+				  
+		          <span>eureka</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/ " style="margin-left:75px";>
+				  
+		          <span>中间件</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/ " style="margin-left:75px";>
+				  
+		          <span>分布式</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-desktop"></i>
+			
+			计算机核心
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/ " style="margin-left:75px";>
+				  
+		          <span>数据结构</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98/ " style="margin-left:75px";>
+				  
+		          <span>leetcode刷题</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/ " style="margin-left:75px";>
+				  
+		          <span>计算机网络</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E7%AE%97%E6%B3%95/ " style="margin-left:75px";>
+				  
+		          <span>算法</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories/" class="waves-effect waves-light">
+			
+			    <i class="fa fa-fw fa-adjust"></i>
+			
+			学习资源
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa fa-fw fa-envelope"></i>
+			
+			留言
+		</a>
+          
+        </li>
+        
+        
+    </ul>
+</div>
+
+        </div>
+
+        
+    </nav>
+
+</header>
+
+        
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/8.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <div class="description center-align post-title">
+                        mybatis 逆向工程使用姿势不对，把表清空了，心里慌的一比，于是写了个插件。
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 20px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+
+    /* 自定义mycard：欧阳思海 */
+
+    #my-card {
+        /* position: relative; */
+        width: 310px;
+        height: 300px;
+        /* max-height: 330px; */
+        margin-bottom: 15px;
+        margin-top: 15px;
+        /* text-align: center; */
+        border: 0;
+        border-radius: 3px;
+        color: rgba(0, 0, 0, .87);
+        background: #fff 50%;
+        background-image: none;
+        background-size: auto;
+        background-size: cover;
+        box-shadow: 0 15px 35px rgba(50, 50, 93, .1), 0 5px 15px rgba(0, 0, 0, .07);
+    }
+
+    /* .widget {
+        line-height: 1.6em;
+        word-wrap: break-word;
+        font-size: 0.9em;
+        padding-top: 15px;
+        padding-left: -45px;
+    } */
+</style>
+
+
+
+
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- shw2018 洪卫  modify 2019.08.15-->
+
+<!-- 代码块修改的代码开始 -->
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFunction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+<!-- 代码块折行 -->
+
+<style type="text/css">
+code[class*="language-"], pre[class*="language-"] { white-space: pre !important; }
+</style>
+
+<!-- 代码块修改代码结束 -->
+
+
+<!-- 文章内容详情 -->
+<div id="container">
+    <div id="artDetail">
+        <div class="card">
+            <div class="card-content article-info">
+                <div class="row tag-cate">
+                    <div class="col s7">
+                        
+                        <div class="article-tag">
+                            <span class="chip bg-color">无标签</span>
+                        </div>
+                        
+                    </div>
+                    <div class="col s5 right-align">
+                        
+                        <div class="post-cate">
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E5%A5%BD%E5%A5%BD%E5%AD%A6java/" class="post-category" target="_blank">
+                                好好学java
+                            </a>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <div class="post-info">
+                    <div class="post-date info-break-policy">
+                        <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
+                        2021-04-04
+                    </div>
+
+                    <div class="post-author info-break-policy">
+                        <i class="fa fa-user-o fa-fw"></i>作者:&nbsp;&nbsp;
+                        
+                        欧阳思海
+                        
+                    </div>
+
+                    
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;
+                        5k
+                    </div>
+                    
+
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-clock-o fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                        17 分
+                    </div>
+                    
+                    
+
+                    
+                    <span id="busuanzi_container_site_pv" style='display:none'></span>
+                    <i class="fa fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                    <span id="busuanzi_value_page_pv"></span>
+
+                    
+
+                </div>
+            </div>
+            <hr class="clearfix">
+            <div class="card-content article-card-content">
+                <!-- 欧阳思海，modify，2020.05.01-->
+<!-- 文章详情详情页面的头部广告位置信息 -->
+<div id="post-head-panel">
+    
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" style="font-size: 18px;" target="_blank">
+        <img src="/icons/hot.gif">
+        本人花费半年的时间总结的《Java面试指南》已拿腾讯等大厂offer，已开源在github ，欢迎star！
+    </a>
+    
+    
+</div>
+<br />
+
+
+
+<blockquote>
+    
+            <p>本文GitHub <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">https://github.com/OUYANGSIHAI/JavaInterview</a> 已收录，这是我花了6个月总结的<b>一线大厂Java面试</b>总结，本人已拿大厂offer，欢迎star</p>
+    
+    <p>原文链接：blog.ouyangsihai.cn &gt;&gt; <a href="/mybatis-ni-xiang-gong-cheng-shi-yong-zi-shi-bu-dui-ba-biao-qing-kong-liao-xin-li-huang-de-yi-bi-yu-shi-xie-liao-ge-cha-jian.html" target="_blank">mybatis 逆向工程使用姿势不对，把表清空了，心里慌的一比，于是写了个插件。</a></p>
+</blockquote>
+                <div id="articleContent">
+                    <p>点击上方 **好好学java **，选择 **星标 **公众号</p>
+<h4 id="重磅资讯、干货，第一时间送达"><a href="#重磅资讯、干货，第一时间送达" class="headerlink" title="重磅资讯、干货，第一时间送达"></a><pre class="has"><code class="language-php">重磅资讯、干货，第一时间送达</h4><p></code></pre></p>
+<h2 id="今日推荐："><a href="#今日推荐：" class="headerlink" title="今日推荐："></a><strong><strong>今日推荐：</strong></strong></h2><h4 id="个人原创100W-访问量博客：点击前往，查看更多"><a href="#个人原创100W-访问量博客：点击前往，查看更多" class="headerlink" title="个人原创100W+访问量博客：点击前往，查看更多"></a><pre class="has"><code class="language-php">个人原创100W+访问量博客：点击前往，查看更多</h4><p></code></pre></p>
+<p><strong>荒腔走板</strong>****</p>
+<p>大家好，我是 why。时间过的真是快，一周又要结束了。那么，你比上周更博学了吗？先来一个简短的荒腔走板，给冰冷的技术文注入一丝色彩。</p>
+<p>上面这张照片是我上周六的傍晚写完文章后出门跑步的时候拍的。</p>
+<p>当时我路过这个地方看到这个画面的时候一眼就被吸引住了，直接停下了奔跑的脚步。</p>
+<p>这是一个还没有开发完成的草坪。远处的高楼，就是成都的软件园区。软件园和草坪之间只有一条河间隔。河的对岸是工作，河的这边是生活。</p>
+<p>我拍这个照片的时候只是觉得和谐，随手一拍。但是现在再看，不知道为什么感觉到的却是深邃的孤独。</p>
+<p>一个玩手机的阿姨，一只孤独的狗。热闹是他们的，我什么都没有。</p>
+<p>我还挺喜欢这张照片的，好了，说文章吧。</p>
+<p><strong>这锅只能自己背了</strong></p>
+<p>你用过 mybatis 逆向工程（mybatis-generator-maven-plugin）生成相关文件吗？</p>
+<p>就像这样式儿的：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIY2JKZXJMWm1ZREw4UVNWTWliY1FUZWRkUlFKczF3YkkwVG0ydUd5ZVE5QWNmN0FoeWI2cEozdWo0aHRxaWNseUxkckZpY2IyWjNzZEpKQS82NDA?x-oss-process=image/format,png">
+
+<p>可以看到逆向工程帮我们生成了实体类、Mapper 接口和 Mapper.xml。</p>
+<p>用起来真的很方便，我用了好几年了，但是前段时间翻车了。</p>
+<p>具体是怎么回事呢，我给大家摆一下。</p>
+<p>先说一下需求吧。就是在做一次借据数据迁移的过程中，要先通过 A 服务的接口拿到所有的借据和对应的还款计划数据，然后再对这些借据进行核查，如果不满足某些添加，就<strong>需要从表中删除借据和对应的还款计划</strong>。</p>
+<p>借据和对应的还款计划存放在两张表中，用借据号来关联。</p>
+<p>而上线之后，我在一片欢声笑语中把还款计划表清空了，而这个必现的问题，在测试阶段同学还没有测试出来。</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9sbkNxanNRNlFIZTZkQ2lhQUFQZEkwUWljYTN4VXZxbnFoUmF1VnVmbHdnRlc2NU02bkM4OVJCN3p2c3NWdVhYMGlhclhrZXM5bDNkWXpyUTl6Y3NDZ0xpY1EvNjQw?x-oss-process=image/format,png">
+
+<p>事情发生后我赶紧找到了 DBA 协助修复数据：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIY2JKZXJMWm1ZREw4UVNWTWliY1FUZWRmWGliaWJIeXVUajVFRFlQY3NWUmliTEhBZnFaUWNwdzhKa1Q3SzQ0SWxiSDFZeHB6U3NPOGtpY3dBLzY0MA?x-oss-process=image/format,png">
+
+<p>是怎么回事呢，为了模拟这个场景，我在本地创建了两张表，订单表（orderInfo）和订单扩展表（orderInfoExt），他们之间用订单号进行关联：</p>
+<p>仅仅是做演示，所以两张表是非常简单的，</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIY2JKZXJMWm1ZREw4UVNWTWliY1FUZWR3RUFkNVp2NnJiRjNpYWNUcHNYaWJiTk9qSk9hSTZjZHc2UjFWYXdIRk0zQm53MzU1ZUlTVm9Ody82NDA?x-oss-process=image/format,png">
+
+<p>我们假设现在表里面的这条订单号为 2020060666666 的数据经过判断是错误数据，我当时写的代码体现在单元测试里面是这样的：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIY2JKZXJMWm1ZREw4UVNWTWliY1FUZWRGallYQ2liR2NxeEw0TGNFZFllcWx6b3o5a3ZRTmlhMmVmOGdmZTlmSkFOb1JSOWNmM1gxTnoyZy82NDA?x-oss-process=image/format,png">
+
+<p>看出问题了吗？</p>
+<p>第 42 行用的 example 对象还是 OrderInfo 的 example。而真正的 OrderInfoExt 对象的 exampleExt  对象没有进行任何赋值的操作。</p>
+<p>为什么会出现这样的乌龙呢？</p>
+<p>都怪 idea 太智能了！（强行找个借口）</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIY2JKZXJMWm1ZREw4UVNWTWliY1FUZWRMMW9LMldCQmtwVEl1UVI0SUpaM0pUMkhnZ3FmM29teVJNa08xeUFVejFGclM1NVcxTk82MncvNjQw?x-oss-process=image/format,png">
+
+<p>我只需要打一个 ex 然后回个车…. example 就出现在代码里面了。</p>
+<p>而这种没有参数的 example 传进去，在 mapper.xml 里面是这样处理的：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIY2JKZXJMWm1ZREw4UVNWTWliY1FUZWQ4Qk14a1FUc3BJeldKdHdqZHFHZWFpYW0wRUtLcXRyZk9qbGhCME1lNUFiMXpZcXVVQ2xoRWFBLzY0MA?x-oss-process=image/format,png">
+
+<p>执行一下，看看效果：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIY2JKZXJMWm1ZREw4UVNWTWliY1FUZWRPSlF2cVA5ck50aWJKMEtOWlRNVWd0YnR6OWljMXRoNzR0akVQblNrVUpXdU03RnRjdER4T01udy82NDA?x-oss-process=image/format,png">
+
+<p>看到 delete from order_info_ext 语句。你说你慌不慌？</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9sbkNxanNRNlFIZTZkQ2lhQUFQZEkwUWljYTN4VXZxbnFoYUpxSlZHMFV5dE5zN2xpYjQ1eHRIdGViejZiWGNsQmhpY2NJblJ6ajRPeVdjTEp3ZVVQTkFkTUEvNjQw?x-oss-process=image/format,png">
+
+<p>当然在线上的服务器肯定是看不到执行的 SQL 的，但是当报警短信一条一条接着来的时候，当连上数据库一看表，发现数据没了的时候。</p>
+<p>你说你慌不慌？</p>
+<p>反正我一刷新后发现表里没数据了，一股凉意从脚板心直冲天灵盖。这种时候都还是要小小的心慌一下，先大喊一声“卧槽！数据怎么没了？”</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9sbkNxanNRNlFIZTZkQ2lhQUFQZEkwUWljYTN4VXZxbnFoYXVpYVJndVJISHZNWW5XYjBPU05UMDNNcFdVR0ZWNHRkQzBPdW9xV0pTM2VHblNxZjhkTlhHUS82NDA?x-oss-process=image/format,png">
+
+<p>然后赶紧报备，准备找 DBA 捞数据吧。</p>
+<p>还好，本次误删不影响正常业务。</p>
+<p>数据恢复过程就不说了，聊一下这事发生后我的一点思考吧。</p>
+<p>哦，对了，还得说一下测试同学为什么没有发现这个问题。这个问题确实是一个必现的问题，测试案例上也写了这个测试点。</p>
+<p>但是测试同学查看数据的时候用的是 select 语句，查询条件给的是确实需要被删除的数据 。</p>
+<p>然后分别在两个表里面执行后发现：数据确实是没了。</p>
+<p>是的，是数据确实是没了。整个表都干净了。</p>
+<p>看着测试妹子惊慌失措的样子，我还能怎么说呢？</p>
+<p>这锅，不甩了，我自己背下来吧。</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9sbkNxanNRNlFIZTZkQ2lhQUFQZEkwUWljYTN4VXZxbnFoR1VRNnRLaWMzdUpZREdpYVIyUVdpYnlBOTg4cXlBd3lLNnYwc0p5dnc5QmFPTFlTcldpY0hIRnpTQS82NDA?x-oss-process=image/format,png">
+
+<p><strong>重新审视逆向工程</strong></p>
+<p>我们先看看逆向工程帮我们生成的接口：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCUHRQaWN6THZuT1EwY0FSSDY1VEJpY1NWU1BCUFhYUzBZQk1YeHcyT1FuVUhLdHRneTlFSVRYY2cvNjQw?x-oss-process=image/format,png">
+
+<p>我相信用过 mybatis 逆向工程的朋友们，一看到这几个接口就知道了：哟，这都是老朋友了。</p>
+<p>当我再去重新审视这些接口的时候我会发现其实还有会有一些问题的。</p>
+<p>比如 delete 这样的高危语句我们还是需要尽量的手写 xml。</p>
+<p>比如 updateByExample 同样存在由于误操作没有 where 条件，导致全表更新的情况。</p>
+<p>比如 select 语句是查出了整个对象，但是有时间我们可能只需要对象里面的某个值而已。</p>
+<p>比如 select 语句针对大表、关键表操作的时候，不能从代码的角度限定 SQL 必须带上索引字段查询。</p>
+<p>上面的这些问题我们怎么处理呢？</p>
+<p>我的建议是不要使用 mybatis 的逆向工程，全都手写。</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9sbkNxanNRNlFIZTZkQ2lhQUFQZEkwUWljYTN4VXZxbnFoWmczSUNBaWM4aWM4YUhUVnUwQ1NVenJLSGZrVEJOQ0s4VjlJNEliMDFSSlNySXJSWlU5clltcWcvNjQw?x-oss-process=image/format,png">
+
+<p>开个玩笑。我们肯定不能因噎废食，何况逆向工程确实是帮我们做了很多工作，极大的方便我们这样的 CRUD Boy 进行 CRUD。</p>
+<p>所以，我想 mybatis 的逆向工程肯定是有什么配置来控制生成哪些接口的，别问为什么，问就是直觉。</p>
+<p>因为要是让我去开发这样的一个插件，我肯定也会提供对应的开关配置。</p>
+<p>我现在的想法是不让它给我生成 delete 相关的接口，这个接口用起来我心里害怕。</p>
+<p>所以怎么配置呢？</p>
+<p>我们去它的 DTD 文件里面找一下嘛：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCUTk2dXhLN0Z1QmwwYmE5bk1VaDRidDN1c2FnT3Axdm45bHhvUmlhUGY2Vktkdlh5SG5Vam1Wdy82NDA?x-oss-process=image/format,png">
+
+<p>这个文件不长，一共也才 213 行，你能发现这一块东西：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCaWE3VG5KR2QxNzllZ29OZzBYWGljQWdkSkZsalNxU1dybzltMmtveEJKRTlpY1A4QmpwWjZSZTZnLzY0MA?x-oss-process=image/format,png">
+
+<p>你用脚指头想也能知道，这就是我们要找的开关配置。从 DTD 文件的描述中来看，这个几个参数是配置在 table 标签里面的。</p>
+<p>我们去试一下：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCbVNvSWJSMDJNaWFpYmJkZXdORmN0VjB6MEtPZjdzYmlhcTluWTNtTHYyTDUxWmZmSmhZVWljQzFmdy82NDA?x-oss-process=image/format,png">
+
+<p>果然是这样的。然后我们进行相关配置如下：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCZW01UTRzTUpSVzJjSTZnZXNUNTBEaWF5c2N4U0ljaWFBdFVpYXpmNmpFZFV1anEwcTZ3RzZ1VGpnLzY0MA?x-oss-process=image/format,png">
+
+<p>再生成一下：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCWXliOVdxdkJCWGd2TVUzM1ZZeEgzSFMyWVExT0lId3FZazZMV3JaaWNPWTFuODdqdGhIRkY0QS82NDA?x-oss-process=image/format,png">
+
+<p>果然，delete 相关的接口没了。</p>
+<p>然后我们程序中真的需要 delete 操作的时候，再自己去手写 xml 文件。</p>
+<p>那你自己写的 xml 文件也忘记写 where 条件了这么办？</p>
+<p>这个月工资别领了。自己好好反思反思。</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9sbkNxanNRNlFIZTZkQ2lhQUFQZEkwUWljYTN4VXZxbnFoSjhORE0zRzdqOTFpY2xPcHlHc2Y3bVphVFZicFVJN29UWG45QXJjcXZFOW51N0ZKaWFIMUs3R3cvNjQw?x-oss-process=image/format,png">
+
+<p>当然，就算你真的忘记写了，下面这个拦截器还能给你兜个底，帮你一把。</p>
+<p><strong>mybatis 拦截器使用</strong>****</p>
+<p>其实这个方案是我想到的第一个方案。导致上面问题的原因很简单嘛，就是执行了delete 语句却没有 where 条件。</p>
+<p>那么我们可以拦截到这个 SQL 语句，然后对其进行两个判断：</p>
+<ol>
+<li>是否是 delete 语句。1. 如果是，是否包含 where 条件。<br>那么问题来了，我们怎么去拦截到这个 SQL 呢？</li>
+</ol>
+<p>答案就是我们可以开发一个 mybatis 插件呀，就像分页插件那样。</p>
+<p>插件，听起来很高端的样子，其实他就是个拦截器。实现起来非常简单。</p>
+<p>先去官网上看一下：</p>
+<blockquote>
+</blockquote>
+<p>  中文：<a target="_blank" rel="noopener" href="https://mybatis.org/mybatis-3/zh/configuration.html#plugins">https://mybatis.org/mybatis-3/zh/configuration.html#plugins</a><br>  英文：<a target="_blank" rel="noopener" href="https://mybatis.org/mybatis-3/configuration.html">https://mybatis.org/mybatis-3/configuration.html</a></p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCWmliaDF3VVJUNXF5RkpRN0UxcTd6MDJiZmQ1clBnaWNpYnhwcUM5MFRRT0lhelJZOHFBd2lhOUlKUS82NDA?x-oss-process=image/format,png">
+
+<p>在官网上，对于插件这一模块的描述是这样的：</p>
+<p><strong>通过 MyBatis 提供的强大机制，使用插件是非常简单的，只需实现 Interceptor 接口，并指定想要拦截的方法签名即可。</strong></p>
+<p>正如官网说的这样，插件开发、使用起来是非常简单的。只需要三步：</p>
+<ol>
+<li>实现 Interceptor 接口。1. 指定想要拦截的方法签名。1. 配置这个插件。</li>
+</ol>
+<p><strong>mybatis 插件开发</strong>****</p>
+<p>基于上面这三步，大家先看一下我们这插件怎么写，以及这个插件的效果。</p>
+<p>先说明一下本文涉及到的源码 mybatis 版本是 3.4.0。</p>
+<p>本文用拦截器的目的是判断 delete 语句中是否有 where 条件。所以，开发出来的插件长这样：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCUWF2dTE2aDltaENIQ01WWXlIbGRxanZRcXNJMnNVN0VpYVBBZUd2WnI4bnBVRzhqMlFkQmJXUS82NDA?x-oss-process=image/format,png">
+
+<p>再来一个复制粘贴直接运行版本：</p>
+<pre class="line-numbers language-java"><code class="language-java">
+<span class="token annotation punctuation">@Slf4j</span>
+<span class="token annotation punctuation">@Intercepts</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+        <span class="token annotation punctuation">@Signature</span><span class="token punctuation">(</span>type <span class="token operator">=</span> Executor<span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">,</span> method <span class="token operator">=</span> <span class="token string">"update"</span><span class="token punctuation">,</span>
+                args <span class="token operator">=</span> <span class="token punctuation">{</span>MappedStatement<span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">,</span> Object<span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">CheckSQLInterceptor</span> <span class="token keyword">implements</span> <span class="token class-name">Interceptor</span> <span class="token punctuation">{</span>
+
+    <span class="token keyword">private</span> <span class="token keyword">static</span> String SQL_WHERE <span class="token operator">=</span> <span class="token string">"where"</span><span class="token punctuation">;</span>
+
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> Object <span class="token function">intercept</span><span class="token punctuation">(</span>Invocation invocation<span class="token punctuation">)</span> <span class="token keyword">throws</span> Throwable <span class="token punctuation">{</span>
+        <span class="token comment" spellcheck="true">//获取方法的第0个参数，也就是MappedStatement。@Signature注解中的args中的顺序</span>
+        MappedStatement mappedStatement <span class="token operator">=</span> <span class="token punctuation">(</span>MappedStatement<span class="token punctuation">)</span> invocation<span class="token punctuation">.</span><span class="token function">getArgs</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+        <span class="token comment" spellcheck="true">//获取sql命令操作类型</span>
+        SqlCommandType sqlCommandType <span class="token operator">=</span> mappedStatement<span class="token punctuation">.</span><span class="token function">getSqlCommandType</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">final</span> Object<span class="token punctuation">[</span><span class="token punctuation">]</span> queryArgs <span class="token operator">=</span> invocation<span class="token punctuation">.</span><span class="token function">getArgs</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">final</span> Object parameter <span class="token operator">=</span> queryArgs<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+        BoundSql boundSql <span class="token operator">=</span> mappedStatement<span class="token punctuation">.</span><span class="token function">getBoundSql</span><span class="token punctuation">(</span>parameter<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        String sql <span class="token operator">=</span> boundSql<span class="token punctuation">.</span><span class="token function">getSql</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>SqlCommandType<span class="token punctuation">.</span>DELETE<span class="token punctuation">.</span><span class="token function">equals</span><span class="token punctuation">(</span>sqlCommandType<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token comment" spellcheck="true">//格式化sql</span>
+            sql <span class="token operator">=</span> sql<span class="token punctuation">.</span><span class="token function">replace</span><span class="token punctuation">(</span><span class="token string">"\n"</span><span class="token punctuation">,</span> <span class="token string">""</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>sql<span class="token punctuation">.</span><span class="token function">toLowerCase</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">contains</span><span class="token punctuation">(</span>SQL_WHERE<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                sql <span class="token operator">=</span> sql<span class="token punctuation">.</span><span class="token function">replace</span><span class="token punctuation">(</span><span class="token string">" "</span><span class="token punctuation">,</span> <span class="token string">""</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                log<span class="token punctuation">.</span><span class="token function">info</span><span class="token punctuation">(</span><span class="token string">"删除语句中没有where条件,sql为:{}"</span><span class="token punctuation">,</span> sql<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">Exception</span><span class="token punctuation">(</span><span class="token string">"删除语句中没有where条件"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span> invocation<span class="token punctuation">.</span><span class="token function">proceed</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> Object <span class="token function">plugin</span><span class="token punctuation">(</span>Object o<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> Plugin<span class="token punctuation">.</span><span class="token function">wrap</span><span class="token punctuation">(</span>o<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">setProperties</span><span class="token punctuation">(</span>Properties properties<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>再把插件注册上（注册插件还有其他的方法，后面会讲到，这里只是展示Bean注入的方式）：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCWmgyUmRZSmFTbGJvcmRvZmtOVTJoZlY0UUhpY0xiUzJqWk1BMldBb0lpY1VxV1RKMUpoNGI1YVEvNjQw?x-oss-process=image/format,png">
+
+<p>我们先看看配上插件后的执行效果：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCTEZGdWRBTnVCa25YUGNUcGRSZlZMRVo0enA4NmljVzRxOW51U0FWaGlicE9aZks3bzBzajdDdEEvNjQw?x-oss-process=image/format,png">
+
+<p>可以看到日志中输出了：</p>
+<p><strong>删除语句中没有where条件,sql为:delete from order_info_ext</strong></p>
+<p>并抛出了异常。</p>
+<p>这样，我们的扩展表的数据就保住了。在测试阶段，测试同学就一定能扯出来问题，瞟一眼日志就明白了。</p>
+<p>就算测试同学忘记测试了，在生产上也不会执行成功，抛出异常后还会有报警短信通知到相应的开发负责人，及时登上服务器去处理。</p>
+<p>功能实现了，确实是非常的简单。</p>
+<p>我们再说回代码，你说说看：当你拿到上面这段代码后，最迷惑的地方是哪里？</p>
+<p>其中的逻辑是很简单的了。 没有什么特别的地方，我想大多数人拿到这段代码迷惑的地方在于这个地方吧：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCMkxpYmlieVVlNWR0Y1FDTGJYU3M0VTRRWGd6TXNxYTVlZEtNd0Z1S0c0cUtTMmQyUWlhV0VqSGN3LzY0MA?x-oss-process=image/format,png">
+
+<p>这个 @Intercepts 里面的 @Signature 里面为什么要这样配置？</p>
+<p>我们先看看 @Intercepts 注解：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCN2xKWXZZTkl5TXlTY0lKa0pzeUExbm16d2QxRXF4ODZwcmFKNnFLeGliakpEN1I5ZzhoYW1ldy82NDA?x-oss-process=image/format,png">
+
+<p>里面是个数组，可以配置多个 Signature。所以，其实这样配置也是可以的：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCTUppY0ptNTlwTHRrMjRwNzNnVXRRSzlnOXRIMGliRmV0dEI4eFRMdDdzeE5wWlp4SGN6Q05nTlEvNjQw?x-oss-process=image/format,png">
+
+<p>关键的地方在于 @Signature 怎么配置：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCb0h2Vjl0dEFSUzhjYzZwazFua05HdGZXWldpY0RyaWFxUGQ5aEh1aWJjT2lhejlLTkJyZVp0QzF5dy82NDA?x-oss-process=image/format,png">
+
+<p>这个问题，我们放到下一节去讨论。</p>
+<p><strong>mybatis插件的原理</strong>****</p>
+<p>上面一小节我们知道了对于开发插件而言，难点在于 @Signature 怎么配置。</p>
+<p>其实这也不能叫难点，只能说你不知道能配置什么，比较茫然而已。这一小节就来回答这个问题。</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9sbkNxanNRNlFIZTZkQ2lhQUFQZEkwUWljYTN4VXZxbnFoaWFRWEkzd000VkxLMjZudUhpYjFUTlMzYTF1eFdqeFN5ckluaWFtSHFkaGljZmxrQXQ4dExQMjZjUS82NDA?x-oss-process=image/format,png">
+
+<p><strong>要知道怎么配置就必须要了解mybatis 这四大对象：Executor、ParameterHandler 、ResultSetHandler 、StatementHandler 。</strong></p>
+<p>官网上说：</p>
+<p>MyBatis 允许你在映射语句执行过程中的某一点进行拦截调用。默认情况下，MyBatis 允许使用插件来拦截的方法调用包括：</p>
+<ol>
+<li>Executor (update, query, flushStatements, commit, rollback, getTransaction, close, isClosed)1. ParameterHandler (getParameterObject, setParameters)1. ResultSetHandler (handleResultSets, handleOutputParameters)1. StatementHandler (prepare, parameterize, batch, update, query)<br>那官网上说的这四大对象分别是拿来干啥用的呢？</li>
+<li>Executor：Mybatis 的执行器，用于进行增删改查的操作。1. ParameterHandler ：参数处理器，用于处理 SQL 语句中的参数对象。1. ResultSetHandler：结果处理器，用于处理 SQL 语句的返回结果。1. StatementHandler ：数据库的处理对象，用于执行SQL语句<br>知道拦截的四大对象了，我们就可以先揭秘一下上面的这个注解配置的是啥了：</li>
+</ol>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCb0h2Vjl0dEFSUzhjYzZwazFua05HdGZXWldpY0RyaWFxUGQ5aEh1aWJjT2lhejlLTkJyZVp0QzF5dy82NDA?x-oss-process=image/format,png">
+1. **type 字段存放的是 class 对象，其取值范围就是上面说的四大对象。**1. **method 字段存放的是 class 对象的具体方法。**1. **args 存放的是具体方法的参数。**
+看到这几个参数你想到了什么？有没有条件反射式的想到反射？如果没有的话你再咂摸咂摸，**看看能不能品出一点反射的味道。**
+
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9sbkNxanNRNlFIZTZkQ2lhQUFQZEkwUWljYTN4VXZxbnFoaWI5NG9ScnhJTWd2cWhwTlhxb1dJM2N6bks0SFV0QURpYXVkSmt3QktJSkdRajluUERvc2pkb2cvNjQw?x-oss-process=image/format,png">
+
+<p>本文用拦截器的目的是判断 delete 语句中是否有 where 条件，因此经过上面的分析，Executor 对象就能满足我们的需求。</p>
+<p>所以在本文示例中 @Signature 的 type 字段就是 Executor.class。</p>
+<p>那 method 字段我们放哪个方法呢？放 delete 吗？</p>
+<p>这就得看看 Executor 对象的方法有哪些：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCcDdkU2xpYmFpY2tLZDNlRzdpY2lhNWZpY1VYb1ZWUVM5ZWhiMDRzYlZUaEdLWXY1QkV3VlJqbm9BZ1EvNjQw?x-oss-process=image/format,png">
+
+<p>可以看到其中并没有 delete 方法，和 SQL 执行相关的，看起来只有 query和 update。</p>
+<p>但是，我们可以大胆猜测一下呀：delete 也是一种 update。</p>
+<p>接着去求证一下就行：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCZ2dlWGswQUtCY0hRNDZ4M21xczhWWXFYUXoyNENUSVBHTG5FeGd0NlFCdGV4bUpibGpFc2JnLzY0MA?x-oss-process=image/format,png">
+
+<p>可以看到 delete 方法确实是调用了 update 方法。</p>
+<p>所以在本文案例中 @Signature 的 method 字段放的是 update 方法。</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCZ0Rrc1l2OGlhZXllWkxTcmVHSUttWjVvd3VyU014N2xaMUVYWmZndk5pYWZSNDJMUlVyNWljdVdRLzY0MA?x-oss-process=image/format,png">
+
+<p>已经知道具体的方法了，那 args 放的就是方法的入参，所以这段配置就是这样来的：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCZVQ1QWt0YUVXMFRmYlZGVDREMWJvbnN0aWF4TVFiQ2N4RjhZU3phRzJYSEJsaWNLNTFLVVJ3OEEvNjQw?x-oss-process=image/format,png">
+
+<p>真的，我觉得这属于手摸手教学系列了。经过这个简单的案例，我希望大家能做到一通百通。</p>
+<p>接下来带大家看看我们常用的分页插件 pageHelper 是怎么做的吧。</p>
+<p>其实你用脚指头也能想到，分页插件肯定是拦截的查询方法，我们只是需要去验证一下就可以。</p>
+<p>引入 pageHelper 后可以看到 Interceptor 的多了两个实现：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCZlc2aWN3aWNzdkFSQ1FjdXk1aGRlRmlhUUNvU2pOclFXaWN2TnpBWkZYNGhGQ0NFaGR2RFVqaGlhTUEvNjQw?x-oss-process=image/format,png">
+
+<p>我们看一下 PageInterceptor 方法吧：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCY2N2ODlHM1hHWW9rRk01NHlaWjFWTWZMMXpsM1d1dDVSNFR0emEyYnFUUUZDSGxzQUVYQ1J3LzY0MA?x-oss-process=image/format,png">
+
+<p>对吧，拦截了两个 query 方法，一个参数是 4 个，一个参数是 6 个： </p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCZFQ5aEhzYVZqMEJHT3MzYmtOc3d3akc1bHdQRzdObnZySEpHbVpxSTBieE5uRTIzT0NmYWRRLzY0MA?x-oss-process=image/format,png">
+
+<p>同时，在 intercept 的实现里面有一部分是这样写的：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCaWMxaWI1WTVyWVhpY1JlRXpqZFhzSk4zQ3dQaWFiN05BOXlQR0xIR2lhSHdydnFrcHI4RHF0cHpqeXcvNjQw?x-oss-process=image/format,png">
+
+<p>4 个参数和 6 个参数是做了单独处理的，至于为什么要这样处理，至于为什么要拦截两个 query 方法，说起来又是一个很长的故事了。</p>
+<p>详细的可以看看这个链接：</p>
+<blockquote>
+</blockquote>
+<p>  <a target="_blank" rel="noopener" href="https://github.com/pagehelper/Mybatis-PageHelper/blob/master/wikis/zh/Interceptor.md">https://github.com/pagehelper/Mybatis-PageHelper/blob/master/wikis/zh/Interceptor.md</a></p>
+<p>好了，还是那句话：<strong>如果要写出好的 mybatis 插件，必须知道 @Signature 怎么去配置。配置后能拦截哪些东西，你心里应该是有点数的。</strong></p>
+<p><strong>mybatis插件的原理</strong>****</p>
+<p>前面我们知道拦截器怎么写了，接下来简单的分析一波原理。</p>
+<p>前几天我看到一个观点是说看开源框架的源码建议从 mybatis 看起。我是很赞成这个观点的，确实是优雅，而容易看懂。能品出很多设计模式的使用。</p>
+<p><strong>一句话总结 mybatis插件的原理就是：动态代理加上责任链。</strong></p>
+<p>先看一下 Plugin 类的动态代理：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCV2NKaWNpYjVsdTFiRkQ3S1lSUG5naWJPbHlDODM5SFg0NnY0cmNpYzJMVnpOWFhOSUxIUFZMWjVrUS82NDA?x-oss-process=image/format,png">
+
+<p>标号为 ① 的地方一看就知道，InvocationHandler，JDK 动态代理，没啥说的。</p>
+<p>标号为 ② 的地方是 wrap 方法，生成 Plugin 代理对象。</p>
+<p>标号为 ③ 的地方是 invoker 方法，<strong>圈起来的目的是想说是在这里判断当前方法是否是需要被拦截的方法。如果是则用代理对象走拦截器逻辑，如果不是则用目标对象，走正常逻辑。</strong></p>
+<p>给大家看一下这个地方的 debug 效果：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCYlAxdTEwc0tkRnZPaWNBbGFWSEdnTnBYd0pnajhCWnZ5cjVjUXBPWWJXNndrd25zQ0V6Snd5QS82NDA?x-oss-process=image/format,png">
+
+<p>一个平平无奇的 if 判断，是拦截器的关键。为什么这个地方多说了几句呢？</p>
+<p>因为其实这就是细节的地方。当面试的时候面试官问你：<strong>mybatis 是怎么判断是否需要拦截这个方法的时候你能答上来。说明你是真的看过源码。</strong></p>
+<p>责任链是怎么体现的呢？</p>
+<p>就是这个地方：</p>
+<blockquote>
+</blockquote>
+<p>  org.apache.ibatis.plugin.InterceptorChain</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCSWxDeXdFRm9pY2ppYzZQSnBERnhoN3d3ZjZRWjBOcWhSYzlma0NmcHBtQXhwM0FRc29xU251U3cvNjQw?x-oss-process=image/format,png">
+
+<p>你看又学到一招，mybatis 里面的设计模式还有责任链。</p>
+<p>我们看一下 pluginAll 方法的调用方：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCNVJUTzJueXdYc0lPTFlDRUw2QlNNWnFhcUxhQVBWVXdQdVNRbmJ1elczSlpBMzhJaWI2SzVBQS82NDA?x-oss-process=image/format,png">
+
+<p>这个地方就体现出之前官网说的了：</p>
+<p>插件是作用于这四大对象的：Executor、ParameterHandler 、ResultSetHandler 、StatementHandler 。</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZHhsNlNpY1RSc0Exc2JHUktjbGliY3FCYlRyMm9Ec3VnRkxiSXVHanlpYktLcnZia092MWZDcG1ZaEFtcHA1T0ExUnZMRVhCMWNWakRtQS82NDA?x-oss-process=image/format,png">
+
+<p>上面框起来的这四个框，就是插件调用的地方。</p>
+<p>那么插件在什么时候被加载，或者说什么是被注册上的呢？</p>
+<p>还是回到拦截链这个类上去：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZTZkQ2lhQUFQZEkwUWljYTN4VXZxbnFob0hpYjF4TGZDOGZkMERwZmE0ZjFDQ2lhN0pwaWJiN2pVRFNPN2VodmxvNmRyaWI3eUJGaWFyS09rSkEvNjQw?x-oss-process=image/format,png">
+
+<p>pluginAll 方法我们已经知道有哪些地方调用了。这个方法里面其实还有两个考点。</p>
+<ol>
+<li>第一就是 interceptor 这个 List 集合的定义，用了 final 修饰。所以要注意 final 修饰基本类型和引用类型的区别，被 final 修饰的引用类型变量内部的内容是可以发生变化的。1. 第二就是 getInterceptors 返回的是一个不可修改的 List 。所以，要对集合 interceptors 进行修改，只能通过 addInterceptor 方法进行元素添加，保证了这个集合是可控的。<br>所以，我们只需要知道哪里调用了 addInterceptor 方法，哪里就是插件被注册的地方。</li>
+</ol>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZTZkQ2lhQUFQZEkwUWljYTN4VXZxbnFodGVMNlhJamlhT1RBQTRCSEF2TlJFVUQ0NHRnczFrclZFaDBRcmlhRVl4aWNFemliNGw2VjJwUE9VUS82NDA?x-oss-process=image/format,png">
+
+<p>一个是 SqlSessionFactoryBean ，一个是 XMLConfigBuilder。</p>
+<p>使用 XML 配置是这样的：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZTZkQ2lhQUFQZEkwUWljYTN4VXZxbnFoUGFDM2lhaWF6aWFuV2Y2dEkyeDlzR2FPRWljVmowUXBxVWNMY3NaMVBocnRJcnFPeVlwRnhkVkV0Zy82NDA?x-oss-process=image/format,png">
+
+<p>熟悉 mybatis 的朋友们肯定知道，无非就是对于标签的解析而已。</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZTZkQ2lhQUFQZEkwUWljYTN4VXZxbnFoVWljbGdkY1IxaWN4aWNKQ3hSanJjRmNYb0F2WThVVE1UaHJlRDdTOXRwekxuUTZWM2FoZ3NZM1BBLzY0MA?x-oss-process=image/format,png">
+
+<p>解析到 plugins 标签，则进入 pluginElement 方法中，在这个方法里面调用 addInterceptor：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZTZkQ2lhQUFQZEkwUWljYTN4VXZxbnFoQ2ljUkVLcWd6T2lidUxheHVXSHVsT3RZOUNQZGtpYVhHa1hQZEFiNGFia09FeDJUVDl3dkR0Y3dnLzY0MA?x-oss-process=image/format,png">
+
+<p>本文没有使用 XML 的形式配置，所以我们主要看一下 SqlSessionFactoryBean。</p>
+<p>怎么看呢？</p>
+<p><strong>不要盲目的走入源码，加个断点看调用链，跟着调用链去走就很清晰了。</strong></p>
+<p>在这个地方加一个断点：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZTZkQ2lhQUFQZEkwUWljYTN4VXZxbnFoMVpXVnBUbGFLaWJTYXNCRUJHNk9ZMnNRclplcm5QTWNVSGVzVHpuYU5VcjNkM0k1dk5uNGliRncvNjQw?x-oss-process=image/format,png">
+
+<p>然后 debug 起来，你就可以看到整个调用链了：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZTZkQ2lhQUFQZEkwUWljYTN4VXZxbnFoaWJmNlMxblQwZU1Dc1c4TlNPSW9ObkFaUlo0Slk4SDhhQW1abTJFMjdIRGljMmtFNnFmVVhzeEEvNjQw?x-oss-process=image/format,png">
+
+<p>然后我们根据上面的调用链，我们就可以找到源头了：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZTZkQ2lhQUFQZEkwUWljYTN4VXZxbnFoZ2FDTFBENmJSTVRtZzloVlhjaWF2R1AwSE9aeUtsNU1YejA3ZkNUaWFHeTN1Z3NYWWJWZFhZZVEvNjQw?x-oss-process=image/format,png">
+
+<p>在 MybatisAutoConfiguration 的构造方法里面初始化了 interceptors。</p>
+<p>而 interceptorsProvider.getIfAvailable() 方法也解释了为什么我们只需要在程序里面这样注入我们的拦截器就可以被找到了：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZTZkQ2lhQUFQZEkwUWljYTN4VXZxbnFoVEhqWWpXd1d6WXhlRjJMYVU5QjhTdmljbVJyR25hbHVpYngxbDIyaFloNWhTV2ZRNEdQbzI1d3cvNjQw?x-oss-process=image/format,png">
+
+<p><strong>对 getIfAvailable 方法不熟悉的朋友可以去补一下这块的知识</strong>，我这里只是给大家看一下这个方法上的注释：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZTZkQ2lhQUFQZEkwUWljYTN4VXZxbnFoV3ppYVBmSWlhamRpYTdFNHRkRmlhZ2dpYk83Ym5jOEplZ2cwbWhvcUkwajJKSGVuUnY0R0Q4OHdWa3cvNjQw?x-oss-process=image/format,png">
+
+<p>当然，你这样去注入的话有可能会不生效，你就会大骂一声：写的什么垃圾玩意，配置上了也不对呀。</p>
+<p>别着急呀，我还没说完呢。你看看是不是有自定义的 SqlSessionFactory 在项目里。</p>
+<p>看一下注入 SqlSessionFactory 的源码上面的那个注解了吗？</p>
+<p>@ConditionalOnMissingBean ，看名字也知道了，当你的项目里面没有自定义的 SqlSessionFactory 的时候，才会由源码给你注入，这个时候才会正在的注册上插件：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZTZkQ2lhQUFQZEkwUWljYTN4VXZxbnFoNlhzVVJPWnJXTWVlcjhkWDhVQWlhRWUyTjN3b0FQOTE5YXg2TGNaTUJnR2haaGppYUlVWWljZHNnLzY0MA?x-oss-process=image/format,png">
+
+<p>如果你有自定义的 SqlSessionFactory，那么请手动调用 factory.setPlugins 方法。</p>
+<p>所以，总结一下插件的三种配置方法：</p>
+<ol>
+<li>xml方式配置。1. 如果没有自定义 SqlSessionFactory 直接 @Bean 注入拦截器即可。1. 如果有自定义 SqlSessionFactory  需要在自定义的地方手动调用 factory.setPlugins 方法。<br>其实我尝试过第四种方法，在application.properties 里面配置：</li>
+</ol>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZTZkQ2lhQUFQZEkwUWljYTN4VXZxbnFoamliNkl0RDIxcUlBODdPRTRmRVJMWlJSSEl0VEZpYkUwakZrOUIzM29yb3pJMW82UVk3RFhzZ0EvNjQw?x-oss-process=image/format,png">
+
+<p>这种配置方式才是符合 SpringBoot 思想的配置。<strong>才是真正的丝滑，润物无声的丝滑。</strong></p>
+<p>可惜，我配置上后，点击到对应的源码地方一看：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZTZkQ2lhQUFQZEkwUWljYTN4VXZxbnFoaHdiYXZyMWlhMkxWNkhXYzB1b0I3c0xZc3RuaWNhRFFDYXJGUmpVWUxDanJpYzBpYTBWSTlnb2xpYlEvNjQw?x-oss-process=image/format,png">
+
+<p>它调用的是 getInterceptors 方法，我就知道肯定是有问题了：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZTZkQ2lhQUFQZEkwUWljYTN4VXZxbnFoRjZ0d3hBcHY0TUw1RnNpYmliVW9HVURMMU5xenNrTmd0M0JpYnJ4MGliOEZ6VVFiSWVzUnZzODdpYmcvNjQw?x-oss-process=image/format,png">
+
+<p>果然，运行起来会报这样的错误：</p>
+<blockquote>
+</blockquote>
+<p>  Failed to bind properties under ‘mybatis.configuration.interceptors’ to java.util.List&lt;org.apache.ibatis.plugin.Interceptor&gt;</p>
+<p>找了一圈原因，最后发现了这个 issue：</p>
+<blockquote>
+</blockquote>
+<p>  github.com&#x2F;mybatis&#x2F;spring-boot-starter&#x2F;issues&#x2F;180</p>
+<p>这个“奇异博士”头像的用户提出了和我一样的问题：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZTZkQ2lhQUFQZEkwUWljYTN4VXZxbnFob2dHMXJqSm1aUlhsYlJ1Z0FMN1hqVkprSUFxclBZdEIxWFdxM29FanYyVm1yR1hSU0xNb3lnLzY0MA?x-oss-process=image/format,png">
+
+<p>然后下面的回答是这样的：</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9sbkNxanNRNlFIZTZkQ2lhQUFQZEkwUWljYTN4VXZxbnFoVjgwV3ZqRXlOaWE0cEtzd0hjODJhYW94QjJpY1VpY1h3RkswRkNuUEFmdEs3VjNHS1Jtd2liRkF4Zy82NDA?x-oss-process=image/format,png">
+
+<p>别问，问就是不支持。请使用 @Bean 的方式。</p>
+<pre class="line-numbers language-java"><code class="language-java">
+原创电子书历时整整一年总结的 Java 面试 <span class="token operator">+</span> Java 后端技术学习指南，这是本人这几年及校招的总结，各种高频面试题已经全部进行总结，按照章节复习即可，已经拿到了大厂offer。
+原创思维导图扫码或者微信搜 程序员的技术圈子 回复 面试 领取原创电子书和思维导图。
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>原文地址：<a target="_blank" rel="noopener" href="https://sihai.blog.csdn.net/article/details/109541555">https://sihai.blog.csdn.net/article/details/109541555</a></p>
+
+                </div>
+                <!-- 欧阳思海，modify，2020.05.01-->
+<!-- 文章详情详情页面的头部广告位置信息 -->
+<div id="post-head-panel">
+    
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" style="font-size: 18px;" target="_blank">
+        <img src="/icons/hot.gif">
+        本人花费半年的时间总结的《Java面试指南》已拿腾讯等大厂offer，已开源在github ，欢迎star！
+    </a>
+    
+    
+</div>
+<br />
+
+
+
+<blockquote>
+    
+            <p>本文GitHub <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">https://github.com/OUYANGSIHAI/JavaInterview</a> 已收录，这是我花了6个月总结的<b>一线大厂Java面试</b>总结，本人已拿大厂offer，欢迎star</p>
+    
+    <p>原文链接：blog.ouyangsihai.cn &gt;&gt; <a href="/mybatis-ni-xiang-gong-cheng-shi-yong-zi-shi-bu-dui-ba-biao-qing-kong-liao-xin-li-huang-de-yi-bi-yu-shi-xie-liao-ge-cha-jian.html" target="_blank">mybatis 逆向工程使用姿势不对，把表清空了，心里慌的一比，于是写了个插件。</a></p>
+</blockquote>
+                <hr />
+
+                
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.88rem;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-large waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fa fa-close"></i></a>
+            <h4 class="reward-title">多少都是对我的认可</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="http://image.ouyangsihai.cn/FpbhsOuf3Ar9vY34B97Y2qQ7LVGe" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="http://image.ouyangsihai.cn/FgYlMzms68PH73PWpZBwPfbLTAws" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+                
+
+                <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+
+<div id="article-share">
+    
+    <div class="social-share" data-disabled="qzone" data-wechat-qrcode-helper="<p>微信里点“发现”->“扫一扫”二维码便可查看分享。</p>"></div>
+    
+</div>
+
+<script src="/libs/share/js/social-share.min.js"></script>
+
+                
+
+                
+                <div class="reprint1">
+                    <p>
+                        <span class="reprint1-tip">
+                            <i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;转载请注明:
+                        </span>
+                        <a href="https://blog.ouyangsihai.cn" class="b-link-green">好好学java</a>
+                        <i class="fa fa-angle-right fa-lg fa-fw text-color"></i>
+                        <a href="/mybatis-ni-xiang-gong-cheng-shi-yong-zi-shi-bu-dui-ba-biao-qing-kong-liao-xin-li-huang-de-yi-bi-yu-shi-xie-liao-ge-cha-jian.html" class="b-link-green">mybatis 逆向工程使用姿势不对，把表清空了，心里慌的一比，于是写了个插件。</a>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        
+
+        
+
+        
+
+        
+
+        
+        <style>
+    .valine-card {
+        margin: 1.5rem auto;
+    }
+
+    .valine-card .card-content {
+        padding: 20px 20px 5px 20px;
+    }
+    /* valine 评论框增加背景图片 */
+    #vcomments textarea {
+        box-sizing: border-box;
+        background: url("") 100% 100% no-repeat;
+    }
+
+    #vcomments input[type=text],
+    #vcomments input[type=email],
+    #vcomments input[type=url],
+    #vcomments textarea {
+        box-sizing: border-box;
+    }
+
+    #vcomments p {
+        margin: 2px 2px 10px;
+        font-size: 1.05rem;
+        line-height: 1.78rem;
+    }
+
+    #vcomments blockquote p {
+        text-indent: 0.2rem;
+    }
+
+    #vcomments a {
+        padding: 0 2px;
+        color: #42b983;
+        font-weight: 500;
+        text-decoration: underline;
+    }
+
+    #vcomments img {
+        max-width: 100%;
+        height: auto;
+        cursor: pointer;
+    }
+
+    #vcomments ol li {
+        list-style-type: decimal;
+    }
+
+    #vcomments ol,
+    ul {
+        display: block;
+        padding-left: 2em;
+        word-spacing: 0.05rem;
+    }
+
+    #vcomments ul li,
+    ol li {
+        display: list-item;
+        line-height: 1.8rem;
+        font-size: 1rem;
+    }
+
+    #vcomments ul li {
+        list-style-type: disc;
+    }
+
+    #vcomments ul ul li {
+        list-style-type: circle;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    #vcomments table, th, td {
+        border: 0;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments h1 {
+        font-size: 1.85rem;
+        font-weight: bold;
+        line-height: 2.2rem;
+    }
+
+    #vcomments h2 {
+        font-size: 1.65rem;
+        font-weight: bold;
+        line-height: 1.9rem;
+    }
+
+    #vcomments h3 {
+        font-size: 1.45rem;
+        font-weight: bold;
+        line-height: 1.7rem;
+    }
+
+    #vcomments h4 {
+        font-size: 1.25rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    #vcomments h5 {
+        font-size: 1.1rem;
+        font-weight: bold;
+        line-height: 1.4rem;
+    }
+
+    #vcomments h6 {
+        font-size: 1rem;
+        line-height: 1.3rem;
+    }
+
+    #vcomments p {
+        font-size: 1rem;
+        line-height: 1.5rem;
+    }
+
+    #vcomments hr {
+        margin: 12px 0;
+        border: 0;
+        border-top: 1px solid #ccc;
+    }
+
+    #vcomments blockquote {
+        margin: 15px 0;
+        border-left: 5px solid #42b983;
+        padding: 1rem 0.8rem 0.3rem 0.8rem;
+        color: #666;
+        background-color: rgba(66, 185, 131, .1);
+    }
+
+    #vcomments pre {
+        font-family: monospace, monospace;
+        padding: 1.2em;
+        margin: .5em 0;
+        background: #272822;
+        overflow: auto;
+        border-radius: 0.3em;
+        tab-size: 4;
+    }
+
+    #vcomments code {
+        font-family: monospace, monospace;
+        padding: 1px 3px;
+        font-size: 0.92rem;
+        color: #e96900;
+        background-color: #f8f8f8;
+        border-radius: 2px;
+    }
+
+    #vcomments pre code {
+        font-family: monospace, monospace;
+        padding: 0;
+        color: #e8eaf6;
+        background-color: #272822;
+    }
+
+    #vcomments pre[class*="language-"] {
+        padding: 1.2em;
+        margin: .5em 0;
+    }
+
+    #vcomments code[class*="language-"],
+    pre[class*="language-"] {
+        color: #e8eaf6;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    #vcomments b,
+    strong {
+        font-weight: bold;
+    }
+
+    #vcomments dfn {
+        font-style: italic;
+    }
+
+    #vcomments small {
+        font-size: 85%;
+    }
+
+    #vcomments cite {
+        font-style: normal;
+    }
+
+    #vcomments mark {
+        background-color: #fcf8e3;
+        padding: .2em;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    /* 修复评论第一行位置错位 */
+    .v .vlist .vcard {
+    padding-top: 2.5em !important ;
+    }
+</style>
+
+<div class="card valine-card" data-aos="fade-up">
+    <div id="vcomments" class="card-content"></div>
+</div>
+
+<script src="/libs/valine/av-min.js"></script>
+<script src="/libs/valine/Valine.min.js"></script>
+<!-- <link rel="stylesheet" type="text/css" href="/libs//libs/jQuery-emoji/dist/css/jquery.emoji.css">
+<script src="/libs//libs/jQuery-emoji/dist/js/jquery.emoji.min.js"></script>
+<script src="/libs//libs/jQuery-emoji/dist/js/emoji.list.js"></script> -->
+<script>
+    new Valine({
+        el: '#vcomments',
+        appId: 'MxSNOS83TYWU3Opsy2GTW1ih-gzGzoHsz',
+        appKey: '4XevOgmAxHEwVDnIKgvEUihB',
+        notify: 'true' === 'true',
+        verify: 'true' === 'true',
+        visitor: 'true' === 'true',
+        avatar: 'mm',
+        pageSize: '10',
+        lang: 'zh-cn',
+        placeholder: '请畅所欲言吧，别害羞~',
+
+    });
+
+//     function parse_emoji() {
+//     jQuery(".vcontent").emojiParse({
+//       basePath: '/libs/jQuery-emoji/images/emoji',
+//       icons: emojiLists   // 注：详见 js/emoji.list.js
+//     });
+//   }
+  
+//   setTimeout(function() {
+//     // jQuery emoji 解析
+//     parse_emoji();
+//     // jquery emoji 初始化
+//     jQuery(".veditor").emoji({
+//       showTab: true,
+//       animation: 'slide',
+//       basePath: '/libs/jQuery-emoji/images/emoji',
+//       icons: emojiLists  // 注：详见 js/emoji.list.js
+//     });
+//     jQuery(".vmore").on("click", function() {
+//       setTimeout(function() {
+//         parse_emoji();
+//       }, 500);
+//     });
+//   }, 800)
+
+</script>
+        
+
+        
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/springboot-2-spring-security-5-jwt-de-dan-ye-ying-yong-restful-jie-jue-fang-an.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="SpringBoot 2 + Spring Security 5 + JWT 的单页应用 Restful 解决方案">
+                        
+                        <span class="card-title">SpringBoot 2 + Spring Security 5 + JWT 的单页应用 Restful 解决方案</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            点击上方 **好好学java **，选择 **星标 **公众号
+重磅资讯、干货，第一时间送达
+今日推荐：个人原创100W+访问量博客：点击前往，查看更多
+此前我已经写过一篇类似的教程，但那时候使用了投机的方法，没有尊重 Spring Sec
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="fa fa-clock fa-fw icon-date"></i>2021-04-04
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E5%A5%BD%E5%A5%BD%E5%AD%A6java/" class="post-category" target="_blank">
+                                    好好学java
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fa fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/da-han-de-404-ye-mian-du-chang-sha-yang-kan-dao-zui-hou-yi-ge-wo-xiao-liao....html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/12.jpg" class="responsive-img" alt="大厂的 404 页面都长啥样？看到最后一个，我笑了...">
+                        
+                        <span class="card-title">大厂的 404 页面都长啥样？看到最后一个，我笑了...</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            点击上方 **好好学java **，选择 **星标 **公众号
+重磅资讯、干货，第一时间送达
+今日推荐：个人原创100W+访问量博客：点击前往，查看更多
+来源：GitHub科技
+每天浏览各大网站，难免会碰到404页面啊。你注意过404页面么
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="fa fa-clock fa-fw icon-date"></i>2021-04-04
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E5%A5%BD%E5%A5%BD%E5%AD%A6java/" class="post-category" target="_blank">
+                                    好好学java
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+    </div>
+</div>
+
+
+<script>
+    $('#articleContent').on('copy', function (e) {
+        // IE8 or earlier browser is 'undefined'
+        if (typeof window.getSelection === 'undefined') return;
+
+        var selection = window.getSelection();
+        // if the selection is short let's not annoy our users.
+        if (('' + selection).length < Number.parseInt('500')) {
+            return;
+        }
+
+        // create a div outside of the visible area and fill it with the selected text.
+        var bodyElement = document.getElementsByTagName('body')[0];
+        var newdiv = document.createElement('div');
+        newdiv.style.position = 'absolute';
+        newdiv.style.left = '-99999px';
+        bodyElement.appendChild(newdiv);
+        newdiv.appendChild(selection.getRangeAt(0).cloneContents());
+
+        // we need a <pre> tag workaround.
+        // otherwise the text inside "pre" loses all the line breaks!
+        if (selection.getRangeAt(0).commonAncestorContainer.nodeName === 'CODE') {
+            newdiv.innerHTML = "<pre>" + newdiv.innerHTML + "</pre>";
+        }
+
+        var url = document.location.href;
+        newdiv.innerHTML += '<br />'
+            + '来源: 好好学java<br />'
+            + '作者: 好好学java<br />'
+            + '链接: <a href="' + url + '">' + url + '</a><br />'
+            + '本文章著作权归作者所有，任何形式的转载都请注明出处。';
+
+        selection.selectAllChildren(newdiv);
+        window.setTimeout(function () { bodyElement.removeChild(newdiv); }, 200);
+    });
+</script>
+
+
+
+<!--
+<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+<script>
+    const btw = new BTWPlugin();
+    btw.init({
+        id: 'container',
+        blogId: '15305-1590684104111-518',
+        name: '程序员的技术圈子',
+        qrcode: 'http://image.ouyangsihai.cn/FtAUOeE5--1JTdcuuZFIhMuEUuJO',
+        keyword: 'vip',
+    });
+</script>
+-->
+
+    </div>
+    <div id="toc-aside" style="width: 310px;" class="expanded col l3 hide-on-med-and-down">
+        <!-- 自定义右侧card：欧阳思海 -->
+        <!-- <div id="my-card" style="background: ">
+            
+        </div> -->
+        <!-- <div class="toc-widget">
+            <div class="toc-title" style="display: none;"><i class="fa fa-list-alt"></i>&nbsp;&nbsp;</div>
+            <div id="toc-content"></div>
+        </div> -->
+
+
+
+
+
+
+
+
+        <aside class="col-lg-3" style="width: 300px;">
+
+            <link rel="stylesheet" type="text/css" href="/css/my-aside.css">
+
+            <!-- 关注公众号信息：欧阳思海 -->
+            <div class="widget-wrap">
+                <div class="widget bg-danger" style="color:whitesmoke; background-color: #419488">
+                    <div class="card-front animated col s12 m12 l8 offset-l2 fadeInUp">
+                        <div class="row">
+                            <div class="col-md-5" style="text-align: center;">
+                                <img class="adv" style="width: 95px; height: 95px;"
+                                    src="http://image.ouyangsihai.cn/FtAUOeE5--1JTdcuuZFIhMuEUuJO">
+                            </div>
+                            <div class="col-md-7" style="text-align: center;">
+                                <h2 style="font-size: 18px; 
+                                    margin: 0; 
+                                    padding: 0;
+                                    border: 0; 
+                                    outline: 0;
+                                    font-weight: inherit;
+                                    font-style: inherit;
+                                    font-family: inherit;
+                                    vertical-align: baseline;">关注公众号</h2>
+                                 
+                                <small style="font-size: 15px;">
+                                    →「技术干货」每日推送 <br>
+                                    →「回复资料」领取资料 <br>
+                                    →「微信加群」每周福利 <br>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div style="font-size: 0.8em;">
+                        <a href="/assets/erweima.jpg" target="_blank"
+                            style="color:orange;font-size: 14px;">点击添加我的微信，加入技术讨论群</a>
+                        除公众号以外，我还会在以下平台发布内容：
+                    </div>
+                    -->
+
+                    <div class="profile-block social-links col-md-7" style="text-align: center;">
+                        <table style="align-items: center; 
+                                        padding-left: 25px;">
+                            <tbody>
+                                <tr>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank" title="GitHub"
+                                            class="tooltip">
+                                            <img style="width: 22px;height: 22px;" src="/icons/github.svg"></a>
+                                    </td>
+
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://www.zhihu.com/people/hai-hai-ren-sheng-50/activities"
+                                            target="_blank" title="知乎" class="tooltip">
+                                            <img style="width: 22px;" src="/icons/zhihu.svg"></a>
+                                    </td>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://blog.csdn.net/sihai12345" target="_blank" title="CSDN"
+                                            class="tooltip">
+                                            <img style="width: 18px;" src="/icons/CSDN.svg"></a>
+                                    </td>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://www.jianshu.com/u/12b0bd4c857c" target="_blank" title="简书"
+                                            class="tooltip">
+                                            <img style="width: 22px;" src="/icons/JianShu.svg"></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            
+
+            <!-- custom rightside_link：热门文章推荐：欧阳思海 -->
+            
+            <div class="widget-wrap widget-panel">
+                <p style="text-align: left;padding-bottom: 10px;line-height: 30px; font-size: 14px;">
+                    
+                    <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        本人花费半年的时间总结的《 Java 面试指南》已拿腾讯等大厂 offer，已开源在 github ，欢迎 star！
+                    </a><br>
+                    
+                    <a href="https://mp.weixin.qq.com/s/I0jimqziHqRNaIy0kXRCnw" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        2020 Java 1000G 最新学习资源，Java基础、Java项目实战、Java分布式等等！
+                    </a><br>
+                    
+                    <a href="http://image.ouyangsihai.cn/FpB-dO6g-XU44mMrVlj7EL1y7Rs7" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        高级 Java 开发微信群，一起搞事情吧！
+                    </a><br>
+                    
+                </p>
+            </div>
+            
+
+            
+
+            <!-- custom rightside_banner：右侧广告或者其他的栏目设置：欧阳思海 -->
+            
+            <div class="widget-wrap">
+                <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">
+                    <img src="http://image.ouyangsihai.cn/FhhoEYMaNr6m0v8KhG8vSPgoREBV" style="width: 100%;">
+                </a>
+            </div>
+            
+            
+
+            
+
+            <!-- 右侧专栏分类：欧阳思海 -->
+            
+            <div class="widget-wrap widget-panel">
+                <ul class="media-list">
+                    
+                    <li class="media">
+                        <a href="/categories/MySQL的艺术世界/" target="_blank">
+                            <div class="media-left">
+                                <img class="media-object" src="http://image.ouyangsihai.cn/Fn3kQurieQ_0QUeqPmx5RW5i6R9n" style="width: 55px;">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading" style="margin-bottom: 10px; font-size: 100%;
+                                                                    margin: 0;
+                                                                    padding: 0;
+                                                                    border: 0;
+                                                                    outline: 0;
+                                                                    font-weight: inherit;
+                                                                    font-style: inherit;
+                                                                    font-family: inherit;
+                                                                    vertical-align: baseline;">
+                                    MySQL 的系列文章，解决全部面试问题！
+                                </h4>
+                                <p>
+                                    总共10篇文章，面试热门的锁、事务，通通解决了！
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    <hr>
+                    
+                    <li class="media">
+                        <a href="/categories/深入理解Java虚拟机/" target="_blank">
+                            <div class="media-left">
+                                <img class="media-object" src="http://image.ouyangsihai.cn/FpcS21VWJOHSgGzKcpW3_xVTSEeN" style="width: 55px;">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading" style="margin-bottom: 10px; font-size: 100%;
+                                                                    margin: 0;
+                                                                    padding: 0;
+                                                                    border: 0;
+                                                                    outline: 0;
+                                                                    font-weight: inherit;
+                                                                    font-style: inherit;
+                                                                    font-family: inherit;
+                                                                    vertical-align: baseline;">
+                                    深入理解 Java 虚拟机，面试必问
+                                </h4>
+                                <p>
+                                    总共10篇文章，包括内存模型、GC算法、GC收集器等。
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    <hr>
+                    
+                </ul>
+            </div>
+            
+
+            <!-- 右侧分类 -->
+            <div class="widget-wrap widget-panel">
+                <h3 class="widget-title">文章分类</h3>
+                <div class="widget">
+                    <ul class="category-list">
+                        
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/趣聊数据结构与算法/">>
+                                趣聊数据结构与算法</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/职业生涯浅谈/">>
+                                职业生涯浅谈</a><span class="category-list-count">33</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java项目分享/">>
+                                Java项目分享</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java面试经验/">>
+                                Java面试经验</a><span class="category-list-count">4</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/我要进大厂/">>
+                                我要进大厂</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/好好学java/">>
+                                好好学java</a><span class="category-list-count">1116</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/剑指offer/">>
+                                剑指offer</a><span class="category-list-count">112</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/css/">>
+                                css</a><span class="category-list-count">12</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/其他框架/">>
+                                其他框架</a><span class="category-list-count">142</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python其他/">>
+                                python其他</a><span class="category-list-count">45</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/数据库相关/">>
+                                数据库相关</a><span class="category-list-count">293</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java核心知识/">>
+                                Java核心知识</a><span class="category-list-count">196</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java面试题/">>
+                                Java面试题</a><span class="category-list-count">308</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/mybatis源码/">>
+                                mybatis源码</a><span class="category-list-count">56</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/spring教程/">>
+                                spring教程</a><span class="category-list-count">173</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springboot教程/">>
+                                springboot教程</a><span class="category-list-count">156</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/实战Activiti工作流/">>
+                                实战Activiti工作流</a><span class="category-list-count">4</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springcloud教程/">>
+                                springcloud教程</a><span class="category-list-count">39</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/linux/">>
+                                linux</a><span class="category-list-count">91</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python框架/">>
+                                python框架</a><span class="category-list-count">43</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python基础/">>
+                                python基础</a><span class="category-list-count">78</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/dubbo/">>
+                                dubbo</a><span class="category-list-count">37</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java源码/">>
+                                Java源码</a><span class="category-list-count">76</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/叽叽喳喳杂七杂八/">>
+                                叽叽喳喳杂七杂八</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/MySQL的艺术世界/">>
+                                MySQL的艺术世界</a><span class="category-list-count">8</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/jquery/">>
+                                jquery</a><span class="category-list-count">14</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java并发/">>
+                                Java并发</a><span class="category-list-count">43</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java文章合辑/">>
+                                Java文章合辑</a><span class="category-list-count">11</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java基础修炼/">>
+                                Java基础修炼</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/不一样的Java8/">>
+                                不一样的Java8</a><span class="category-list-count">3</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/小程序开发的世界/">>
+                                小程序开发的世界</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java学习资源分享/">>
+                                Java学习资源分享</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java小学生漫游/">>
+                                Java小学生漫游</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/rocketmq源码解析/">>
+                                rocketmq源码解析</a><span class="category-list-count">33</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springmvc最新教程/">>
+                                springmvc最新教程</a><span class="category-list-count">9</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java的Exception/">>
+                                Java的Exception</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/vue-js/">>
+                                vue.js</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/实战设计模式/">>
+                                实战设计模式</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python数据处理/">>
+                                python数据处理</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java-Web闯关/">>
+                                Java Web闯关</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springboot2-0最新教程/">>
+                                springboot2.0最新教程</a><span class="category-list-count">11</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/netty/">>
+                                netty</a><span class="category-list-count">16</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/rpc/">>
+                                rpc</a><span class="category-list-count">13</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/拥抱大厂系列/">>
+                                拥抱大厂系列</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/eureka/">>
+                                eureka</a><span class="category-list-count">19</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/分布式/">>
+                                分布式</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/中间件/">>
+                                中间件</a><span class="category-list-count">23</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java基础/">>
+                                Java基础</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/带你学Python/">>
+                                带你学Python</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/使用技术工具/">>
+                                使用技术工具</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/mycat源码/">>
+                                mycat源码</a><span class="category-list-count">5</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/深入理解Java虚拟机/">>
+                                深入理解Java虚拟机</a><span class="category-list-count">8</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/spring源码/">>
+                                spring源码</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java集合源码分析/">>
+                                Java集合源码分析</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/github的repo/">>
+                                github的repo</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java框架深究/">>
+                                Java框架深究</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/分布式架构/">>
+                                分布式架构</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+
+        </aside>
+
+
+
+
+
+
+
+
+
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. 修改成永远不显示：欧阳思海-->
+
+
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h1, h2, h3, h4, h5'
+        });
+
+        console.log('============');
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h1, h2, h3, h4, h5').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+                        
+            /* 修复文章卡片 div 的宽度. */
+            let fixPostCardWidth = function (srcId, targetId) {
+                let srcDiv = $('#' + srcId);
+                if (srcDiv.length === 0) {
+                    return;
+                }
+
+                let w = srcDiv.width();
+                if (w >= 450) {
+                    w = w + 21;
+                } else if (w >= 350 && w < 450) {
+                    w = w + 18;
+                } else if (w >= 300 && w < 350) {
+                    w = w + 16;
+                } else {
+                    w = w + 14;
+                }
+                $('#' + targetId).width(w);
+            };
+
+            // 切换TOC目录展开收缩的相关操作.
+            // 修改右侧边栏功能：欧阳思海
+            const expandedClass = 'expanded';
+            let $tocAside = $('#toc-aside');
+            let $mainContent = $('#main-content');
+
+            $('#floating-toc-btn .btn-floating').click(function () {
+                if ($tocAside.hasClass(expandedClass)) {
+                    $tocAside.removeClass(expandedClass).slideUp(500);
+                    $mainContent.removeClass('l9');
+                } else {
+                    $tocAside.addClass(expandedClass).slideDown(500);
+                    $mainContent.addClass('l9');
+                }
+                fixPostCardWidth('artDetail', 'prenext-posts');
+            });
+                        
+                    });
+</script>
+    
+
+</main>
+
+
+        <footer class="page-footer bg-color">
+    <div class="container row center-align">
+        <div class="col s12 m8 l8 copy-right">
+            
+	    Copyright&copy; 2019 <a href="https://www.java1000.com/" target="_blank"> 好好学java </a>维护. 网站备案/许可证号：赣ICP备17007984号-3
+            <br>
+            <span id="sitetime"></span>
+            <br>
+
+            
+
+            
+                    <!-- 
+                        <span id="busuanzi_container_site_pv" style='display:none'></span>
+                        总访问量: <span id="busuanzi_value_site_pv" class="white-color"></span>
+                    
+        
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'></span>
+                        人次&nbsp; | &nbsp;访客人数: <span id="busuanzi_value_site_uv" class="white-color"></span> 人
+                     -->
+                        <!-- 修改计数：欧阳思海 -->
+                    
+                        <span id="busuanzi_container_site_pv" style='display:inline'>
+                            <i class="fa fa-heart-o"></i>
+                            本站总访问量 <span id="busuanzi_value_site_pv" class="white-color"></span>
+                        </span>
+                    
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'>
+                            人次,&nbsp;访客数 <span id="busuanzi_value_site_uv" class="white-color"></span> 人.
+                        </span>
+                    
+    
+            
+
+            
+                &nbsp; | &nbsp;字数统计:&nbsp;
+                <span class="white-color">8290.3k</span> 字
+            
+
+            
+            <br>
+
+        </div>
+
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fa fa-code-branch"></i>
+    </a>
+
+
+ 
+    <a href="https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=1446037005@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fa fa-envelope-open"></i>
+    </a>
+
+
+
+
+    <a href="https://zhihu.com/people/hai-hai-ren-sheng-50/activities" class="tooltipped" target="_blank" data-tooltip="访问我的知乎" data-position="top" data-delay="50">
+        <i class="fa fa-inverse">知</i>
+    </a>
+
+
+
+
+
+
+
+
+
+    <a href="https://blog.ouyangsihai.cn/sitemap.xml" class="tooltipped" target="_blank" data-tooltip="站点地图" data-position="top" data-delay="50">
+        <i class="fa fa-sitemap"></i>
+    </a>
+
+
+
+    <a href="https://blog.ouyangsihai.cn/friends" class="tooltipped" target="_blank" data-tooltip="友情链接" data-position="top" data-delay="50">
+        <i class="fa fa-address-book"></i>
+    </a>
+</div>
+
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+
+        var t1 = Date.UTC(2019, 08, 10, 00, 00, 00); //北京时间2019-8-1 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes *
+            minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "本站已运行 " + diffYears + " 年 " + diffDays + " 天 " + diffHours +
+            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒" ;
+    } /*因为建站时间还没有一年，就将之注释掉了。需要的可以取消*/
+    siteTime();
+</script>
+
+<!-- 修改计数：欧阳思海 -->
+<script>
+    $(document).ready(function () {
+
+        var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+        var pvcountOffset = 1005469;  // 初始化首次数据
+        var uvcountOffset = 250804;
+
+        function fixCount() {
+            if (document.getElementById("busuanzi_container_site_pv").style.display != "none") {
+                $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + pvcountOffset);
+                clearInterval(int);
+            }
+            if ($("#busuanzi_container_site_pv").css("display") != "none") {
+                $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + uvcountOffset); // 加上初始数据 
+                clearInterval(int); // 停止检测
+            }
+        }
+    });
+</script>
+
+
+
+
+        <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.json", 'searchInput', 'searchResult');
+});
+</script>
+        <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fa fa-angle-up"></i>
+    </a>
+</div>
+
+
+        <script src="/libs/materialize/materialize.min.js"></script>
+        <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+        <script src="/libs/aos/aos.js"></script>
+        <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+        <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+        <script src="/js/matery.js"></script>
+
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-149362573-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    gtag('config', 'UA-149362573-1');
+</script>
+
+
+
+        
+            <script src="/libs/others/clicklove.js"></script>
+        
+
+        
+            <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+        
+
+        <!-- 洪卫 shw2018 add 2019.08.28 -->
+        <script type="text/javascript">
+            var OriginTitile = document.title,
+                st;
+            document.addEventListener("visibilitychange", function () {
+                document.hidden ? (document.title = "看不见我🙈~看不见我🙈~", clearTimeout(st)) : (document.title =
+                    "(๑•̀ㅂ•́) ✧被发现了～", st = setTimeout(function () {
+                        document.title = OriginTitile
+                    }, 3e3))
+            })
+        </script>
+
+        <!-- 鼠标点击烟花爆炸效果  洪卫 shw2018 add 2019.09.09 -->
+        
+
+        <!-- 背景雪花飘落特效洪卫 shw2018 add 2019.09.10 -->
+        
+
+        <!-- 鼠标点击文字特效 洪卫 shw2018 add 2019.09.10-->
+        
+
+        <!-- 背景雪花飘落特效 洪卫 shw2018 add 2019.09.10 -->
+        
+
+        <!-- 在线聊天工具  洪卫 shw2018 add 2019.09.11 -->
+        
+
+        <!-- 背景 canvas-nest  洪卫 shw 2018  add 2019.09.15-->
+        
+
+        <!-- 背景静止彩带  洪卫 shw 2018  add 2019.09.15-->
+        
+
+        <!-- 背景动态彩带 洪卫 shw 2018  add 2019.09.15-->
+        
+
+    </body>
+</html>

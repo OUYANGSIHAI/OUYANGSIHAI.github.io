@@ -1,0 +1,3021 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+    <!-- shw2018 洪卫  modify 2019.08.15-->
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="Spring Boot, Spring Cloud, 微服务, Java技术, 好好学java, Java面试, 分布式, 最新干货分享">
+    <meta name="baidu-site-verification" content="fmlEuI34ir" />
+    <meta name="google-site-verification" content="ZWVq5UvPg33BCEA3LRTUkYe5J854o9lF1_WRTer9l8A" />
+    <meta name="description" content="本站是 好好学java 的技术分享博客。内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、分布式、Java面试、测试开发等相关的研究与知识分享。">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>使用Docker部署SpringBoot+Vue博客系统 | 好好学java | Spring Boot | Spring Cloud | 微服务 | Java技术 | Java面试 | 分布式 | 最新干货分享</title>
+    <link rel="icon" type="image/png" href="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7">
+
+    <!-- <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css"> -->
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    <!-- 自定义fontawesome样式：欧阳思海 -->
+    <link rel="stylesheet" type="text/css" href="/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/brands.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/fontawesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/regular.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/solid.min.css">
+
+
+    <style type="text/css">
+        code[class*="language-"],
+            pre[class*="language-"] {
+                white-space: pre !important;
+            }
+
+            
+
+        /* 将matery.css中的背景颜色修改放到这里：欧阳思海 */
+        .bg-color {
+            background-image: linear-gradient(to right, #ec8585 0%, #419488 100%);
+            opacity: 0.9;
+            // 透明度
+        }
+    </style>
+
+    <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
+    <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+
+    
+    
+    <script>
+        (function () {
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+    
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?6fe466069710c03a563713b507fbaca7";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+    <!-- Google Analytics -->
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-XXXXX-Y', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <!-- End Google Analytics -->
+
+    <script>(function (i, s, o, g, r, a, m) { i["DaoVoiceObject"] = r; i[r] = i[r] || function () { (i[r].q = i[r].q || []).push(arguments) }, i[r].l = 1 * new Date(); a = s.createElement(o), m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; a.charset = "utf-8"; m.parentNode.insertBefore(a, m) })(window, document, "script", ('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/0a804bac.js", "daovoice")</script>
+
+    <script>
+        if (true) {
+            daovoice('init', {
+                app_id: "0a804bac",
+                user_id: "NO_89757", // 必填: 该用户在您系统上的唯一ID
+                email: "daovoice@example.com", // 选填:  该用户在您系统上的主邮箱
+                name: "道客船长", // 选填: 用户名
+                signed_up: 1449821660 // 选填: 用户的注册时间，用Unix时间戳表示
+            });
+            daovoice('update');
+
+            daovoice('init', {
+                app_id: "0a804bac"
+            });
+            daovoice('update');
+        }
+    </script>
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/rss2.xml" title="好好学java" type="application/rss+xml">
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+    <body>
+
+        <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span" style="font-size: 1.4rem;">好好学java</span>
+                </a>
+            </div>
+            
+
+
+<!-- <a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-navicon"></i></a>
+<ul class="right">
+    
+    <li class="hide-on-med-and-down">
+        <a href="" class="waves-effect waves-light">
+            
+            <i class="fa "></i>
+            
+            <span></span>
+        </a>
+    </li>
+    
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title=""></i>
+        </a>
+    </li>
+</ul> -->
+
+<!-- 支持二级菜单特性 洪卫 shw2018 modify 2019.09.17  -->
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-align-justify"></i></a>
+<ul class="right nav-menu">
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-folder-minus"></i>
+                
+                <span style="font-size: 1.1rem;">Java学习</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/" >
+                    
+                    <span>Java入门</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Javaweb/" >
+                    
+                    <span>Java Web</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/spring%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>Spring教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/springboot%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>SpringBoot教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/springcloud%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>SpringCloud教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98/" >
+                    
+                    <span>Java面试</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%89%91%E6%8C%87offer/" >
+                    
+                    <span>剑指offer</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-code-branch"></i>
+                
+                <span style="font-size: 1.1rem;">Java进阶</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97/" >
+                    
+                    <span>设计模式</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" >
+                    
+                    <span>Java并发编程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/" >
+                    
+                    <span>数据库</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/redis/" >
+                    
+                    <span>Redis</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/linux/" >
+                    
+                    <span>Linux</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/" >
+                    
+                    <span>Java实战项目</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-code"></i>
+                
+                <span style="font-size: 1.1rem;">python学习</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/python%E5%9F%BA%E7%A1%80/" >
+                    
+                    <span>python基础</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/python%E6%A1%86%E6%9E%B6/" >
+                    
+                    <span>python框架</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/python%E5%85%B6%E4%BB%96/" >
+                    
+                    <span>python其他</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-coffee"></i>
+                
+                <span style="font-size: 1.1rem;">Java扩展</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/dubbo/" >
+                    
+                    <span>dubbo</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/netty/" >
+                    
+                    <span>netty</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/rpc/" >
+                    
+                    <span>rpc</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/eureka/" >
+                    
+                    <span>eureka</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/" >
+                    
+                    <span>中间件</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" >
+                    
+                    <span>分布式</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-desktop"></i>
+                
+                <span style="font-size: 1.1rem;">计算机核心</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" >
+                    
+                    <span>数据结构</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98/" >
+                    
+                    <span>leetcode刷题</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" >
+                    
+                    <span>计算机网络</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" >
+                    
+                    <span>算法</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/categories/" class="waves-effect waves-light">
+              
+                <i style="font-size: 1.1rem;" class="fa fa-adjust"></i>
+              
+              <span style="font-size: 1.1rem;">学习资源</span>
+            </a>
+
+            
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/contact" class="waves-effect waves-light">
+              
+                <i style="font-size: 1.1rem;" class="fa fa-envelope"></i>
+              
+              <span style="font-size: 1.1rem;">留言</span>
+            </a>
+
+            
+      </li>
+    
+
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title="搜索"></i>
+        </a>
+    </li>
+
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">好好学java</div>
+        <div class="logo-desc">
+            
+            
+            本站是 好好学java 的技术分享博客，涵盖Java后端技术、SpringBoot、微服务架构、分布式、Java面试等知 ...
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-folder-minus"></i>
+			
+			Java学习
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/ " style="margin-left:75px";>
+				  
+		          <span>Java入门</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Javaweb/ " style="margin-left:75px";>
+				  
+		          <span>Java Web</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/spring%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>Spring教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/springboot%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>SpringBoot教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/springcloud%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>SpringCloud教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98/ " style="margin-left:75px";>
+				  
+		          <span>Java面试</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%89%91%E6%8C%87offer/ " style="margin-left:75px";>
+				  
+		          <span>剑指offer</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-code-branch"></i>
+			
+			Java进阶
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97/ " style="margin-left:75px";>
+				  
+		          <span>设计模式</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>Java并发编程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/ " style="margin-left:75px";>
+				  
+		          <span>数据库</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/redis/ " style="margin-left:75px";>
+				  
+		          <span>Redis</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/linux/ " style="margin-left:75px";>
+				  
+		          <span>Linux</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/ " style="margin-left:75px";>
+				  
+		          <span>Java实战项目</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-code"></i>
+			
+			python学习
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/python%E5%9F%BA%E7%A1%80/ " style="margin-left:75px";>
+				  
+		          <span>python基础</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/python%E6%A1%86%E6%9E%B6/ " style="margin-left:75px";>
+				  
+		          <span>python框架</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/python%E5%85%B6%E4%BB%96/ " style="margin-left:75px";>
+				  
+		          <span>python其他</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-coffee"></i>
+			
+			Java扩展
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/dubbo/ " style="margin-left:75px";>
+				  
+		          <span>dubbo</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/netty/ " style="margin-left:75px";>
+				  
+		          <span>netty</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/rpc/ " style="margin-left:75px";>
+				  
+		          <span>rpc</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/eureka/ " style="margin-left:75px";>
+				  
+		          <span>eureka</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/ " style="margin-left:75px";>
+				  
+		          <span>中间件</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/ " style="margin-left:75px";>
+				  
+		          <span>分布式</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-desktop"></i>
+			
+			计算机核心
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/ " style="margin-left:75px";>
+				  
+		          <span>数据结构</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98/ " style="margin-left:75px";>
+				  
+		          <span>leetcode刷题</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/ " style="margin-left:75px";>
+				  
+		          <span>计算机网络</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E7%AE%97%E6%B3%95/ " style="margin-left:75px";>
+				  
+		          <span>算法</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories/" class="waves-effect waves-light">
+			
+			    <i class="fa fa-fw fa-adjust"></i>
+			
+			学习资源
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa fa-fw fa-envelope"></i>
+			
+			留言
+		</a>
+          
+        </li>
+        
+        
+    </ul>
+</div>
+
+        </div>
+
+        
+    </nav>
+
+</header>
+
+        
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/1.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <div class="description center-align post-title">
+                        使用Docker部署SpringBoot+Vue博客系统
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 20px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+
+    /* 自定义mycard：欧阳思海 */
+
+    #my-card {
+        /* position: relative; */
+        width: 310px;
+        height: 300px;
+        /* max-height: 330px; */
+        margin-bottom: 15px;
+        margin-top: 15px;
+        /* text-align: center; */
+        border: 0;
+        border-radius: 3px;
+        color: rgba(0, 0, 0, .87);
+        background: #fff 50%;
+        background-image: none;
+        background-size: auto;
+        background-size: cover;
+        box-shadow: 0 15px 35px rgba(50, 50, 93, .1), 0 5px 15px rgba(0, 0, 0, .07);
+    }
+
+    /* .widget {
+        line-height: 1.6em;
+        word-wrap: break-word;
+        font-size: 0.9em;
+        padding-top: 15px;
+        padding-left: -45px;
+    } */
+</style>
+
+
+
+
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- shw2018 洪卫  modify 2019.08.15-->
+
+<!-- 代码块修改的代码开始 -->
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFunction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+<!-- 代码块折行 -->
+
+<style type="text/css">
+code[class*="language-"], pre[class*="language-"] { white-space: pre !important; }
+</style>
+
+<!-- 代码块修改代码结束 -->
+
+
+<!-- 文章内容详情 -->
+<div id="container">
+    <div id="artDetail">
+        <div class="card">
+            <div class="card-content article-info">
+                <div class="row tag-cate">
+                    <div class="col s7">
+                        
+                        <div class="article-tag">
+                            <span class="chip bg-color">无标签</span>
+                        </div>
+                        
+                    </div>
+                    <div class="col s5 right-align">
+                        
+                        <div class="post-cate">
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E5%A5%BD%E5%A5%BD%E5%AD%A6java/" class="post-category" target="_blank">
+                                好好学java
+                            </a>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <div class="post-info">
+                    <div class="post-date info-break-policy">
+                        <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
+                        2021-04-04
+                    </div>
+
+                    <div class="post-author info-break-policy">
+                        <i class="fa fa-user-o fa-fw"></i>作者:&nbsp;&nbsp;
+                        
+                        欧阳思海
+                        
+                    </div>
+
+                    
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;
+                        4.2k
+                    </div>
+                    
+
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-clock-o fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                        17 分
+                    </div>
+                    
+                    
+
+                    
+                    <span id="busuanzi_container_site_pv" style='display:none'></span>
+                    <i class="fa fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                    <span id="busuanzi_value_page_pv"></span>
+
+                    
+
+                </div>
+            </div>
+            <hr class="clearfix">
+            <div class="card-content article-card-content">
+                <!-- 欧阳思海，modify，2020.05.01-->
+<!-- 文章详情详情页面的头部广告位置信息 -->
+<div id="post-head-panel">
+    
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" style="font-size: 18px;" target="_blank">
+        <img src="/icons/hot.gif">
+        本人花费半年的时间总结的《Java面试指南》已拿腾讯等大厂offer，已开源在github ，欢迎star！
+    </a>
+    
+    
+</div>
+<br />
+
+
+
+<blockquote>
+    
+            <p>本文GitHub <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">https://github.com/OUYANGSIHAI/JavaInterview</a> 已收录，这是我花了6个月总结的<b>一线大厂Java面试</b>总结，本人已拿大厂offer，欢迎star</p>
+    
+    <p>原文链接：blog.ouyangsihai.cn &gt;&gt; <a href="/shi-yong-docker-bu-shu-springboot-vue-bo-ke-xi-tong.html" target="_blank">使用Docker部署SpringBoot+Vue博客系统</a></p>
+</blockquote>
+                <div id="articleContent">
+                    <p>点击上方 **好好学java **，选择 **星标 **公众号</p>
+<h4 id="重磅资讯、干货，第一时间送达"><a href="#重磅资讯、干货，第一时间送达" class="headerlink" title="重磅资讯、干货，第一时间送达"></a><pre class="has"><code class="language-php">重磅资讯、干货，第一时间送达</h4><p></code></pre></p>
+<h2 id="今日推荐："><a href="#今日推荐：" class="headerlink" title="今日推荐："></a><strong><strong>今日推荐：</strong></strong></h2><h4 id="个人原创100W-访问量博客：点击前往，查看更多"><a href="#个人原创100W-访问量博客：点击前往，查看更多" class="headerlink" title=" 个人原创100W+访问量博客：点击前往，查看更多"></a><pre class="has"><code class="language-php"> 个人原创100W+访问量博客：点击前往，查看更多</h4><p></code></pre></p>
+<p>****在今年年初的时候，完成了自己的个Fame博客系统的实现，当时也做了一篇博文Spring-boot+Vue &#x3D; Fame 写blog的一次小结作为记录和介绍。从完成实现到现在，也断断续续的根据实际的使用情况进行更新。</p>
+<p>只不过每次上线部署的时候都觉得有些麻烦，因为我的服务器内存太小，每次即使只更新了前台部分(fame-front)的代码，在执行<code class="java">
+npm build</code>的时候都还必须把我的后端服务(fame-server)的进程关掉，不然会造成服务器卡死(惨啊)。</p>
+<p>而且这个项目是前后端分离的，博客前台页面还为了SEO用了<code class="java">
+Nuxt</code>框架，假如是第一次部署或者要服务器迁移的话，麻烦的要死啊，部署一次的话要以下步骤</p>
+<ol>
+<li>安装mysql，修改相关配置文件，设置编码时区等，然后重启1. 下载安装java，配置java环境1. 下载安装maven，配置maven环境1. 下载安装nginx，修改配置文件，设计反向代理等1. 启动spring-boot项目1. 打包vue项目，<code class="java">
+npm install</code>,<code class="java">
+npm run build</code>等1. 启动nuxt项目,<code class="java">
+npm install</code>,<code class="java">
+npm run start</code>等<br>如果能够顺利的完成这七个步骤算是幸运儿了，假如中间哪个步骤报错出了问题，可能还要回头查找哪个步骤出了问题，然后又重新部署。</li>
+</ol>
+<p>在这些需求面前，Docker就是解决这些问题的大杀器。无论是其虚拟化技术隔离各个容器使其资源互不影响，还是一致的运行环境，以及docker-compose的一键部署，都完美的解决了上述问题。</p>
+<blockquote>
+</blockquote>
+<p>  项目地址：<a target="_blank" rel="noopener" href="https://github.com/zzzzbw/Fame">https://github.com/zzzzbw/Fame</a></p>
+<h3 id="Docker和Docker-compose安装"><a href="#Docker和Docker-compose安装" class="headerlink" title="Docker和Docker-compose安装"></a>Docker和Docker-compose安装</h3><blockquote>
+</blockquote>
+<p>  Docker和Docker-compose的功能和使用可以看线上的一个中文文档Docker — 从入门到实践</p>
+<p>下面是Centos7安装和配置Docker以及Docker-compose的shell脚本，其他操作系统可以参考修改来安装。其中Docker版本为<code class="java">
+docker-ce</code>，Docker-compose版本为<code class="java">
+1.22.0</code></p>
+<pre class="line-numbers language-java"><code class="language-java">
+#<span class="token operator">!</span><span class="token operator">/</span>bin<span class="token operator">/</span>sh
+
+### 更新 ###
+yum <span class="token operator">-</span>y update
+
+### 安装docker ###
+# 安装一些必要的系统工具
+sudo yum install <span class="token operator">-</span>y yum<span class="token operator">-</span>utils device<span class="token operator">-</span>mapper<span class="token operator">-</span>persistent<span class="token operator">-</span>data lvm2
+# 添加软件源信息
+sudo yum<span class="token operator">-</span>config<span class="token operator">-</span>manager <span class="token operator">--</span>add<span class="token operator">-</span>repo http<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>mirrors<span class="token punctuation">.</span>aliyun<span class="token punctuation">.</span>com<span class="token operator">/</span>docker<span class="token operator">-</span>ce<span class="token operator">/</span>linux<span class="token operator">/</span>centos<span class="token operator">/</span>docker<span class="token operator">-</span>ce<span class="token punctuation">.</span>repo
+# 更新 yum 缓存
+sudo yum makecache fast
+# 安装 Docker<span class="token operator">-</span>ce
+sudo yum <span class="token operator">-</span>y install docker<span class="token operator">-</span>ce
+# 启动docker并设置为开机启动<span class="token punctuation">(</span>centos7<span class="token punctuation">)</span>
+systemctl  start docker<span class="token punctuation">.</span>service
+systemctl  enable docker<span class="token punctuation">.</span>service
+# 替换docker为国内源
+echo <span class="token string">'{"registry-mirrors": ["https://registry.docker-cn.com"],"live-restore": true}'</span> <span class="token operator">&amp;</span>gt<span class="token punctuation">;</span> <span class="token operator">/</span>etc<span class="token operator">/</span>docker<span class="token operator">/</span>daemon<span class="token punctuation">.</span>json
+systemctl restart docker
+# 安装dokcer<span class="token operator">-</span>compose
+sudo curl <span class="token operator">-</span>L https<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>github<span class="token punctuation">.</span>com<span class="token operator">/</span>docker<span class="token operator">/</span>compose<span class="token operator">/</span>releases<span class="token operator">/</span>download<span class="token operator">/</span><span class="token number">1.22</span><span class="token punctuation">.</span><span class="token number">0</span><span class="token operator">/</span>docker<span class="token operator">-</span>compose<span class="token operator">-</span>`uname <span class="token operator">-</span>s`<span class="token operator">-</span>`uname <span class="token operator">-</span>m` <span class="token operator">-</span>o <span class="token operator">/</span>usr<span class="token operator">/</span>local<span class="token operator">/</span>bin<span class="token operator">/</span>docker<span class="token operator">-</span>compose
+chmod <span class="token operator">+</span>x <span class="token operator">/</span>usr<span class="token operator">/</span>local<span class="token operator">/</span>bin<span class="token operator">/</span>docker<span class="token operator">-</span>compose
+# 安装命令补全工具
+yum <span class="token operator">-</span>y install bash<span class="token operator">-</span>completion
+curl <span class="token operator">-</span>L https<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>raw<span class="token punctuation">.</span>githubusercontent<span class="token punctuation">.</span>com<span class="token operator">/</span>docker<span class="token operator">/</span>compose<span class="token operator">/</span>$<span class="token punctuation">(</span>docker<span class="token operator">-</span>compose version <span class="token operator">--</span><span class="token keyword">short</span><span class="token punctuation">)</span><span class="token operator">/</span>contrib<span class="token operator">/</span>completion<span class="token operator">/</span>bash<span class="token operator">/</span>docker<span class="token operator">-</span>compose <span class="token operator">&amp;</span>gt<span class="token punctuation">;</span> <span class="token operator">/</span>etc<span class="token operator">/</span>bash_completion<span class="token punctuation">.</span>d<span class="token operator">/</span>docker<span class="token operator">-</span>compose
+### 安装docker结束 ###
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="Docker化改造"><a href="#Docker化改造" class="headerlink" title="Docker化改造"></a>Docker化改造</h3><h4 id="改造后目录结构"><a href="#改造后目录结构" class="headerlink" title="改造后目录结构"></a>改造后目录结构</h4><p>先看一下改造后的项目的结构</p>
+<pre class="line-numbers language-java"><code class="language-java">
+├─Fame
+│  │  <span class="token punctuation">.</span>env                            <span class="token comment" spellcheck="true">// docker-compose环境参数配置文件</span>
+│  │  docker<span class="token operator">-</span>compose<span class="token punctuation">.</span>yml              <span class="token comment" spellcheck="true">// docker-compose文件</span>
+│  ├─fame<span class="token operator">-</span>docker
+│  │  │  fame<span class="token operator">-</span>front<span class="token operator">-</span>Dockerfile        <span class="token comment" spellcheck="true">// fame-front的Dockerfile文件</span>
+│  │  │  fame<span class="token operator">-</span>server<span class="token operator">-</span>Dockerfile       <span class="token comment" spellcheck="true">// fame-server的Dockerfile文件</span>
+│  │  │  
+│  │  ├─fame<span class="token operator">-</span>admin
+│  │  │      fame<span class="token operator">-</span>admin<span class="token operator">-</span>Dockerfile    <span class="token comment" spellcheck="true">// fame-admin的Dockerfile文件</span>
+│  │  │      nginx<span class="token punctuation">.</span>conf               <span class="token comment" spellcheck="true">// fame-admin的nginx服务器配置文件</span>
+│  │  │      
+│  │  ├─fame<span class="token operator">-</span>mysql
+│  │  │      fame<span class="token operator">-</span>mysql<span class="token operator">-</span>Dockerfile    <span class="token comment" spellcheck="true">// mysql的Dockerfile文件</span>
+│  │  │      mysqld<span class="token punctuation">.</span>cnf               <span class="token comment" spellcheck="true">// mysql的配置文件mysqld.cnf</span>
+│  │  │      
+│  │  └─fame<span class="token operator">-</span>nginx
+│  │          nginx<span class="token operator">-</span>Dockerfile        <span class="token comment" spellcheck="true">// 整个项目的nginx服务器的Dockerfile文件</span>
+│  │          nginx<span class="token punctuation">.</span>conf              <span class="token comment" spellcheck="true">// 整个项目的nginx的配置文件</span>
+│  │          
+│  ├─fame<span class="token operator">-</span>admin   <span class="token comment" spellcheck="true">// 博客管理后台，基于Vue+elementui</span>
+│  ├─fame<span class="token operator">-</span>front   <span class="token comment" spellcheck="true">// 博客前端，基于Nuxt</span>
+│  └─fame<span class="token operator">-</span>server  <span class="token comment" spellcheck="true">// 博客服务端，基于spring-boot</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>为了不破坏原有项目的结构，无论前端还是后端的docker的相关配置文件全部提取出来，单独放在了<code class="java">
+fame-docker</code>文件夹中。搜索Java知音公众号，回复“后端面试“，送你一份Java面试体验宝典.pdf</p>
+<p><code class="java">
+docker-compose.yml</code>放在项目根目录下，直接在根目录运行命令：<code class="java">
+docker-compose up -d</code></p>
+<pre class="line-numbers language-java"><code class="language-java">
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@localhost</span> Fame<span class="token punctuation">]</span># docker<span class="token operator">-</span>compose up <span class="token operator">-</span>d
+Starting fame<span class="token operator">-</span>front <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> 
+Starting fame<span class="token operator">-</span>admin <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> 
+Starting fame<span class="token operator">-</span>front <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> done
+Starting fame<span class="token operator">-</span>admin <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> done
+Starting fame<span class="token operator">-</span>nginx <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> done
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>就启动项目了，再也不用重复繁琐的步骤！</p>
+<h3 id="改造后的docker项目结构"><a href="#改造后的docker项目结构" class="headerlink" title="改造后的docker项目结构"></a>改造后的docker项目结构</h3><h4 id="改造后的docker-compose-yaml文件"><a href="#改造后的docker-compose-yaml文件" class="headerlink" title="改造后的docker-compose.yaml文件"></a>改造后的<code class="java">
+docker-compose.yaml</code>文件</h4><pre class="line-numbers language-java"><code class="language-java">
+version<span class="token operator">:</span> <span class="token string">'3'</span>
+services<span class="token operator">:</span> 
+  fame<span class="token operator">-</span>nginx<span class="token operator">:</span>
+    container_name<span class="token operator">:</span> fame<span class="token operator">-</span>nginx
+    build<span class="token operator">:</span>
+     context<span class="token operator">:</span> <span class="token punctuation">.</span>/
+     dockerfile<span class="token operator">:</span> <span class="token punctuation">.</span>/fame<span class="token operator">-</span>docker<span class="token operator">/</span>fame<span class="token operator">-</span>nginx<span class="token operator">/</span>nginx<span class="token operator">-</span>Dockerfile
+    ports<span class="token operator">:</span>
+      <span class="token operator">-</span> <span class="token string">"80:80"</span>
+    volumes<span class="token operator">:</span>
+     <span class="token operator">-</span> <span class="token punctuation">.</span>/logs<span class="token operator">/</span>nginx<span class="token operator">:</span><span class="token operator">/</span>var<span class="token operator">/</span>log<span class="token operator">/</span>nginx
+    depends_on<span class="token operator">:</span>
+      <span class="token operator">-</span> fame<span class="token operator">-</span>server
+      <span class="token operator">-</span> fame<span class="token operator">-</span>admin
+      <span class="token operator">-</span> fame<span class="token operator">-</span>front
+  
+  fame<span class="token operator">-</span>mysql<span class="token operator">:</span>
+   container_name<span class="token operator">:</span> fame<span class="token operator">-</span>mysql
+   build<span class="token operator">:</span> 
+     context<span class="token operator">:</span> <span class="token punctuation">.</span>/
+     dockerfile<span class="token operator">:</span> <span class="token punctuation">.</span>/fame<span class="token operator">-</span>docker<span class="token operator">/</span>fame<span class="token operator">-</span>mysql<span class="token operator">/</span>fame<span class="token operator">-</span>mysql<span class="token operator">-</span>Dockerfile
+   environment<span class="token operator">:</span>
+     MYSQL_DATABASE<span class="token operator">:</span> fame
+     MYSQL_ROOT_PASSWORD<span class="token operator">:</span> root
+     MYSQL_ROOT_HOST<span class="token operator">:</span> <span class="token string">'%'</span>
+     TZ<span class="token operator">:</span> Asia<span class="token operator">/</span>Shanghai
+   expose<span class="token operator">:</span>
+      <span class="token operator">-</span> <span class="token string">"3306"</span>
+   volumes<span class="token operator">:</span>
+     <span class="token operator">-</span> <span class="token punctuation">.</span>/mysql<span class="token operator">/</span>mysql_data<span class="token operator">:</span><span class="token operator">/</span>var<span class="token operator">/</span>lib<span class="token operator">/</span>mysql
+   restart<span class="token operator">:</span> always
+
+  fame<span class="token operator">-</span>server<span class="token operator">:</span>
+    container_name<span class="token operator">:</span> fame<span class="token operator">-</span>server
+    restart<span class="token operator">:</span> always
+    build<span class="token operator">:</span> 
+     context<span class="token operator">:</span> <span class="token punctuation">.</span>/
+     dockerfile<span class="token operator">:</span> <span class="token punctuation">.</span>/fame<span class="token operator">-</span>docker<span class="token operator">/</span>fame<span class="token operator">-</span>server<span class="token operator">-</span>Dockerfile
+    working_dir<span class="token operator">:</span> <span class="token operator">/</span>app
+    volumes<span class="token operator">:</span>
+      <span class="token operator">-</span> <span class="token punctuation">.</span>/fame<span class="token operator">-</span>server<span class="token operator">:</span><span class="token operator">/</span>app
+      <span class="token operator">-</span> <span class="token operator">~</span><span class="token operator">/</span><span class="token punctuation">.</span>m2<span class="token operator">:</span><span class="token operator">/</span>root<span class="token operator">/</span><span class="token punctuation">.</span>m2
+      <span class="token operator">-</span> <span class="token punctuation">.</span>/logs<span class="token operator">/</span>fame<span class="token operator">:</span><span class="token operator">/</span>app<span class="token operator">/</span>log
+    expose<span class="token operator">:</span>
+      <span class="token operator">-</span> <span class="token string">"9090"</span>
+    command<span class="token operator">:</span> mvn clean spring<span class="token operator">-</span>boot<span class="token operator">:</span>run <span class="token operator">-</span>Dspring<span class="token operator">-</span>boot<span class="token punctuation">.</span>run<span class="token punctuation">.</span>profiles<span class="token operator">=</span>docker <span class="token operator">-</span>Dmaven<span class="token punctuation">.</span>test<span class="token punctuation">.</span>skip<span class="token operator">=</span><span class="token boolean">true</span>
+    depends_on<span class="token operator">:</span>
+      <span class="token operator">-</span> fame<span class="token operator">-</span>mysql
+
+  fame<span class="token operator">-</span>admin<span class="token operator">:</span>
+   container_name<span class="token operator">:</span> fame<span class="token operator">-</span>admin
+   build<span class="token operator">:</span> 
+    context<span class="token operator">:</span> <span class="token punctuation">.</span>/
+    dockerfile<span class="token operator">:</span> <span class="token punctuation">.</span>/fame<span class="token operator">-</span>docker<span class="token operator">/</span>fame<span class="token operator">-</span>admin<span class="token operator">/</span>fame<span class="token operator">-</span>admin<span class="token operator">-</span>Dockerfile
+    args<span class="token operator">:</span>
+      BASE_URL<span class="token operator">:</span> $<span class="token punctuation">{</span>BASE_URL<span class="token punctuation">}</span>
+   expose<span class="token operator">:</span>
+      <span class="token operator">-</span> <span class="token string">"3001"</span>
+
+  fame<span class="token operator">-</span>front<span class="token operator">:</span>
+   container_name<span class="token operator">:</span> fame<span class="token operator">-</span>front
+   build<span class="token operator">:</span> 
+    context<span class="token operator">:</span> <span class="token punctuation">.</span>/
+    dockerfile<span class="token operator">:</span> <span class="token punctuation">.</span>/fame<span class="token operator">-</span>docker<span class="token operator">/</span>fame<span class="token operator">-</span>front<span class="token operator">-</span>Dockerfile
+   environment<span class="token operator">:</span>
+      BASE_URL<span class="token operator">:</span> $<span class="token punctuation">{</span>BASE_URL<span class="token punctuation">}</span>
+      PROXY_HOST<span class="token operator">:</span> $<span class="token punctuation">{</span>PROXY_HOST<span class="token punctuation">}</span>
+      PROXY_PORT<span class="token operator">:</span> $<span class="token punctuation">{</span>PROXY_PORT<span class="token punctuation">}</span>
+   expose<span class="token operator">:</span>
+      <span class="token operator">-</span> <span class="token string">"3000"</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code class="java">
+docker-compose.yml</code>的结构和刚才目录结构大体类似，也是分以下几个部分</p>
+<ol>
+<li>fame-nginx1. fame-mysql1. fame-server1. fame-admin1. fame-front<br>这个<code class="java">
+docker-compose.yml</code>中有几个要点</li>
+</ol>
+<ul>
+<li><code class="java">
+fame-mysql</code>和<code class="java">
+fame-server</code>的<code class="java">
+restart</code>要设置为<code class="java">
+always</code>，因为目前Docker-compose是没有一个方案可以解决容器启动的先后的问题的。即使设置了<code class="java">
+depends_on</code>，那也只是控制容器开始启动的时间，不能控制容器启动完成的时间，所以让<code class="java">
+fame-mysql</code>和<code class="java">
+fame-server</code>这两个容器设置<code class="java">
+restart</code>，防止spring-boot在mysql启动完成之前启动而报错启动失败- <code class="java">
+fame-server</code>，<code class="java">
+fame-mysql</code>，<code class="java">
+fame-nginx</code>这三个容器都设置了<code class="java">
+volumes</code>，把容器里的logs日志文件挂载到宿主机的项目目录里，方便随时看日志文件- <code class="java">
+fame-mysql</code>容器的mysql存储文件也设置了<code class="java">
+volumes</code>挂载在项目目录里(<code class="java">
+./mysql/mysql_data:/var/lib/mysql</code>)，这个建议大家可以根据实际的情况设置到宿主机的其他目录里，不然不小心删除项目的话那么容器里的数据库数据也都没了<blockquote>
+</blockquote>
+<p>几个镜像的Dockerfile大部分都比较简单，这部分就不全部详细介绍了，可以直接去我项目中了解。</p>
+</li>
+</ul>
+<h3 id="Docker化过程的困难和解决方法"><a href="#Docker化过程的困难和解决方法" class="headerlink" title="Docker化过程的困难和解决方法"></a>Docker化过程的困难和解决方法</h3><h4 id="spring-boot双配置切换"><a href="#spring-boot双配置切换" class="headerlink" title="spring-boot双配置切换"></a>spring-boot双配置切换</h4><p>为了能够让spring-boot能够在开发环境和Docker环境下快速切换，需要将spring-boot的配置文件进行修改</p>
+<pre class="line-numbers language-java"><code class="language-java">
+└─fame<span class="token operator">-</span>server
+        <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>                   
+        │  └─resources
+        │      │  application<span class="token operator">-</span>dev<span class="token punctuation">.</span>properties
+        │      │  application<span class="token operator">-</span>docker<span class="token punctuation">.</span>properties
+        │      │  application<span class="token punctuation">.</span>properties
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>在原有的<code class="java">
+application.properties</code>基础上增加<code class="java">
+application-dev.properties</code>和<code class="java">
+application-docker.properties</code>配置文件，把<code class="java">
+application.properties</code>里的数据库日志等信息分别放到<code class="java">
+application-dev.properties</code>和<code class="java">
+application-docker.properties</code>这两个文件中，实现开发环境和Docker环境的快速切换。</p>
+<pre class="line-numbers language-java"><code class="language-java">
+# application<span class="token punctuation">.</span>properties文件
+#端口号
+server<span class="token punctuation">.</span>port<span class="token operator">=</span><span class="token number">9090</span>
+#mybatis
+mybatis<span class="token punctuation">.</span>type<span class="token operator">-</span>aliases<span class="token operator">-</span><span class="token keyword">package</span><span class="token operator">=</span>com<span class="token punctuation">.</span>zbw<span class="token punctuation">.</span>fame<span class="token punctuation">.</span>Model
+#mapper
+mapper<span class="token punctuation">.</span>mappers<span class="token operator">=</span>com<span class="token punctuation">.</span>zbw<span class="token punctuation">.</span>fame<span class="token punctuation">.</span>util<span class="token punctuation">.</span>MyMapper
+mapper<span class="token punctuation">.</span>not<span class="token operator">-</span>empty<span class="token operator">=</span><span class="token boolean">false</span>
+mapper<span class="token punctuation">.</span>identity<span class="token operator">=</span>MYSQL
+
+#mail
+spring<span class="token punctuation">.</span>mail<span class="token punctuation">.</span>properties<span class="token punctuation">.</span>mail<span class="token punctuation">.</span>smtp<span class="token punctuation">.</span>auth<span class="token operator">=</span><span class="token boolean">true</span>
+spring<span class="token punctuation">.</span>mail<span class="token punctuation">.</span>properties<span class="token punctuation">.</span>mail<span class="token punctuation">.</span>smtp<span class="token punctuation">.</span>starttls<span class="token punctuation">.</span>enable<span class="token operator">=</span><span class="token boolean">true</span>
+spring<span class="token punctuation">.</span>mail<span class="token punctuation">.</span>properties<span class="token punctuation">.</span>mail<span class="token punctuation">.</span>smtp<span class="token punctuation">.</span>starttls<span class="token punctuation">.</span>required<span class="token operator">=</span><span class="token boolean">true</span>
+
+#默认properties
+spring<span class="token punctuation">.</span>profiles<span class="token punctuation">.</span>active<span class="token operator">=</span>dev
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>~</p>
+<pre class="line-numbers language-java"><code class="language-java">
+# application<span class="token operator">-</span>docker<span class="token punctuation">.</span>properties文件
+#datasource
+spring<span class="token punctuation">.</span>datasource<span class="token punctuation">.</span>driverClassName<span class="token operator">=</span>com<span class="token punctuation">.</span>mysql<span class="token punctuation">.</span>jdbc<span class="token punctuation">.</span>Driver
+spring<span class="token punctuation">.</span>datasource<span class="token punctuation">.</span>url<span class="token operator">=</span>jdbc<span class="token operator">:</span>mysql<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>fame<span class="token operator">-</span>mysql<span class="token operator">:</span><span class="token number">3306</span><span class="token operator">/</span>fame<span class="token operator">?</span>useUnicode<span class="token operator">=</span><span class="token boolean">true</span><span class="token operator">&amp;</span>amp<span class="token punctuation">;</span>characterEncoding<span class="token operator">=</span>utf<span class="token operator">-</span><span class="token number">8</span><span class="token operator">&amp;</span>amp<span class="token punctuation">;</span>useSSL<span class="token operator">=</span><span class="token boolean">false</span>
+spring<span class="token punctuation">.</span>datasource<span class="token punctuation">.</span>username<span class="token operator">=</span>root
+spring<span class="token punctuation">.</span>datasource<span class="token punctuation">.</span>password<span class="token operator">=</span>root
+
+#log
+logging<span class="token punctuation">.</span>level<span class="token punctuation">.</span>root<span class="token operator">=</span>INFO
+logging<span class="token punctuation">.</span>level<span class="token punctuation">.</span>org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>web<span class="token operator">=</span>INFO
+logging<span class="token punctuation">.</span>file<span class="token operator">=</span>log<span class="token operator">/</span>fame<span class="token punctuation">.</span>log
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code class="java">
+application-dev.properties</code>的内容和<code class="java">
+application-docker.properties</code>文件类似，只是根据自己开发环境的情况修改mysql和log配置。</p>
+<h4 id="动态配置axios的baseUrl地址"><a href="#动态配置axios的baseUrl地址" class="headerlink" title="动态配置axios的baseUrl地址"></a>动态配置axios的<code class="java">
+baseUrl</code>地址</h4><p>在<code class="java">
+fame-admin</code>和<code class="java">
+fame-front</code>中用了<code class="java">
+axios</code>插件，用于发起和获取<code class="java">
+fame-server</code>服务器的请求。在<code class="java">
+axios</code>要配置服务器url地址<code class="java">
+baseUrl</code>，那么通常开发环境和Docker环境以及生产环境的url可能都不一样，每次都去修改有点麻烦。(虽然只需要配置两处，但是代码洁癖不允许我硬编码这个配置)。</p>
+<p>1.先修改<code class="java">
+fame-admin(Vue)</code>使其兼容手动部署模式和Docker模式</p>
+<p><code class="java">
+fame-admin</code>是基于<code class="java">
+Vue CLI 3</code>搭建的，相对于cli 2.0官方把webpack的一些配置文件都封装起来了，所以没有config和build文件夹。不过对应的官网也给了一些设置更加方便的配置参数。</p>
+<p>在官方文档中提到:</p>
+<blockquote>
+</blockquote>
+<p>  只有以 <code class="java">
+VUE_APP_</code> 开头的变量会被 <code class="java">
+webpack.DefinePlugin</code> 静态嵌入到客户端侧的包中。你可以在应用的代码中这样访问它们：</p>
+<pre class="line-numbers language-java"><code class="language-java">
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>process<span class="token punctuation">.</span>env<span class="token punctuation">.</span>VUE_APP_SECRET<span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>在构建过程中，<code class="java">
+process.env.VUE_APP_SECRET</code> 将会被相应的值所取代。在 <code class="java">
+VUE_APP_SECRET=secret</code> 的情况下，它会被替换为 <code class="java">
+&quot;sercet&quot;</code>。</p>
+<p>利用这个特性来设置环境变量来动态的设置Docker模式和手动部署模式的<code class="java">
+baseUrl</code>的值</p>
+<p>在<code class="java">
+fame-admin</code>目录下创建文件<code class="java">
+server-config.js</code>，编写以下内容</p>
+<pre class="line-numbers language-java"><code class="language-java">
+<span class="token keyword">const</span> isProd <span class="token operator">=</span> process<span class="token punctuation">.</span>env<span class="token punctuation">.</span>NODE_ENV <span class="token operator">==</span><span class="token operator">=</span> <span class="token string">'production'</span>
+<span class="token keyword">const</span> localhost <span class="token operator">=</span> <span class="token string">'http://127.0.0.1:9090/'</span>
+<span class="token keyword">const</span> baseUrl <span class="token operator">=</span> process<span class="token punctuation">.</span>env<span class="token punctuation">.</span>VUE_APP_API_URL <span class="token operator">||</span> localhost
+<span class="token keyword">const</span> api <span class="token operator">=</span> isProd <span class="token operator">?</span> baseUrl <span class="token operator">:</span> localhost
+export <span class="token keyword">default</span> <span class="token punctuation">{</span>
+  isProd<span class="token punctuation">,</span>
+  api
+<span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>那么只要在环境变量中有<code class="java">
+VUE_APP_API_URL</code>的值，且<code class="java">
+NODE_ENV === &#39;production&#39;</code>，baseUrl就等于<code class="java">
+VUE_APP_API_URL</code>的值，否则就是<code class="java">
+localhost</code>的值。</p>
+<p>接着在<code class="java">
+axios</code>配置文件中引用该文件设置</p>
+<pre class="line-numbers language-java"><code class="language-java">
+<span class="token comment" spellcheck="true">// fame-admin/src/plugins/http.js</span>
+<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+<span class="token keyword">import</span> serverConfig from <span class="token string">'../../server-config'</span>
+
+<span class="token keyword">const</span> Axios <span class="token operator">=</span> axios<span class="token punctuation">.</span><span class="token function">create</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  baseURL<span class="token operator">:</span> serverConfig<span class="token punctuation">.</span>api <span class="token operator">+</span> <span class="token string">'api/'</span><span class="token punctuation">,</span>
+ <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+    
+<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>现在只要将docker的环境变量设置一个<code class="java">
+VUE_APP_API_URL</code>的值就行了，只要在对应的Dockerfile中增加一个步骤就可以了。</p>
+<pre class="line-numbers language-java"><code class="language-java">
+ENV VUE_APP_API_URL http<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>xx<span class="token punctuation">.</span>xxx<span class="token punctuation">.</span>xxx<span class="token punctuation">.</span>xxx
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>2.再修改<code class="java">
+fame-front(Nuxt)</code>使其兼容手动部署模式和Docker模式</p>
+<p>同样的，对于用<code class="java">
+Nuxt</code>搭建<code class="java">
+fame-front</code>博客前台修改也是类似的思路。</p>
+<p>在Nuxt的官方文档中写到：</p>
+<p>Nuxt.js 让你可以配置在客户端和服务端共享的环境变量。</p>
+<p>例如 (<code class="java">
+nuxt.config.js</code>)：</p>
+<pre class="line-numbers language-java"><code class="language-java">
+module<span class="token punctuation">.</span>exports <span class="token operator">=</span> <span class="token punctuation">{</span>
+  env<span class="token operator">:</span> <span class="token punctuation">{</span>
+    baseUrl<span class="token operator">:</span> process<span class="token punctuation">.</span>env<span class="token punctuation">.</span>BASE_URL <span class="token operator">||</span> <span class="token string">'http://localhost:3000'</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>以上配置我们创建了一个 <code class="java">
+baseUrl</code> 环境变量，如果应用设定了 <code class="java">
+BASE_URL</code> 环境变量，那么 <code class="java">
+baseUrl</code> 的值等于 <code class="java">
+BASE_URL</code> 的值，否则其值为 <code class="java">
+http://localhost:3000</code>。</p>
+<p>所以我们只要和官方文档说的一样，在<code class="java">
+nuxt.config.js</code>文件中增加代码就可以了</p>
+<pre class="line-numbers language-java"><code class="language-java">
+module<span class="token punctuation">.</span>exports <span class="token operator">=</span> <span class="token punctuation">{</span>
+ env<span class="token operator">:</span> <span class="token punctuation">{</span>
+   baseUrl<span class="token operator">:</span> process<span class="token punctuation">.</span>env<span class="token punctuation">.</span>BASE_URL <span class="token operator">||</span> <span class="token string">'http://localhost:3000'</span>
+ <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>接着在<code class="java">
+server-config.js</code>文件和<code class="java">
+axios</code>的配置文件<code class="java">
+fame-front/plugins/http.js</code>以及对应的Dockerfile文件中编写和上面<code class="java">
+fame-admin</code>部分一样的代码就可以了</p>
+<p>现在已经把<code class="java">
+baseUrl</code>的设置从代码的硬编码中解放出来了，但事实上我们只是把这个参数的编码从代码从转移到Dockerfile文件里了，要是想要修改的话也要去这两个文件里查找然后修改，这样也不方便。后面会解决这个问题把所有环境配置统一起来。</p>
+<h4 id="Nuxt在Docker中无法访问到宿主机ip问题"><a href="#Nuxt在Docker中无法访问到宿主机ip问题" class="headerlink" title="Nuxt在Docker中无法访问到宿主机ip问题"></a>Nuxt在Docker中无法访问到宿主机ip问题</h4><p>先要说明一点，为什么博客前端要单独去使用的Nuxt而不是和博客后台一样用Vue呢，因为博客前端有SEO的需求的，像Vue这样的对搜索引擎很不友好。</p>
+<p>所以Nuxt的页面是服务器端渲染(SSR)的</p>
+<h5 id="这样就产生了问题"><a href="#这样就产生了问题" class="headerlink" title="这样就产生了问题"></a>这样就产生了问题</h5><p><code class="java">
+fame-front</code>的页面在渲染之前必须获取到<code class="java">
+fame-server</code>服务器中的数据，但是每个docker容器都是互相独立的，其内部想要互相访问只能通过容器名访问。例如容器<code class="java">
+fame-front</code>想要访问容器<code class="java">
+fame-server</code>，就设置<code class="java">
+baseURL = fame-server</code>(fame-server是服务器的容器的container_name)。</p>
+<p>这样设置之后打开浏览器输入网址:<a target="_blank" rel="noopener" href="http://xx.xxx.xxx.xx可以成功...,但是随便点击一个链接,就会看到浏览器提示错误无法访问到地址http//fame-server/">http://xx.xxx.xxx.xx可以成功...，但是随便点击一个链接，就会看到浏览器提示错误无法访问到地址http://fame-server/</a>…</p>
+<pre class="line-numbers language-java"><code class="language-java">
+vendor<span class="token punctuation">.</span>e2feb665ef91f298be86<span class="token punctuation">.</span>js<span class="token operator">:</span><span class="token number">2</span> GET http<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>fame<span class="token operator">-</span>server<span class="token operator">/</span>api<span class="token operator">/</span>article<span class="token operator">/</span><span class="token number">1</span> net<span class="token operator">:</span><span class="token operator">:</span>ERR_CONNECTION_REFUSED
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>这是必然的结果，在容器里<a target="_blank" rel="noopener" href="http://fame-server/%E5%B0%B1%E6%98%AF%E6%9C%8D%E5%8A%A1%E5%99%A8...%EF%BC%8C%E4%BD%86%E6%98%AF%E4%BD%A0%E6%9C%AC%E5%9C%B0%E7%9A%84%E6%B5%8F%E8%A7%88%E5%99%A8%E5%BD%93%E7%84%B6%E6%98%AF%E4%B8%8D%E7%9F%A5%E9%81%93http://fame-server/%E6%98%AF%E4%B8%AA%E4%BB%80%E4%B9%88%E9%AC%BC...%EF%BC%8C%E6%89%80%E4%BB%A5%E5%B0%B1%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B0%B1%E6%8A%A5%E5%87%BA%E6%97%A0%E6%B3%95%E8%AE%BF%E9%97%AE%E7%9A%84%E9%94%99%E8%AF%AF%E3%80%82">http://fame-server/就是服务器...，但是你本地的浏览器当然是不知道http://fame-server/是个什么鬼...，所以就浏览器就报出无法访问的错误。</a></p>
+<p>什么？可是刚才不是说Nuxt是服务器渲染的页面吗，怎么又让本地浏览器报这个错误了。</p>
+<p>原来是因为当通过浏览器链接直接访问的时候，Nuxt的确是从后端渲染了页面再传过来，但是在页面中点击链接的时候是通过Vue-Router跳转的，这时候不在Nuxt的控制范围，而是和Vue一样在浏览器渲染的，这时候就要从浏览器里向服务端获取数据来渲染，浏览器就会报错。</p>
+<h5 id="如何解决呢"><a href="#如何解决呢" class="headerlink" title="如何解决呢"></a>如何解决呢</h5><p>这个问题开始的时候一直想要尝试配置Docker容器的网络模式来解决，可是都没有解决。直到后面我看<code class="java">
+axios</code>文档的时候才注意到<code class="java">
+axios</code>的代理功能，其本质是解决跨域的问题的，因为只要在<code class="java">
+axios</code>设置了代理，在服务端渲染的时候就会使用代理的地址，同时在浏览器访问的时候会用<code class="java">
+baseUrl</code> 的地址，这个特点完美解决我的问题啊。</p>
+<p>在<code class="java">
+server-config.js</code>文件里增加以下代码（在<code class="java">
+nuxt.config.js</code>里获取环境变量里的<code class="java">
+proxyHost</code>和<code class="java">
+proxyPort</code>）</p>
+<pre class="line-numbers language-java"><code class="language-java">
+<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+<span class="token keyword">const</span> localProxy <span class="token operator">=</span> <span class="token punctuation">{</span>
+  host<span class="token operator">:</span> <span class="token string">'127.0.0.1'</span><span class="token punctuation">,</span>
+  port<span class="token operator">:</span> <span class="token number">9090</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">const</span> baseProxy <span class="token operator">=</span> <span class="token punctuation">{</span>
+  host<span class="token operator">:</span> process<span class="token punctuation">.</span>env<span class="token punctuation">.</span>proxyHost <span class="token operator">||</span> localProxy<span class="token punctuation">.</span>host<span class="token punctuation">,</span>
+  port<span class="token operator">:</span> process<span class="token punctuation">.</span>env<span class="token punctuation">.</span>proxyPort <span class="token operator">||</span> localProxy<span class="token punctuation">.</span>port
+<span class="token punctuation">}</span>
+exports<span class="token punctuation">.</span>baseProxy <span class="token operator">=</span> isProd <span class="token operator">?</span> baseProxy <span class="token operator">:</span> localProxy
+<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>然后在<code class="java">
+axios</code>配置文件里增加代码</p>
+<pre class="line-numbers language-java"><code class="language-java">
+<span class="token comment" spellcheck="true">// fame-front/plugins/http.js</span>
+<span class="token keyword">const</span> Axios <span class="token operator">=</span> axios<span class="token punctuation">.</span><span class="token function">create</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  proxy<span class="token operator">:</span> serverConfig<span class="token punctuation">.</span>baseProxy
+ <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+    
+<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>就可以完美的解决问题了。</p>
+<h4 id="Dockerfile的环境参数统一设置"><a href="#Dockerfile的环境参数统一设置" class="headerlink" title="Dockerfile的环境参数统一设置"></a>Dockerfile的环境参数统一设置</h4><p>在上文解决<code class="java">
+动态配置axios地址</code>的部分把<code class="java">
+baseUrl</code>的设置放在了Dockerfile中，现在就再把Dockerfile中的硬编码提取出来，放到统一的配置文件中。</p>
+<p>首先在<code class="java">
+docker-compose.yml</code>文件目录下(即项目跟目录)创建环境文件<code class="java">
+.env</code>并编写一下内容</p>
+<pre class="line-numbers language-java"><code class="language-java">
+BASE_URL<span class="token operator">=</span>http<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>xx<span class="token punctuation">.</span>xxx<span class="token punctuation">.</span>xxx<span class="token punctuation">.</span>xxx
+
+PROXY_HOST<span class="token operator">=</span>fame<span class="token operator">-</span>nginx
+PROXY_PORT<span class="token operator">=</span><span class="token number">80</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>这个是<code class="java">
+docker-compose</code>的<code class="java">
+env_file</code>参数，从文件中获取环境变量，可以为单独的文件路径或列表，如果同目录下有<code class="java">
+.env</code>文件则会默认读取，也可以自己在<code class="java">
+docker-compose</code>里设置路径。</p>
+<p>已经在<code class="java">
+.env</code>设置了环境变量<code class="java">
+BASE_URL</code>的值，就能在<code class="java">
+docker-compose.yml</code>里直接使用了。修改<code class="java">
+docker-compose.yml</code>的<code class="java">
+fame-front</code>部分：</p>
+<pre class="line-numbers language-java"><code class="language-java">
+fame<span class="token operator">-</span>front<span class="token operator">:</span>
+ <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+ environment<span class="token operator">:</span>
+  BASE_URL<span class="token operator">:</span> $<span class="token punctuation">{</span>BASE_URL<span class="token punctuation">}</span>
+  PROXY_HOST<span class="token operator">:</span> $<span class="token punctuation">{</span>PROXY_HOST<span class="token punctuation">}</span>
+  PROXY_PORT<span class="token operator">:</span> $<span class="token punctuation">{</span>PROXY_PORT<span class="token punctuation">}</span>
+  <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>这样在<code class="java">
+fame-front</code>的容器里就有对应的<code class="java">
+BASE_URL</code>,<code class="java">
+PROXY_HOST</code>,<code class="java">
+PROXY_PORT</code>环境变量，Nuxt也能够成功获取并设置。</p>
+<p>不过对于<code class="java">
+fame-admin</code>容器来说就要稍微复杂一点点了。先来看一下<code class="java">
+fame-admin</code>容器的Dockerfile文件<code class="java">
+fame-admin-Dockerfile</code></p>
+<pre class="line-numbers language-java"><code class="language-java">
+# build stage
+FROM node<span class="token operator">:</span><span class="token number">10.10</span><span class="token punctuation">.</span><span class="token number">0</span><span class="token operator">-</span>alpine as build<span class="token operator">-</span>stage
+
+#中间一些操作省略<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+
+RUN npm run build
+
+# production stage
+FROM nginx<span class="token operator">:</span><span class="token number">1.15</span><span class="token punctuation">.</span><span class="token number">3</span><span class="token operator">-</span>alpine as production<span class="token operator">-</span>stage
+
+COPY <span class="token punctuation">.</span>/fame<span class="token operator">-</span>docker<span class="token operator">/</span>fame<span class="token operator">-</span>admin<span class="token operator">/</span>nginx<span class="token punctuation">.</span>conf <span class="token operator">/</span>etc<span class="token operator">/</span>nginx<span class="token operator">/</span>conf<span class="token punctuation">.</span>d<span class="token operator">/</span><span class="token keyword">default</span><span class="token punctuation">.</span>conf
+COPY <span class="token operator">--</span>from<span class="token operator">=</span>build<span class="token operator">-</span>stage <span class="token operator">/</span>app<span class="token operator">/</span>dist <span class="token operator">/</span>usr<span class="token operator">/</span>share<span class="token operator">/</span>nginx<span class="token operator">/</span>html
+EXPOSE <span class="token number">80</span>
+CMD <span class="token punctuation">[</span><span class="token string">"nginx"</span><span class="token punctuation">,</span> <span class="token string">"-g"</span><span class="token punctuation">,</span> <span class="token string">"daemon off;"</span><span class="token punctuation">]</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>这里用了多阶段构建容器，如果直接通过<code class="java">
+docker-compose</code>设置环境变量只会在后面一个阶段生效，但是<code class="java">
+npm run build</code>是在第一个阶段执行的，所以环境变量不能应用到Vue当中。为了让环境变量在第一阶段就应用，必须要在构建的时候就把变量从<code class="java">
+docker-compose</code>传到<code class="java">
+fame-admin-Dockerfile</code>中，然后在Dockerfile中的第一阶段把这个环境变量应用到容器里。下面修改<code class="java">
+docker-compose.yml</code>的<code class="java">
+fame-admin</code>部分：</p>
+<pre class="line-numbers language-java"><code class="language-java">
+ fame<span class="token operator">-</span>admin<span class="token operator">:</span>
+   <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+   build<span class="token operator">:</span> 
+    context<span class="token operator">:</span> <span class="token punctuation">.</span>/
+    dockerfile<span class="token operator">:</span> <span class="token punctuation">.</span>/fame<span class="token operator">-</span>docker<span class="token operator">/</span>fame<span class="token operator">-</span>admin<span class="token operator">/</span>fame<span class="token operator">-</span>admin<span class="token operator">-</span>Dockerfile
+    args<span class="token operator">:</span>
+      BASE_URL<span class="token operator">:</span> $<span class="token punctuation">{</span>BASE_URL<span class="token punctuation">}</span> # 这里把环境变量当做ARG传给Dockerfile
+   <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>然后在<code class="java">
+fame-admin-Dockerfile</code>的第一阶段增加步骤</p>
+<pre class="line-numbers language-java"><code class="language-java">
+# build stage
+FROM node<span class="token operator">:</span><span class="token number">10.10</span><span class="token punctuation">.</span><span class="token number">0</span><span class="token operator">-</span>alpine as build<span class="token operator">-</span>stage
+
+ARG BASE_URL # 必须申明这个ARG才能从docker<span class="token operator">-</span>compose里获取
+
+ENV VUE_APP_API_URL $BASE_URL
+
+# 以下省略<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>这样就可以在构建阶段一镜像的时候就把环境变量传入到阶段一的镜像里，让Vue里的变量生效了。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>现在网上很多复杂一点的项目即使用了docker-compose部署，也多少依赖shell脚本来操作，比如复制文件设置环境等，我觉得这样会降低docker-compose的意义。如果都使用了shell脚本，那不如直接不用docker-compose而全用shell来构建和启动镜像。</p>
+<p>所以在Docker化的过程中虽然遇到一些坎坷，但坚持实现了只用docker-compose部署，以后上线和下线就及其方便了。也希望我的Docker化思路可以给其他项目做一些参考。</p>
+<p>对比以前恐怖的步骤，现在Fame博客的上线和下线只需要两行命令，真的十分的便捷。</p>
+<pre class="line-numbers language-java"><code class="language-java">
+docker<span class="token operator">-</span>compose up
+docker<span class="token operator">-</span>compose down
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<blockquote>
+</blockquote>
+<p>  源码地址 <a target="_blank" rel="noopener" href="https://github.com/zzzzbw/Fame">https://github.com/zzzzbw/Fame</a></p>
+<pre class="line-numbers language-java"><code class="language-java">
+作者：zzzzbw
+segmentfault<span class="token punctuation">.</span>com<span class="token operator">/</span>a<span class="token operator">/</span><span class="token number">1190000016557755</span>
+最后，给大家准备了一套算法学习教程，从小白到大神，都是这样走过来的，建议学习一下，拿走不谢！
+下载方式<span class="token number">1</span><span class="token punctuation">.</span> 首先扫描下方二维码<span class="token number">2</span><span class="token punctuation">.</span> 后台回复「A110」即可获取
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>原文地址：<a target="_blank" rel="noopener" href="https://sihai.blog.csdn.net/article/details/111465562">https://sihai.blog.csdn.net/article/details/111465562</a></p>
+
+                </div>
+                <!-- 欧阳思海，modify，2020.05.01-->
+<!-- 文章详情详情页面的头部广告位置信息 -->
+<div id="post-head-panel">
+    
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" style="font-size: 18px;" target="_blank">
+        <img src="/icons/hot.gif">
+        本人花费半年的时间总结的《Java面试指南》已拿腾讯等大厂offer，已开源在github ，欢迎star！
+    </a>
+    
+    
+</div>
+<br />
+
+
+
+<blockquote>
+    
+            <p>本文GitHub <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">https://github.com/OUYANGSIHAI/JavaInterview</a> 已收录，这是我花了6个月总结的<b>一线大厂Java面试</b>总结，本人已拿大厂offer，欢迎star</p>
+    
+    <p>原文链接：blog.ouyangsihai.cn &gt;&gt; <a href="/shi-yong-docker-bu-shu-springboot-vue-bo-ke-xi-tong.html" target="_blank">使用Docker部署SpringBoot+Vue博客系统</a></p>
+</blockquote>
+                <hr />
+
+                
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.88rem;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-large waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fa fa-close"></i></a>
+            <h4 class="reward-title">多少都是对我的认可</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="http://image.ouyangsihai.cn/FpbhsOuf3Ar9vY34B97Y2qQ7LVGe" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="http://image.ouyangsihai.cn/FgYlMzms68PH73PWpZBwPfbLTAws" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+                
+
+                <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+
+<div id="article-share">
+    
+    <div class="social-share" data-disabled="qzone" data-wechat-qrcode-helper="<p>微信里点“发现”->“扫一扫”二维码便可查看分享。</p>"></div>
+    
+</div>
+
+<script src="/libs/share/js/social-share.min.js"></script>
+
+                
+
+                
+                <div class="reprint1">
+                    <p>
+                        <span class="reprint1-tip">
+                            <i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;转载请注明:
+                        </span>
+                        <a href="https://blog.ouyangsihai.cn" class="b-link-green">好好学java</a>
+                        <i class="fa fa-angle-right fa-lg fa-fw text-color"></i>
+                        <a href="/shi-yong-docker-bu-shu-springboot-vue-bo-ke-xi-tong.html" class="b-link-green">使用Docker部署SpringBoot+Vue博客系统</a>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        
+
+        
+
+        
+
+        
+
+        
+        <style>
+    .valine-card {
+        margin: 1.5rem auto;
+    }
+
+    .valine-card .card-content {
+        padding: 20px 20px 5px 20px;
+    }
+    /* valine 评论框增加背景图片 */
+    #vcomments textarea {
+        box-sizing: border-box;
+        background: url("") 100% 100% no-repeat;
+    }
+
+    #vcomments input[type=text],
+    #vcomments input[type=email],
+    #vcomments input[type=url],
+    #vcomments textarea {
+        box-sizing: border-box;
+    }
+
+    #vcomments p {
+        margin: 2px 2px 10px;
+        font-size: 1.05rem;
+        line-height: 1.78rem;
+    }
+
+    #vcomments blockquote p {
+        text-indent: 0.2rem;
+    }
+
+    #vcomments a {
+        padding: 0 2px;
+        color: #42b983;
+        font-weight: 500;
+        text-decoration: underline;
+    }
+
+    #vcomments img {
+        max-width: 100%;
+        height: auto;
+        cursor: pointer;
+    }
+
+    #vcomments ol li {
+        list-style-type: decimal;
+    }
+
+    #vcomments ol,
+    ul {
+        display: block;
+        padding-left: 2em;
+        word-spacing: 0.05rem;
+    }
+
+    #vcomments ul li,
+    ol li {
+        display: list-item;
+        line-height: 1.8rem;
+        font-size: 1rem;
+    }
+
+    #vcomments ul li {
+        list-style-type: disc;
+    }
+
+    #vcomments ul ul li {
+        list-style-type: circle;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    #vcomments table, th, td {
+        border: 0;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments h1 {
+        font-size: 1.85rem;
+        font-weight: bold;
+        line-height: 2.2rem;
+    }
+
+    #vcomments h2 {
+        font-size: 1.65rem;
+        font-weight: bold;
+        line-height: 1.9rem;
+    }
+
+    #vcomments h3 {
+        font-size: 1.45rem;
+        font-weight: bold;
+        line-height: 1.7rem;
+    }
+
+    #vcomments h4 {
+        font-size: 1.25rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    #vcomments h5 {
+        font-size: 1.1rem;
+        font-weight: bold;
+        line-height: 1.4rem;
+    }
+
+    #vcomments h6 {
+        font-size: 1rem;
+        line-height: 1.3rem;
+    }
+
+    #vcomments p {
+        font-size: 1rem;
+        line-height: 1.5rem;
+    }
+
+    #vcomments hr {
+        margin: 12px 0;
+        border: 0;
+        border-top: 1px solid #ccc;
+    }
+
+    #vcomments blockquote {
+        margin: 15px 0;
+        border-left: 5px solid #42b983;
+        padding: 1rem 0.8rem 0.3rem 0.8rem;
+        color: #666;
+        background-color: rgba(66, 185, 131, .1);
+    }
+
+    #vcomments pre {
+        font-family: monospace, monospace;
+        padding: 1.2em;
+        margin: .5em 0;
+        background: #272822;
+        overflow: auto;
+        border-radius: 0.3em;
+        tab-size: 4;
+    }
+
+    #vcomments code {
+        font-family: monospace, monospace;
+        padding: 1px 3px;
+        font-size: 0.92rem;
+        color: #e96900;
+        background-color: #f8f8f8;
+        border-radius: 2px;
+    }
+
+    #vcomments pre code {
+        font-family: monospace, monospace;
+        padding: 0;
+        color: #e8eaf6;
+        background-color: #272822;
+    }
+
+    #vcomments pre[class*="language-"] {
+        padding: 1.2em;
+        margin: .5em 0;
+    }
+
+    #vcomments code[class*="language-"],
+    pre[class*="language-"] {
+        color: #e8eaf6;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    #vcomments b,
+    strong {
+        font-weight: bold;
+    }
+
+    #vcomments dfn {
+        font-style: italic;
+    }
+
+    #vcomments small {
+        font-size: 85%;
+    }
+
+    #vcomments cite {
+        font-style: normal;
+    }
+
+    #vcomments mark {
+        background-color: #fcf8e3;
+        padding: .2em;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    /* 修复评论第一行位置错位 */
+    .v .vlist .vcard {
+    padding-top: 2.5em !important ;
+    }
+</style>
+
+<div class="card valine-card" data-aos="fade-up">
+    <div id="vcomments" class="card-content"></div>
+</div>
+
+<script src="/libs/valine/av-min.js"></script>
+<script src="/libs/valine/Valine.min.js"></script>
+<!-- <link rel="stylesheet" type="text/css" href="/libs//libs/jQuery-emoji/dist/css/jquery.emoji.css">
+<script src="/libs//libs/jQuery-emoji/dist/js/jquery.emoji.min.js"></script>
+<script src="/libs//libs/jQuery-emoji/dist/js/emoji.list.js"></script> -->
+<script>
+    new Valine({
+        el: '#vcomments',
+        appId: 'MxSNOS83TYWU3Opsy2GTW1ih-gzGzoHsz',
+        appKey: '4XevOgmAxHEwVDnIKgvEUihB',
+        notify: 'true' === 'true',
+        verify: 'true' === 'true',
+        visitor: 'true' === 'true',
+        avatar: 'mm',
+        pageSize: '10',
+        lang: 'zh-cn',
+        placeholder: '请畅所欲言吧，别害羞~',
+
+    });
+
+//     function parse_emoji() {
+//     jQuery(".vcontent").emojiParse({
+//       basePath: '/libs/jQuery-emoji/images/emoji',
+//       icons: emojiLists   // 注：详见 js/emoji.list.js
+//     });
+//   }
+  
+//   setTimeout(function() {
+//     // jQuery emoji 解析
+//     parse_emoji();
+//     // jquery emoji 初始化
+//     jQuery(".veditor").emoji({
+//       showTab: true,
+//       animation: 'slide',
+//       basePath: '/libs/jQuery-emoji/images/emoji',
+//       icons: emojiLists  // 注：详见 js/emoji.list.js
+//     });
+//     jQuery(".vmore").on("click", function() {
+//       setTimeout(function() {
+//         parse_emoji();
+//       }, 500);
+//     });
+//   }, 800)
+
+</script>
+        
+
+        
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/song-yi-tai-dian-nao-xian-shi-qi-wo-mei-tian-ban-gong-du-yong-ta-an-li.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="送一台电脑显示器，我每天办公都用它，安利！">
+                        
+                        <span class="card-title">送一台电脑显示器，我每天办公都用它，安利！</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            大家好，我是海哥。
+写代码如果有两个显示器事件很爽的事情，如果再来一个2K超清并且可以旋转的显示器。那会不会更爽呢！
+阅读代码的时候将显示器竖着旋转一目了然，代码BUG多不多不重要，逼格先到位！
+
+
+所以，杰哥联合几位公众号主给大家送一款全
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="fa fa-clock fa-fw icon-date"></i>2021-04-04
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E5%A5%BD%E5%A5%BD%E5%AD%A6java/" class="post-category" target="_blank">
+                                    好好学java
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fa fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/reng-diao-okhttp-httpclient-lai-shi-shi-zhe-kuan-qing-liang-ji-http-ke-hu-duan-shen-qi.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/3.jpg" class="responsive-img" alt="扔掉okhttp、httpClient，来试试这款轻量级HTTP客户端神器？">
+                        
+                        <span class="card-title">扔掉okhttp、httpClient，来试试这款轻量级HTTP客户端神器？</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            点击上方 **好好学java **，选择 **星标 **公众号
+重磅资讯、干货，第一时间送达
+今日推荐： 个人原创100W+访问量博客：点击前往，查看更多
+作者： 伍陆七
+juejin.cn&#x2F;post&#x2F;689848580
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="fa fa-clock fa-fw icon-date"></i>2021-04-04
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E5%A5%BD%E5%A5%BD%E5%AD%A6java/" class="post-category" target="_blank">
+                                    好好学java
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+    </div>
+</div>
+
+
+<script>
+    $('#articleContent').on('copy', function (e) {
+        // IE8 or earlier browser is 'undefined'
+        if (typeof window.getSelection === 'undefined') return;
+
+        var selection = window.getSelection();
+        // if the selection is short let's not annoy our users.
+        if (('' + selection).length < Number.parseInt('500')) {
+            return;
+        }
+
+        // create a div outside of the visible area and fill it with the selected text.
+        var bodyElement = document.getElementsByTagName('body')[0];
+        var newdiv = document.createElement('div');
+        newdiv.style.position = 'absolute';
+        newdiv.style.left = '-99999px';
+        bodyElement.appendChild(newdiv);
+        newdiv.appendChild(selection.getRangeAt(0).cloneContents());
+
+        // we need a <pre> tag workaround.
+        // otherwise the text inside "pre" loses all the line breaks!
+        if (selection.getRangeAt(0).commonAncestorContainer.nodeName === 'CODE') {
+            newdiv.innerHTML = "<pre>" + newdiv.innerHTML + "</pre>";
+        }
+
+        var url = document.location.href;
+        newdiv.innerHTML += '<br />'
+            + '来源: 好好学java<br />'
+            + '作者: 好好学java<br />'
+            + '链接: <a href="' + url + '">' + url + '</a><br />'
+            + '本文章著作权归作者所有，任何形式的转载都请注明出处。';
+
+        selection.selectAllChildren(newdiv);
+        window.setTimeout(function () { bodyElement.removeChild(newdiv); }, 200);
+    });
+</script>
+
+
+
+<!--
+<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+<script>
+    const btw = new BTWPlugin();
+    btw.init({
+        id: 'container',
+        blogId: '15305-1590684104111-518',
+        name: '程序员的技术圈子',
+        qrcode: 'http://image.ouyangsihai.cn/FtAUOeE5--1JTdcuuZFIhMuEUuJO',
+        keyword: 'vip',
+    });
+</script>
+-->
+
+    </div>
+    <div id="toc-aside" style="width: 310px;" class="expanded col l3 hide-on-med-and-down">
+        <!-- 自定义右侧card：欧阳思海 -->
+        <!-- <div id="my-card" style="background: ">
+            
+        </div> -->
+        <!-- <div class="toc-widget">
+            <div class="toc-title" style="display: none;"><i class="fa fa-list-alt"></i>&nbsp;&nbsp;</div>
+            <div id="toc-content"></div>
+        </div> -->
+
+
+
+
+
+
+
+
+        <aside class="col-lg-3" style="width: 300px;">
+
+            <link rel="stylesheet" type="text/css" href="/css/my-aside.css">
+
+            <!-- 关注公众号信息：欧阳思海 -->
+            <div class="widget-wrap">
+                <div class="widget bg-danger" style="color:whitesmoke; background-color: #419488">
+                    <div class="card-front animated col s12 m12 l8 offset-l2 fadeInUp">
+                        <div class="row">
+                            <div class="col-md-5" style="text-align: center;">
+                                <img class="adv" style="width: 95px; height: 95px;"
+                                    src="http://image.ouyangsihai.cn/FtAUOeE5--1JTdcuuZFIhMuEUuJO">
+                            </div>
+                            <div class="col-md-7" style="text-align: center;">
+                                <h2 style="font-size: 18px; 
+                                    margin: 0; 
+                                    padding: 0;
+                                    border: 0; 
+                                    outline: 0;
+                                    font-weight: inherit;
+                                    font-style: inherit;
+                                    font-family: inherit;
+                                    vertical-align: baseline;">关注公众号</h2>
+                                 
+                                <small style="font-size: 15px;">
+                                    →「技术干货」每日推送 <br>
+                                    →「回复资料」领取资料 <br>
+                                    →「微信加群」每周福利 <br>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div style="font-size: 0.8em;">
+                        <a href="/assets/erweima.jpg" target="_blank"
+                            style="color:orange;font-size: 14px;">点击添加我的微信，加入技术讨论群</a>
+                        除公众号以外，我还会在以下平台发布内容：
+                    </div>
+                    -->
+
+                    <div class="profile-block social-links col-md-7" style="text-align: center;">
+                        <table style="align-items: center; 
+                                        padding-left: 25px;">
+                            <tbody>
+                                <tr>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank" title="GitHub"
+                                            class="tooltip">
+                                            <img style="width: 22px;height: 22px;" src="/icons/github.svg"></a>
+                                    </td>
+
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://www.zhihu.com/people/hai-hai-ren-sheng-50/activities"
+                                            target="_blank" title="知乎" class="tooltip">
+                                            <img style="width: 22px;" src="/icons/zhihu.svg"></a>
+                                    </td>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://blog.csdn.net/sihai12345" target="_blank" title="CSDN"
+                                            class="tooltip">
+                                            <img style="width: 18px;" src="/icons/CSDN.svg"></a>
+                                    </td>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://www.jianshu.com/u/12b0bd4c857c" target="_blank" title="简书"
+                                            class="tooltip">
+                                            <img style="width: 22px;" src="/icons/JianShu.svg"></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            
+
+            <!-- custom rightside_link：热门文章推荐：欧阳思海 -->
+            
+            <div class="widget-wrap widget-panel">
+                <p style="text-align: left;padding-bottom: 10px;line-height: 30px; font-size: 14px;">
+                    
+                    <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        本人花费半年的时间总结的《 Java 面试指南》已拿腾讯等大厂 offer，已开源在 github ，欢迎 star！
+                    </a><br>
+                    
+                    <a href="https://mp.weixin.qq.com/s/I0jimqziHqRNaIy0kXRCnw" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        2020 Java 1000G 最新学习资源，Java基础、Java项目实战、Java分布式等等！
+                    </a><br>
+                    
+                    <a href="http://image.ouyangsihai.cn/FpB-dO6g-XU44mMrVlj7EL1y7Rs7" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        高级 Java 开发微信群，一起搞事情吧！
+                    </a><br>
+                    
+                </p>
+            </div>
+            
+
+            
+
+            <!-- custom rightside_banner：右侧广告或者其他的栏目设置：欧阳思海 -->
+            
+            <div class="widget-wrap">
+                <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">
+                    <img src="http://image.ouyangsihai.cn/FhhoEYMaNr6m0v8KhG8vSPgoREBV" style="width: 100%;">
+                </a>
+            </div>
+            
+            
+
+            
+
+            <!-- 右侧专栏分类：欧阳思海 -->
+            
+            <div class="widget-wrap widget-panel">
+                <ul class="media-list">
+                    
+                    <li class="media">
+                        <a href="/categories/MySQL的艺术世界/" target="_blank">
+                            <div class="media-left">
+                                <img class="media-object" src="http://image.ouyangsihai.cn/Fn3kQurieQ_0QUeqPmx5RW5i6R9n" style="width: 55px;">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading" style="margin-bottom: 10px; font-size: 100%;
+                                                                    margin: 0;
+                                                                    padding: 0;
+                                                                    border: 0;
+                                                                    outline: 0;
+                                                                    font-weight: inherit;
+                                                                    font-style: inherit;
+                                                                    font-family: inherit;
+                                                                    vertical-align: baseline;">
+                                    MySQL 的系列文章，解决全部面试问题！
+                                </h4>
+                                <p>
+                                    总共10篇文章，面试热门的锁、事务，通通解决了！
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    <hr>
+                    
+                    <li class="media">
+                        <a href="/categories/深入理解Java虚拟机/" target="_blank">
+                            <div class="media-left">
+                                <img class="media-object" src="http://image.ouyangsihai.cn/FpcS21VWJOHSgGzKcpW3_xVTSEeN" style="width: 55px;">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading" style="margin-bottom: 10px; font-size: 100%;
+                                                                    margin: 0;
+                                                                    padding: 0;
+                                                                    border: 0;
+                                                                    outline: 0;
+                                                                    font-weight: inherit;
+                                                                    font-style: inherit;
+                                                                    font-family: inherit;
+                                                                    vertical-align: baseline;">
+                                    深入理解 Java 虚拟机，面试必问
+                                </h4>
+                                <p>
+                                    总共10篇文章，包括内存模型、GC算法、GC收集器等。
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    <hr>
+                    
+                </ul>
+            </div>
+            
+
+            <!-- 右侧分类 -->
+            <div class="widget-wrap widget-panel">
+                <h3 class="widget-title">文章分类</h3>
+                <div class="widget">
+                    <ul class="category-list">
+                        
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/趣聊数据结构与算法/">>
+                                趣聊数据结构与算法</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/职业生涯浅谈/">>
+                                职业生涯浅谈</a><span class="category-list-count">33</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java项目分享/">>
+                                Java项目分享</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java面试经验/">>
+                                Java面试经验</a><span class="category-list-count">4</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/我要进大厂/">>
+                                我要进大厂</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/好好学java/">>
+                                好好学java</a><span class="category-list-count">1116</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/剑指offer/">>
+                                剑指offer</a><span class="category-list-count">112</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/css/">>
+                                css</a><span class="category-list-count">12</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/其他框架/">>
+                                其他框架</a><span class="category-list-count">142</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python其他/">>
+                                python其他</a><span class="category-list-count">45</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/数据库相关/">>
+                                数据库相关</a><span class="category-list-count">293</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java核心知识/">>
+                                Java核心知识</a><span class="category-list-count">196</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java面试题/">>
+                                Java面试题</a><span class="category-list-count">308</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/mybatis源码/">>
+                                mybatis源码</a><span class="category-list-count">56</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/spring教程/">>
+                                spring教程</a><span class="category-list-count">173</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springboot教程/">>
+                                springboot教程</a><span class="category-list-count">156</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/实战Activiti工作流/">>
+                                实战Activiti工作流</a><span class="category-list-count">4</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springcloud教程/">>
+                                springcloud教程</a><span class="category-list-count">39</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/linux/">>
+                                linux</a><span class="category-list-count">91</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python框架/">>
+                                python框架</a><span class="category-list-count">43</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python基础/">>
+                                python基础</a><span class="category-list-count">78</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/dubbo/">>
+                                dubbo</a><span class="category-list-count">37</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java源码/">>
+                                Java源码</a><span class="category-list-count">76</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/叽叽喳喳杂七杂八/">>
+                                叽叽喳喳杂七杂八</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/MySQL的艺术世界/">>
+                                MySQL的艺术世界</a><span class="category-list-count">8</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/jquery/">>
+                                jquery</a><span class="category-list-count">14</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java并发/">>
+                                Java并发</a><span class="category-list-count">43</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java文章合辑/">>
+                                Java文章合辑</a><span class="category-list-count">11</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java基础修炼/">>
+                                Java基础修炼</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/不一样的Java8/">>
+                                不一样的Java8</a><span class="category-list-count">3</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/小程序开发的世界/">>
+                                小程序开发的世界</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java学习资源分享/">>
+                                Java学习资源分享</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java小学生漫游/">>
+                                Java小学生漫游</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/rocketmq源码解析/">>
+                                rocketmq源码解析</a><span class="category-list-count">33</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springmvc最新教程/">>
+                                springmvc最新教程</a><span class="category-list-count">9</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java的Exception/">>
+                                Java的Exception</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/vue-js/">>
+                                vue.js</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/实战设计模式/">>
+                                实战设计模式</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python数据处理/">>
+                                python数据处理</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java-Web闯关/">>
+                                Java Web闯关</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springboot2-0最新教程/">>
+                                springboot2.0最新教程</a><span class="category-list-count">11</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/netty/">>
+                                netty</a><span class="category-list-count">16</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/rpc/">>
+                                rpc</a><span class="category-list-count">13</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/拥抱大厂系列/">>
+                                拥抱大厂系列</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/eureka/">>
+                                eureka</a><span class="category-list-count">19</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/分布式/">>
+                                分布式</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/中间件/">>
+                                中间件</a><span class="category-list-count">23</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java基础/">>
+                                Java基础</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/带你学Python/">>
+                                带你学Python</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/使用技术工具/">>
+                                使用技术工具</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/mycat源码/">>
+                                mycat源码</a><span class="category-list-count">5</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/深入理解Java虚拟机/">>
+                                深入理解Java虚拟机</a><span class="category-list-count">8</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/spring源码/">>
+                                spring源码</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java集合源码分析/">>
+                                Java集合源码分析</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/github的repo/">>
+                                github的repo</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java框架深究/">>
+                                Java框架深究</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/分布式架构/">>
+                                分布式架构</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+
+        </aside>
+
+
+
+
+
+
+
+
+
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. 修改成永远不显示：欧阳思海-->
+
+
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h1, h2, h3, h4, h5'
+        });
+
+        console.log('============');
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h1, h2, h3, h4, h5').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+                        
+            /* 修复文章卡片 div 的宽度. */
+            let fixPostCardWidth = function (srcId, targetId) {
+                let srcDiv = $('#' + srcId);
+                if (srcDiv.length === 0) {
+                    return;
+                }
+
+                let w = srcDiv.width();
+                if (w >= 450) {
+                    w = w + 21;
+                } else if (w >= 350 && w < 450) {
+                    w = w + 18;
+                } else if (w >= 300 && w < 350) {
+                    w = w + 16;
+                } else {
+                    w = w + 14;
+                }
+                $('#' + targetId).width(w);
+            };
+
+            // 切换TOC目录展开收缩的相关操作.
+            // 修改右侧边栏功能：欧阳思海
+            const expandedClass = 'expanded';
+            let $tocAside = $('#toc-aside');
+            let $mainContent = $('#main-content');
+
+            $('#floating-toc-btn .btn-floating').click(function () {
+                if ($tocAside.hasClass(expandedClass)) {
+                    $tocAside.removeClass(expandedClass).slideUp(500);
+                    $mainContent.removeClass('l9');
+                } else {
+                    $tocAside.addClass(expandedClass).slideDown(500);
+                    $mainContent.addClass('l9');
+                }
+                fixPostCardWidth('artDetail', 'prenext-posts');
+            });
+                        
+                    });
+</script>
+    
+
+</main>
+
+
+        <footer class="page-footer bg-color">
+    <div class="container row center-align">
+        <div class="col s12 m8 l8 copy-right">
+            
+	    Copyright&copy; 2019 <a href="https://www.java1000.com/" target="_blank"> 好好学java </a>维护. 网站备案/许可证号：赣ICP备17007984号-3
+            <br>
+            <span id="sitetime"></span>
+            <br>
+
+            
+
+            
+                    <!-- 
+                        <span id="busuanzi_container_site_pv" style='display:none'></span>
+                        总访问量: <span id="busuanzi_value_site_pv" class="white-color"></span>
+                    
+        
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'></span>
+                        人次&nbsp; | &nbsp;访客人数: <span id="busuanzi_value_site_uv" class="white-color"></span> 人
+                     -->
+                        <!-- 修改计数：欧阳思海 -->
+                    
+                        <span id="busuanzi_container_site_pv" style='display:inline'>
+                            <i class="fa fa-heart-o"></i>
+                            本站总访问量 <span id="busuanzi_value_site_pv" class="white-color"></span>
+                        </span>
+                    
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'>
+                            人次,&nbsp;访客数 <span id="busuanzi_value_site_uv" class="white-color"></span> 人.
+                        </span>
+                    
+    
+            
+
+            
+                &nbsp; | &nbsp;字数统计:&nbsp;
+                <span class="white-color">8290.3k</span> 字
+            
+
+            
+            <br>
+
+        </div>
+
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fa fa-code-branch"></i>
+    </a>
+
+
+ 
+    <a href="https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=1446037005@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fa fa-envelope-open"></i>
+    </a>
+
+
+
+
+    <a href="https://zhihu.com/people/hai-hai-ren-sheng-50/activities" class="tooltipped" target="_blank" data-tooltip="访问我的知乎" data-position="top" data-delay="50">
+        <i class="fa fa-inverse">知</i>
+    </a>
+
+
+
+
+
+
+
+
+
+    <a href="https://blog.ouyangsihai.cn/sitemap.xml" class="tooltipped" target="_blank" data-tooltip="站点地图" data-position="top" data-delay="50">
+        <i class="fa fa-sitemap"></i>
+    </a>
+
+
+
+    <a href="https://blog.ouyangsihai.cn/friends" class="tooltipped" target="_blank" data-tooltip="友情链接" data-position="top" data-delay="50">
+        <i class="fa fa-address-book"></i>
+    </a>
+</div>
+
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+
+        var t1 = Date.UTC(2019, 08, 10, 00, 00, 00); //北京时间2019-8-1 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes *
+            minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "本站已运行 " + diffYears + " 年 " + diffDays + " 天 " + diffHours +
+            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒" ;
+    } /*因为建站时间还没有一年，就将之注释掉了。需要的可以取消*/
+    siteTime();
+</script>
+
+<!-- 修改计数：欧阳思海 -->
+<script>
+    $(document).ready(function () {
+
+        var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+        var pvcountOffset = 1005469;  // 初始化首次数据
+        var uvcountOffset = 250804;
+
+        function fixCount() {
+            if (document.getElementById("busuanzi_container_site_pv").style.display != "none") {
+                $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + pvcountOffset);
+                clearInterval(int);
+            }
+            if ($("#busuanzi_container_site_pv").css("display") != "none") {
+                $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + uvcountOffset); // 加上初始数据 
+                clearInterval(int); // 停止检测
+            }
+        }
+    });
+</script>
+
+
+
+
+        <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.json", 'searchInput', 'searchResult');
+});
+</script>
+        <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fa fa-angle-up"></i>
+    </a>
+</div>
+
+
+        <script src="/libs/materialize/materialize.min.js"></script>
+        <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+        <script src="/libs/aos/aos.js"></script>
+        <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+        <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+        <script src="/js/matery.js"></script>
+
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-149362573-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    gtag('config', 'UA-149362573-1');
+</script>
+
+
+
+        
+            <script src="/libs/others/clicklove.js"></script>
+        
+
+        
+            <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+        
+
+        <!-- 洪卫 shw2018 add 2019.08.28 -->
+        <script type="text/javascript">
+            var OriginTitile = document.title,
+                st;
+            document.addEventListener("visibilitychange", function () {
+                document.hidden ? (document.title = "看不见我🙈~看不见我🙈~", clearTimeout(st)) : (document.title =
+                    "(๑•̀ㅂ•́) ✧被发现了～", st = setTimeout(function () {
+                        document.title = OriginTitile
+                    }, 3e3))
+            })
+        </script>
+
+        <!-- 鼠标点击烟花爆炸效果  洪卫 shw2018 add 2019.09.09 -->
+        
+
+        <!-- 背景雪花飘落特效洪卫 shw2018 add 2019.09.10 -->
+        
+
+        <!-- 鼠标点击文字特效 洪卫 shw2018 add 2019.09.10-->
+        
+
+        <!-- 背景雪花飘落特效 洪卫 shw2018 add 2019.09.10 -->
+        
+
+        <!-- 在线聊天工具  洪卫 shw2018 add 2019.09.11 -->
+        
+
+        <!-- 背景 canvas-nest  洪卫 shw 2018  add 2019.09.15-->
+        
+
+        <!-- 背景静止彩带  洪卫 shw 2018  add 2019.09.15-->
+        
+
+        <!-- 背景动态彩带 洪卫 shw 2018  add 2019.09.15-->
+        
+
+    </body>
+</html>

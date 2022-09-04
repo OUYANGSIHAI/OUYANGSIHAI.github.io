@@ -1,0 +1,2758 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+    <!-- shw2018 洪卫  modify 2019.08.15-->
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="Spring Boot, Spring Cloud, 微服务, Java技术, 好好学java, Java面试, 分布式, 最新干货分享">
+    <meta name="baidu-site-verification" content="fmlEuI34ir" />
+    <meta name="google-site-verification" content="ZWVq5UvPg33BCEA3LRTUkYe5J854o9lF1_WRTer9l8A" />
+    <meta name="description" content="本站是 好好学java 的技术分享博客。内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、分布式、Java面试、测试开发等相关的研究与知识分享。">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>MySQL高可用复制管理工具——Orchestrator介绍 | 好好学java | Spring Boot | Spring Cloud | 微服务 | Java技术 | Java面试 | 分布式 | 最新干货分享</title>
+    <link rel="icon" type="image/png" href="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7">
+
+    <!-- <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css"> -->
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    <!-- 自定义fontawesome样式：欧阳思海 -->
+    <link rel="stylesheet" type="text/css" href="/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/brands.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/fontawesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/regular.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/solid.min.css">
+
+
+    <style type="text/css">
+        code[class*="language-"],
+            pre[class*="language-"] {
+                white-space: pre !important;
+            }
+
+            
+
+        /* 将matery.css中的背景颜色修改放到这里：欧阳思海 */
+        .bg-color {
+            background-image: linear-gradient(to right, #ec8585 0%, #419488 100%);
+            opacity: 0.9;
+            // 透明度
+        }
+    </style>
+
+    <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
+    <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+
+    
+    
+    <script>
+        (function () {
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+    
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?6fe466069710c03a563713b507fbaca7";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+    <!-- Google Analytics -->
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-XXXXX-Y', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <!-- End Google Analytics -->
+
+    <script>(function (i, s, o, g, r, a, m) { i["DaoVoiceObject"] = r; i[r] = i[r] || function () { (i[r].q = i[r].q || []).push(arguments) }, i[r].l = 1 * new Date(); a = s.createElement(o), m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; a.charset = "utf-8"; m.parentNode.insertBefore(a, m) })(window, document, "script", ('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/0a804bac.js", "daovoice")</script>
+
+    <script>
+        if (true) {
+            daovoice('init', {
+                app_id: "0a804bac",
+                user_id: "NO_89757", // 必填: 该用户在您系统上的唯一ID
+                email: "daovoice@example.com", // 选填:  该用户在您系统上的主邮箱
+                name: "道客船长", // 选填: 用户名
+                signed_up: 1449821660 // 选填: 用户的注册时间，用Unix时间戳表示
+            });
+            daovoice('update');
+
+            daovoice('init', {
+                app_id: "0a804bac"
+            });
+            daovoice('update');
+        }
+    </script>
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/rss2.xml" title="好好学java" type="application/rss+xml">
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+    <body>
+
+        <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span" style="font-size: 1.4rem;">好好学java</span>
+                </a>
+            </div>
+            
+
+
+<!-- <a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-navicon"></i></a>
+<ul class="right">
+    
+    <li class="hide-on-med-and-down">
+        <a href="" class="waves-effect waves-light">
+            
+            <i class="fa "></i>
+            
+            <span></span>
+        </a>
+    </li>
+    
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title=""></i>
+        </a>
+    </li>
+</ul> -->
+
+<!-- 支持二级菜单特性 洪卫 shw2018 modify 2019.09.17  -->
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-align-justify"></i></a>
+<ul class="right nav-menu">
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-folder-minus"></i>
+                
+                <span style="font-size: 1.1rem;">Java学习</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/" >
+                    
+                    <span>Java入门</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Javaweb/" >
+                    
+                    <span>Java Web</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/spring%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>Spring教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/springboot%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>SpringBoot教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/springcloud%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>SpringCloud教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98/" >
+                    
+                    <span>Java面试</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%89%91%E6%8C%87offer/" >
+                    
+                    <span>剑指offer</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-code-branch"></i>
+                
+                <span style="font-size: 1.1rem;">Java进阶</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97/" >
+                    
+                    <span>设计模式</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" >
+                    
+                    <span>Java并发编程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/" >
+                    
+                    <span>数据库</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/redis/" >
+                    
+                    <span>Redis</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/linux/" >
+                    
+                    <span>Linux</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/" >
+                    
+                    <span>Java实战项目</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-code"></i>
+                
+                <span style="font-size: 1.1rem;">python学习</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/python%E5%9F%BA%E7%A1%80/" >
+                    
+                    <span>python基础</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/python%E6%A1%86%E6%9E%B6/" >
+                    
+                    <span>python框架</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/python%E5%85%B6%E4%BB%96/" >
+                    
+                    <span>python其他</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-coffee"></i>
+                
+                <span style="font-size: 1.1rem;">Java扩展</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/dubbo/" >
+                    
+                    <span>dubbo</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/netty/" >
+                    
+                    <span>netty</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/rpc/" >
+                    
+                    <span>rpc</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/eureka/" >
+                    
+                    <span>eureka</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/" >
+                    
+                    <span>中间件</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" >
+                    
+                    <span>分布式</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-desktop"></i>
+                
+                <span style="font-size: 1.1rem;">计算机核心</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" >
+                    
+                    <span>数据结构</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98/" >
+                    
+                    <span>leetcode刷题</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" >
+                    
+                    <span>计算机网络</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" >
+                    
+                    <span>算法</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/categories/" class="waves-effect waves-light">
+              
+                <i style="font-size: 1.1rem;" class="fa fa-adjust"></i>
+              
+              <span style="font-size: 1.1rem;">学习资源</span>
+            </a>
+
+            
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/contact" class="waves-effect waves-light">
+              
+                <i style="font-size: 1.1rem;" class="fa fa-envelope"></i>
+              
+              <span style="font-size: 1.1rem;">留言</span>
+            </a>
+
+            
+      </li>
+    
+
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title="搜索"></i>
+        </a>
+    </li>
+
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">好好学java</div>
+        <div class="logo-desc">
+            
+            
+            本站是 好好学java 的技术分享博客，涵盖Java后端技术、SpringBoot、微服务架构、分布式、Java面试等知 ...
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-folder-minus"></i>
+			
+			Java学习
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/ " style="margin-left:75px";>
+				  
+		          <span>Java入门</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Javaweb/ " style="margin-left:75px";>
+				  
+		          <span>Java Web</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/spring%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>Spring教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/springboot%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>SpringBoot教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/springcloud%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>SpringCloud教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98/ " style="margin-left:75px";>
+				  
+		          <span>Java面试</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%89%91%E6%8C%87offer/ " style="margin-left:75px";>
+				  
+		          <span>剑指offer</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-code-branch"></i>
+			
+			Java进阶
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97/ " style="margin-left:75px";>
+				  
+		          <span>设计模式</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>Java并发编程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/ " style="margin-left:75px";>
+				  
+		          <span>数据库</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/redis/ " style="margin-left:75px";>
+				  
+		          <span>Redis</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/linux/ " style="margin-left:75px";>
+				  
+		          <span>Linux</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/ " style="margin-left:75px";>
+				  
+		          <span>Java实战项目</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-code"></i>
+			
+			python学习
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/python%E5%9F%BA%E7%A1%80/ " style="margin-left:75px";>
+				  
+		          <span>python基础</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/python%E6%A1%86%E6%9E%B6/ " style="margin-left:75px";>
+				  
+		          <span>python框架</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/python%E5%85%B6%E4%BB%96/ " style="margin-left:75px";>
+				  
+		          <span>python其他</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-coffee"></i>
+			
+			Java扩展
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/dubbo/ " style="margin-left:75px";>
+				  
+		          <span>dubbo</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/netty/ " style="margin-left:75px";>
+				  
+		          <span>netty</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/rpc/ " style="margin-left:75px";>
+				  
+		          <span>rpc</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/eureka/ " style="margin-left:75px";>
+				  
+		          <span>eureka</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/ " style="margin-left:75px";>
+				  
+		          <span>中间件</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/ " style="margin-left:75px";>
+				  
+		          <span>分布式</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-desktop"></i>
+			
+			计算机核心
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/ " style="margin-left:75px";>
+				  
+		          <span>数据结构</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98/ " style="margin-left:75px";>
+				  
+		          <span>leetcode刷题</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/ " style="margin-left:75px";>
+				  
+		          <span>计算机网络</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E7%AE%97%E6%B3%95/ " style="margin-left:75px";>
+				  
+		          <span>算法</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories/" class="waves-effect waves-light">
+			
+			    <i class="fa fa-fw fa-adjust"></i>
+			
+			学习资源
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa fa-fw fa-envelope"></i>
+			
+			留言
+		</a>
+          
+        </li>
+        
+        
+    </ul>
+</div>
+
+        </div>
+
+        
+    </nav>
+
+</header>
+
+        
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/10.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <div class="description center-align post-title">
+                        MySQL高可用复制管理工具——Orchestrator介绍
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 20px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+
+    /* 自定义mycard：欧阳思海 */
+
+    #my-card {
+        /* position: relative; */
+        width: 310px;
+        height: 300px;
+        /* max-height: 330px; */
+        margin-bottom: 15px;
+        margin-top: 15px;
+        /* text-align: center; */
+        border: 0;
+        border-radius: 3px;
+        color: rgba(0, 0, 0, .87);
+        background: #fff 50%;
+        background-image: none;
+        background-size: auto;
+        background-size: cover;
+        box-shadow: 0 15px 35px rgba(50, 50, 93, .1), 0 5px 15px rgba(0, 0, 0, .07);
+    }
+
+    /* .widget {
+        line-height: 1.6em;
+        word-wrap: break-word;
+        font-size: 0.9em;
+        padding-top: 15px;
+        padding-left: -45px;
+    } */
+</style>
+
+
+
+
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- shw2018 洪卫  modify 2019.08.15-->
+
+<!-- 代码块修改的代码开始 -->
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFunction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+<!-- 代码块折行 -->
+
+<style type="text/css">
+code[class*="language-"], pre[class*="language-"] { white-space: pre !important; }
+</style>
+
+<!-- 代码块修改代码结束 -->
+
+
+<!-- 文章内容详情 -->
+<div id="container">
+    <div id="artDetail">
+        <div class="card">
+            <div class="card-content article-info">
+                <div class="row tag-cate">
+                    <div class="col s7">
+                        
+                        <div class="article-tag">
+                            <!--我修改的地方：欧阳思海-->
+                            
+                            <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93-mysql-oracle-redis/" target="_blank">
+                                <span class="chip bg-color">数据库,mysql,oracle,redis</span>
+                            </a>
+                            
+                        </div>
+                        
+                    </div>
+                    <div class="col s5 right-align">
+                        
+                        <div class="post-cate">
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/" class="post-category" target="_blank">
+                                数据库相关
+                            </a>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <div class="post-info">
+                    <div class="post-date info-break-policy">
+                        <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
+                        2021-04-05
+                    </div>
+
+                    <div class="post-author info-break-policy">
+                        <i class="fa fa-user-o fa-fw"></i>作者:&nbsp;&nbsp;
+                        
+                        欧阳思海
+                        
+                    </div>
+
+                    
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;
+                        10k
+                    </div>
+                    
+
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-clock-o fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                        41 分
+                    </div>
+                    
+                    
+
+                    
+                    <span id="busuanzi_container_site_pv" style='display:none'></span>
+                    <i class="fa fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                    <span id="busuanzi_value_page_pv"></span>
+
+                    
+
+                </div>
+            </div>
+            <hr class="clearfix">
+            <div class="card-content article-card-content">
+                <!-- 欧阳思海，modify，2020.05.01-->
+<!-- 文章详情详情页面的头部广告位置信息 -->
+<div id="post-head-panel">
+    
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" style="font-size: 18px;" target="_blank">
+        <img src="/icons/hot.gif">
+        本人花费半年的时间总结的《Java面试指南》已拿腾讯等大厂offer，已开源在github ，欢迎star！
+    </a>
+    
+    
+</div>
+<br />
+
+
+
+<blockquote>
+    
+            <p>本文GitHub <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">https://github.com/OUYANGSIHAI/JavaInterview</a> 已收录，这是我花了6个月总结的<b>一线大厂Java面试</b>总结，本人已拿大厂offer，欢迎star</p>
+    
+    <p>原文链接：blog.ouyangsihai.cn &gt;&gt; <a href="/mysql-gao-ke-yong-fu-zhi-guan-li-gong-ju-orchestrator-jie-shao.html" target="_blank">MySQL高可用复制管理工具——Orchestrator介绍</a></p>
+</blockquote>
+                <div id="articleContent">
+                    <img class="" title="MySQL高可用复制管理工具:Orchestrator介绍" src="https://www.javazhiyin.com/wp-content/uploads/2019/03/java10-1551850137.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="MySQL高可用复制管理工具:Orchestrator介绍">
+
+<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>在MySQL高可用架构中，目前使用比较多的是Percona的PXC，Galera以及MySQL 5.7之后的MGR等，其他的还有的MHA，今天介绍另一个比较好用的MySQL高可用复制管理工具：Orchestrator（orch）。</p>
+<p>Orchestrator（orch）：go编写的MySQL高可用性和复制拓扑管理工具，支持复制拓扑结构的调整，自动故障转移和手动主从切换等。后端数据库用MySQL或SQLite存储元数据，并提供Web界面展示MySQL复制的拓扑关系及状态，通过Web可更改MySQL实例的复制关系和部分配置信息，同时也提供命令行和api接口，方便运维管理。相对比MHA来看最重要的是解决了管理节点的单点问题，其通过raft协议保证本身的高可用。GitHub的一部分管理也在用该工具进行管理。关于Orchestrator更详细的介绍可以看Github的介绍，大致的特点有：</p>
+<p>① 自动发现MySQL的复制拓扑，并且在web上展示。</p>
+<p>② 重构复制关系，可以在web进行拖图来进行复制关系变更。</p>
+<p>③ 检测主异常，并可以自动或手动恢复，通过Hooks进行自定义脚本。</p>
+<p>④ 支持命令行和web界面管理复制。</p>
+<img class="" title="MySQL高可用复制管理工具:Orchestrator介绍" src="https://www.javazhiyin.com/wp-content/uploads/2019/03/java7-1551850137.jpg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="MySQL高可用复制管理工具:Orchestrator介绍">
+
+<h3 id="环境："><a href="#环境：" class="headerlink" title="环境："></a>环境：</h3><p>系统： Ubuntu 16.04</p>
+<p>三台主机： </p>
+<p>test1:192.168.163.131 </p>
+<p>test2:192.168.163.132 </p>
+<p>test3:192.168.163.133</p>
+<p>后端MySQL端口：3306 测试MySQL端口：3307</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>根据需要下载合适的包进行安装，本文是基于Ubuntu16.04安装的，下载好deb包后，需要安装jq的依赖包（apt-get install jq）。安装完成之后，相应的目录为：</p>
+<td class="line_numbers"><pre>12345</pre></td><td class="code"><pre class="mysql" style="font-family:monospace;">/usr/local/orchestrator-rwxr-xr-x 1 root root  20M 1月  16 21:49 orchestrator-rw-r--r-- 1 root root 5.1K 1月  16 21:49 orchestrator-sample.conf.json-rw-r--r-- 1 root root 4.4K 1月  16 21:49 orchestrator-sample-sqlite.conf.jsondrwxr-xr-x 7 root root 4.0K 2月  15 19:03 resources</pre></td>
+
+<p>&#x2F;usr&#x2F;local&#x2F;orchestrator<br>-rwxr-xr-x 1 root root  20M 1月  16 21:49 orchestrator<br>-rw-r–r– 1 root root 5.1K 1月  16 21:49 orchestrator-sample.conf.json<br>-rw-r–r– 1 root root 4.4K 1月  16 21:49 orchestrator-sample-sqlite.conf.json<br>drwxr-xr-x 7 root root 4.0K 2月  15 19:03 resources</p>
+<p>orchestrator：应用程序</p>
+<p>*.json：默认的配置模板</p>
+<p>resources：orchestrator相关的文件：client、web、伪GTID等相关文件。</p>
+<p>配置 配置的相关参数了解后，大致说明如下（可能会有偏差、后续不定时更新）： </p>
+<td class="line_numbers"><pre>123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108109110111112113114115116117118119120121122123124125126127128129130131132133134135136137138139140141142143144145146147148149150</pre></td><td class="code"><pre class="mysql" style="font-family:monospace;">Debug:                                      false,  --设置debug模式EnableSyslog:                               false, -- 是否把日志输出到系统日志里ListenAddress:                              ":3000", -- web http tpc 监听端口ListenSocket:                               "", -- 套接字文件，默认空，和ListenAddress互斥。HTTPAdvertise:                              "", --可选，为raft设置。通知相关http信息AgentsServerPort:                           ":3001",--回调接口StatusEndpoint:                             "/api/status",--状态查看，默认为'/ api / status'StatusOUVerify:                             false,--如果为true，请尝试在Mutual TLS打开时验证OU。 默认为falseBackendDB:                                  "mysql",--后端数据库类型，可选mysql或则sqlite3SQLite3DataFile:                            "", --sqlite3的数据文件SkipOrchestratorDatabaseUpdate:             false,-- 如果为true，不检查后端数据库模式，也不尝试更新它。 当运行多个版本的orchestrator时很有用PanicIfDifferentDatabaseDeploy:             false, --如果为true，此进程发现协调器后端的数据库由不同版本配置，则发生混乱RaftBind:                                   "127.0.0.1:10008",RaftAdvertise:                              "",RaftDataDir:                                "",DefaultRaftPort:                            10008, --如果RaftNodes未指定端口，使用此端口RaftNodes:                                  []string{}, --raft初始化连接ExpectFailureAnalysisConcensus:             true,MySQLOrchestratorMaxPoolConnections:        128, --限制后端数据库的并发数MySQLOrchestratorPort:                      3306, --后端数据库端口MySQLTopologyUseMutualTLS:                  false,--是否启用TLS身份验证MySQLTopologyUseMixedTLS:                   true,--是否混合TLS和非TLS身份验证MySQLOrchestratorUseMutualTLS:              false,--是否为Orchestrator MySQL实例启用TLS身份验证MySQLConnectTimeoutSeconds:                 2,--数据库连接超时时间，秒。MySQLOrchestratorReadTimeoutSeconds:        30,--读操作超时MySQLDiscoveryReadTimeoutSeconds:           10,--发现查询的超时MySQLTopologyReadTimeoutSeconds:            600,--发现查询之外查询的超时MySQLConnectionLifetimeSeconds:             0,--活跃状态的的时间DefaultInstancePort:                        3306,--数据库默认端口TLSCacheTTLFactor:                          100,--为TLS信息缓存到期的InstancePollSeconds的因子InstancePollSeconds:                        5,--实例之间读取间隔InstanceWriteBufferSize:                    100,--实例写入缓冲区大小BufferInstanceWrites:                       false,--在后端表上设置为“true”以进行写入优化，写入可能过时并覆盖非陈旧数据InstanceFlushIntervalMilliseconds:          100,--实例写入缓冲区刷新之间的最大间隔时间SkipMaxScaleCheck:                          false,--如果没有MaxScale BinlogServer，请将其设置为“true”以保存一些无意义的查询UnseenInstanceForgetHours:                  240,--忽略不可见的实例的小时数SnapshotTopologiesIntervalHours:            0,--快照拓扑调用之间的小时间隔。 默认值：0（禁用）DiscoverByShowSlaveHosts:                   false,--在PROCESSLIST之前尝试SHOW SLAVE HOSTSUseSuperReadOnly:                           false,--每当它设置read_only时，orchestrator应该是super_read_onlyDiscoveryMaxConcurrency:                    300,--实例发现时go的最大进程数量。DiscoveryQueueCapacity:                     100000,--发现队列的缓冲区大小。 应该大于发现的数据库实例的数量DiscoveryQueueMaxStatisticsSize:            120,--发现队列的第二次统计数据的最大数量DiscoveryCollectionRetentionSeconds:        120,--保留发现集合信息的秒数InstanceBulkOperationsWaitTimeoutSeconds:   10,--在进行批量操作时等待单个实例的时间HostnameResolveMethod:                      "default",MySQLHostnameResolveMethod:                 "@@hostname",SkipBinlogServerUnresolveCheck:             true, --跳过检查未解析的主机名是否解析为binlog服务器的相同主机名ExpiryHostnameResolvesMinutes:              60, --主机名解析到期之前的分钟数RejectHostnameResolvePattern:               "",--不接受解析主机名的正则表达式。 这样做是为了避免因网络故障而存储错误ReasonableReplicationLagSeconds:            10,--复制延迟高于该值表示异常ProblemIgnoreHostnameFilters:               []string{},--将与给定的regexp过滤器匹配的主机名最小化问题VerifyReplicationFilters:                   false, --在拓扑重构之前检查复制筛选器ReasonableMaintenanceReplicationLagSeconds: 20,--高于此值会上移和下移CandidateInstanceExpireMinutes:             60,--该时间之后，使用实例作为候选副本的建议已过期。AuditLogFile:                               "", --审计操作的日志文件名。 空的时候禁用。AuditToSyslog:                              false, --审计日志是否写入到系统日志AuditToBackendDB:                           false, --审计日志是否入库，表为audit，默认trueRemoveTextFromHostnameDisplay:              "",--去除群集/群集页面上的主机名的文本ReadOnly:                                   false,AuthenticationMethod:                       "",--身份验证类型。可选值有："" for none, "basic" for BasicAuth,"multi" for advanced BasicAuth, "proxy" for forwarded credentials via reverse proxy, 通过反向代理转发凭证"token" for token based accessHTTPAuthUser:                               "", --HTTP基本身份验证的用户名，空表示禁用身份验证HTTPAuthPassword:                           "", --HTTP基本身份验证的密码，空表示禁用密码AuthUserHeader:                             "X-Forwarded-User",--当AuthenticationMethod为“proxy”时，HTTP标头指示auth用户PowerAuthUsers:                             []string{"*"},--在AuthenticationMethod ==“proxy”上，可以更改的用户列表。 所有其他都是只读的PowerAuthGroups:                            []string{},--经过身份验证的用户必须是unix组列表成员AccessTokenUseExpirySeconds:                60,--必须使用已颁发token的时间AccessTokenExpiryMinutes:                   1440,--访问的到期的时间ClusterNameToAlias:                         make(map[string]string),DetectClusterAliasQuery:                    "",--可选查询（在拓扑实例上执行），返回集群的别名DetectClusterDomainQuery:                   "",--可选查询（在拓扑实例上执行），返回此集群主服务器的VIP / CNAME /别名/任何域名DetectInstanceAliasQuery:                   "",--可选查询（在拓扑实例上执行），返回实例的别名DetectPromotionRuleQuery:                   "",--可选查询（在拓扑实例上执行），返回实例的提升规则DataCenterPattern:                          "", --一个组的正则表达式模式，从主机名中提取数据中心名称PhysicalEnvironmentPattern:                 "",--一个组的正则表达式模式，从主机名中提取物理环境信息DetectDataCenterQuery:                      "",--可选查询（在拓扑实例上执行），返回实例的数据中心，覆盖DataCenterPattern，对无法通过主机名推断DC非常有用DetectPhysicalEnvironmentQuer"",--可选查询（在拓扑实例上执行），返回实例的物理环境。覆盖PhysicalEnvironmentPattern，对无法通过主机名推断出env非常有用DetectSemiSyncEnforcedQuery:                "",--可选查询（在拓扑实例上执行）以确定是否对主写入完全强制执行半同步SupportFuzzyPoolHostnames:                  true,--应该“submit-pool-instances”命令能够传递模糊实例列表（模糊意味着非fqdn，但足够独特默认值为“true”，表示后端数据库上有更多查询InstancePoolExpiryMinutes:                  60,--database_instance_pool的过期的时间PromotionIgnoreHostnameFilters:             []string{},--不使用主机名匹配模式来提升副本ServeAgentsHttp:                            false,--产生另一个专用于orchestrator-agent的HTTP接口AgentsUseSSL:                               false,--当“true”orchestrator将使用SSL侦听代理端口以及通过SSL连接到代理时AgentsUseMutualTLS:                         false,--当“true”时，使用相互TLS服务器与代理通信AgentSSLValidOUs:                           []string{},--使用相互TLS与代理进行通信AgentSSLSkipVerify:                         false,--为代理使用SSLAgentSSLPrivateKeyFile:                     "",AgentSSLCertFile:                           "",AgentSSLCAFile:                             "",UseSSL:                                     false,--在Web端口上使用SSLUseMutualTLS:                               false,--“true”时使用TLS作为服务器的Web和API连接SSLValidOUs:                                []string{},--使用TLS交互SSLSkipVerify:                              false,--使用SSL时，是否应忽略SSL认证错误SSLPrivateKeyFile:                          "",SSLCertFile:                                "",SSLCAFile:                                  "",AgentPollMinutes:                           60,--代理轮询的分钟数UnseenAgentForgetHours:                     6,--忘记不可见的代理的小时数StaleSeedFailMinutes:                       60,--过时（无进展）被视为失败的分钟数SeedAcceptableBytesDiff:                    8192,--种子源和目标数据大小之间的字节差异仍被视为成功复制SeedWaitSecondsBeforeSend:                  2,--在代理上开始发送数据命令之前等待的秒数AutoPseudoGTID:                             false, --是否自动将Pseudo-GTID条目注入主服务器PseudoGTIDPattern:                          "",--在二进制日志中查找的模式，用于创建唯一条目（伪GTID）。 为空时，禁用基于伪GTID的重构。PseudoGTIDPatternIsFixedSubstring:          false,--如为true，则PseudoGTIDPattern不被视为正则表达式而是固定子字符串PseudoGTIDMonotonicHint:                    "",--Pseudo-GTID条目中的子字符串，表示Pseudo-GTID条目预计会单调递增DetectPseudoGTIDQuery:                      "",--可选查询，用于确定是否在实例上启用了伪gtidBinlogEventsChunkSize:                      10000,--SHOW BINLOG | RELAYLOG EVENTS LIMIT的块大小。 较小意味着更少的锁定和工作要做SkipBinlogEventsContaining:                 []string{},--扫描/比较Pseudo-GTID的binlog时，跳过包含给定文本的条目。 这些不是正则表达式（扫描binlog时会消耗太多的CPU），只需查找子字符串。ReduceReplicationAnalysisCount:             true,--如果为true，则复制分析将报告可能首先处理问题的可能性的实例。 如果为false，则为每个已知实例提供一个条目FailureDetectionPeriodBlockMinutes:         60,--实例的故障发现保持“活动”的时间，以避免实例失败的并发“发现”; 如果有的话，这会在任何恢复过程之前。RecoveryPeriodBlockMinutes:                 60,--实例的恢复保持“活动”的时间，以避免并发恢复RecoveryPeriodBlockSeconds:                 3600, --实例的恢复保持“活动”的时间，以避免并发恢复RecoveryIgnoreHostnameFilters:              []string{},--恢复分析将完全忽略与给定模式匹配的主机RecoverMasterClusterFilters:                []string{},--只对匹配这些正则表达式模式的集群进行主恢复（“*”模式匹配所有）RecoverIntermediateMasterClusterFilters:    []string{},--只对匹配这些正则表达式模式的集群进行恢复（“*”模式匹配所有内容）ProcessesShellCommand:                      "bash",--执行命令脚本的ShellOnFailureDetectionProcesses:                []string{},--检测故障转移方案时执行（在决定是否进行故障转移之前）。 可以并且应该使用其中一些占位符{failureType}，{failureDescription}，{command}，{failedHost}，{failureCluster}，{failureClusterAlias}，{failureClusterDomain}，{failedPort}，{successorHost}，{successorPort}，{ successorAlias}，{countReplicas}，{replicaHosts}，{isDowntimed}，{autoMasterRecovery}，{autoIntermediateMasterRecovery}PreGracefulTakeoverProcesses:      []string{},--在主变为只读之前立即执行。 可以并且应该使用其中一些占位符：{failureType}，{failureDescription}，{command}，{failedHost}，{failureCluster}，{failureClusterAlias}，{failureClusterDomain}，{failedPort}，{successorHost}，{successorPort}，{ successorAlias}，{countReplicas}，{replicaHosts}，{isDowntimed}PreFailoverProcesses:                       []string{},--在执行恢复操作之前立即执行。任何这些进程的失败（非零退出代码）都会中止恢复。提示：这使您有机会根据系统的某些内部状态中止恢复。 可以并且应该使用其中一些占位符：{failureType}，{failureDescription}，{command}，{failedHost}，{failureCluster}，{failureClusterAlias}，{failureClusterDomain}，{failedPort}，{successorHost}，{successorPort}，{ successorAlias}，{countReplicas}，{replicaHosts}，{isDowntimed}PostMasterFailoverProcesses:                []string{},--在主恢复成功结束时执行（未定义的执行顺序）。 使用与PostFailoverProcesses相同的占位符PostIntermediateMasterFailoverProcesses:    []string{},--在成功的中间主恢复结束时执行（未定义的执行顺序）。 使用与PostFailoverProcesses相同的占位符PostFailoverProcesses:                      []string{},--在成功恢复结束时执行（包括并添加到上述两个）。 可以并且应该使用其中一些占位符：{failureType}，{failureDescription}，{command}，{failedHost}，{failureCluster}，{failureClusterAlias}，{failureClusterDomain}，{failedPort}，{successorHost}，{successorPort}，{ successorAlias}，{countReplicas}，{replicaHosts}，{isDowntimed}，{isSuccessful}，{lostReplicas}PostUnsuccessfulFailoverProcesses:          []string{},--在任何不成功的恢复结束时执行。（未定义的执行顺序）。 可以并且应该使用其中一些占位符：{failureType}，{failureDescription}，{command}，{failedHost}，{failureCluster}，{failureClusterAlias}，{failureClusterDomain}，{failedPort}，{successorHost}，{successorPort}，{ successorAlias}，{countReplicas}，{replicaHosts}，{isDowntimed}，{isSuccessful}，{lostReplicas}PostGracefulTakeoverProcesses:              []string{},--在旧主位于新晋升的主之后执行。 使用与PostFailoverProcesses相同的占位符CoMasterRecoveryMustPromoteOtherCoMaster:   true,--当'false'时，任何都可以得到提升（候选人比其他人更受欢迎）。 当'true'时，将促进其他共同主人或否则失败DetachLostSlavesAfterMasterFailover(DetachLostReplicasAfterMasterFailover):        true,--恢复过程中可能会丢失一些副本。如果为true，将通过detach-replica命令强制中断其复制，以确保没有人认为它们完全正常运行。ApplyMySQLPromotionAfterMasterFailover:     true,--将重置slave all并在提升的master上设置read_only = 0，默认true。PreventCrossDataCenterMasterFailover:       false,--如果为true（默认值：false），则不允许跨DC主故障转移，orchestrator将尽其所能仅在同一DC内进行故障转移，否则不进行故障转移。MasterFailoverLostInstancesDowntimeMinutes: 0,--在主故障转移（包括失败的主副本和丢失的副本）之后丢失的任何服务器停机的分钟数。 0表示禁用MasterFailoverDetachSlaveMasterHost(MasterFailoverDetachReplicaMasterHost):        false,--orchestrator是否应该在新升级的master上发出detach-replica-master-host（这样可以确保新master不会尝试复制旧的master，如果它恢复生命）。 默认为'false'。 如果ApplyMySQLPromotionAfterMasterFailover为'true'则无意义。FailMasterPromotionIfSQLThreadNotUpToDate:  false,--如果为true，并且发生主故障转移，如果候选主服务器未消耗所有中继日志（延迟），则中止并显示错误PostponeSlaveRecoveryOnLagMinutes（PostponeReplicaRecoveryOnLagMinutes）:          0,--在崩溃恢复时，滞后超过给定分钟的副本仅在主/ IM被选出并执行进程后才在恢复过程的后期复活。 值为0将禁用此功能RemoteSSHForMasterFailover:                 false,--orchestrator是否应该在主故障转移时尝试远程-shsh relaylog-synching？ 需要RemoteSSHCommandRemoteSSHCommand:                           "",--一个`ssh`命令，由恢复进程用于读取/应用relaylogs。 如果提供，则此变量必须包含文本“{hostname}”。 远程SSH登录必须具有读/写中继日志的权限。 示例：“setuidgid remoteuser ssh {hostname}”RemoteSSHCommandUseSudo:                    true,--是否orchestrator应该在SSH命令下在远程主机上应用'sudo'OSCIgnoreHostnameFilters:                   []string{},--建议将忽略与给定模式匹配的副本主机名GraphiteAddr:                               "",GraphitePath:                               "",GraphiteConvertHostnameDotsToUnderscores:   true,GraphitePollSeconds:                        60,URLPrefix:                                  "",DiscoveryIgnoreReplicaHostnameFilters: []string{},ConsulAddress:                         "",ConsulAclToken:                        "",ZkAddress:                             "",KVClusterMasterPrefix:                 "mysql/master",WebMessage:                            "",</pre></td>
+
+<p>Debug:                                      false,  –设置debug模式<br>EnableSyslog:                               false, – 是否把日志输出到系统日志里<br>ListenAddress:                              “:3000”, – web http tpc 监听端口<br>ListenSocket:                               “”, – 套接字文件，默认空，和ListenAddress互斥。<br>HTTPAdvertise:                              “”, –可选，为raft设置。通知相关http信息<br>AgentsServerPort:                           “:3001”,–回调接口<br>StatusEndpoint:                             “&#x2F;api&#x2F;status”,–状态查看，默认为’&#x2F; api &#x2F; status’<br>StatusOUVerify:                             false,–如果为true，请尝试在Mutual TLS打开时验证OU。 默认为false<br>BackendDB:                                  “mysql”,–后端数据库类型，可选mysql或则sqlite3<br>SQLite3DataFile:                            “”, –sqlite3的数据文件<br>SkipOrchestratorDatabaseUpdate:             false,– 如果为true，不检查后端数据库模式，也不尝试更新它。 当运行多个版本的orchestrator时很有用<br>PanicIfDifferentDatabaseDeploy:             false, –如果为true，此进程发现协调器后端的数据库由不同版本配置，则发生混乱<br>RaftBind:                                   “127.0.0.1:10008”,<br>RaftAdvertise:                              “”,<br>RaftDataDir:                                “”,<br>DefaultRaftPort:                            10008, –如果RaftNodes未指定端口，使用此端口<br>RaftNodes:                                  []string{}, –raft初始化连接<br>ExpectFailureAnalysisConcensus:             true,<br>MySQLOrchestratorMaxPoolConnections:        128, –限制后端数据库的并发数<br>MySQLOrchestratorPort:                      3306, –后端数据库端口<br>MySQLTopologyUseMutualTLS:                  false,–是否启用TLS身份验证<br>MySQLTopologyUseMixedTLS:                   true,–是否混合TLS和非TLS身份验证<br>MySQLOrchestratorUseMutualTLS:              false,–是否为Orchestrator MySQL实例启用TLS身份验证<br>MySQLConnectTimeoutSeconds:                 2,–数据库连接超时时间，秒。<br>MySQLOrchestratorReadTimeoutSeconds:        30,–读操作超时<br>MySQLDiscoveryReadTimeoutSeconds:           10,–发现查询的超时<br>MySQLTopologyReadTimeoutSeconds:            600,–发现查询之外查询的超时<br>MySQLConnectionLifetimeSeconds:             0,–活跃状态的的时间<br>DefaultInstancePort:                        3306,–数据库默认端口<br>TLSCacheTTLFactor:                          100,–为TLS信息缓存到期的InstancePollSeconds的因子<br>InstancePollSeconds:                        5,–实例之间读取间隔<br>InstanceWriteBufferSize:                    100,–实例写入缓冲区大小<br>BufferInstanceWrites:                       false,–在后端表上设置为“true”以进行写入优化，写入可能过时并覆盖非陈旧数据<br>InstanceFlushIntervalMilliseconds:          100,–实例写入缓冲区刷新之间的最大间隔时间<br>SkipMaxScaleCheck:                          false,–如果没有MaxScale BinlogServer，请将其设置为“true”以保存一些无意义的查询<br>UnseenInstanceForgetHours:                  240,–忽略不可见的实例的小时数<br>SnapshotTopologiesIntervalHours:            0,–快照拓扑调用之间的小时间隔。 默认值：0（禁用）<br>DiscoverByShowSlaveHosts:                   false,–在PROCESSLIST之前尝试SHOW SLAVE HOSTS<br>UseSuperReadOnly:                           false,–每当它设置read_only时，orchestrator应该是super_read_only<br>DiscoveryMaxConcurrency:                    300,–实例发现时go的最大进程数量。<br>DiscoveryQueueCapacity:                     100000,–发现队列的缓冲区大小。 应该大于发现的数据库实例的数量<br>DiscoveryQueueMaxStatisticsSize:            120,–发现队列的第二次统计数据的最大数量<br>DiscoveryCollectionRetentionSeconds:        120,–保留发现集合信息的秒数<br>InstanceBulkOperationsWaitTimeoutSeconds:   10,–在进行批量操作时等待单个实例的时间<br>HostnameResolveMethod:                      “default”,<br>MySQLHostnameResolveMethod:                 “@@hostname”,<br>SkipBinlogServerUnresolveCheck:             true, –跳过检查未解析的主机名是否解析为binlog服务器的相同主机名<br>ExpiryHostnameResolvesMinutes:              60, –主机名解析到期之前的分钟数<br>RejectHostnameResolvePattern:               “”,–不接受解析主机名的正则表达式。 这样做是为了避免因网络故障而存储错误<br>ReasonableReplicationLagSeconds:            10,–复制延迟高于该值表示异常<br>ProblemIgnoreHostnameFilters:               []string{},–将与给定的regexp过滤器匹配的主机名最小化问题<br>VerifyReplicationFilters:                   false, –在拓扑重构之前检查复制筛选器<br>ReasonableMaintenanceReplicationLagSeconds: 20,–高于此值会上移和下移<br>CandidateInstanceExpireMinutes:             60,–该时间之后，使用实例作为候选副本的建议已过期。<br>AuditLogFile:                               “”, –审计操作的日志文件名。 空的时候禁用。<br>AuditToSyslog:                              false, –审计日志是否写入到系统日志<br>AuditToBackendDB:                           false, –审计日志是否入库，表为audit，默认true<br>RemoveTextFromHostnameDisplay:              “”,–去除群集&#x2F;群集页面上的主机名的文本<br>ReadOnly:                                   false,<br>AuthenticationMethod:                       “”,–身份验证类型。可选值有：<br>“” for none, “basic” for BasicAuth,<br>“multi” for advanced BasicAuth,<br>“proxy” for forwarded credentials via reverse proxy, 通过反向代理转发凭证<br>“token” for token based access<br>HTTPAuthUser:                               “”, –HTTP基本身份验证的用户名，空表示禁用身份验证<br>HTTPAuthPassword:                           “”, –HTTP基本身份验证的密码，空表示禁用密码<br>AuthUserHeader:                             “X-Forwarded-User”,–当AuthenticationMethod为“proxy”时，HTTP标头指示auth用户<br>PowerAuthUsers:                             []string{“<em>“},–在AuthenticationMethod &#x3D;&#x3D;“proxy”上，可以更改的用户列表。 所有其他都是只读的<br>PowerAuthGroups:                            []string{},–经过身份验证的用户必须是unix组列表成员<br>AccessTokenUseExpirySeconds:                60,–必须使用已颁发token的时间<br>AccessTokenExpiryMinutes:                   1440,–访问的到期的时间<br>ClusterNameToAlias:                         make(map[string]string),<br>DetectClusterAliasQuery:                    “”,–可选查询（在拓扑实例上执行），返回集群的别名<br>DetectClusterDomainQuery:                   “”,–可选查询（在拓扑实例上执行），返回此集群主服务器的VIP &#x2F; CNAME &#x2F;别名&#x2F;任何域名<br>DetectInstanceAliasQuery:                   “”,–可选查询（在拓扑实例上执行），返回实例的别名<br>DetectPromotionRuleQuery:                   “”,–可选查询（在拓扑实例上执行），返回实例的提升规则<br>DataCenterPattern:                          “”, –一个组的正则表达式模式，从主机名中提取数据中心名称<br>PhysicalEnvironmentPattern:                 “”,–一个组的正则表达式模式，从主机名中提取物理环境信息<br>DetectDataCenterQuery:                      “”,–可选查询（在拓扑实例上执行），返回实例的数据中心，覆盖DataCenterPattern，对无法通过主机名推断DC非常有用<br>DetectPhysicalEnvironmentQuer””,–可选查询（在拓扑实例上执行），返回实例的物理环境。覆盖PhysicalEnvironmentPattern，对无法通过主机名推断出env非常有用<br>DetectSemiSyncEnforcedQuery:                “”,–可选查询（在拓扑实例上执行）以确定是否对主写入完全强制执行半同步<br>SupportFuzzyPoolHostnames:                  true,–应该“submit-pool-instances”命令能够传递模糊实例列表（模糊意味着非fqdn，但足够独特默认值为“true”，表示后端数据库上有更多查询<br>InstancePoolExpiryMinutes:                  60,–database_instance_pool的过期的时间<br>PromotionIgnoreHostnameFilters:             []string{},–不使用主机名匹配模式来提升副本<br>ServeAgentsHttp:                            false,–产生另一个专用于orchestrator-agent的HTTP接口<br>AgentsUseSSL:                               false,–当“true”orchestrator将使用SSL侦听代理端口以及通过SSL连接到代理时<br>AgentsUseMutualTLS:                         false,–当“true”时，使用相互TLS服务器与代理通信<br>AgentSSLValidOUs:                           []string{},–使用相互TLS与代理进行通信<br>AgentSSLSkipVerify:                         false,–为代理使用SSL<br>AgentSSLPrivateKeyFile:                     “”,<br>AgentSSLCertFile:                           “”,<br>AgentSSLCAFile:                             “”,<br>UseSSL:                                     false,–在Web端口上使用SSL<br>UseMutualTLS:                               false,–“true”时使用TLS作为服务器的Web和API连接<br>SSLValidOUs:                                []string{},–使用TLS交互<br>SSLSkipVerify:                              false,–使用SSL时，是否应忽略SSL认证错误<br>SSLPrivateKeyFile:                          “”,<br>SSLCertFile:                                “”,<br>SSLCAFile:                                  “”,<br>AgentPollMinutes:                           60,–代理轮询的分钟数<br>UnseenAgentForgetHours:                     6,–忘记不可见的代理的小时数<br>StaleSeedFailMinutes:                       60,–过时（无进展）被视为失败的分钟数<br>SeedAcceptableBytesDiff:                    8192,–种子源和目标数据大小之间的字节差异仍被视为成功复制<br>SeedWaitSecondsBeforeSend:                  2,–在代理上开始发送数据命令之前等待的秒数<br>AutoPseudoGTID:                             false, –是否自动将Pseudo-GTID条目注入主服务器<br>PseudoGTIDPattern:                          “”,–在二进制日志中查找的模式，用于创建唯一条目（伪GTID）。 为空时，禁用基于伪GTID的重构。<br>PseudoGTIDPatternIsFixedSubstring:          false,–如为true，则PseudoGTIDPattern不被视为正则表达式而是固定子字符串<br>PseudoGTIDMonotonicHint:                    “”,–Pseudo-GTID条目中的子字符串，表示Pseudo-GTID条目预计会单调递增<br>DetectPseudoGTIDQuery:                      “”,–可选查询，用于确定是否在实例上启用了伪gtid<br>BinlogEventsChunkSize:                      10000,–SHOW BINLOG | RELAYLOG EVENTS LIMIT的块大小。 较小意味着更少的锁定和工作要做<br>SkipBinlogEventsContaining:                 []string{},–扫描&#x2F;比较Pseudo-GTID的binlog时，跳过包含给定文本的条目。 这些不是正则表达式（扫描binlog时会消耗太多的CPU），只需查找子字符串。<br>ReduceReplicationAnalysisCount:             true,–如果为true，则复制分析将报告可能首先处理问题的可能性的实例。 如果为false，则为每个已知实例提供一个条目<br>FailureDetectionPeriodBlockMinutes:         60,–实例的故障发现保持“活动”的时间，以避免实例失败的并发“发现”; 如果有的话，这会在任何恢复过程之前。<br>RecoveryPeriodBlockMinutes:                 60,–实例的恢复保持“活动”的时间，以避免并发恢复<br>RecoveryPeriodBlockSeconds:                 3600, –实例的恢复保持“活动”的时间，以避免并发恢复<br>RecoveryIgnoreHostnameFilters:              []string{},–恢复分析将完全忽略与给定模式匹配的主机<br>RecoverMasterClusterFilters:                []string{},–只对匹配这些正则表达式模式的集群进行主恢复（“</em>”模式匹配所有）<br>RecoverIntermediateMasterClusterFilters:    []string{},–只对匹配这些正则表达式模式的集群进行恢复（“*”模式匹配所有内容）<br>ProcessesShellCommand:                      “bash”,–执行命令脚本的Shell<br>OnFailureDetectionProcesses:                []string{},–检测故障转移方案时执行（在决定是否进行故障转移之前）。 可以并且应该使用其中一些占位符{failureType}，{failureDescription}，{command}，{failedHost}，{failureCluster}，{failureClusterAlias}，{failureClusterDomain}，{failedPort}，{successorHost}，{successorPort}，{ successorAlias}，{countReplicas}，{replicaHosts}，{isDowntimed}，{autoMasterRecovery}，{autoIntermediateMasterRecovery}<br>PreGracefulTakeoverProcesses:      []string{},–在主变为只读之前立即执行。 可以并且应该使用其中一些占位符：{failureType}，{failureDescription}，{command}，{failedHost}，{failureCluster}，{failureClusterAlias}，{failureClusterDomain}，{failedPort}，{successorHost}，{successorPort}，{ successorAlias}，{countReplicas}，{replicaHosts}，{isDowntimed}<br>PreFailoverProcesses:                       []string{},–在执行恢复操作之前立即执行。任何这些进程的失败（非零退出代码）都会中止恢复。提示：这使您有机会根据系统的某些内部状态中止恢复。 可以并且应该使用其中一些占位符：{failureType}，{failureDescription}，{command}，{failedHost}，{failureCluster}，{failureClusterAlias}，{failureClusterDomain}，{failedPort}，{successorHost}，{successorPort}，{ successorAlias}，{countReplicas}，{replicaHosts}，{isDowntimed}<br>PostMasterFailoverProcesses:                []string{},–在主恢复成功结束时执行（未定义的执行顺序）。 使用与PostFailoverProcesses相同的占位符<br>PostIntermediateMasterFailoverProcesses:    []string{},–在成功的中间主恢复结束时执行（未定义的执行顺序）。 使用与PostFailoverProcesses相同的占位符<br>PostFailoverProcesses:                      []string{},–在成功恢复结束时执行（包括并添加到上述两个）。 可以并且应该使用其中一些占位符：{failureType}，{failureDescription}，{command}，{failedHost}，{failureCluster}，{failureClusterAlias}，{failureClusterDomain}，{failedPort}，{successorHost}，{successorPort}，{ successorAlias}，{countReplicas}，{replicaHosts}，{isDowntimed}，{isSuccessful}，{lostReplicas}<br>PostUnsuccessfulFailoverProcesses:          []string{},–在任何不成功的恢复结束时执行。（未定义的执行顺序）。 可以并且应该使用其中一些占位符：{failureType}，{failureDescription}，{command}，{failedHost}，{failureCluster}，{failureClusterAlias}，{failureClusterDomain}，{failedPort}，{successorHost}，{successorPort}，{ successorAlias}，{countReplicas}，{replicaHosts}，{isDowntimed}，{isSuccessful}，{lostReplicas}<br>PostGracefulTakeoverProcesses:              []string{},–在旧主位于新晋升的主之后执行。 使用与PostFailoverProcesses相同的占位符<br>CoMasterRecoveryMustPromoteOtherCoMaster:   true,–当’false’时，任何都可以得到提升（候选人比其他人更受欢迎）。 当’true’时，将促进其他共同主人或否则失败<br>DetachLostSlavesAfterMasterFailover(DetachLostReplicasAfterMasterFailover):        true,–恢复过程中可能会丢失一些副本。如果为true，将通过detach-replica命令强制中断其复制，以确保没有人认为它们完全正常运行。<br>ApplyMySQLPromotionAfterMasterFailover:     true,–将重置slave all并在提升的master上设置read_only &#x3D; 0，默认true。<br>PreventCrossDataCenterMasterFailover:       false,–如果为true（默认值：false），则不允许跨DC主故障转移，orchestrator将尽其所能仅在同一DC内进行故障转移，否则不进行故障转移。<br>MasterFailoverLostInstancesDowntimeMinutes: 0,–在主故障转移（包括失败的主副本和丢失的副本）之后丢失的任何服务器停机的分钟数。 0表示禁用<br>MasterFailoverDetachSlaveMasterHost(MasterFailoverDetachReplicaMasterHost):        false,–orchestrator是否应该在新升级的master上发出detach-replica-master-host（这样可以确保新master不会尝试复制旧的master，如果它恢复生命）。 默认为’false’。 如果ApplyMySQLPromotionAfterMasterFailover为’true’则无意义。<br>FailMasterPromotionIfSQLThreadNotUpToDate:  false,–如果为true，并且发生主故障转移，如果候选主服务器未消耗所有中继日志（延迟），则中止并显示错误<br>PostponeSlaveRecoveryOnLagMinutes（PostponeReplicaRecoveryOnLagMinutes）:          0,–在崩溃恢复时，滞后超过给定分钟的副本仅在主&#x2F; IM被选出并执行进程后才在恢复过程的后期复活。 值为0将禁用此功能<br>RemoteSSHForMasterFailover:                 false,–orchestrator是否应该在主故障转移时尝试远程-shsh relaylog-synching？ 需要RemoteSSHCommand<br>RemoteSSHCommand:                           “”,–一个<code class="java">
+ssh</code>命令，由恢复进程用于读取&#x2F;应用relaylogs。 如果提供，则此变量必须包含文本“{hostname}”。 远程SSH登录必须具有读&#x2F;写中继日志的权限。 示例：“setuidgid remoteuser ssh {hostname}”<br>RemoteSSHCommandUseSudo:                    true,–是否orchestrator应该在SSH命令下在远程主机上应用’sudo’<br>OSCIgnoreHostnameFilters:                   []string{},–建议将忽略与给定模式匹配的副本主机名<br>GraphiteAddr:                               “”,<br>GraphitePath:                               “”,<br>GraphiteConvertHostnameDotsToUnderscores:   true,<br>GraphitePollSeconds:                        60,<br>URLPrefix:                                  “”,<br>DiscoveryIgnoreReplicaHostnameFilters: []string{},<br>ConsulAddress:                         “”,<br>ConsulAclToken:                        “”,<br>ZkAddress:                             “”,<br>KVClusterMasterPrefix:                 “mysql&#x2F;master”,<br>WebMessage:                            “”,</p>
+<p>按照本文的测试用例，定制了一个相关的模板（&#x2F;etc&#x2F;orchestrator.conf.json）：</p>
+<td class="line_numbers"><pre>123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108109110111112113114115116117118119120121122123124125126127128129130131132133134135136137138139140141142143144145146147148149150151152153</pre></td><td class="code"><pre class="javascript" style="font-family:monospace;">{  "Debug": true,  "EnableSyslog": false,  "ListenAddress": ":3000",  "MySQLTopologyUser": "orchestrator",  "MySQLTopologyPassword": "Aa123456",  "MySQLTopologyCredentialsConfigFile": "",  "MySQLTopologySSLPrivateKeyFile": "",  "MySQLTopologySSLCertFile": "",  "MySQLTopologySSLCAFile": "",  "MySQLTopologySSLSkipVerify": true,  "MySQLTopologyUseMutualTLS": false,  "MySQLOrchestratorHost": "127.0.0.1",  "MySQLOrchestratorPort": 3306,  "MySQLOrchestratorDatabase": "orchestrator",  "MySQLOrchestratorUser": "orchestrator",  "MySQLOrchestratorPassword": "123456",  "MySQLOrchestratorCredentialsConfigFile": "",  "MySQLOrchestratorSSLPrivateKeyFile": "",  "MySQLOrchestratorSSLCertFile": "",  "MySQLOrchestratorSSLCAFile": "",  "MySQLOrchestratorSSLSkipVerify": true,  "MySQLOrchestratorUseMutualTLS": false,  "MySQLConnectTimeoutSeconds": 1,  "MySQLTopologyReadTimeoutSeconds": 3,  "MySQLDiscoveryReadTimeoutSeconds": 3,  "DefaultInstancePort": 3306,  "DiscoverByShowSlaveHosts": true,  "InstancePollSeconds": 3,  "UnseenInstanceForgetHours": 240,  "SnapshotTopologiesIntervalHours": 0,  "InstanceBulkOperationsWaitTimeoutSeconds": 10,  "HostnameResolveMethod": "default",  "MySQLHostnameResolveMethod": "@@hostname",  "SkipBinlogServerUnresolveCheck": true,  "SkipMaxScaleCheck":true,  "ExpiryHostnameResolvesMinutes": 60,  "RejectHostnameResolvePattern": "",  "ReasonableReplicationLagSeconds": 10,  "ProblemIgnoreHostnameFilters": [],  "VerifyReplicationFilters": false,  "ReasonableMaintenanceReplicationLagSeconds": 20,  "CandidateInstanceExpireMinutes": 1440,  "AuditLogFile": "",  "AuditToSyslog": false,  "RemoveTextFromHostnameDisplay": ":3306",  "ReadOnly": false,  "AuthenticationMethod": "",  "HTTPAuthUser": "",  "HTTPAuthPassword": "",  "AuthUserHeader": "",  "PowerAuthUsers": [    "*"  ],  "ClusterNameToAlias": {    "127.0.0.1": "test suite"  },  "SlaveLagQuery": "",  "DetectClusterAliasQuery":  "SELECT cluster_name FROM meta.cluster WHERE cluster_name = left(@@hostname,4) ",  "DetectClusterDomainQuery": "SELECT cluster_domain FROM meta.cluster WHERE cluster_name = left(@@hostname,4) ",  "DetectInstanceAliasQuery": "SELECT @@hostname as instance_alias",  "DetectPromotionRuleQuery": "",  "DetectDataCenterQuery": "SELECT data_center FROM meta.cluster WHERE cluster_name = left(@@hostname,4) ",  "PhysicalEnvironmentPattern": "",  "PromotionIgnoreHostnameFilters": [],  "DetachLostReplicasAfterMasterFailover": true,  "DetectSemiSyncEnforcedQuery": "SELECT 0 AS semisync FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM performance_schema.global_variables WHERE VARIABLE_NAME = 'rpl_semi_sync_master_wait_no_slave' AND VARIABLE_VALUE = 'ON') UNION SELECT 1 FROM DUAL WHERE EXISTS (SELECT 1 FROM performance_schema.global_variables WHERE VARIABLE_NAME = 'rpl_semi_sync_master_wait_no_slave' AND VARIABLE_VALUE = 'ON')",  "ServeAgentsHttp": false,  "AgentsServerPort": ":3001",  "AgentsUseSSL": false,  "AgentsUseMutualTLS": false,  "AgentSSLSkipVerify": false,  "AgentSSLPrivateKeyFile": "",  "AgentSSLCertFile": "",  "AgentSSLCAFile": "",  "AgentSSLValidOUs": [],  "UseSSL": false,  "UseMutualTLS": false,  "SSLSkipVerify": false,  "SSLPrivateKeyFile": "",  "SSLCertFile": "",  "SSLCAFile": "",  "SSLValidOUs": [],  "URLPrefix": "",  "StatusEndpoint": "/api/status",  "StatusSimpleHealth": true,  "StatusOUVerify": false,  "AgentPollMinutes": 60,  "UnseenAgentForgetHours": 6,  "StaleSeedFailMinutes": 60,  "SeedAcceptableBytesDiff": 8192,  "AutoPseudoGTID":true,  "PseudoGTIDPattern": "drop view if exists `meta`.`_pseudo_gtid_hint__asc:",  "PseudoGTIDPatternIsFixedSubstring": true,  "PseudoGTIDMonotonicHint": "asc:",  "DetectPseudoGTIDQuery": "select count(*) as pseudo_gtid_exists from meta.pseudo_gtid_status where anchor = 1 and time_generated  now() - interval 2 hour",  "BinlogEventsChunkSize": 10000,  "SkipBinlogEventsContaining": [],  "ReduceReplicationAnalysisCount": true,  "FailureDetectionPeriodBlockMinutes": 60,  "RecoveryPeriodBlockSeconds": 31,  "RecoveryIgnoreHostnameFilters": [],  "RecoverMasterClusterFilters": ["*"],  "RecoverIntermediateMasterClusterFilters": ["*"],  "OnFailureDetectionProcesses": [    "echo '②  Detected {failureType} on {failureCluster}. Affected replicas: {countSlaves}'  /tmp/recovery.log"  ],  "PreGracefulTakeoverProcesses": [    "echo '①   Planned takeover about to take place on {failureCluster}. Master will switch to read_only'  /tmp/recovery.log"  ],  "PreFailoverProcesses": [    "echo '③  Will recover from {failureType} on {failureCluster}'  /tmp/recovery.log"  ],  "PostMasterFailoverProcesses": [    "echo '④  Recovered from {failureType} on {failureCluster}. Failed: {failedHost}:{failedPort}; Promoted: {successorHost}:{successorPort}'  /tmp/recovery.log"  ],  "PostFailoverProcesses": [    "echo '⑤  (for all types) Recovered from {failureType} on {failureCluster}. Failed: {failedHost}:{failedPort}; Successor: {successorHost}:{successorPort}'  /tmp/recovery.log"  ],  "PostUnsuccessfulFailoverProcesses": [    "echo '⑧   /tmp/recovery.log'"  ],  "PostIntermediateMasterFailoverProcesses": [    "echo '⑥ Recovered from {failureType} on {failureCluster}. Failed: {failedHost}:{failedPort}; Successor: {successorHost}:{successorPort}'  /tmp/recovery.log"  ],  "PostGracefulTakeoverProcesses": [    "echo '⑦ Planned takeover complete'  /tmp/recovery.log"  ],  "CoMasterRecoveryMustPromoteOtherCoMaster": true,  "DetachLostSlavesAfterMasterFailover": true,  "ApplyMySQLPromotionAfterMasterFailover": true,  "PreventCrossDataCenterMasterFailover": false,  "MasterFailoverDetachSlaveMasterHost": false,  "MasterFailoverLostInstancesDowntimeMinutes": 0,  "PostponeSlaveRecoveryOnLagMinutes": 0,  "OSCIgnoreHostnameFilters": [],  "GraphiteAddr": "",  "GraphitePath": "",  "GraphiteConvertHostnameDotsToUnderscores": true,   "RaftEnabled": true,  "BackendDB": "mysql",  "RaftBind": "192.168.163.131",  "RaftDataDir": "/var/lib/orchestrator",  "DefaultRaftPort": 10008,  "RaftNodes": [    "192.168.163.131",    "192.168.163.132",    "192.168.163.133"    ], "ConsulAddress": "", "ConsulAclToken": ""}</pre></td>
+
+<p>{<br>  “Debug”: true,<br>  “EnableSyslog”: false,<br>  “ListenAddress”: “:3000”,<br>  “MySQLTopologyUser”: “orchestrator”,<br>  “MySQLTopologyPassword”: “Aa123456”,<br>  “MySQLTopologyCredentialsConfigFile”: “”,<br>  “MySQLTopologySSLPrivateKeyFile”: “”,<br>  “MySQLTopologySSLCertFile”: “”,<br>  “MySQLTopologySSLCAFile”: “”,<br>  “MySQLTopologySSLSkipVerify”: true,<br>  “MySQLTopologyUseMutualTLS”: false,<br>  “MySQLOrchestratorHost”: “127.0.0.1”,<br>  “MySQLOrchestratorPort”: 3306,<br>  “MySQLOrchestratorDatabase”: “orchestrator”,<br>  “MySQLOrchestratorUser”: “orchestrator”,<br>  “MySQLOrchestratorPassword”: “123456”,<br>  “MySQLOrchestratorCredentialsConfigFile”: “”,<br>  “MySQLOrchestratorSSLPrivateKeyFile”: “”,<br>  “MySQLOrchestratorSSLCertFile”: “”,<br>  “MySQLOrchestratorSSLCAFile”: “”,<br>  “MySQLOrchestratorSSLSkipVerify”: true,<br>  “MySQLOrchestratorUseMutualTLS”: false,<br>  “MySQLConnectTimeoutSeconds”: 1,<br>  “MySQLTopologyReadTimeoutSeconds”: 3,<br>  “MySQLDiscoveryReadTimeoutSeconds”: 3,<br>  “DefaultInstancePort”: 3306,<br>  “DiscoverByShowSlaveHosts”: true,<br>  “InstancePollSeconds”: 3,<br>  “UnseenInstanceForgetHours”: 240,<br>  “SnapshotTopologiesIntervalHours”: 0,<br>  “InstanceBulkOperationsWaitTimeoutSeconds”: 10,<br>  “HostnameResolveMethod”: “default”,<br>  “MySQLHostnameResolveMethod”: “@@hostname”,<br>  “SkipBinlogServerUnresolveCheck”: true,<br>  “SkipMaxScaleCheck”:true,<br>  “ExpiryHostnameResolvesMinutes”: 60,<br>  “RejectHostnameResolvePattern”: “”,<br>  “ReasonableReplicationLagSeconds”: 10,<br>  “ProblemIgnoreHostnameFilters”: [],<br>  “VerifyReplicationFilters”: false,<br>  “ReasonableMaintenanceReplicationLagSeconds”: 20,<br>  “CandidateInstanceExpireMinutes”: 1440,<br>  “AuditLogFile”: “”,<br>  “AuditToSyslog”: false,<br>  “RemoveTextFromHostnameDisplay”: “:3306”,<br>  “ReadOnly”: false,<br>  “AuthenticationMethod”: “”,<br>  “HTTPAuthUser”: “”,<br>  “HTTPAuthPassword”: “”,<br>  “AuthUserHeader”: “”,<br>  “PowerAuthUsers”: [<br>    “<em>“<br>  ],<br>  “ClusterNameToAlias”: {<br>    “127.0.0.1”: “test suite”<br>  },<br>  “SlaveLagQuery”: “”,<br>  “DetectClusterAliasQuery”:  “SELECT cluster_name FROM meta.cluster WHERE cluster_name &#x3D; left(@@hostname,4) “,<br>  “DetectClusterDomainQuery”: “SELECT cluster_domain FROM meta.cluster WHERE cluster_name &#x3D; left(@@hostname,4) “,<br>  “DetectInstanceAliasQuery”: “SELECT @@hostname as instance_alias”,<br>  “DetectPromotionRuleQuery”: “”,<br>  “DetectDataCenterQuery”: “SELECT data_center FROM meta.cluster WHERE cluster_name &#x3D; left(@@hostname,4) “,<br>  “PhysicalEnvironmentPattern”: “”,<br>  “PromotionIgnoreHostnameFilters”: [],<br>  “DetachLostReplicasAfterMasterFailover”: true,<br>  “DetectSemiSyncEnforcedQuery”: “SELECT 0 AS semisync FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM performance_schema.global_variables WHERE VARIABLE_NAME &#x3D; ‘rpl_semi_sync_master_wait_no_slave’ AND VARIABLE_VALUE &#x3D; ‘ON’) UNION SELECT 1 FROM DUAL WHERE EXISTS (SELECT 1 FROM performance_schema.global_variables WHERE VARIABLE_NAME &#x3D; ‘rpl_semi_sync_master_wait_no_slave’ AND VARIABLE_VALUE &#x3D; ‘ON’)”,<br>  “ServeAgentsHttp”: false,<br>  “AgentsServerPort”: “:3001”,<br>  “AgentsUseSSL”: false,<br>  “AgentsUseMutualTLS”: false,<br>  “AgentSSLSkipVerify”: false,<br>  “AgentSSLPrivateKeyFile”: “”,<br>  “AgentSSLCertFile”: “”,<br>  “AgentSSLCAFile”: “”,<br>  “AgentSSLValidOUs”: [],<br>  “UseSSL”: false,<br>  “UseMutualTLS”: false,<br>  “SSLSkipVerify”: false,<br>  “SSLPrivateKeyFile”: “”,<br>  “SSLCertFile”: “”,<br>  “SSLCAFile”: “”,<br>  “SSLValidOUs”: [],<br>  “URLPrefix”: “”,<br>  “StatusEndpoint”: “&#x2F;api&#x2F;status”,<br>  “StatusSimpleHealth”: true,<br>  “StatusOUVerify”: false,<br>  “AgentPollMinutes”: 60,<br>  “UnseenAgentForgetHours”: 6,<br>  “StaleSeedFailMinutes”: 60,<br>  “SeedAcceptableBytesDiff”: 8192,<br>  “AutoPseudoGTID”:true,<br>  “PseudoGTIDPattern”: “drop view if exists <code class="java">
+meta</code>.&#96;_pseudo_gtid_hint__asc:”,<br>  “PseudoGTIDPatternIsFixedSubstring”: true,<br>  “PseudoGTIDMonotonicHint”: “asc:”,<br>  “DetectPseudoGTIDQuery”: “select count(</em>) as pseudo_gtid_exists from meta.pseudo_gtid_status where anchor &#x3D; 1 and time_generated  now() - interval 2 hour”,<br>  “BinlogEventsChunkSize”: 10000,<br>  “SkipBinlogEventsContaining”: [],<br>  “ReduceReplicationAnalysisCount”: true,<br>  “FailureDetectionPeriodBlockMinutes”: 60,<br>  “RecoveryPeriodBlockSeconds”: 31,<br>  “RecoveryIgnoreHostnameFilters”: [],<br>  “RecoverMasterClusterFilters”: [“<em>“],<br>  “RecoverIntermediateMasterClusterFilters”: [“</em>“],<br>  “OnFailureDetectionProcesses”: [<br>    “echo ‘②  Detected {failureType} on {failureCluster}. Affected replicas: {countSlaves}’  &#x2F;tmp&#x2F;recovery.log”<br>  ],<br>  “PreGracefulTakeoverProcesses”: [<br>    “echo ‘①   Planned takeover about to take place on {failureCluster}. Master will switch to read_only’  &#x2F;tmp&#x2F;recovery.log”<br>  ],<br>  “PreFailoverProcesses”: [<br>    “echo ‘③  Will recover from {failureType} on {failureCluster}’  &#x2F;tmp&#x2F;recovery.log”<br>  ],<br>  “PostMasterFailoverProcesses”: [<br>    “echo ‘④  Recovered from {failureType} on {failureCluster}. Failed: {failedHost}:{failedPort}; Promoted: {successorHost}:{successorPort}’  &#x2F;tmp&#x2F;recovery.log”<br>  ],<br>  “PostFailoverProcesses”: [<br>    “echo ‘⑤  (for all types) Recovered from {failureType} on {failureCluster}. Failed: {failedHost}:{failedPort}; Successor: {successorHost}:{successorPort}’  &#x2F;tmp&#x2F;recovery.log”<br>  ],<br>  “PostUnsuccessfulFailoverProcesses”: [<br>    “echo ‘⑧   &#x2F;tmp&#x2F;recovery.log’”<br>  ],<br>  “PostIntermediateMasterFailoverProcesses”: [<br>    “echo ‘⑥ Recovered from {failureType} on {failureCluster}. Failed: {failedHost}:{failedPort}; Successor: {successorHost}:{successorPort}’  &#x2F;tmp&#x2F;recovery.log”<br>  ],<br>  “PostGracefulTakeoverProcesses”: [<br>    “echo ‘⑦ Planned takeover complete’  &#x2F;tmp&#x2F;recovery.log”<br>  ],<br>  “CoMasterRecoveryMustPromoteOtherCoMaster”: true,<br>  “DetachLostSlavesAfterMasterFailover”: true,<br>  “ApplyMySQLPromotionAfterMasterFailover”: true,<br>  “PreventCrossDataCenterMasterFailover”: false,<br>  “MasterFailoverDetachSlaveMasterHost”: false,<br>  “MasterFailoverLostInstancesDowntimeMinutes”: 0,<br>  “PostponeSlaveRecoveryOnLagMinutes”: 0,<br>  “OSCIgnoreHostnameFilters”: [],<br>  “GraphiteAddr”: “”,<br>  “GraphitePath”: “”,<br>  “GraphiteConvertHostnameDotsToUnderscores”: true,</p>
+<p>  “RaftEnabled”: true,<br>  “BackendDB”: “mysql”,<br>  “RaftBind”: “192.168.163.131”,<br>  “RaftDataDir”: “&#x2F;var&#x2F;lib&#x2F;orchestrator”,<br>  “DefaultRaftPort”: 10008,<br>  “RaftNodes”: [<br>    “192.168.163.131”,<br>    “192.168.163.132”,<br>    “192.168.163.133”<br>    ],<br> “ConsulAddress”: “”,<br> “ConsulAclToken”: “”<br>}</p>
+<p>这里列出说明几个比较重要的参数：</p>
+<td class="line_numbers"><pre>123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108109110111112113114115116117118119120121122123124125126127128129130131132133</pre></td><td class="code"><pre class="null" style="font-family:monospace;">ListenAddress：　　
+web界面的http端口
+MySQLOrchestratorHost
+orch后端数据库地址
+MySQLOrchestratorPort
+orch后端数据库端口
+MySQLOrchestratorDatabase
+orch后端数据库名
+MySQLOrchestratorUser
+orch后端数据库用户名（明文）
+MySQLOrchestratorPassword
+orch后端数据库密码（明文）
+MySQLOrchestratorCredentialsConfigFile
+后端数据库用户名密码的配置文件「 "MySQLOrchestratorCredentialsConfigFile": "/etc/mysql/orchestrator-backend.cnf" 」，格式：
+ [client]
+user=orchestrator_srv
+password=${ORCHESTRATOR_PASSWORD}
+后端MySQL数据库的用户权限需要是：
+ CREATE USER 'orchestrator_srv'@'orc_host' IDENTIFIED BY 'orc_server_password';
+GRANT ALL ON orchestrator.* TO 'orchestrator_srv'@'orc_host';
+MySQLTopologyUser
+被管理的MySQL的用户（明文）
+MySQLTopologyPassword
+被管理的MySQL的密码（密文）
+MySQLTopologyCredentialsConfigFile
+被管理的MySQL的用户密码配置文件「"/etc/mysql/orchestrator-topology.cnf"」，格式：
+ [client]
+user=orchestrator_srv
+password=${ORCHESTRATOR_PASSWORD}
+被管理MySQL数据库的用户权限需要是：
+ CREATE USER 'orchestrator'@'orc_host' IDENTIFIED BY 'orc_topology_password';
+GRANT SUPER, PROCESS, REPLICATION SLAVE, REPLICATION CLIENT, RELOAD ON *.* TO 'orchestrator'@'orc_host';
+GRANT SELECT ON meta.* TO 'orchestrator'@'orc_host';
+GRANT SELECT ON ndbinfo.processes TO 'orchestrator'@'orc_host'; -- Only for NDB Cluster
+InstancePollSeconds
+orch探测MySQL的间隔秒数
+MySQLConnectTimeoutSeconds
+orch连接MySQL的超时时间
+MySQLOrchestratorReadTimeoutSeconds
+后端MySQL读超时时间
+MySQLTopologyReadTimeoutSeconds
+被管理MySQL读超时时间，用于除发现查询以外的所有查询
+MySQLDiscoveryReadTimeoutSeconds
+被管理MySQL读超时时间，用于发现
+DefaultInstancePort
+被管理MySQL的默认端口
+DiscoverByShowSlaveHosts
+通过show slave hosts 来发现拓扑结构
+UnseenInstanceForgetHours
+忽略看不见的实例的小时数
+HostnameResolveMethod
+解析主机名，使用主机名：default；不解析用none，直接用IP
+MySQLHostnameResolveMethod
+解析主机名，发出select @@hostname；发出select @@report_host（需要配置report_host）。不解析用""，直接用IP。
+InstanceBulkOperationsWaitTimeoutSeconds
+进行批量操作时等待单个实例的时间
+ReasonableReplicationLagSeconds
+复制延迟高于该值表示异常
+VerifyReplicationFilters
+在拓扑重构之前检查复制筛选器
+ReasonableMaintenanceReplicationLagSeconds
+复制延迟高于该值会上下移动调整MySQL拓扑
+CandidateInstanceExpireMinutes
+该时间之后，使用实例作为候选从库（在主故障转移时提升）的建议到期
+ReplicationLagQuery（SlaveLagQuery）
+使用SHOW SLAVE STATUS进行延迟判断，力度为秒。使用pt-heartbeat。这提供了亚秒级的力度，允许自己设置查询「 "select absolute_lag from meta.heartbeat_view"」
+DetectClusterAliasQuery
+查询集群别名的query，信息放到每个被管理实例的meta库的cluster表中「"select ifnull(max(cluster_name), '') as cluster_alias from meta.cluster where anchor=1"」
+DetectClusterDomainQuery
+查询集群Domain的query，信息放到每个被管理实例的meta库的cluster表中「select ifnull(max(cluster_domain), '') as cluster_domain from meta.cluster where anchor=1」
+DetectInstanceAliasQuery
+查询实例的别名
+DetectDataCenterQuery
+查询数据中心的query，信息放到每个被管理实例的meta库的cluster表中「"select substring_index(substring_index(@@hostname, '-',3), '-', -1) as dc"」
+DetachLostReplicasAfterMasterFailover（DetachLostSlavesAfterMasterFailover）
+是否强制分离在主恢复中不会丢失的从库
+DetectSemiSyncEnforcedQuery
+检测是否强制半同步
+AutoPseudoGTID
+是否自动将Pseudo-GTID条目注入主服务器，对于没用GTID的复制推荐使用。要是使用了GTID的复制，设置“false”即可。
+RecoveryPeriodBlockSeconds
+在该时间内再次出现故障，不会进行迁移，避免出现并发恢复和不稳定。
+FailureDetectionPeriodBlockMinutes
+在该时间内再次出现故障，不会被多次发现。
+RecoverMasterClusterFilters
+只对匹配这些正则表达式模式的集群进行主恢复（“*”模式匹配所有）。
+RecoverIntermediateMasterClusterFilters
+只对匹配这些正则表达式模式的集群进行主恢复（“*”模式匹配所有）。
+OnFailureDetectionProcesses
+检测故障转移时执行，属于Hooks。
+PreGracefulTakeoverProcesses
+在主变为只读之前立即执行，属于Hooks。
+PreFailoverProcesses
+在执行恢复操作之前立即执行，属于Hooks。
+PostMasterFailoverProcesses
+在主恢复成功结束时执行，属于Hooks。
+PostFailoverProcesses
+在成功恢复结束时执行，属于Hooks。
+PostUnsuccessfulFailoverProcesses
+在任何不成功的恢复结束时执行，属于Hooks。
+PostIntermediateMasterFailoverProcesses
+在成功的中间主恢复结束时执行，属于Hooks。
+PostGracefulTakeoverProcesses
+在旧主位于新晋升的主之后执行，属于Hooks。
+CoMasterRecoveryMustPromoteOtherCoMaster
+当'false'时，任何实例都可以得到提升； 当'true'时，将提升共同主人否则失败。
+ApplyMySQLPromotionAfterMasterFailover
+将重置slave all并在提升的master上设置read_only = 0，默认true
+PreventCrossDataCenterMasterFailover
+如果为true（默认值：false），则不允许跨DC主故障转移，orchestrator将尽其所能仅在同一DC内进行故障转移，否则不进行故障转移。
+MasterFailoverDetachReplicaMasterHost（MasterFailoverDetachSlaveMasterHost）
+否应该在新升级的master上发出detach-replica-master-host，这样可以确保新master不会尝试复制正常之后的旧的master。如果参数ApplyMySQLPromotionAfterMasterFailover为True，则该参数无意义。
+MasterFailoverLostInstancesDowntimeMinutes
+主故障转移后丢失的任何服务器停机的分钟数（包括失败的主和丢失的从）。 0表示禁用。
+PostponeReplicaRecoveryOnLagMinutes（PostponeSlaveRecoveryOnLagMinutes）
+在崩溃恢复时，延迟超过给定分钟的从库在主被选出后才复活。 值为0将禁用此功能。
+BackendDB
+后端数据库类型。
+RaftEnabled
+是否开启Raft，保证orch的高可用。
+RaftDataDir
+Raft的数据目录。
+RaftBind
+Raft 的 bind地址。
+DefaultRaftPort
+Raft的端口。
+RaftNodes
+Raft的节点。
+ConsulAddress
+Consul的地址。
+ConsulAclToken
+Consul的token。</pre></td>
+
+<p>ListenAddress：　　<br>web界面的http端口<br>MySQLOrchestratorHost<br>orch后端数据库地址<br>MySQLOrchestratorPort<br>orch后端数据库端口<br>MySQLOrchestratorDatabase<br>orch后端数据库名<br>MySQLOrchestratorUser<br>orch后端数据库用户名（明文）<br>MySQLOrchestratorPassword<br>orch后端数据库密码（明文）<br>MySQLOrchestratorCredentialsConfigFile<br>后端数据库用户名密码的配置文件「 “MySQLOrchestratorCredentialsConfigFile”: “&#x2F;etc&#x2F;mysql&#x2F;orchestrator-backend.cnf” 」，格式：<br> [client]<br>user&#x3D;orchestrator_srv<br>password&#x3D;${ORCHESTRATOR_PASSWORD}<br>后端MySQL数据库的用户权限需要是：</p>
+<p>CREATE USER ‘orchestrator_srv‘@’orc_host’ IDENTIFIED BY ‘orc_server_password’;<br>GRANT ALL ON orchestrator.* TO ‘orchestrator_srv‘@’orc_host’;<br>MySQLTopologyUser<br>被管理的MySQL的用户（明文）<br>MySQLTopologyPassword<br>被管理的MySQL的密码（密文）<br>MySQLTopologyCredentialsConfigFile<br>被管理的MySQL的用户密码配置文件「”&#x2F;etc&#x2F;mysql&#x2F;orchestrator-topology.cnf”」，格式：<br> [client]<br>user&#x3D;orchestrator_srv<br>password&#x3D;${ORCHESTRATOR_PASSWORD}<br>被管理MySQL数据库的用户权限需要是：<br> CREATE USER ‘orchestrator‘@’orc_host’ IDENTIFIED BY ‘orc_topology_password’;<br>GRANT SUPER, PROCESS, REPLICATION SLAVE, REPLICATION CLIENT, RELOAD ON <em>.</em> TO ‘orchestrator‘@’orc_host’;<br>GRANT SELECT ON meta.* TO ‘orchestrator‘@’orc_host’;<br>GRANT SELECT ON ndbinfo.processes TO ‘orchestrator‘@’orc_host’; – Only for NDB Cluster<br>InstancePollSeconds<br>orch探测MySQL的间隔秒数<br>MySQLConnectTimeoutSeconds<br>orch连接MySQL的超时时间<br>MySQLOrchestratorReadTimeoutSeconds<br>后端MySQL读超时时间<br>MySQLTopologyReadTimeoutSeconds<br>被管理MySQL读超时时间，用于除发现查询以外的所有查询<br>MySQLDiscoveryReadTimeoutSeconds<br>被管理MySQL读超时时间，用于发现<br>DefaultInstancePort<br>被管理MySQL的默认端口<br>DiscoverByShowSlaveHosts<br>通过show slave hosts 来发现拓扑结构<br>UnseenInstanceForgetHours<br>忽略看不见的实例的小时数<br>HostnameResolveMethod<br>解析主机名，使用主机名：default；不解析用none，直接用IP<br>MySQLHostnameResolveMethod<br>解析主机名，发出select @@hostname；发出select @@report_host（需要配置report_host）。不解析用””，直接用IP。<br>InstanceBulkOperationsWaitTimeoutSeconds<br>进行批量操作时等待单个实例的时间<br>ReasonableReplicationLagSeconds<br>复制延迟高于该值表示异常<br>VerifyReplicationFilters<br>在拓扑重构之前检查复制筛选器<br>ReasonableMaintenanceReplicationLagSeconds<br>复制延迟高于该值会上下移动调整MySQL拓扑<br>CandidateInstanceExpireMinutes<br>该时间之后，使用实例作为候选从库（在主故障转移时提升）的建议到期<br>ReplicationLagQuery（SlaveLagQuery）<br>使用SHOW SLAVE STATUS进行延迟判断，力度为秒。使用pt-heartbeat。这提供了亚秒级的力度，允许自己设置查询「 “select absolute_lag from meta.heartbeat_view”」<br>DetectClusterAliasQuery<br>查询集群别名的query，信息放到每个被管理实例的meta库的cluster表中「”select ifnull(max(cluster_name), ‘’) as cluster_alias from meta.cluster where anchor&#x3D;1”」<br>DetectClusterDomainQuery<br>查询集群Domain的query，信息放到每个被管理实例的meta库的cluster表中「select ifnull(max(cluster_domain), ‘’) as cluster_domain from meta.cluster where anchor&#x3D;1」<br>DetectInstanceAliasQuery<br>查询实例的别名<br>DetectDataCenterQuery<br>查询数据中心的query，信息放到每个被管理实例的meta库的cluster表中「”select substring_index(substring_index(@@hostname, ‘-‘,3), ‘-‘, -1) as dc”」<br>DetachLostReplicasAfterMasterFailover（DetachLostSlavesAfterMasterFailover）<br>是否强制分离在主恢复中不会丢失的从库<br>DetectSemiSyncEnforcedQuery<br>检测是否强制半同步<br>AutoPseudoGTID<br>是否自动将Pseudo-GTID条目注入主服务器，对于没用GTID的复制推荐使用。要是使用了GTID的复制，设置“false”即可。<br>RecoveryPeriodBlockSeconds<br>在该时间内再次出现故障，不会进行迁移，避免出现并发恢复和不稳定。<br>FailureDetectionPeriodBlockMinutes<br>在该时间内再次出现故障，不会被多次发现。<br>RecoverMasterClusterFilters<br>只对匹配这些正则表达式模式的集群进行主恢复（“<em>”模式匹配所有）。<br>RecoverIntermediateMasterClusterFilters<br>只对匹配这些正则表达式模式的集群进行主恢复（“</em>”模式匹配所有）。<br>OnFailureDetectionProcesses<br>检测故障转移时执行，属于Hooks。<br>PreGracefulTakeoverProcesses<br>在主变为只读之前立即执行，属于Hooks。<br>PreFailoverProcesses<br>在执行恢复操作之前立即执行，属于Hooks。<br>PostMasterFailoverProcesses<br>在主恢复成功结束时执行，属于Hooks。<br>PostFailoverProcesses<br>在成功恢复结束时执行，属于Hooks。<br>PostUnsuccessfulFailoverProcesses<br>在任何不成功的恢复结束时执行，属于Hooks。<br>PostIntermediateMasterFailoverProcesses<br>在成功的中间主恢复结束时执行，属于Hooks。<br>PostGracefulTakeoverProcesses<br>在旧主位于新晋升的主之后执行，属于Hooks。<br>CoMasterRecoveryMustPromoteOtherCoMaster<br>当’false’时，任何实例都可以得到提升； 当’true’时，将提升共同主人否则失败。<br>ApplyMySQLPromotionAfterMasterFailover<br>将重置slave all并在提升的master上设置read_only &#x3D; 0，默认true<br>PreventCrossDataCenterMasterFailover<br>如果为true（默认值：false），则不允许跨DC主故障转移，orchestrator将尽其所能仅在同一DC内进行故障转移，否则不进行故障转移。<br>MasterFailoverDetachReplicaMasterHost（MasterFailoverDetachSlaveMasterHost）<br>否应该在新升级的master上发出detach-replica-master-host，这样可以确保新master不会尝试复制正常之后的旧的master。如果参数ApplyMySQLPromotionAfterMasterFailover为True，则该参数无意义。<br>MasterFailoverLostInstancesDowntimeMinutes<br>主故障转移后丢失的任何服务器停机的分钟数（包括失败的主和丢失的从）。 0表示禁用。<br>PostponeReplicaRecoveryOnLagMinutes（PostponeSlaveRecoveryOnLagMinutes）<br>在崩溃恢复时，延迟超过给定分钟的从库在主被选出后才复活。 值为0将禁用此功能。<br>BackendDB<br>后端数据库类型。<br>RaftEnabled<br>是否开启Raft，保证orch的高可用。<br>RaftDataDir<br>Raft的数据目录。<br>RaftBind<br>Raft 的 bind地址。<br>DefaultRaftPort<br>Raft的端口。<br>RaftNodes<br>Raft的节点。<br>ConsulAddress<br>Consul的地址。<br>ConsulAclToken<br>Consul的token。</p>
+<h3 id="运行部署"><a href="#运行部署" class="headerlink" title="运行部署"></a>运行部署</h3><h4 id="环境：-1"><a href="#环境：-1" class="headerlink" title="环境："></a>环境：</h4><p>在三台测试机上各自安装MySQL2个实例：orch用的后端MySQL（3306）和被orch管理的MySQL（3307）。按照给出的配置模板</p>
+<p><strong>首先</strong>在后端数据库的实例上创建账号：</p>
+<td class="line_numbers"><pre>12</pre></td><td class="code"><pre class="mysql" style="font-family:monospace;">CREATE USER 'orchestrator'@'127.0.0.1' IDENTIFIED BY '123456';GRANT ALL ON orchestrator.* TO 'orchestrator'@'127.0.0.1';</pre></td>
+
+<p>CREATE USER ‘orchestrator‘@’127.0.0.1’ IDENTIFIED BY ‘123456’;<br>GRANT ALL ON orchestrator.* TO ‘orchestrator‘@’127.0.0.1’;</p>
+<p><strong>然后</strong>再在被管理的MySQL（3307）实例上 创建账号：</p>
+<td class="line_numbers"><pre>1234</pre></td><td class="code"><pre class="mysql" style="font-family:monospace;">CREATE USER 'orchestrator'@'%' IDENTIFIED BY 'Aa123456';GRANT SUPER, PROCESS, REPLICATION SLAVE, RELOAD ON *.* TO 'orchestrator'@'%';GRANT SELECT ON mysql.slave_master_info TO 'orchestrator'@'%';GRANT SELECT ON meta.* TO 'orchestrator'@'orc_host';</pre></td>
+
+<p>CREATE USER ‘orchestrator‘@’%’ IDENTIFIED BY ‘Aa123456’;<br>GRANT SUPER, PROCESS, REPLICATION SLAVE, RELOAD ON <em>.</em> TO ‘orchestrator‘@’%’;<br>GRANT SELECT ON mysql.slave_master_info TO ‘orchestrator‘@’%’;<br>GRANT SELECT ON meta.* TO ‘orchestrator‘@’orc_host’;</p>
+<p>其中meta库的作用是自己的query所用到的，如：cluster、pseudo_gtid_status等，后面会有相关说明。</p>
+<p>到此，关于orch的环境已经准备完毕，最后只需要把被管理的3台MySQL部署成一主二从即可（rep）:</p>
+<td class="line_numbers"><pre>123</pre></td><td class="code"><pre class="mysql" style="font-family:monospace;">Master：192.168.163.131:3307Slave  ：192.168.163.132:3307Slave  ：192.168.163.133:3307</pre></td>
+
+<p>Master：192.168.163.131:3307<br>Slave  ：192.168.163.132:3307<br>Slave  ：192.168.163.133:3307</p>
+<p><strong>最后</strong>，因为配置文件里写的是域名(hostname)，所以需要修改三台被管理MySQL的hosts。即：</p>
+<td class="line_numbers"><pre>123</pre></td><td class="code"><pre class="mysql" style="font-family:monospace;">192.168.163.131 test1192.168.163.132 test2192.168.163.133 test3</pre></td>
+
+<p>192.168.163.131 test1<br>192.168.163.132 test2<br>192.168.163.133 test3</p>
+<h4 id="安装："><a href="#安装：" class="headerlink" title="安装："></a>安装：</h4><li>
+开启orchestrator
+<blockquote style="-webkit-print-color-adjust: exact; margin-top: 15px; margin-bottom: 15px; border-left-width: 4px; border-left-color: #dddddd; padding-right: 15px; padding-left: 15px; color: #777777;">
+./orchestrator --debug --config=/etc/orchestrator.conf.json http
+</blockquote>
+</li>
+<li>
+把配置好的复制实例加入到orchestrator，因为orch可以自动发现整个拓扑的所有实例，所以只需要添加任意一台实例即可，如果没有发现的话可以再添加。
+</li>
+
+<p>在web上添加（导航里的Clusters - Discover）： </p>
+<img class="" title="MySQL高可用复制管理工具:Orchestrator介绍" src="https://www.javazhiyin.com/wp-content/uploads/2019/03/java4-1551850137.jpg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="MySQL高可用复制管理工具:Orchestrator介绍">
+
+<p>添加完成之后，最终的结构图如下： </p>
+<img class="" title="MySQL高可用复制管理工具:Orchestrator介绍" src="https://www.javazhiyin.com/wp-content/uploads/2019/03/java8-1551850138.jpg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="MySQL高可用复制管理工具:Orchestrator介绍">
+
+<h3 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h3><p>限于篇幅的原因，本文先对orchestrator进行参数和部署做些简单的说明，对于一些Failover和HA在放在下一篇「<strong>MySQL高可用复制管理工具 —— Orchestrator使用</strong>」中进行介绍。</p>
+<h3 id="参考文档："><a href="#参考文档：" class="headerlink" title="参考文档："></a>参考文档：</h3><p><a target="_blank" rel="noopener" href="https://github.com/github/orchestrator">https://github.com/github/orchestrator</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.percona.com/blog/2016/03/08/orchestrator-mysql-replication-topology-manager/">https://www.percona.com/blog/2016/03/08/orchestrator-mysql-replication-topology-manager/</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.slideshare.net/sjmudd/mysql-failover-and-orchestrator">https://www.slideshare.net/sjmudd/mysql-failover-and-orchestrator</a></p>
+<blockquote>
+<p>原文始发于微信公众号（yangyidba）：</p>
+</blockquote>
+
+                </div>
+                <!-- 欧阳思海，modify，2020.05.01-->
+<!-- 文章详情详情页面的头部广告位置信息 -->
+<div id="post-head-panel">
+    
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" style="font-size: 18px;" target="_blank">
+        <img src="/icons/hot.gif">
+        本人花费半年的时间总结的《Java面试指南》已拿腾讯等大厂offer，已开源在github ，欢迎star！
+    </a>
+    
+    
+</div>
+<br />
+
+
+
+<blockquote>
+    
+            <p>本文GitHub <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">https://github.com/OUYANGSIHAI/JavaInterview</a> 已收录，这是我花了6个月总结的<b>一线大厂Java面试</b>总结，本人已拿大厂offer，欢迎star</p>
+    
+    <p>原文链接：blog.ouyangsihai.cn &gt;&gt; <a href="/mysql-gao-ke-yong-fu-zhi-guan-li-gong-ju-orchestrator-jie-shao.html" target="_blank">MySQL高可用复制管理工具——Orchestrator介绍</a></p>
+</blockquote>
+                <hr />
+
+                
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.88rem;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-large waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fa fa-close"></i></a>
+            <h4 class="reward-title">多少都是对我的认可</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="http://image.ouyangsihai.cn/FpbhsOuf3Ar9vY34B97Y2qQ7LVGe" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="http://image.ouyangsihai.cn/FgYlMzms68PH73PWpZBwPfbLTAws" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+                
+
+                <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+
+<div id="article-share">
+    
+    <div class="social-share" data-disabled="qzone" data-wechat-qrcode-helper="<p>微信里点“发现”->“扫一扫”二维码便可查看分享。</p>"></div>
+    
+</div>
+
+<script src="/libs/share/js/social-share.min.js"></script>
+
+                
+
+                
+                <div class="reprint1">
+                    <p>
+                        <span class="reprint1-tip">
+                            <i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;转载请注明:
+                        </span>
+                        <a href="https://blog.ouyangsihai.cn" class="b-link-green">好好学java</a>
+                        <i class="fa fa-angle-right fa-lg fa-fw text-color"></i>
+                        <a href="/mysql-gao-ke-yong-fu-zhi-guan-li-gong-ju-orchestrator-jie-shao.html" class="b-link-green">MySQL高可用复制管理工具——Orchestrator介绍</a>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        
+
+        
+
+        
+
+        
+
+        
+        <style>
+    .valine-card {
+        margin: 1.5rem auto;
+    }
+
+    .valine-card .card-content {
+        padding: 20px 20px 5px 20px;
+    }
+    /* valine 评论框增加背景图片 */
+    #vcomments textarea {
+        box-sizing: border-box;
+        background: url("") 100% 100% no-repeat;
+    }
+
+    #vcomments input[type=text],
+    #vcomments input[type=email],
+    #vcomments input[type=url],
+    #vcomments textarea {
+        box-sizing: border-box;
+    }
+
+    #vcomments p {
+        margin: 2px 2px 10px;
+        font-size: 1.05rem;
+        line-height: 1.78rem;
+    }
+
+    #vcomments blockquote p {
+        text-indent: 0.2rem;
+    }
+
+    #vcomments a {
+        padding: 0 2px;
+        color: #42b983;
+        font-weight: 500;
+        text-decoration: underline;
+    }
+
+    #vcomments img {
+        max-width: 100%;
+        height: auto;
+        cursor: pointer;
+    }
+
+    #vcomments ol li {
+        list-style-type: decimal;
+    }
+
+    #vcomments ol,
+    ul {
+        display: block;
+        padding-left: 2em;
+        word-spacing: 0.05rem;
+    }
+
+    #vcomments ul li,
+    ol li {
+        display: list-item;
+        line-height: 1.8rem;
+        font-size: 1rem;
+    }
+
+    #vcomments ul li {
+        list-style-type: disc;
+    }
+
+    #vcomments ul ul li {
+        list-style-type: circle;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    #vcomments table, th, td {
+        border: 0;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments h1 {
+        font-size: 1.85rem;
+        font-weight: bold;
+        line-height: 2.2rem;
+    }
+
+    #vcomments h2 {
+        font-size: 1.65rem;
+        font-weight: bold;
+        line-height: 1.9rem;
+    }
+
+    #vcomments h3 {
+        font-size: 1.45rem;
+        font-weight: bold;
+        line-height: 1.7rem;
+    }
+
+    #vcomments h4 {
+        font-size: 1.25rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    #vcomments h5 {
+        font-size: 1.1rem;
+        font-weight: bold;
+        line-height: 1.4rem;
+    }
+
+    #vcomments h6 {
+        font-size: 1rem;
+        line-height: 1.3rem;
+    }
+
+    #vcomments p {
+        font-size: 1rem;
+        line-height: 1.5rem;
+    }
+
+    #vcomments hr {
+        margin: 12px 0;
+        border: 0;
+        border-top: 1px solid #ccc;
+    }
+
+    #vcomments blockquote {
+        margin: 15px 0;
+        border-left: 5px solid #42b983;
+        padding: 1rem 0.8rem 0.3rem 0.8rem;
+        color: #666;
+        background-color: rgba(66, 185, 131, .1);
+    }
+
+    #vcomments pre {
+        font-family: monospace, monospace;
+        padding: 1.2em;
+        margin: .5em 0;
+        background: #272822;
+        overflow: auto;
+        border-radius: 0.3em;
+        tab-size: 4;
+    }
+
+    #vcomments code {
+        font-family: monospace, monospace;
+        padding: 1px 3px;
+        font-size: 0.92rem;
+        color: #e96900;
+        background-color: #f8f8f8;
+        border-radius: 2px;
+    }
+
+    #vcomments pre code {
+        font-family: monospace, monospace;
+        padding: 0;
+        color: #e8eaf6;
+        background-color: #272822;
+    }
+
+    #vcomments pre[class*="language-"] {
+        padding: 1.2em;
+        margin: .5em 0;
+    }
+
+    #vcomments code[class*="language-"],
+    pre[class*="language-"] {
+        color: #e8eaf6;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    #vcomments b,
+    strong {
+        font-weight: bold;
+    }
+
+    #vcomments dfn {
+        font-style: italic;
+    }
+
+    #vcomments small {
+        font-size: 85%;
+    }
+
+    #vcomments cite {
+        font-style: normal;
+    }
+
+    #vcomments mark {
+        background-color: #fcf8e3;
+        padding: .2em;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    /* 修复评论第一行位置错位 */
+    .v .vlist .vcard {
+    padding-top: 2.5em !important ;
+    }
+</style>
+
+<div class="card valine-card" data-aos="fade-up">
+    <div id="vcomments" class="card-content"></div>
+</div>
+
+<script src="/libs/valine/av-min.js"></script>
+<script src="/libs/valine/Valine.min.js"></script>
+<!-- <link rel="stylesheet" type="text/css" href="/libs//libs/jQuery-emoji/dist/css/jquery.emoji.css">
+<script src="/libs//libs/jQuery-emoji/dist/js/jquery.emoji.min.js"></script>
+<script src="/libs//libs/jQuery-emoji/dist/js/emoji.list.js"></script> -->
+<script>
+    new Valine({
+        el: '#vcomments',
+        appId: 'MxSNOS83TYWU3Opsy2GTW1ih-gzGzoHsz',
+        appKey: '4XevOgmAxHEwVDnIKgvEUihB',
+        notify: 'true' === 'true',
+        verify: 'true' === 'true',
+        visitor: 'true' === 'true',
+        avatar: 'mm',
+        pageSize: '10',
+        lang: 'zh-cn',
+        placeholder: '请畅所欲言吧，别害羞~',
+
+    });
+
+//     function parse_emoji() {
+//     jQuery(".vcontent").emojiParse({
+//       basePath: '/libs/jQuery-emoji/images/emoji',
+//       icons: emojiLists   // 注：详见 js/emoji.list.js
+//     });
+//   }
+  
+//   setTimeout(function() {
+//     // jQuery emoji 解析
+//     parse_emoji();
+//     // jquery emoji 初始化
+//     jQuery(".veditor").emoji({
+//       showTab: true,
+//       animation: 'slide',
+//       basePath: '/libs/jQuery-emoji/images/emoji',
+//       icons: emojiLists  // 注：详见 js/emoji.list.js
+//     });
+//     jQuery(".vmore").on("click", function() {
+//       setTimeout(function() {
+//         parse_emoji();
+//       }, 500);
+//     });
+//   }, 800)
+
+</script>
+        
+
+        
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/mysql-gao-ke-yong-fu-zhi-guan-li-gong-ju-orchestrator-shi-yong.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="MySQL高可用复制管理工具—— Orchestrator使用">
+                        
+                        <span class="card-title">MySQL高可用复制管理工具—— Orchestrator使用</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+
+
+
+**本文转自 https://www.cnblogs.com/zhoujinyi/p/10394389.html**
+作者 高富帅DBA 周金义 
+
+文章比较长，实践步骤比较多，适合PC端阅读。
+
+
+一 背景在上一篇「」中大致介绍了
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="fa fa-clock fa-fw icon-date"></i>2021-04-05
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/" class="post-category" target="_blank">
+                                    数据库相关
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93-mysql-oracle-redis/" target="_blank">
+                        <span class="chip bg-color">数据库,mysql,oracle,redis</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fa fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/shi-wu-de-acid-shu-xing-ni-huan-sha-sha-fen-bu-qing-ma.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="事务的ACID属性你还傻傻分不清吗">
+                        
+                        <span class="card-title">事务的ACID属性你还傻傻分不清吗</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            点击上方蓝字关注“后端技术精选”
+技术博文不错过！
+ 
+
+本文作者：小孩子节选自掘金小册《MySQL是怎样运行的：从根儿上理解MySQL》
+
+事务的起源对于大部分程序员来说，他们的任务就是把现实世界的业务场景映射到数据库世界。比如银行为了存
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="fa fa-clock fa-fw icon-date"></i>2021-04-05
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/" class="post-category" target="_blank">
+                                    数据库相关
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93-mysql-oracle-redis/" target="_blank">
+                        <span class="chip bg-color">数据库,mysql,oracle,redis</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+    </div>
+</div>
+
+
+<script>
+    $('#articleContent').on('copy', function (e) {
+        // IE8 or earlier browser is 'undefined'
+        if (typeof window.getSelection === 'undefined') return;
+
+        var selection = window.getSelection();
+        // if the selection is short let's not annoy our users.
+        if (('' + selection).length < Number.parseInt('500')) {
+            return;
+        }
+
+        // create a div outside of the visible area and fill it with the selected text.
+        var bodyElement = document.getElementsByTagName('body')[0];
+        var newdiv = document.createElement('div');
+        newdiv.style.position = 'absolute';
+        newdiv.style.left = '-99999px';
+        bodyElement.appendChild(newdiv);
+        newdiv.appendChild(selection.getRangeAt(0).cloneContents());
+
+        // we need a <pre> tag workaround.
+        // otherwise the text inside "pre" loses all the line breaks!
+        if (selection.getRangeAt(0).commonAncestorContainer.nodeName === 'CODE') {
+            newdiv.innerHTML = "<pre>" + newdiv.innerHTML + "</pre>";
+        }
+
+        var url = document.location.href;
+        newdiv.innerHTML += '<br />'
+            + '来源: 好好学java<br />'
+            + '作者: 好好学java<br />'
+            + '链接: <a href="' + url + '">' + url + '</a><br />'
+            + '本文章著作权归作者所有，任何形式的转载都请注明出处。';
+
+        selection.selectAllChildren(newdiv);
+        window.setTimeout(function () { bodyElement.removeChild(newdiv); }, 200);
+    });
+</script>
+
+
+
+<!--
+<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+<script>
+    const btw = new BTWPlugin();
+    btw.init({
+        id: 'container',
+        blogId: '15305-1590684104111-518',
+        name: '程序员的技术圈子',
+        qrcode: 'http://image.ouyangsihai.cn/FtAUOeE5--1JTdcuuZFIhMuEUuJO',
+        keyword: 'vip',
+    });
+</script>
+-->
+
+    </div>
+    <div id="toc-aside" style="width: 310px;" class="expanded col l3 hide-on-med-and-down">
+        <!-- 自定义右侧card：欧阳思海 -->
+        <!-- <div id="my-card" style="background: ">
+            
+        </div> -->
+        <!-- <div class="toc-widget">
+            <div class="toc-title" style="display: none;"><i class="fa fa-list-alt"></i>&nbsp;&nbsp;</div>
+            <div id="toc-content"></div>
+        </div> -->
+
+
+
+
+
+
+
+
+        <aside class="col-lg-3" style="width: 300px;">
+
+            <link rel="stylesheet" type="text/css" href="/css/my-aside.css">
+
+            <!-- 关注公众号信息：欧阳思海 -->
+            <div class="widget-wrap">
+                <div class="widget bg-danger" style="color:whitesmoke; background-color: #419488">
+                    <div class="card-front animated col s12 m12 l8 offset-l2 fadeInUp">
+                        <div class="row">
+                            <div class="col-md-5" style="text-align: center;">
+                                <img class="adv" style="width: 95px; height: 95px;"
+                                    src="http://image.ouyangsihai.cn/FtAUOeE5--1JTdcuuZFIhMuEUuJO">
+                            </div>
+                            <div class="col-md-7" style="text-align: center;">
+                                <h2 style="font-size: 18px; 
+                                    margin: 0; 
+                                    padding: 0;
+                                    border: 0; 
+                                    outline: 0;
+                                    font-weight: inherit;
+                                    font-style: inherit;
+                                    font-family: inherit;
+                                    vertical-align: baseline;">关注公众号</h2>
+                                 
+                                <small style="font-size: 15px;">
+                                    →「技术干货」每日推送 <br>
+                                    →「回复资料」领取资料 <br>
+                                    →「微信加群」每周福利 <br>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div style="font-size: 0.8em;">
+                        <a href="/assets/erweima.jpg" target="_blank"
+                            style="color:orange;font-size: 14px;">点击添加我的微信，加入技术讨论群</a>
+                        除公众号以外，我还会在以下平台发布内容：
+                    </div>
+                    -->
+
+                    <div class="profile-block social-links col-md-7" style="text-align: center;">
+                        <table style="align-items: center; 
+                                        padding-left: 25px;">
+                            <tbody>
+                                <tr>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank" title="GitHub"
+                                            class="tooltip">
+                                            <img style="width: 22px;height: 22px;" src="/icons/github.svg"></a>
+                                    </td>
+
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://www.zhihu.com/people/hai-hai-ren-sheng-50/activities"
+                                            target="_blank" title="知乎" class="tooltip">
+                                            <img style="width: 22px;" src="/icons/zhihu.svg"></a>
+                                    </td>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://blog.csdn.net/sihai12345" target="_blank" title="CSDN"
+                                            class="tooltip">
+                                            <img style="width: 18px;" src="/icons/CSDN.svg"></a>
+                                    </td>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://www.jianshu.com/u/12b0bd4c857c" target="_blank" title="简书"
+                                            class="tooltip">
+                                            <img style="width: 22px;" src="/icons/JianShu.svg"></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            
+
+            <!-- custom rightside_link：热门文章推荐：欧阳思海 -->
+            
+            <div class="widget-wrap widget-panel">
+                <p style="text-align: left;padding-bottom: 10px;line-height: 30px; font-size: 14px;">
+                    
+                    <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        本人花费半年的时间总结的《 Java 面试指南》已拿腾讯等大厂 offer，已开源在 github ，欢迎 star！
+                    </a><br>
+                    
+                    <a href="https://mp.weixin.qq.com/s/I0jimqziHqRNaIy0kXRCnw" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        2020 Java 1000G 最新学习资源，Java基础、Java项目实战、Java分布式等等！
+                    </a><br>
+                    
+                    <a href="http://image.ouyangsihai.cn/FpB-dO6g-XU44mMrVlj7EL1y7Rs7" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        高级 Java 开发微信群，一起搞事情吧！
+                    </a><br>
+                    
+                </p>
+            </div>
+            
+
+            
+
+            <!-- custom rightside_banner：右侧广告或者其他的栏目设置：欧阳思海 -->
+            
+            <div class="widget-wrap">
+                <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">
+                    <img src="http://image.ouyangsihai.cn/FhhoEYMaNr6m0v8KhG8vSPgoREBV" style="width: 100%;">
+                </a>
+            </div>
+            
+            
+
+            
+
+            <!-- 右侧专栏分类：欧阳思海 -->
+            
+            <div class="widget-wrap widget-panel">
+                <ul class="media-list">
+                    
+                    <li class="media">
+                        <a href="/categories/MySQL的艺术世界/" target="_blank">
+                            <div class="media-left">
+                                <img class="media-object" src="http://image.ouyangsihai.cn/Fn3kQurieQ_0QUeqPmx5RW5i6R9n" style="width: 55px;">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading" style="margin-bottom: 10px; font-size: 100%;
+                                                                    margin: 0;
+                                                                    padding: 0;
+                                                                    border: 0;
+                                                                    outline: 0;
+                                                                    font-weight: inherit;
+                                                                    font-style: inherit;
+                                                                    font-family: inherit;
+                                                                    vertical-align: baseline;">
+                                    MySQL 的系列文章，解决全部面试问题！
+                                </h4>
+                                <p>
+                                    总共10篇文章，面试热门的锁、事务，通通解决了！
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    <hr>
+                    
+                    <li class="media">
+                        <a href="/categories/深入理解Java虚拟机/" target="_blank">
+                            <div class="media-left">
+                                <img class="media-object" src="http://image.ouyangsihai.cn/FpcS21VWJOHSgGzKcpW3_xVTSEeN" style="width: 55px;">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading" style="margin-bottom: 10px; font-size: 100%;
+                                                                    margin: 0;
+                                                                    padding: 0;
+                                                                    border: 0;
+                                                                    outline: 0;
+                                                                    font-weight: inherit;
+                                                                    font-style: inherit;
+                                                                    font-family: inherit;
+                                                                    vertical-align: baseline;">
+                                    深入理解 Java 虚拟机，面试必问
+                                </h4>
+                                <p>
+                                    总共10篇文章，包括内存模型、GC算法、GC收集器等。
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    <hr>
+                    
+                </ul>
+            </div>
+            
+
+            <!-- 右侧分类 -->
+            <div class="widget-wrap widget-panel">
+                <h3 class="widget-title">文章分类</h3>
+                <div class="widget">
+                    <ul class="category-list">
+                        
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/趣聊数据结构与算法/">>
+                                趣聊数据结构与算法</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/职业生涯浅谈/">>
+                                职业生涯浅谈</a><span class="category-list-count">33</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java项目分享/">>
+                                Java项目分享</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java面试经验/">>
+                                Java面试经验</a><span class="category-list-count">4</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/我要进大厂/">>
+                                我要进大厂</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/好好学java/">>
+                                好好学java</a><span class="category-list-count">1116</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/剑指offer/">>
+                                剑指offer</a><span class="category-list-count">112</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/css/">>
+                                css</a><span class="category-list-count">12</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/其他框架/">>
+                                其他框架</a><span class="category-list-count">142</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python其他/">>
+                                python其他</a><span class="category-list-count">45</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/数据库相关/">>
+                                数据库相关</a><span class="category-list-count">293</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java核心知识/">>
+                                Java核心知识</a><span class="category-list-count">196</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java面试题/">>
+                                Java面试题</a><span class="category-list-count">308</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/mybatis源码/">>
+                                mybatis源码</a><span class="category-list-count">56</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/spring教程/">>
+                                spring教程</a><span class="category-list-count">173</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springboot教程/">>
+                                springboot教程</a><span class="category-list-count">156</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/实战Activiti工作流/">>
+                                实战Activiti工作流</a><span class="category-list-count">4</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springcloud教程/">>
+                                springcloud教程</a><span class="category-list-count">39</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/linux/">>
+                                linux</a><span class="category-list-count">91</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python框架/">>
+                                python框架</a><span class="category-list-count">43</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python基础/">>
+                                python基础</a><span class="category-list-count">78</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/dubbo/">>
+                                dubbo</a><span class="category-list-count">37</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java源码/">>
+                                Java源码</a><span class="category-list-count">76</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/叽叽喳喳杂七杂八/">>
+                                叽叽喳喳杂七杂八</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/MySQL的艺术世界/">>
+                                MySQL的艺术世界</a><span class="category-list-count">8</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/jquery/">>
+                                jquery</a><span class="category-list-count">14</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java并发/">>
+                                Java并发</a><span class="category-list-count">43</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java文章合辑/">>
+                                Java文章合辑</a><span class="category-list-count">11</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java基础修炼/">>
+                                Java基础修炼</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/不一样的Java8/">>
+                                不一样的Java8</a><span class="category-list-count">3</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/小程序开发的世界/">>
+                                小程序开发的世界</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java学习资源分享/">>
+                                Java学习资源分享</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java小学生漫游/">>
+                                Java小学生漫游</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/rocketmq源码解析/">>
+                                rocketmq源码解析</a><span class="category-list-count">33</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springmvc最新教程/">>
+                                springmvc最新教程</a><span class="category-list-count">9</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java的Exception/">>
+                                Java的Exception</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/vue-js/">>
+                                vue.js</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/实战设计模式/">>
+                                实战设计模式</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python数据处理/">>
+                                python数据处理</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java-Web闯关/">>
+                                Java Web闯关</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springboot2-0最新教程/">>
+                                springboot2.0最新教程</a><span class="category-list-count">11</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/netty/">>
+                                netty</a><span class="category-list-count">16</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/rpc/">>
+                                rpc</a><span class="category-list-count">13</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/拥抱大厂系列/">>
+                                拥抱大厂系列</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/eureka/">>
+                                eureka</a><span class="category-list-count">19</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/分布式/">>
+                                分布式</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/中间件/">>
+                                中间件</a><span class="category-list-count">23</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java基础/">>
+                                Java基础</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/带你学Python/">>
+                                带你学Python</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/使用技术工具/">>
+                                使用技术工具</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/mycat源码/">>
+                                mycat源码</a><span class="category-list-count">5</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/深入理解Java虚拟机/">>
+                                深入理解Java虚拟机</a><span class="category-list-count">8</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/spring源码/">>
+                                spring源码</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java集合源码分析/">>
+                                Java集合源码分析</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/github的repo/">>
+                                github的repo</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java框架深究/">>
+                                Java框架深究</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/分布式架构/">>
+                                分布式架构</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+
+        </aside>
+
+
+
+
+
+
+
+
+
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. 修改成永远不显示：欧阳思海-->
+
+
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h1, h2, h3, h4, h5'
+        });
+
+        console.log('============');
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h1, h2, h3, h4, h5').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+                        
+            /* 修复文章卡片 div 的宽度. */
+            let fixPostCardWidth = function (srcId, targetId) {
+                let srcDiv = $('#' + srcId);
+                if (srcDiv.length === 0) {
+                    return;
+                }
+
+                let w = srcDiv.width();
+                if (w >= 450) {
+                    w = w + 21;
+                } else if (w >= 350 && w < 450) {
+                    w = w + 18;
+                } else if (w >= 300 && w < 350) {
+                    w = w + 16;
+                } else {
+                    w = w + 14;
+                }
+                $('#' + targetId).width(w);
+            };
+
+            // 切换TOC目录展开收缩的相关操作.
+            // 修改右侧边栏功能：欧阳思海
+            const expandedClass = 'expanded';
+            let $tocAside = $('#toc-aside');
+            let $mainContent = $('#main-content');
+
+            $('#floating-toc-btn .btn-floating').click(function () {
+                if ($tocAside.hasClass(expandedClass)) {
+                    $tocAside.removeClass(expandedClass).slideUp(500);
+                    $mainContent.removeClass('l9');
+                } else {
+                    $tocAside.addClass(expandedClass).slideDown(500);
+                    $mainContent.addClass('l9');
+                }
+                fixPostCardWidth('artDetail', 'prenext-posts');
+            });
+                        
+                    });
+</script>
+    
+
+</main>
+
+
+        <footer class="page-footer bg-color">
+    <div class="container row center-align">
+        <div class="col s12 m8 l8 copy-right">
+            
+	    Copyright&copy; 2019 <a href="https://www.java1000.com/" target="_blank"> 好好学java </a>维护. 网站备案/许可证号：赣ICP备17007984号-3
+            <br>
+            <span id="sitetime"></span>
+            <br>
+
+            
+
+            
+                    <!-- 
+                        <span id="busuanzi_container_site_pv" style='display:none'></span>
+                        总访问量: <span id="busuanzi_value_site_pv" class="white-color"></span>
+                    
+        
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'></span>
+                        人次&nbsp; | &nbsp;访客人数: <span id="busuanzi_value_site_uv" class="white-color"></span> 人
+                     -->
+                        <!-- 修改计数：欧阳思海 -->
+                    
+                        <span id="busuanzi_container_site_pv" style='display:inline'>
+                            <i class="fa fa-heart-o"></i>
+                            本站总访问量 <span id="busuanzi_value_site_pv" class="white-color"></span>
+                        </span>
+                    
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'>
+                            人次,&nbsp;访客数 <span id="busuanzi_value_site_uv" class="white-color"></span> 人.
+                        </span>
+                    
+    
+            
+
+            
+                &nbsp; | &nbsp;字数统计:&nbsp;
+                <span class="white-color">8290.3k</span> 字
+            
+
+            
+            <br>
+
+        </div>
+
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fa fa-code-branch"></i>
+    </a>
+
+
+ 
+    <a href="https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=1446037005@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fa fa-envelope-open"></i>
+    </a>
+
+
+
+
+    <a href="https://zhihu.com/people/hai-hai-ren-sheng-50/activities" class="tooltipped" target="_blank" data-tooltip="访问我的知乎" data-position="top" data-delay="50">
+        <i class="fa fa-inverse">知</i>
+    </a>
+
+
+
+
+
+
+
+
+
+    <a href="https://blog.ouyangsihai.cn/sitemap.xml" class="tooltipped" target="_blank" data-tooltip="站点地图" data-position="top" data-delay="50">
+        <i class="fa fa-sitemap"></i>
+    </a>
+
+
+
+    <a href="https://blog.ouyangsihai.cn/friends" class="tooltipped" target="_blank" data-tooltip="友情链接" data-position="top" data-delay="50">
+        <i class="fa fa-address-book"></i>
+    </a>
+</div>
+
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+
+        var t1 = Date.UTC(2019, 08, 10, 00, 00, 00); //北京时间2019-8-1 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes *
+            minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "本站已运行 " + diffYears + " 年 " + diffDays + " 天 " + diffHours +
+            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒" ;
+    } /*因为建站时间还没有一年，就将之注释掉了。需要的可以取消*/
+    siteTime();
+</script>
+
+<!-- 修改计数：欧阳思海 -->
+<script>
+    $(document).ready(function () {
+
+        var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+        var pvcountOffset = 1005469;  // 初始化首次数据
+        var uvcountOffset = 250804;
+
+        function fixCount() {
+            if (document.getElementById("busuanzi_container_site_pv").style.display != "none") {
+                $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + pvcountOffset);
+                clearInterval(int);
+            }
+            if ($("#busuanzi_container_site_pv").css("display") != "none") {
+                $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + uvcountOffset); // 加上初始数据 
+                clearInterval(int); // 停止检测
+            }
+        }
+    });
+</script>
+
+
+
+
+        <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.json", 'searchInput', 'searchResult');
+});
+</script>
+        <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fa fa-angle-up"></i>
+    </a>
+</div>
+
+
+        <script src="/libs/materialize/materialize.min.js"></script>
+        <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+        <script src="/libs/aos/aos.js"></script>
+        <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+        <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+        <script src="/js/matery.js"></script>
+
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-149362573-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    gtag('config', 'UA-149362573-1');
+</script>
+
+
+
+        
+            <script src="/libs/others/clicklove.js"></script>
+        
+
+        
+            <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+        
+
+        <!-- 洪卫 shw2018 add 2019.08.28 -->
+        <script type="text/javascript">
+            var OriginTitile = document.title,
+                st;
+            document.addEventListener("visibilitychange", function () {
+                document.hidden ? (document.title = "看不见我🙈~看不见我🙈~", clearTimeout(st)) : (document.title =
+                    "(๑•̀ㅂ•́) ✧被发现了～", st = setTimeout(function () {
+                        document.title = OriginTitile
+                    }, 3e3))
+            })
+        </script>
+
+        <!-- 鼠标点击烟花爆炸效果  洪卫 shw2018 add 2019.09.09 -->
+        
+
+        <!-- 背景雪花飘落特效洪卫 shw2018 add 2019.09.10 -->
+        
+
+        <!-- 鼠标点击文字特效 洪卫 shw2018 add 2019.09.10-->
+        
+
+        <!-- 背景雪花飘落特效 洪卫 shw2018 add 2019.09.10 -->
+        
+
+        <!-- 在线聊天工具  洪卫 shw2018 add 2019.09.11 -->
+        
+
+        <!-- 背景 canvas-nest  洪卫 shw 2018  add 2019.09.15-->
+        
+
+        <!-- 背景静止彩带  洪卫 shw 2018  add 2019.09.15-->
+        
+
+        <!-- 背景动态彩带 洪卫 shw 2018  add 2019.09.15-->
+        
+
+    </body>
+</html>

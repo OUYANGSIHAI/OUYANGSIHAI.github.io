@@ -1,0 +1,3648 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+    <!-- shw2018 洪卫  modify 2019.08.15-->
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="Spring Boot, Spring Cloud, 微服务, Java技术, 好好学java, Java面试, 分布式, 最新干货分享">
+    <meta name="baidu-site-verification" content="fmlEuI34ir" />
+    <meta name="google-site-verification" content="ZWVq5UvPg33BCEA3LRTUkYe5J854o9lF1_WRTer9l8A" />
+    <meta name="description" content="本站是 好好学java 的技术分享博客。内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、分布式、Java面试、测试开发等相关的研究与知识分享。">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>【加精】精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 ) | 好好学java | Spring Boot | Spring Cloud | 微服务 | Java技术 | Java面试 | 分布式 | 最新干货分享</title>
+    <link rel="icon" type="image/png" href="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7">
+
+    <!-- <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css"> -->
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    <!-- 自定义fontawesome样式：欧阳思海 -->
+    <link rel="stylesheet" type="text/css" href="/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/brands.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/fontawesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/regular.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/solid.min.css">
+
+
+    <style type="text/css">
+        code[class*="language-"],
+            pre[class*="language-"] {
+                white-space: pre !important;
+            }
+
+            
+
+        /* 将matery.css中的背景颜色修改放到这里：欧阳思海 */
+        .bg-color {
+            background-image: linear-gradient(to right, #ec8585 0%, #419488 100%);
+            opacity: 0.9;
+            // 透明度
+        }
+    </style>
+
+    <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
+    <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+
+    
+    
+    <script>
+        (function () {
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+    
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?6fe466069710c03a563713b507fbaca7";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+    <!-- Google Analytics -->
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-XXXXX-Y', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <!-- End Google Analytics -->
+
+    <script>(function (i, s, o, g, r, a, m) { i["DaoVoiceObject"] = r; i[r] = i[r] || function () { (i[r].q = i[r].q || []).push(arguments) }, i[r].l = 1 * new Date(); a = s.createElement(o), m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; a.charset = "utf-8"; m.parentNode.insertBefore(a, m) })(window, document, "script", ('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/0a804bac.js", "daovoice")</script>
+
+    <script>
+        if (true) {
+            daovoice('init', {
+                app_id: "0a804bac",
+                user_id: "NO_89757", // 必填: 该用户在您系统上的唯一ID
+                email: "daovoice@example.com", // 选填:  该用户在您系统上的主邮箱
+                name: "道客船长", // 选填: 用户名
+                signed_up: 1449821660 // 选填: 用户的注册时间，用Unix时间戳表示
+            });
+            daovoice('update');
+
+            daovoice('init', {
+                app_id: "0a804bac"
+            });
+            daovoice('update');
+        }
+    </script>
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/rss2.xml" title="好好学java" type="application/rss+xml">
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+    <body>
+
+        <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span" style="font-size: 1.4rem;">好好学java</span>
+                </a>
+            </div>
+            
+
+
+<!-- <a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-navicon"></i></a>
+<ul class="right">
+    
+    <li class="hide-on-med-and-down">
+        <a href="" class="waves-effect waves-light">
+            
+            <i class="fa "></i>
+            
+            <span></span>
+        </a>
+    </li>
+    
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title=""></i>
+        </a>
+    </li>
+</ul> -->
+
+<!-- 支持二级菜单特性 洪卫 shw2018 modify 2019.09.17  -->
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-align-justify"></i></a>
+<ul class="right nav-menu">
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-folder-minus"></i>
+                
+                <span style="font-size: 1.1rem;">Java学习</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/" >
+                    
+                    <span>Java入门</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Javaweb/" >
+                    
+                    <span>Java Web</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/spring%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>Spring教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/springboot%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>SpringBoot教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/springcloud%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>SpringCloud教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98/" >
+                    
+                    <span>Java面试</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%89%91%E6%8C%87offer/" >
+                    
+                    <span>剑指offer</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-code-branch"></i>
+                
+                <span style="font-size: 1.1rem;">Java进阶</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97/" >
+                    
+                    <span>设计模式</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" >
+                    
+                    <span>Java并发编程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/" >
+                    
+                    <span>数据库</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/redis/" >
+                    
+                    <span>Redis</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/linux/" >
+                    
+                    <span>Linux</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/" >
+                    
+                    <span>Java实战项目</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-code"></i>
+                
+                <span style="font-size: 1.1rem;">python学习</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/python%E5%9F%BA%E7%A1%80/" >
+                    
+                    <span>python基础</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/python%E6%A1%86%E6%9E%B6/" >
+                    
+                    <span>python框架</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/python%E5%85%B6%E4%BB%96/" >
+                    
+                    <span>python其他</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-coffee"></i>
+                
+                <span style="font-size: 1.1rem;">Java扩展</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/dubbo/" >
+                    
+                    <span>dubbo</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/netty/" >
+                    
+                    <span>netty</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/rpc/" >
+                    
+                    <span>rpc</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/eureka/" >
+                    
+                    <span>eureka</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/" >
+                    
+                    <span>中间件</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" >
+                    
+                    <span>分布式</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-desktop"></i>
+                
+                <span style="font-size: 1.1rem;">计算机核心</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" >
+                    
+                    <span>数据结构</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98/" >
+                    
+                    <span>leetcode刷题</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" >
+                    
+                    <span>计算机网络</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" >
+                    
+                    <span>算法</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/categories/" class="waves-effect waves-light">
+              
+                <i style="font-size: 1.1rem;" class="fa fa-adjust"></i>
+              
+              <span style="font-size: 1.1rem;">学习资源</span>
+            </a>
+
+            
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/contact" class="waves-effect waves-light">
+              
+                <i style="font-size: 1.1rem;" class="fa fa-envelope"></i>
+              
+              <span style="font-size: 1.1rem;">留言</span>
+            </a>
+
+            
+      </li>
+    
+
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title="搜索"></i>
+        </a>
+    </li>
+
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">好好学java</div>
+        <div class="logo-desc">
+            
+            
+            本站是 好好学java 的技术分享博客，涵盖Java后端技术、SpringBoot、微服务架构、分布式、Java面试等知 ...
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-folder-minus"></i>
+			
+			Java学习
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/ " style="margin-left:75px";>
+				  
+		          <span>Java入门</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Javaweb/ " style="margin-left:75px";>
+				  
+		          <span>Java Web</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/spring%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>Spring教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/springboot%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>SpringBoot教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/springcloud%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>SpringCloud教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98/ " style="margin-left:75px";>
+				  
+		          <span>Java面试</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%89%91%E6%8C%87offer/ " style="margin-left:75px";>
+				  
+		          <span>剑指offer</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-code-branch"></i>
+			
+			Java进阶
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97/ " style="margin-left:75px";>
+				  
+		          <span>设计模式</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>Java并发编程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/ " style="margin-left:75px";>
+				  
+		          <span>数据库</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/redis/ " style="margin-left:75px";>
+				  
+		          <span>Redis</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/linux/ " style="margin-left:75px";>
+				  
+		          <span>Linux</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/ " style="margin-left:75px";>
+				  
+		          <span>Java实战项目</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-code"></i>
+			
+			python学习
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/python%E5%9F%BA%E7%A1%80/ " style="margin-left:75px";>
+				  
+		          <span>python基础</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/python%E6%A1%86%E6%9E%B6/ " style="margin-left:75px";>
+				  
+		          <span>python框架</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/python%E5%85%B6%E4%BB%96/ " style="margin-left:75px";>
+				  
+		          <span>python其他</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-coffee"></i>
+			
+			Java扩展
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/dubbo/ " style="margin-left:75px";>
+				  
+		          <span>dubbo</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/netty/ " style="margin-left:75px";>
+				  
+		          <span>netty</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/rpc/ " style="margin-left:75px";>
+				  
+		          <span>rpc</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/eureka/ " style="margin-left:75px";>
+				  
+		          <span>eureka</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/ " style="margin-left:75px";>
+				  
+		          <span>中间件</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/ " style="margin-left:75px";>
+				  
+		          <span>分布式</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-desktop"></i>
+			
+			计算机核心
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/ " style="margin-left:75px";>
+				  
+		          <span>数据结构</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98/ " style="margin-left:75px";>
+				  
+		          <span>leetcode刷题</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/ " style="margin-left:75px";>
+				  
+		          <span>计算机网络</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E7%AE%97%E6%B3%95/ " style="margin-left:75px";>
+				  
+		          <span>算法</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories/" class="waves-effect waves-light">
+			
+			    <i class="fa fa-fw fa-adjust"></i>
+			
+			学习资源
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa fa-fw fa-envelope"></i>
+			
+			留言
+		</a>
+          
+        </li>
+        
+        
+    </ul>
+</div>
+
+        </div>
+
+        
+    </nav>
+
+</header>
+
+        
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/2.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <div class="description center-align post-title">
+                        【加精】精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 20px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+
+    /* 自定义mycard：欧阳思海 */
+
+    #my-card {
+        /* position: relative; */
+        width: 310px;
+        height: 300px;
+        /* max-height: 330px; */
+        margin-bottom: 15px;
+        margin-top: 15px;
+        /* text-align: center; */
+        border: 0;
+        border-radius: 3px;
+        color: rgba(0, 0, 0, .87);
+        background: #fff 50%;
+        background-image: none;
+        background-size: auto;
+        background-size: cover;
+        box-shadow: 0 15px 35px rgba(50, 50, 93, .1), 0 5px 15px rgba(0, 0, 0, .07);
+    }
+
+    /* .widget {
+        line-height: 1.6em;
+        word-wrap: break-word;
+        font-size: 0.9em;
+        padding-top: 15px;
+        padding-left: -45px;
+    } */
+</style>
+
+
+
+
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- shw2018 洪卫  modify 2019.08.15-->
+
+<!-- 代码块修改的代码开始 -->
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFunction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+<!-- 代码块折行 -->
+
+<style type="text/css">
+code[class*="language-"], pre[class*="language-"] { white-space: pre !important; }
+</style>
+
+<!-- 代码块修改代码结束 -->
+
+
+<!-- 文章内容详情 -->
+<div id="container">
+    <div id="artDetail">
+        <div class="card">
+            <div class="card-content article-info">
+                <div class="row tag-cate">
+                    <div class="col s7">
+                        
+                        <div class="article-tag">
+                            <!--我修改的地方：欧阳思海-->
+                            
+                            <a href="/tags/dubbo%E6%BA%90%E7%A0%81/" target="_blank">
+                                <span class="chip bg-color">dubbo源码</span>
+                            </a>
+                            
+                        </div>
+                        
+                    </div>
+                    <div class="col s5 right-align">
+                        
+                        <div class="post-cate">
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/dubbo/" class="post-category" target="_blank">
+                                dubbo
+                            </a>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <div class="post-info">
+                    <div class="post-date info-break-policy">
+                        <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
+                        2021-04-05
+                    </div>
+
+                    <div class="post-author info-break-policy">
+                        <i class="fa fa-user-o fa-fw"></i>作者:&nbsp;&nbsp;
+                        
+                        欧阳思海
+                        
+                    </div>
+
+                    
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;
+                        11k
+                    </div>
+                    
+
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-clock-o fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                        40 分
+                    </div>
+                    
+                    
+
+                    
+                    <span id="busuanzi_container_site_pv" style='display:none'></span>
+                    <i class="fa fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                    <span id="busuanzi_value_page_pv"></span>
+
+                    
+
+                </div>
+            </div>
+            <hr class="clearfix">
+            <div class="card-content article-card-content">
+                <!-- 欧阳思海，modify，2020.05.01-->
+<!-- 文章详情详情页面的头部广告位置信息 -->
+<div id="post-head-panel">
+    
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" style="font-size: 18px;" target="_blank">
+        <img src="/icons/hot.gif">
+        本人花费半年的时间总结的《Java面试指南》已拿腾讯等大厂offer，已开源在github ，欢迎star！
+    </a>
+    
+    
+</div>
+<br />
+
+
+
+<blockquote>
+    
+            <p>本文GitHub <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">https://github.com/OUYANGSIHAI/JavaInterview</a> 已收录，这是我花了6个月总结的<b>一线大厂Java面试</b>总结，本人已拿大厂offer，欢迎star</p>
+    
+    <p>原文链接：blog.ouyangsihai.cn &gt;&gt; <a href="/jia-jing-jing-jin-dubbo-yuan-li-yu-yuan-ma-zhuan-lan-yi-jing-wan-cheng-69-pian-yu-ji-zong-gong-75-pian.html" target="_blank">【加精】精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )</a></p>
+</blockquote>
+                <div id="articleContent">
+                    <p> </p>
+<ul>
+<li><strong>只更新在笔者的知识星球，欢迎加入一起讨论 Dubbo 源码与实现</strong>。<li>↓↓↓ 长按下方二维码加入 ↓↓↓</li>
+</ul>
+<figure style="font-size: inherit; color: inherit; line-height: inherit;"><img class="" style="margin-right: auto; margin-left: auto; border-radius: 0px; font-size: inherit; color: inherit; line-height: inherit; display: block; border: 2px none #eeeeee;" title="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )" src="https://www.javazhiyin.com/wp-content/uploads/2018/09/java7-1536752131-1.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )"></figure>
+<ul class="list-paddingleft-2" style="list-style-type: square;">
+<li>
+<figure style="font-size: inherit; color: inherit; line-height: inherit;">↑↑↑ 长按上方二维码加入</figure>
+<figure style="font-size: inherit; color: inherit; line-height: inherit;"><figcaption style="margin-top: 10px; font-size: 0.7em; color: #999999; line-height: inherit; text-align: center;"></figcaption></figure>
+<figure style="font-size: inherit; color: inherit; line-height: inherit;"><figcaption style="margin-top: 10px; font-size: 0.7em; color: #999999; line-height: inherit; text-align: center;"></figcaption></figure>
+</li>
+- 目前已经有 **1300+** 位球友加入…
+- 进度：已经完成 **69+** 篇，预计总共 75+ 篇，完成度 **92%** 。
+- **对了，现在还有 40+ 篇 Netty 源码解析。**
+
+<h2 id="1-1-目录"><a href="#1-1-目录" class="headerlink" title="1.1 目录"></a>1.1 目录</h2><li>调试环境搭建
+<ul class="list-paddingleft-2" style="list-style-type: square;">
+- 《精尽 Dubbo 源码分析 —— 调试环境搭建》
+
+<ul>
+<li><p>《精尽 Dubbo 源码分析 —— 项目结构一览》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— API 配置（一）之应用》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— API 配置（二）之服务提供者》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— API 配置（三）之服务消费者》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 属性配置》</p>
+</li>
+<li><p>《精近 Dubbo 源码解析 —— XML 配置》</p>
+</li>
+<li><p>《精近 Dubbo 源码解析 —— 核心流程一览》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 拓展机制 SPI》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 线程池》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 服务暴露（一）之本地暴露（Injvm）》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 服务暴露（二）之远程暴露（Dubbo）》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 服务引用（一）之本地引用（Injvm）》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 服务引用（二）之远程引用（Dubbo）》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— Zookeeper 客户端》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 注册中心（一）之抽象 API》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 注册中心（二）之 Zookeeper》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 注册中心（三）之 Redis》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 注册中心（四）之 Simple 》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 注册中心（五）之 Multicast 》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 动态编译（一）之 Javassist》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 动态编译（二）之 JDK》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 动态代理（一）之 Javassist》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 动态代理（二）之 JDK》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 动态代理（三）之本地存根 Stub》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 服务调用（一）之本地调用（Injvm）》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 服务调用（二）之远程调用（Dubbo）【1】通信实现》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 服务调用（二）之远程调用（Dubbo）【2】同步调用》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 服务调用（二）之远程调用（Dubbo）【3】异步调用》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 服务调用（二）之远程调用（Dubbo）【4】参数回调》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 服务调用（三）之远程调用（HTTP）》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 服务调用（四）之远程调用（Hessian）》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 服务调用（五）之远程调用（Webservice）》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 服务调用（六）之远程调用（REST）》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 服务调用（七）之远程调用（RMI）》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 服务调用（八）之远程调用（Redis）》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 服务调用（九）之远程调用（Memcached）》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 服务调用（十）之远程调用（Thrift）》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 调用特性（一）之回音测试》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 调用特性（二）之泛化引用》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 调用特性（三）之泛化实现》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 过滤器（一）之 ClassLoaderFilter》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 过滤器（二）之 ContextFilter》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 过滤器（三）之 AccessLogFilter》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 过滤器（四）之 ActiveLimitFilter &amp;&amp; ExecuteLimitFilter》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 过滤器（五）之 TimeoutFilter》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 过滤器（六）之 DeprecatedFilter》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 过滤器（七）之 ExceptionFilter》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 过滤器（八）之 TokenFilter》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 过滤器（九）之 TpsLimitFilter》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 过滤器（十）之 CacheFilter》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 过滤器（十一）之 ValidationFilter》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— NIO 服务器（一）之抽象 API》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— NIO 服务器（二）之 Transport 层》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— NIO 服务器（三）之 Telnet 层》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— NIO 服务器（四）之 Exchange 层》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— NIO 服务器（五）之 Buffer 层》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— NIO 服务器（六）之 Netty4 实现》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— NIO 服务器（七）之 Netty3 实现》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— NIO 服务器（八）之 Mina1 实现》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— NIO 服务器（九）之 Grizzly 实现》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— P2P 服务器》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— HTTP 服务器》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 序列化（一）之 总体实现》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 序列化（二）之 Dubbo 实现》</p>
+</li>
+<li><p>《精尽 Dubbo 源码分析 —— 序列化（三）之 Kryo 实现》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 服务容器》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 集群容错（一）之抽象 API》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 集群容错（二）之 Cluster 实现》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 集群容错（三）之 Directory 实现》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 集群容错（四）之 Loadbalance 实现》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 集群容错（五）之 Merger 实现》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 集群容错（六）之 Configurator 实现》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 集群容错（七）之 Router 实现》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 集群容错（八）之 Mock 实现》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 优雅停机》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 日志适配》</p>
+</li>
+<li><p>《精尽 Dubbo 源码解析 —— 状态检查》</p>
+</li>
+<li><p>TODO 等待新版本</p>
+</li>
+<li><p>TODO 等待新版本</p>
+</li>
+<li><p>TODO 比较简单，未来写一下</p>
+</li>
+<li><p>《SkyWalking 源码分析 —— Agent 插件（二）之 Dubbo》</p>
+</li>
+</ul>
+<blockquote>
+</blockquote>
+<p>ps：</p>
+<ul class="list-paddingleft-2">
+- 小圆点代表已完成；
+- 小方块代表未来计划完成
+- 钟华贤代表不考虑写
+</ul>
+
+
+<h2 id="1-2-Dubbo-用户指南"><a href="#1-2-Dubbo-用户指南" class="headerlink" title="1.2 Dubbo 用户指南"></a>1.2 Dubbo 用户指南</h2><p>本小节，我们将 《精尽 Dubbo 源码解析》 和 《Dubbo 用户指南》 做一次映射，方便大家直接找到感兴趣的功能的具体源码实现。当然，如果有整理不到位的地方，欢迎大家给我留言斧正。</p>
+<h3 id="【2-快速启动】"><a href="#【2-快速启动】" class="headerlink" title="【2 快速启动】"></a>【2 快速启动】</h3><blockquote>
+</blockquote>
+<p>Dubbo 采用全 Spring 配置方式，透明化接入应用，对应用没有任何 API 侵入，只需用 Spring 加载 Dubbo 的配置即可，Dubbo 基于 Spring 的 Schema 扩展进行加载。<br>如果不想使用 Spring 配置，可以通过 API 的方式 进行调用。</p>
+<p>如果不想使用 Spring 配置，可以通过 API 的方式 进行调用。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 调试环境搭建》</li>
+</ul>
+<h3 id="【5-1-XML-配置】"><a href="#【5-1-XML-配置】" class="headerlink" title="【5.1 XML 配置】"></a>【5.1 XML 配置】</h3><blockquote>
+</blockquote>
+<p>有关 XML 的详细配置项，请参见：配置参考手册。如果不想使用 Spring 配置，而希望通过 API 的方式进行调用，请参见：API配置。想知道如何使用配置，请参见：快速启动。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精近 Dubbo 源码解析 —— XML 配置》</li>
+</ul>
+<h3 id="【5-2-属性配置】"><a href="#【5-2-属性配置】" class="headerlink" title="【5.2 属性配置】"></a>【5.2 属性配置】</h3><blockquote>
+</blockquote>
+<p>如果公共配置很简单，没有多注册中心，多协议等情况，或者想多个 Spring 容器想共享配置，可以使用 dubbo.properties 作为缺省配置。<br>Dubbo 将自动加载 classpath 根目录下的 dubbo.properties，可以通过JVM启动参数 <code class="java">
+-Ddubbo.properties.file=xxx.properties</code> 改变缺省配置位置。1</p>
+<p>Dubbo 将自动加载 classpath 根目录下的 dubbo.properties，可以通过JVM启动参数 <code class="java">
+-Ddubbo.properties.file=xxx.properties</code> 改变缺省配置位置。1</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 属性配置》</li>
+</ul>
+<h3 id="【5-3-API-配置】"><a href="#【5-3-API-配置】" class="headerlink" title="【5.3 API 配置】"></a>【5.3 API 配置】</h3><blockquote>
+</blockquote>
+<p>API 属性与配置项一对一，各属性含义，请参见：配置参考手册，比如：<code class="java">
+ApplicationConfig.setName(&quot;xxx&quot;)</code>对应 <code class="java">
+dubbo:application name=&quot;xxx&quot; /</code> 1</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— API 配置（一）之应用》</li>
+<li>《精尽 Dubbo 源码解析 —— API 配置（二）之服务提供者》</li>
+<li>《精尽 Dubbo 源码解析 —— API 配置（三）之服务消费者》</li>
+</ul>
+<h3 id="【5-4-注解配置】"><a href="#【5-4-注解配置】" class="headerlink" title="【5.4 注解配置】"></a>【5.4 注解配置】</h3><blockquote>
+</blockquote>
+<p>需要 <code class="java">
+2.5.7</code> 及以上版本支持</p>
+<p>对应源码解析文章：</p>
+<p>《精尽 Dubbo 源码解析 —— 注解配置》</p>
+<h3 id="【6-1-启动时检查】"><a href="#【6-1-启动时检查】" class="headerlink" title="【6.1 启动时检查】"></a>【6.1 启动时检查】</h3><blockquote>
+</blockquote>
+<p>Dubbo 缺省会在启动时检查依赖的服务是否可用，不可用时会抛出异常，阻止 Spring 初始化完成，以便上线时，能及早发现问题，默认 <code class="java">
+check=&quot;true&quot;</code>。<br>可以通过 <code class="java">
+check=&quot;false&quot;</code> 关闭检查，比如，测试时，有些服务不关心，或者出现了循环依赖，必须有一方先启动。<br>另外，如果你的 Spring 容器是懒加载的，或者通过 API 编程延迟引用服务，请关闭 check，否则服务临时不可用时，会抛出异常，拿到 null 引用，如果 <code class="java">
+check=&quot;false&quot;</code>，总是会返回引用，当服务恢复时，能自动连上。</p>
+<p>可以通过 <code class="java">
+check=&quot;false&quot;</code> 关闭检查，比如，测试时，有些服务不关心，或者出现了循环依赖，必须有一方先启动。</p>
+<ul>
+<li><strong>注意</strong>，服务提供者注册失败，是没有启动检查功能的。这一点，笔者一直理解错了。</li>
+</ul>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 注册中心（一）之抽象 API》</li>
+</ul>
+<h3 id="【6-2-集群容错】"><a href="#【6-2-集群容错】" class="headerlink" title="【6.2 集群容错】"></a>【6.2 集群容错】</h3><blockquote>
+</blockquote>
+<p>在集群调用失败时，Dubbo 提供了多种容错方案，缺省为 failover 重试。</p>
+<figure style="font-size: inherit; color: inherit; line-height: inherit;"><img class="" style="margin-right: auto; margin-left: auto; border-radius: 0px; font-size: inherit; color: inherit; line-height: inherit; display: block; border: 2px none #eeeeee;" title="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )" src="https://www.javazhiyin.com/wp-content/uploads/2018/09/java7-1536752131-2.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )"><figcaption style="margin-top: 10px; font-size: 0.7em; color: #999999; line-height: inherit; text-align: center;">cluster</figcaption></figure>
+
+
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 集群容错（一）之抽象 API》</li>
+<li>《精尽 Dubbo 源码解析 —— 集群容错（二）之 Cluster 实现》</li>
+<li>《精尽 Dubbo 源码解析 —— 集群容错（三）之 Directory 实现》</li>
+</ul>
+<h3 id="【6-3-负载均衡】"><a href="#【6-3-负载均衡】" class="headerlink" title="【6.3 负载均衡】"></a>【6.3 负载均衡】</h3><blockquote>
+</blockquote>
+<p>在集群负载均衡时，Dubbo 提供了多种均衡策略，缺省为 <code class="java">
+random</code> 随机调用。<br>可以自行扩展负载均衡策略，参见：负载均衡扩展</p>
+<p>可以自行扩展负载均衡策略，参见：负载均衡扩展</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 集群容错（四）之 Loadbalance 实现》</li>
+</ul>
+<h3 id="【6-4-线程模型】"><a href="#【6-4-线程模型】" class="headerlink" title="【6.4 线程模型】"></a>【6.4 线程模型】</h3><blockquote>
+</blockquote>
+<p>如果事件处理的逻辑能迅速完成，并且不会发起新的 IO 请求，比如只是在内存中记个标识，则直接在 IO 线程上处理更快，因为减少了线程池调度。<br>但如果事件处理逻辑较慢，或者需要发起新的 IO 请求，比如需要查询数据库，则必须派发到线程池，否则 IO 线程阻塞，将导致不能接收其它请求。<br>如果用 IO 线程处理事件，又在事件处理过程中发起新的 IO 请求，比如在连接事件中发起登录请求，会报“可能引发死锁”异常，但不会真死锁。</p>
+<figure style="font-size: inherit; color: inherit; line-height: inherit;"><img class="" style="margin-right: auto; margin-left: auto; border-radius: 0px; font-size: inherit; color: inherit; line-height: inherit; display: block; border: 2px none #eeeeee;" title="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )" src="https://www.javazhiyin.com/wp-content/uploads/2018/09/java8-1536752132.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )"><figcaption style="margin-top: 10px; font-size: 0.7em; color: #999999; line-height: inherit; text-align: center;">dubbo-protocol</figcaption></figure>
+
+
+<p>但如果事件处理逻辑较慢，或者需要发起新的 IO 请求，比如需要查询数据库，则必须派发到线程池，否则 IO 线程阻塞，将导致不能接收其它请求。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 线程池》</li>
+</ul>
+<h3 id="【6-5-直连提供者】"><a href="#【6-5-直连提供者】" class="headerlink" title="【6.5 直连提供者】"></a>【6.5 直连提供者】</h3><blockquote>
+</blockquote>
+<p>在开发及测试环境下，经常需要绕过注册中心，只测试指定服务提供者，这时候可能需要点对点直连，点对点直联方式，将以服务接口为单位，忽略注册中心的提供者列表，A 接口配置点对点，不影响 B 接口从注册中心获取列表。</p>
+<figure style="font-size: inherit; color: inherit; line-height: inherit;"><img class="" style="margin-right: auto; margin-left: auto; border-radius: 0px; font-size: inherit; color: inherit; line-height: inherit; display: block; border: 2px none #eeeeee;" title="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )" src="https://www.javazhiyin.com/wp-content/uploads/2018/09/java2-1536752132.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )"><figcaption style="margin-top: 10px; font-size: 0.7em; color: #999999; line-height: inherit; text-align: center;">/user-guide/images/dubbo-directly.jpg</figcaption></figure>
+
+
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 服务引用（二）之远程引用（Dubbo）》</li>
+</ul>
+<h3 id="【6-6-只订阅】"><a href="#【6-6-只订阅】" class="headerlink" title="【6.6 只订阅】"></a>【6.6 只订阅】</h3><blockquote>
+</blockquote>
+<p>为方便开发测试，经常会在线下共用一个所有服务可用的注册中心，这时，如果一个正在开发中的服务提供者注册，可能会影响消费者不能正常运行。<br>可以让服务提供者开发方，只订阅服务(开发的服务可能依赖其它服务)，而不注册正在开发的服务，通过直连测试正在开发的服务。</p>
+<figure style="font-size: inherit; color: inherit; line-height: inherit;"><img class="" style="margin-right: auto; margin-left: auto; border-radius: 0px; font-size: inherit; color: inherit; line-height: inherit; display: block; border: 2px none #eeeeee;" title="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )" src="https://www.javazhiyin.com/wp-content/uploads/2018/09/java3-1536752132.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )"><figcaption style="margin-top: 10px; font-size: 0.7em; color: #999999; line-height: inherit; text-align: center;">/user-guide/images/subscribe-only.jpg</figcaption></figure>
+
+
+<p>可以让服务提供者开发方，只订阅服务(开发的服务可能依赖其它服务)，而不注册正在开发的服务，通过直连测试正在开发的服务。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 服务引用（一）之本地暴露（Injvm）》</li>
+</ul>
+<h3 id="【6-7-只注册】"><a href="#【6-7-只注册】" class="headerlink" title="【6.7 只注册】"></a>【6.7 只注册】</h3><blockquote>
+</blockquote>
+<p>如果有两个镜像环境，两个注册中心，有一个服务只在其中一个注册中心有部署，另一个注册中心还没来得及部署，而两个注册中心的其它应用都需要依赖此服务。这个时候，可以让服务提供者方只注册服务到另一注册中心，而不从另一注册中心订阅服务。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 服务引用（一）之本地暴露（Injvm）》</li>
+</ul>
+<h3 id="【6-8-静态服务】"><a href="#【6-8-静态服务】" class="headerlink" title="【6.8 静态服务】"></a>【6.8 静态服务】</h3><blockquote>
+</blockquote>
+<p>有时候希望人工管理服务提供者的上线和下线，此时需将注册中心标识为非动态管理模式。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 注册中心（二）之 Zookeeper》</li>
+<li>《精尽 Dubbo 源码分析 —— 注册中心（三）之 Redis》</li>
+</ul>
+<h3 id="【6-9-多协议】"><a href="#【6-9-多协议】" class="headerlink" title="【6.9 多协议】"></a>【6.9 多协议】</h3><blockquote>
+</blockquote>
+<p>Dubbo 允许配置多协议，在不同服务上支持不同协议或者同一服务上同时支持多种协议。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 服务暴露（一）之本地暴露（Injvm）》</li>
+<li>《精尽 Dubbo 源码分析 —— 服务暴露（二）之远程暴露（Dubbo）》</li>
+</ul>
+<h3 id="【6-10-多注册中心】"><a href="#【6-10-多注册中心】" class="headerlink" title="【6.10 多注册中心】"></a>【6.10 多注册中心】</h3><blockquote>
+</blockquote>
+<p>Dubbo 支持同一服务向多注册中心同时注册，或者不同服务分别注册到不同的注册中心上去，甚至可以同时引用注册在不同注册中心上的同名服务。另外，注册中心是支持自定义扩展的。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 服务暴露（一）之本地暴露（Injvm）》</li>
+<li>《精尽 Dubbo 源码分析 —— 服务暴露（二）之远程暴露（Dubbo）》</li>
+<li>《精尽 Dubbo 源码分析 —— 服务引用（一）之本地引用（Injvm）》</li>
+<li>《精尽 Dubbo 源码分析 —— 服务引用（二）之远程引用（Dubbo）》</li>
+</ul>
+<h3 id="【6-11-服务分组】"><a href="#【6-11-服务分组】" class="headerlink" title="【6.11 服务分组】"></a>【6.11 服务分组】</h3><blockquote>
+</blockquote>
+<p>当一个接口有多种实现时，可以用 group 区分。</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 服务暴露（二）之远程暴露（Dubbo）》</li>
+<li>《精尽 Dubbo 源码分析 —— 服务引用（二）之远程引用（Dubbo）》</li>
+</ul>
+<h3 id="【6-12-多版本】"><a href="#【6-12-多版本】" class="headerlink" title="【6.12 多版本】"></a>【6.12 多版本】</h3><blockquote>
+</blockquote>
+<p>当一个接口实现，出现不兼容升级时，可以用版本号过渡，版本号不同的服务相互间不引用。<br>可以按照以下的步骤进行版本迁移：</p>
+<ol class="list-paddingleft-2">
+- 在低压力时间段，先升级一半提供者为新版本
+- 再将所有消费者升级为新版本
+- 然后将剩下的一半提供者升级为新版本
+</ol>
+
+
+<p>可以按照以下的步骤进行版本迁移：</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 服务暴露（二）之远程暴露（Dubbo）》</li>
+<li>《精尽 Dubbo 源码分析 —— 服务引用（二）之远程引用（Dubbo）》</li>
+<li>《精尽 Dubbo 源码解析 —— 服务调用（二）之远程调用（Dubbo）【2】同步调用》</li>
+</ul>
+<h3 id="【6-13-分组聚合】"><a href="#【6-13-分组聚合】" class="headerlink" title="【6.13 分组聚合】"></a>【6.13 分组聚合】</h3><blockquote>
+</blockquote>
+<p>按组合并返回结果 1，比如菜单服务，接口一样，但有多种实现，用group区分，现在消费方需从每种group中调用一次返回结果，合并结果返回，这样就可以实现聚合菜单项。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 集群容错（五）之 Merger 实现》</li>
+</ul>
+<h3 id="【6-14-参数验证】"><a href="#【6-14-参数验证】" class="headerlink" title="【6.14 参数验证】"></a>【6.14 参数验证】</h3><blockquote>
+</blockquote>
+<p>参数验证功能 1 是基于 JSR303 实现的，用户只需标识 JSR303 标准的验证 annotation，并通过声明 filter 来实现验证 2。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 过滤器（十一）之 ValidationFilter》</li>
+</ul>
+<h3 id="【6-15-结果缓存】"><a href="#【6-15-结果缓存】" class="headerlink" title="【6.15 结果缓存】"></a>【6.15 结果缓存】</h3><blockquote>
+</blockquote>
+<p>结果缓存 1，用于加速热门数据的访问速度，Dubbo 提供声明式缓存，以减少用户加缓存的工作量 2。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 过滤器（十）之 CacheFilter》</li>
+</ul>
+<h3 id="【6-16-泛化引用】"><a href="#【6-16-泛化引用】" class="headerlink" title="【6.16 泛化引用】"></a>【6.16 泛化引用】</h3><blockquote>
+</blockquote>
+<p>泛化接口调用方式主要用于客户端没有 API 接口及模型类元的情况，参数及返回值中的所有 POJO 均用 <code class="java">
+Map</code> 表示，通常用于框架集成，比如：实现一个通用的服务测试框架，可通过 <code class="java">
+GenericService</code> 调用所有服务实现。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 调用特性（二）之泛化引用》</li>
+</ul>
+<h3 id="【6-17-泛化实现】"><a href="#【6-17-泛化实现】" class="headerlink" title="【6.17 泛化实现】"></a>【6.17 泛化实现】</h3><blockquote>
+</blockquote>
+<p>泛接口实现方式主要用于服务器端没有API接口及模型类元的情况，参数及返回值中的所有POJO均用Map表示，通常用于框架集成，比如：实现一个通用的远程服务Mock框架，可通过实现GenericService接口处理所有服务请求。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 调用特性（三）之泛化实现》</li>
+</ul>
+<h3 id="【6-18-回声测试】"><a href="#【6-18-回声测试】" class="headerlink" title="【6.18 回声测试】"></a>【6.18 回声测试】</h3><blockquote>
+</blockquote>
+<p>回声测试用于检测服务是否可用，回声测试按照正常请求流程执行，能够测试整个调用是否通畅，可用于监控。<br>所有服务自动实现 <code class="java">
+EchoService</code> 接口，只需将任意服务引用强制转型为 <code class="java">
+EchoService</code>，即可使用。</p>
+<p>所有服务自动实现 <code class="java">
+EchoService</code> 接口，只需将任意服务引用强制转型为 <code class="java">
+EchoService</code>，即可使用。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 调用特性（一）之回音测试》</li>
+</ul>
+<h3 id="【6-19-上下文信息】"><a href="#【6-19-上下文信息】" class="headerlink" title="【6.19 上下文信息】"></a>【6.19 上下文信息】</h3><blockquote>
+</blockquote>
+<p>上下文中存放的是当前调用过程中所需的环境信息。所有配置信息都将转换为 URL 的参数，参见 schema 配置参考手册 中的<strong>对应URL参数</strong>一列。<br>RpcContext 是一个 ThreadLocal 的临时状态记录器，当接收到 RPC 请求，或发起 RPC 请求时，RpcContext 的状态都会变化。比如：A 调 B，B 再调 C，则 B 机器上，在 B 调 C 之前，RpcContext 记录的是 A 调 B 的信息，在 B 调 C 之后，RpcContext 记录的是 B 调 C 的信息。</p>
+<p>RpcContext 是一个 ThreadLocal 的临时状态记录器，当接收到 RPC 请求，或发起 RPC 请求时，RpcContext 的状态都会变化。比如：A 调 B，B 再调 C，则 B 机器上，在 B 调 C 之前，RpcContext 记录的是 A 调 B 的信息，在 B 调 C 之后，RpcContext 记录的是 B 调 C 的信息。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 过滤器（二）之 ContextFilter》</li>
+</ul>
+<h3 id="【6-20-隐式参数】"><a href="#【6-20-隐式参数】" class="headerlink" title="【6.20 隐式参数】"></a>【6.20 隐式参数】</h3><blockquote>
+</blockquote>
+<p>可以通过 <code class="java">
+RpcContext</code> 上的 <code class="java">
+setAttachment</code> 和 <code class="java">
+getAttachment</code> 在服务消费方和提供方之间进行参数的隐式传递。 1</p>
+<figure style="font-size: inherit; color: inherit; line-height: inherit;"><img class="" style="margin-right: auto; margin-left: auto; border-radius: 0px; font-size: inherit; color: inherit; line-height: inherit; display: block; border: 2px none #eeeeee;" title="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )" src="https://www.javazhiyin.com/wp-content/uploads/2018/09/java9-1536752132.jpg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )"><figcaption style="margin-top: 10px; font-size: 0.7em; color: #999999; line-height: inherit; text-align: center;">/user-guide/images/context.png</figcaption></figure>
+
+
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 过滤器（二）之 ContextFilter》</li>
+</ul>
+<h3 id="【6-21-异步调用】"><a href="#【6-21-异步调用】" class="headerlink" title="【6.21 异步调用】"></a>【6.21 异步调用】</h3><blockquote>
+</blockquote>
+<p>基于 NIO 的非阻塞实现并行调用，客户端不需要启动多线程即可完成并行调用多个远程服务，相对多线程开销较小。 1</p>
+<figure style="font-size: inherit; color: inherit; line-height: inherit;"><img class="" style="margin-right: auto; margin-left: auto; border-radius: 0px; font-size: inherit; color: inherit; line-height: inherit; display: block; border: 2px none #eeeeee;" title="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )" src="https://www.javazhiyin.com/wp-content/uploads/2018/09/java6-1536752133.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )"><figcaption style="margin-top: 10px; font-size: 0.7em; color: #999999; line-height: inherit; text-align: center;">/user-guide/images/future.jpg</figcaption></figure>
+
+
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 服务调用（二）之远程调用（Dubbo）【3】异步调用》</li>
+</ul>
+<h3 id="【6-22-本地调用】"><a href="#【6-22-本地调用】" class="headerlink" title="【6.22 本地调用】"></a>【6.22 本地调用】</h3><blockquote>
+</blockquote>
+<p>本地调用使用了 injvm 协议，是一个伪协议，它不开启端口，不发起远程调用，只在 JVM 内直接关联，但执行 Dubbo 的 Filter 链。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 服务调用（一）之本地调用（Injvm）》</li>
+</ul>
+<h3 id="【6-23-参数回调】"><a href="#【6-23-参数回调】" class="headerlink" title="【6.23 参数回调】"></a>【6.23 参数回调】</h3><blockquote>
+</blockquote>
+<p>参数回调方式与调用本地 callback 或 listener 相同，只需要在 Spring 的配置文件中声明哪个参数是 callback 类型即可。Dubbo 将基于长连接生成反向代理，这样就可以从服务器端调用客户端逻辑 1。可以参考 dubbo 项目中的示例代码。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 服务调用（二）之远程调用（Dubbo）【4】参数回调》</li>
+</ul>
+<h3 id="【6-24-事件通知】"><a href="#【6-24-事件通知】" class="headerlink" title="【6.24 事件通知】"></a>【6.24 事件通知】</h3><blockquote>
+</blockquote>
+<p>在调用之前、调用之后、出现异常时，会触发 <code class="java">
+oninvoke</code>、<code class="java">
+onreturn</code>、<code class="java">
+onthrow</code> 三个事件，可以配置当事件发生时，通知哪个类的哪个方法 1。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 服务调用（二）之远程调用（Dubbo）【3】异步调用》</li>
+</ul>
+<h3 id="【6-25-本地存根】"><a href="#【6-25-本地存根】" class="headerlink" title="【6.25 本地存根】"></a>【6.25 本地存根】</h3><blockquote>
+</blockquote>
+<p>远程服务后，客户端通常只剩下接口，而实现全在服务器端，但提供方有些时候想在客户端也执行部分逻辑，比如：做 ThreadLocal 缓存，提前验证参数，调用失败后伪造容错数据等等，此时就需要在 API 中带上 Stub，客户端生成 Proxy 实例，会把 Proxy 通过构造函数传给 Stub 1，然后把 Stub 暴露给用户，Stub 可以决定要不要去调 Proxy。</p>
+<figure style="font-size: inherit; color: inherit; line-height: inherit;"><img class="" title="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )" src="https://www.javazhiyin.com/wp-content/uploads/2018/09/java10-1536752133.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )"><figcaption style="margin-top: 10px; font-size: 0.7em; color: #999999; line-height: inherit; text-align: center;">/user-guide/images/stub.jpg</figcaption></figure>
+
+
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 动态代理（三）之本地存根 Stub》</li>
+</ul>
+<h3 id="【6-26-本地伪装】"><a href="#【6-26-本地伪装】" class="headerlink" title="【6.26 本地伪装】"></a>【6.26 本地伪装】</h3><blockquote>
+</blockquote>
+<p>本地伪装 1 通常用于服务降级，比如某验权服务，当服务提供方全部挂掉后，客户端不抛出异常，而是通过 Mock 数据返回授权失败。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 集群容错（八）之 Mock 实现》</li>
+</ul>
+<h3 id="【6-27-延迟暴露】"><a href="#【6-27-延迟暴露】" class="headerlink" title="【6.27 延迟暴露】"></a>【6.27 延迟暴露】</h3><blockquote>
+</blockquote>
+<p>如果你的服务需要预热时间，比如初始化缓存，等待相关资源就位等，可以使用 delay 进行延迟暴露。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— API 配置（二）之服务提供者》</li>
+</ul>
+<h3 id="【6-28-并发控制】"><a href="#【6-28-并发控制】" class="headerlink" title="【6.28 并发控制】"></a>【6.28 并发控制】</h3><blockquote>
+</blockquote>
+<p>限制 <code class="java">
+com.foo.BarService</code> 的每个方法，服务器端并发执行（或占用线程池线程数）不能超过 10 个<br>限制 <code class="java">
+com.foo.BarService</code> 的 <code class="java">
+sayHello</code> 方法，服务器端并发执行（或占用线程池线程数）不能超过 10 个<br>限制 <code class="java">
+com.foo.BarService</code> 的每个方法，每客户端并发执行（或占用连接的请求数）不能超过 10 个<br>限制 <code class="java">
+com.foo.BarService</code> 的 <code class="java">
+sayHello</code> 方法，每客户端并发执行（或占用连接的请求数）不能超过 10 个</p>
+<p>限制 <code class="java">
+com.foo.BarService</code> 的 <code class="java">
+sayHello</code> 方法，服务器端并发执行（或占用线程池线程数）不能超过 10 个</p>
+<p>限制 <code class="java">
+com.foo.BarService</code> 的 <code class="java">
+sayHello</code> 方法，每客户端并发执行（或占用连接的请求数）不能超过 10 个</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 过滤器（四）之 ActiveLimitFilter &amp;&amp; ExecuteLimitFilter》</li>
+<li>《精尽 Dubbo 源码解析 —— 集群容错（四）之 Loadbalance 实现》</li>
+</ul>
+<h3 id="【6-29-连接控制】"><a href="#【6-29-连接控制】" class="headerlink" title="【6.29 连接控制】"></a>【6.29 连接控制】</h3><blockquote>
+</blockquote>
+<p>限制服务器端接受的连接不能超过 10 个 1：<br>限制客户端服务使用连接不能超过 10 个 2：</p>
+<p>限制客户端服务使用连接不能超过 10 个 2：</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 过滤器（四）之 ActiveLimitFilter &amp;&amp; ExecuteLimitFilter》</li>
+</ul>
+<h3 id="【6-30-延迟连接】"><a href="#【6-30-延迟连接】" class="headerlink" title="【6.30 延迟连接】"></a>【6.30 延迟连接】</h3><blockquote>
+</blockquote>
+<p>延迟连接用于减少长连接数。当有调用发起时，再创建长连接。1</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 服务调用（二）之远程调用（Dubbo）【1】通信实现》</li>
+</ul>
+<h3 id="【6-31-粘滞连接】"><a href="#【6-31-粘滞连接】" class="headerlink" title="【6.31 粘滞连接】"></a>【6.31 粘滞连接】</h3><blockquote>
+</blockquote>
+<p>粘滞连接用于有状态服务，尽可能让客户端总是向同一提供者发起调用，除非该提供者挂了，再连另一台。<br>粘滞连接将自动开启延迟连接，以减少长连接数。</p>
+<p>粘滞连接将自动开启延迟连接，以减少长连接数。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 集群容错（一）之抽象 API》</li>
+</ul>
+<h3 id="【6-32-令牌验证】"><a href="#【6-32-令牌验证】" class="headerlink" title="【6.32 令牌验证】"></a>【6.32 令牌验证】</h3><blockquote>
+</blockquote>
+<p>通过令牌验证在注册中心控制权限，以决定要不要下发令牌给消费者，可以防止消费者绕过注册中心访问提供者，另外通过注册中心可灵活改变授权方式，而不需修改或升级提供者</p>
+<figure style="font-size: inherit; color: inherit; line-height: inherit;"><img class="" style="margin-right: auto; margin-left: auto; border-radius: 0px; font-size: inherit; color: inherit; line-height: inherit; display: block; border: 2px none #eeeeee;" title="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )" src="https://www.javazhiyin.com/wp-content/uploads/2018/09/java1-1536752133.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )"><figcaption style="margin-top: 10px; font-size: 0.7em; color: #999999; line-height: inherit; text-align: center;">/user-guide/images/dubbo-token.jpg</figcaption></figure>
+
+
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 过滤器（八）之 TokenFilter》</li>
+</ul>
+<h3 id="【6-33-路由规则】"><a href="#【6-33-路由规则】" class="headerlink" title="【6.33 路由规则】"></a>【6.33 路由规则】</h3><blockquote>
+</blockquote>
+<p>路由规则 1 决定一次 dubbo 服务调用的目标服务器，分为条件路由规则和脚本路由规则，并且支持可扩展 2。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 集群容错（七）之 Router 实现》</li>
+</ul>
+<h3 id="【6-34-配置规则】"><a href="#【6-34-配置规则】" class="headerlink" title="【6.34 配置规则】"></a>【6.34 配置规则】</h3><blockquote>
+</blockquote>
+<p>向注册中心写入动态配置覆盖规则 1。该功能通常由监控中心或治理中心的页面完成。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 集群容错（六）之 Configurator 实现》</li>
+</ul>
+<h3 id="【6-35-服务降级】"><a href="#【6-35-服务降级】" class="headerlink" title="【6.35 服务降级】"></a>【6.35 服务降级】</h3><blockquote>
+</blockquote>
+<p>可以通过服务降级功能 1 临时屏蔽某个出错的非关键服务，并定义降级后的返回策略。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 集群容错（八）之 Mock 实现》</li>
+</ul>
+<h3 id="【6-36-优雅停机】"><a href="#【6-36-优雅停机】" class="headerlink" title="【6.36 优雅停机】"></a>【6.36 优雅停机】</h3><blockquote>
+</blockquote>
+<p>Dubbo 是通过 JDK 的 ShutdownHook 来完成优雅停机的，所以如果用户使用 <code class="java">
+kill -9 PID</code> 等强制关闭指令，是不会执行优雅停机的，只有通过 <code class="java">
+kill PID</code> 时，才会执行。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 优雅停机》</li>
+</ul>
+<h3 id="【6-37-主机绑定】"><a href="#【6-37-主机绑定】" class="headerlink" title="【6.37 主机绑定】"></a>【6.37 主机绑定】</h3><blockquote>
+</blockquote>
+<p>缺省主机 IP 查找顺序：</p>
+<ul class="list-paddingleft-2">
+- 通过 `LocalHost.getLocalHost()` 获取本机地址。
+- 如果是 `127.*` 等 loopback 地址，则扫描各网卡，获取网卡 IP。
+</ul>
+
+
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— API 配置（二）之服务提供者》</li>
+</ul>
+<h3 id="【6-38-日志适配】"><a href="#【6-38-日志适配】" class="headerlink" title="【6.38 日志适配】"></a>【6.38 日志适配】</h3><blockquote>
+</blockquote>
+<p>自 <code class="java">
+2.2.1</code> 开始，dubbo 开始内置 log4j、slf4j、jcl、jdk 这些日志框架的适配 1，也可以通过以下方式显示配置日志输出策略：</p>
+<ol class="list-paddingleft-2">
+- 命令行
+- 在 `dubbo.properties` 中指定
+- 在 `dubbo.xml` 中配置
+</ol>
+
+
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 日志适配》</li>
+</ul>
+<h3 id="【6-39-访问日志】"><a href="#【6-39-访问日志】" class="headerlink" title="【6.39 访问日志】"></a>【6.39 访问日志】</h3><blockquote>
+</blockquote>
+<p>如果你想记录每一次请求信息，可开启访问日志，类似于apache的访问日志。<strong>注意</strong>：此日志量比较大，请注意磁盘容量。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 过滤器（三）之 AccessLogFilter》</li>
+</ul>
+<h3 id="【6-40-服务容器】"><a href="#【6-40-服务容器】" class="headerlink" title="【6.40 服务容器】"></a>【6.40 服务容器】</h3><blockquote>
+</blockquote>
+<p>服务容器是一个 standalone 的启动程序，因为后台服务不需要 Tomcat 或 JBoss 等 Web 容器的功能，如果硬要用 Web 容器去加载服务提供方，增加复杂性，也浪费资源。<br>服务容器只是一个简单的 Main 方法，并加载一个简单的 Spring 容器，用于暴露服务。<br>服务容器的加载内容可以扩展，内置了 spring, jetty, log4j 等加载，可通过容器扩展点进行扩展。配置配在 java 命令的 -D 参数或者 <code class="java">
+dubbo.properties</code> 中。</p>
+<p>服务容器只是一个简单的 Main 方法，并加载一个简单的 Spring 容器，用于暴露服务。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 服务容器》</li>
+</ul>
+<h3 id="【6-41-ReferenceConfig-缓存】"><a href="#【6-41-ReferenceConfig-缓存】" class="headerlink" title="【6.41 ReferenceConfig 缓存】"></a>【6.41 ReferenceConfig 缓存】</h3><blockquote>
+</blockquote>
+<p><code class="java">
+ReferenceConfig</code> 实例很重，封装了与注册中心的连接以及与提供者的连接，需要缓存。否则重复生成 <code class="java">
+ReferenceConfig</code> 可能造成性能问题并且会有内存和连接泄漏。在 API 方式编程时，容易忽略此问题。<br>因此，自 <code class="java">
+2.4.0</code> 版本开始， dubbo 提供了简单的工具类 <code class="java">
+ReferenceConfigCache</code>用于缓存 <code class="java">
+ReferenceConfig</code> 实例。</p>
+<p>因此，自 <code class="java">
+2.4.0</code> 版本开始， dubbo 提供了简单的工具类 <code class="java">
+ReferenceConfigCache</code>用于缓存 <code class="java">
+ReferenceConfig</code> 实例。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— API 配置（三）之服务消费者》</li>
+</ul>
+<h3 id="【6-42-分布式事务】"><a href="#【6-42-分布式事务】" class="headerlink" title="【6.42 分布式事务】"></a>【6.42 分布式事务】</h3><blockquote>
+</blockquote>
+<p>分布式事务基于 JTA&#x2F;XA 规范实现 1。<br>两阶段提交：</p>
+<figure style="font-size: inherit; color: inherit; line-height: inherit;"><img class="" style="margin-right: auto; margin-left: auto; border-radius: 0px; font-size: inherit; color: inherit; line-height: inherit; display: block; border: 2px none #eeeeee;" title="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )" src="https://www.javazhiyin.com/wp-content/uploads/2018/09/java9-1536752133.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )"><figcaption style="margin-top: 10px; font-size: 0.7em; color: #999999; line-height: inherit; text-align: center;">/user-guide/images/jta-xa.jpg</figcaption></figure>
+
+
+<p>两阶段提交：</p>
+<p>目前该功能暂未实现，如下是推荐阅读的内容：</p>
+<ul>
+<li>《RocketMQ 源码分析 —— 事务消息》</li>
+<li>《Sharding-JDBC 源码分析 —— 分布式事务（一）之最大努力型》</li>
+<li>《MyCAT 源码分析 —— XA分布式事务》</li>
+<li>《TCC-Transaction 源码解析 —— 精品合集》</li>
+<li>《Happylifeplat-TCC 源码解析 —— 精品合集》</li>
+<li>《Myth 源码解析 —— 精品合集》</li>
+</ul>
+<h3 id="【6-43-线程栈自动dump】"><a href="#【6-43-线程栈自动dump】" class="headerlink" title="【6.43 线程栈自动dump】"></a>【6.43 线程栈自动dump】</h3><blockquote>
+</blockquote>
+<p>当业务线程池满时，我们需要知道线程都在等待哪些资源、条件，以找到系统的瓶颈点或异常点。dubbo通过Jstack自动导出线程堆栈来保留现场，方便排查问题<br>默认策略:</p>
+<ul class="list-paddingleft-2">
+- 导出路径，user.home标识的用户主目录
+- 导出间隔，最短间隔允许每隔10分钟导出一次
+</ul>
+
+
+<p>默认策略:</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 线程池》</li>
+</ul>
+<h3 id="【6-44-Netty4】"><a href="#【6-44-Netty4】" class="headerlink" title="【6.44 Netty4】"></a>【6.44 Netty4】</h3><blockquote>
+</blockquote>
+<p>dubbo 2.5.6版本新增了对netty4通信模块的支持</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— NIO 服务器（六）之 Netty4 实现》</li>
+</ul>
+<h3 id="【8-schema-配置参考手册】"><a href="#【8-schema-配置参考手册】" class="headerlink" title="【8 schema 配置参考手册】"></a>【8 schema 配置参考手册】</h3><blockquote>
+</blockquote>
+<p>这里以 XML Config 1 为准，列举所有配置项 2。其它配置方式，请参见相应转换关系：属性配置，注解配置，API 配置。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精近 Dubbo 源码解析 —— XML 配置》</li>
+</ul>
+<h3 id="【9-1-dubbo-x2F-x2F-】"><a href="#【9-1-dubbo-x2F-x2F-】" class="headerlink" title="【9.1 dubbo:&#x2F;&#x2F;】"></a>【9.1 dubbo:&#x2F;&#x2F;】</h3><blockquote>
+</blockquote>
+<p>Dubbo 缺省协议采用单一长连接和 NIO 异步通讯，适合于小数据量大并发的服务调用，以及服务消费者机器数远大于服务提供者机器数的情况。<br>反之，Dubbo 缺省协议不适合传送大数据量的服务，比如传文件，传视频等，除非请求量很低。</p>
+<figure style="font-size: inherit; color: inherit; line-height: inherit;"><img class="" style="margin-right: auto; margin-left: auto; border-radius: 0px; font-size: inherit; color: inherit; line-height: inherit; display: block; border: 2px none #eeeeee;" title="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )" src="https://www.javazhiyin.com/wp-content/uploads/2018/09/java10-1536752133-1.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )"><figcaption style="margin-top: 10px; font-size: 0.7em; color: #999999; line-height: inherit; text-align: center;">dubbo-protocol.jpg</figcaption></figure>
+
+
+<p>反之，Dubbo 缺省协议不适合传送大数据量的服务，比如传文件，传视频等，除非请求量很低。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 服务调用（二）之远程调用（Dubbo）【1】通信实现》</li>
+<li>《精尽 Dubbo 源码解析 —— 服务调用（二）之远程调用（Dubbo）【2】同步调用》</li>
+<li>《精尽 Dubbo 源码解析 —— 服务调用（二）之远程调用（Dubbo）【3】异步调用》</li>
+<li>《精尽 Dubbo 源码解析 —— 服务调用（二）之远程调用（Dubbo）【4】参数回调》</li>
+</ul>
+<h3 id="【9-2-rmi-x2F-x2F-】"><a href="#【9-2-rmi-x2F-x2F-】" class="headerlink" title="【9.2 rmi:&#x2F;&#x2F;】"></a>【9.2 rmi:&#x2F;&#x2F;】</h3><blockquote>
+</blockquote>
+<p>RMI 协议采用 JDK 标准的 <code class="java">
+java.rmi.*</code> 实现，采用阻塞式短连接和 JDK 标准序列化方式。<br>注意：如果正在使用 RMI 提供服务给外部访问 1，同时应用里依赖了老的 common-collections 包 2 的情况下，存在反序列化安全风险 3。</p>
+<p>注意：如果正在使用 RMI 提供服务给外部访问 1，同时应用里依赖了老的 common-collections 包 2 的情况下，存在反序列化安全风险 3。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 服务调用（七）之远程调用（RMI）》</li>
+</ul>
+<h3 id="【9-3-hessian-x2F-x2F-】"><a href="#【9-3-hessian-x2F-x2F-】" class="headerlink" title="【9.3 hessian:&#x2F;&#x2F;】"></a>【9.3 hessian:&#x2F;&#x2F;】</h3><blockquote>
+</blockquote>
+<p>Hessian 1 协议用于集成 Hessian 的服务，Hessian 底层采用 Http 通讯，采用 Servlet 暴露服务，Dubbo 缺省内嵌 Jetty 作为服务器实现。<br>Dubbo 的 Hessian 协议可以和原生 Hessian 服务互操作，即：</p>
+<ul class="list-paddingleft-2">
+- 提供者用 Dubbo 的 Hessian 协议暴露服务，消费者直接用标准 Hessian 接口调用
+- 或者提供方用标准 Hessian 暴露服务，消费方用 Dubbo 的 Hessian 协议调用。
+</ul>
+
+
+<p>Dubbo 的 Hessian 协议可以和原生 Hessian 服务互操作，即：</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 服务调用（四）之远程调用（Hessian）》</li>
+</ul>
+<h3 id="【9-4-http-x2F-x2F-】"><a href="#【9-4-http-x2F-x2F-】" class="headerlink" title="【9.4 http:&#x2F;&#x2F;】"></a>【9.4 http:&#x2F;&#x2F;】</h3><blockquote>
+</blockquote>
+<p>基于 HTTP 表单的远程调用协议，采用 Spring 的 HttpInvoker 实现 1</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 服务调用（三）之远程调用（HTTP）》</li>
+</ul>
+<h3 id="【9-5-webservice-x2F-x2F-】"><a href="#【9-5-webservice-x2F-x2F-】" class="headerlink" title="【9.5 webservice:&#x2F;&#x2F;】"></a>【9.5 webservice:&#x2F;&#x2F;】</h3><blockquote>
+</blockquote>
+<p>基于 WebService 的远程调用协议，基于 Apache CXF 1 的 <code class="java">
+frontend-simple</code> 和 <code class="java">
+transports-http</code> 实现 2。<br>可以和原生 WebService 服务互操作，即：</p>
+<ul class="list-paddingleft-2">
+- 提供者用 Dubbo 的 WebService 协议暴露服务，消费者直接用标准 WebService 接口调用，
+- 或者提供方用标准 WebService 暴露服务，消费方用 Dubbo 的 WebService 协议调用。
+</ul>
+
+
+<p>可以和原生 WebService 服务互操作，即：</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 服务调用（五）之远程调用（Webservice）》</li>
+</ul>
+<h3 id="【9-6-thrift-x2F-x2F-】"><a href="#【9-6-thrift-x2F-x2F-】" class="headerlink" title="【9.6 thrift:&#x2F;&#x2F;】"></a>【9.6 thrift:&#x2F;&#x2F;】</h3><blockquote>
+</blockquote>
+<p>当前 dubbo 支持 1的 thrift 协议是对 thrift 原生协议 2 的扩展，在原生协议的基础上添加了一些额外的头信息，比如 service name，magic number 等。<br>使用 dubbo thrift 协议同样需要使用 thrift 的 idl compiler 编译生成相应的 java 代码，后续版本中会在这方面做一些增强。</p>
+<p>使用 dubbo thrift 协议同样需要使用 thrift 的 idl compiler 编译生成相应的 java 代码，后续版本中会在这方面做一些增强。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 服务调用（十）之远程调用（Thrift）》</li>
+</ul>
+<h3 id="【9-7-memcached-x2F-x2F-】"><a href="#【9-7-memcached-x2F-x2F-】" class="headerlink" title="【9.7 memcached:&#x2F;&#x2F;】"></a>【9.7 memcached:&#x2F;&#x2F;】</h3><blockquote>
+</blockquote>
+<p>基于 memcached 1 实现的 RPC 协议 2。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 服务调用（九）之远程调用（Memcached）》</li>
+</ul>
+<h3 id="【9-8-redis-x2F-x2F-】"><a href="#【9-8-redis-x2F-x2F-】" class="headerlink" title="【9.8 redis:&#x2F;&#x2F;】"></a>【9.8 redis:&#x2F;&#x2F;】</h3><blockquote>
+</blockquote>
+<p>基于 Redis 1 实现的 RPC 协议 2。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 服务调用（八）之远程调用（Redis）》</li>
+</ul>
+<h3 id="【9-9-rest-x2F-x2F-】"><a href="#【9-9-rest-x2F-x2F-】" class="headerlink" title="【9.9 rest:&#x2F;&#x2F;】"></a>【9.9 rest:&#x2F;&#x2F;】</h3><p>对应文档为</p>
+<ul>
+<li>《在Dubbo中开发REST风格的远程调用（RESTful Remoting）》 。</li>
+</ul>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 服务调用（六）之远程调用（REST）》</li>
+</ul>
+<h3 id="【10-1-Multicast-注册中心】"><a href="#【10-1-Multicast-注册中心】" class="headerlink" title="【10.1 Multicast 注册中心】"></a>【10.1 Multicast 注册中心】</h3><blockquote>
+</blockquote>
+<p>Multicast 注册中心不需要启动任何中心节点，只要广播地址一样，就可以互相发现。</p>
+<figure style="font-size: inherit; color: inherit; line-height: inherit;"><img class="" style="margin-right: auto; margin-left: auto; border-radius: 0px; font-size: inherit; color: inherit; line-height: inherit; display: block; border: 2px none #eeeeee;" title="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )" src="https://www.javazhiyin.com/wp-content/uploads/2018/09/java4-1536752134.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )"><figcaption style="margin-top: 10px; font-size: 0.7em; color: #999999; line-height: inherit; text-align: center;">/user-guide/images/multicast.jpg</figcaption></figure>
+<ol class="list-paddingleft-2">
+- 提供方启动时广播自己的地址
+- 消费方启动时广播订阅请求
+- 提供方收到订阅请求时，单播自己的地址给订阅者，如果设置了 `unicast=false`，则广播给订阅者
+- 消费方收到提供方地址时，连接该地址进行 RPC 调用。
+</ol>
+组播受网络结构限制，只适合小规模应用或开发阶段使用。组播地址段: 224.0.0.0 - 239.255.255.255
+
+
+<p>组播受网络结构限制，只适合小规模应用或开发阶段使用。组播地址段: 224.0.0.0 - 239.255.255.255</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 注册中心（五）之 Multicast 》</li>
+</ul>
+<h3 id="【10-2-zookeeper-注册中心】"><a href="#【10-2-zookeeper-注册中心】" class="headerlink" title="【10.2 zookeeper 注册中心】"></a>【10.2 zookeeper 注册中心】</h3><blockquote>
+</blockquote>
+<p>Zookeeper 是 Apacahe Hadoop 的子项目，是一个树型的目录服务，支持变更推送，适合作为 Dubbo 服务的注册中心，工业强度较高，可用于生产环境，并推荐使用 1。</p>
+<figure style="font-size: inherit; color: inherit; line-height: inherit;"><img class="" title="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )" src="https://www.javazhiyin.com/wp-content/uploads/2018/09/java1-1536752134.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )"><figcaption style="margin-top: 10px; font-size: 0.7em; color: #999999; line-height: inherit; text-align: center;">/user-guide/images/zookeeper.jpg</figcaption></figure>
+
+
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— Zookeeper 客户端》</li>
+<li>《精尽 Dubbo 源码分析 —— 注册中心（一）之抽象 API》</li>
+<li>《精尽 Dubbo 源码分析 —— 注册中心（二）之 Zookeeper》</li>
+</ul>
+<h3 id="【10-3-Redis-注册中心】"><a href="#【10-3-Redis-注册中心】" class="headerlink" title="【10.3 Redis 注册中心】"></a>【10.3 Redis 注册中心】</h3><blockquote>
+</blockquote>
+<p>基于 Redis 1 实现的注册中心 2。</p>
+<figure style="font-size: inherit; color: inherit; line-height: inherit;"><img class="" title="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )" src="https://www.javazhiyin.com/wp-content/uploads/2018/09/java4-1536752134-1.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )"><figcaption style="margin-top: 10px; font-size: 0.7em; color: #999999; line-height: inherit; text-align: center;">/user-guide/images/dubbo-redis-registry.jpg</figcaption></figure>
+
+
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 注册中心（三）之 Redis》</li>
+</ul>
+<h3 id="【10-4-Simple-注册中心】"><a href="#【10-4-Simple-注册中心】" class="headerlink" title="【10.4 Simple 注册中心】"></a>【10.4 Simple 注册中心】</h3><blockquote>
+</blockquote>
+<p>Simple 注册中心本身就是一个普通的 Dubbo 服务，可以减少第三方依赖，使整体通讯方式一致。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 注册中心（四）之 Simple 》</li>
+</ul>
+<h3 id="【11-Telnet-命令参考手册】"><a href="#【11-Telnet-命令参考手册】" class="headerlink" title="【11 Telnet 命令参考手册】"></a>【11 Telnet 命令参考手册】</h3><blockquote>
+</blockquote>
+<p>从 <code class="java">
+2.0.5</code> 版本开始，dubbo 开始支持通过 telnet 命令来镜像服务治理。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— NIO 服务器（三）之 Telnet 层》</li>
+</ul>
+<h3 id="【12-在线运维命令-QOS】"><a href="#【12-在线运维命令-QOS】" class="headerlink" title="【12 在线运维命令-QOS】"></a>【12 在线运维命令-QOS】</h3><blockquote>
+</blockquote>
+<p>dubbo 2.5.8 新版本重构了 telnet 模块，提供了新的 telnet 命令支持。</p>
+<p>对应源码解析文章：</p>
+<p>TODO</p>
+<p><code class="java">
+dubbo-ops</code></p>
+<h2 id="1-3-Dubbo-开发指南"><a href="#1-3-Dubbo-开发指南" class="headerlink" title="1.3 Dubbo 开发指南"></a>1.3 Dubbo 开发指南</h2><p>本小节，我们将 《精尽 Dubbo 源码解析》 和 《Dubbo 开发指南》 做一次映射，方便大家直接找到感兴趣的功能的具体源码实现。当然，如果有整理不到位的地方，欢迎大家给我留言斧正。</p>
+<h3 id="【1-源码构建】"><a href="#【1-源码构建】" class="headerlink" title="【1 源码构建】"></a>【1 源码构建】</h3><blockquote>
+</blockquote>
+<p style="margin-top: 1.5em; margin-bottom: 1.5em; font-size: inherit; color: inherit; line-height: inherit;">代码签出 
+分支 
+构建 
+构建源代码 jar 包 
+IDE 支持</p>
+
+
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 调试环境搭建》</li>
+</ul>
+<h3 id="【2-框架设计】"><a href="#【2-框架设计】" class="headerlink" title="【2 框架设计】"></a>【2 框架设计】</h3><blockquote>
+</blockquote>
+<figure style="font-size: inherit; color: inherit; line-height: inherit;"><img class="" style="margin-right: auto; margin-left: auto; border-radius: 0px; font-size: inherit; color: inherit; line-height: inherit; display: block; border: 2px none #eeeeee;" title="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )" src="https://www.javazhiyin.com/wp-content/uploads/2018/09/java9-1536752134.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )"><figcaption style="margin-top: 10px; font-size: 0.7em; color: #999999; line-height: inherit; text-align: center;">/dev-guide/images/dubbo-framework.jpg</figcaption></figure>
+
+
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 项目结构一览》</li>
+<li>《精近 Dubbo 源码解析 —— 核心流程一览》</li>
+</ul>
+<h3 id="【3-扩展点加载】"><a href="#【3-扩展点加载】" class="headerlink" title="【3 扩展点加载】"></a>【3 扩展点加载】</h3><blockquote>
+</blockquote>
+<p>Dubbo 的扩展点加载从 JDK 标准的 SPI (Service Provider Interface) 扩展点发现机制加强而来。<br>Dubbo 改进了 JDK 标准的 SPI 的以下问题：</p>
+<ul class="list-paddingleft-2">
+- JDK 标准的 SPI 会一次性实例化扩展点所有实现，如果有扩展实现初始化很耗时，但如果没用上也加载，会很浪费资源。
+- 如果扩展点加载失败，连扩展点的名称都拿不到了。比如：JDK 标准的 ScriptEngine，通过 `getName()` 获取脚本类型的名称，但如果 RubyScriptEngine 因为所依赖的 jruby.jar 不存在，导致 RubyScriptEngine 类加载失败，这个失败原因被吃掉了，和 ruby 对应不起来，当用户执行 ruby 脚本时，会报不支持 ruby，而不是真正失败的原因。
+- 增加了对扩展点 IoC 和 AOP 的支持，一个扩展点可以直接 setter 注入其它扩展点。
+</ul>
+
+
+<p>Dubbo 改进了 JDK 标准的 SPI 的以下问题：</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 拓展机制 SPI》</li>
+</ul>
+<h3 id="【5-1-协议扩展】"><a href="#【5-1-协议扩展】" class="headerlink" title="【5.1 协议扩展】"></a>【5.1 协议扩展】</h3><blockquote>
+</blockquote>
+<p>RPC 协议扩展，封装远程调用细节。<br>契约：</p>
+<ul class="list-paddingleft-2">
+- 当用户调用 `refer()` 所返回的 `Invoker` 对象的 `invoke()` 方法时，协议需相应执行同 URL 远端 `export()` 传入的 `Invoker` 对象的 `invoke()` 方法。
+- 其中，`refer()` 返回的 `Invoker` 由协议实现，协议通常需要在此 `Invoker` 中发送远程请求，`export()` 传入的 `Invoker` 由框架实现并传入，协议不需要关心。
+</ul>
+注意：
+<ul class="list-paddingleft-2">
+- 协议不关心业务接口的透明代理，以 `Invoker` 为中心，由外层将 `Invoker` 转换为业务接口。
+- 协议不一定要是 TCP 网络通讯，比如通过共享文件，IPC 进程间通讯等。
+</ul>
+
+
+<p>契约：</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 服务暴露（一）之本地暴露（Injvm）》</li>
+<li>《精尽 Dubbo 源码分析 —— 服务暴露（二）之远程暴露（Dubbo）》</li>
+<li>《精尽 Dubbo 源码分析 —— 服务引用（一）之本地引用（Injvm）》</li>
+<li>《精尽 Dubbo 源码分析 —— 服务引用（二）之远程引用（Dubbo）》</li>
+</ul>
+<h3 id="【5-2-调用拦截扩展】"><a href="#【5-2-调用拦截扩展】" class="headerlink" title="【5.2 调用拦截扩展】"></a>【5.2 调用拦截扩展】</h3><blockquote>
+</blockquote>
+<p>服务提供方和服务消费方调用过程拦截，Dubbo 本身的大多功能均基于此扩展点实现，每次远程方法执行，该拦截都会被执行，请注意对性能的影响。<br>约定：</p>
+<ul class="list-paddingleft-2">
+- 用户自定义 filter 默认在内置 filter 之后。
+- 特殊值 `default`，表示缺省扩展点插入的位置。比如：`filter="xxx,default,yyy"`，表示 `xxx` 在缺省 filter 之前，`yyy` 在缺省 filter 之后。
+- 特殊符号 `-`，表示剔除。比如：`filter="-foo1"`，剔除添加缺省扩展点 `foo1`。比如：`filter="-default"`，剔除添加所有缺省扩展点。
+- provider 和 service 同时配置的 filter 时，累加所有 filter，而不是覆盖。比如：`` 和 ``，则 `xxx`,`yyy`,`aaa`,`bbb` 均会生效。如果要覆盖，需配置：``
+</ul>
+
+
+<p>约定：</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 过滤器（一）之 ClassLoaderFilter》</li>
+<li>《精尽 Dubbo 源码解析 —— 过滤器（二）之 ContextFilter》</li>
+<li>《精尽 Dubbo 源码解析 —— 过滤器（三）之 AccessLogFilter》</li>
+<li>《精尽 Dubbo 源码分析 —— 过滤器（四）之 ActiveLimitFilter &amp;&amp; ExecuteLimitFilter》</li>
+<li>《精尽 Dubbo 源码分析 —— 过滤器（五）之 TimeoutFilter》</li>
+<li>《精尽 Dubbo 源码分析 —— 过滤器（六）之 DeprecatedFilter》</li>
+<li>《精尽 Dubbo 源码分析 —— 过滤器（七）之 ExceptionFilter》</li>
+<li>《精尽 Dubbo 源码分析 —— 过滤器（八）之 TokenFilter》</li>
+<li>《精尽 Dubbo 源码分析 —— 过滤器（九）之 TpsLimitFilter》</li>
+<li>《精尽 Dubbo 源码分析 —— 过滤器（十）之 CacheFilter》</li>
+<li>《精尽 Dubbo 源码分析 —— 过滤器（十一）之 ValidationFilter》</li>
+</ul>
+<h3 id="【5-3-引用监听扩展】"><a href="#【5-3-引用监听扩展】" class="headerlink" title="【5.3 引用监听扩展】"></a>【5.3 引用监听扩展】</h3><blockquote>
+</blockquote>
+<p>当有服务引用时，触发该事件。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 服务引用（一）之本地引用（Injvm）》</li>
+</ul>
+<h3 id="【5-4-暴露监听扩展】"><a href="#【5-4-暴露监听扩展】" class="headerlink" title="【5.4 暴露监听扩展】"></a>【5.4 暴露监听扩展】</h3><blockquote>
+</blockquote>
+<p>当有服务暴露时，触发该事件。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 服务暴露（一）之本地暴露（Injvm）》</li>
+</ul>
+<h3 id="【5-5-集群扩展】"><a href="#【5-5-集群扩展】" class="headerlink" title="【5.5 集群扩展】"></a>【5.5 集群扩展】</h3><blockquote>
+</blockquote>
+<p>当有多个服务提供方时，将多个服务提供方组织成一个集群，并伪装成一个提供方。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 集群容错（一）之抽象 API》</li>
+<li>《精尽 Dubbo 源码解析 —— 集群容错（二）之 Cluster 实现》</li>
+</ul>
+<h3 id="【5-6-路由扩展】"><a href="#【5-6-路由扩展】" class="headerlink" title="【5.6 路由扩展】"></a>【5.6 路由扩展】</h3><blockquote>
+</blockquote>
+<p>从多个服务提者方中选择一个进行调用。</p>
+<ul>
+<li>官方文档写的有问题，从多个服务提者方中筛选出所有匹配的结果集。</li>
+</ul>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 集群容错（七）之 Router 实现》</li>
+</ul>
+<h3 id="【5-7-负载均衡扩展】"><a href="#【5-7-负载均衡扩展】" class="headerlink" title="【5.7 负载均衡扩展】"></a>【5.7 负载均衡扩展】</h3><blockquote>
+</blockquote>
+<p>从多个服务提者方中选择一个进行调用</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 集群容错（四）之 Loadbalance 实现》</li>
+</ul>
+<h3 id="【5-8-合并结果扩展】"><a href="#【5-8-合并结果扩展】" class="headerlink" title="【5.8 合并结果扩展】"></a>【5.8 合并结果扩展】</h3><blockquote>
+</blockquote>
+<p>合并返回结果，用于分组聚合。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 集群容错（五）之 Merger 实现》</li>
+</ul>
+<h3 id="【5-9-注册中心扩展】"><a href="#【5-9-注册中心扩展】" class="headerlink" title="【5.9 注册中心扩展】"></a>【5.9 注册中心扩展】</h3><blockquote>
+</blockquote>
+<p>负责服务的注册与发现。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— Zookeeper 客户端》</li>
+<li>《精尽 Dubbo 源码分析 —— 注册中心（一）之抽象 API》</li>
+<li>《精尽 Dubbo 源码分析 —— 注册中心（二）之 Zookeeper》</li>
+<li>《精尽 Dubbo 源码分析 —— 注册中心（三）之 Redis》</li>
+<li>《精尽 Dubbo 源码分析 —— 注册中心（四）之 Simple 》</li>
+<li>《精尽 Dubbo 源码分析 —— 注册中心（五）之 Multicast 》</li>
+</ul>
+<h3 id="【5-10-监控中心扩展】"><a href="#【5-10-监控中心扩展】" class="headerlink" title="【5.10 监控中心扩展】"></a>【5.10 监控中心扩展】</h3><blockquote>
+</blockquote>
+<p>负责服务调用次和调用时间的监控。</p>
+<p>对应源码解析文章：</p>
+<p>TODO</p>
+<h3 id="【5-11-扩展点加载扩展】"><a href="#【5-11-扩展点加载扩展】" class="headerlink" title="【5.11 扩展点加载扩展】"></a>【5.11 扩展点加载扩展】</h3><blockquote>
+</blockquote>
+<p>扩展点本身的加载容器，可从不同容器加载扩展点。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 拓展机制 SPI》</li>
+</ul>
+<h3 id="【5-12-动态代理扩展】"><a href="#【5-12-动态代理扩展】" class="headerlink" title="【5.12 动态代理扩展】"></a>【5.12 动态代理扩展】</h3><blockquote>
+</blockquote>
+<p>将 <code class="java">
+Invoker</code> 接口转换成业务接口。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 动态代理（一）之 Javassist》</li>
+<li>《精尽 Dubbo 源码分析 —— 动态代理（二）之 JDK》</li>
+</ul>
+<h3 id="【5-13-编译器扩展】"><a href="#【5-13-编译器扩展】" class="headerlink" title="【5.13 编译器扩展】"></a>【5.13 编译器扩展】</h3><blockquote>
+</blockquote>
+<p>Java 代码编译器，用于动态生成字节码，加速调用。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 动态编译（一）之 Javassist》</li>
+<li>《精尽 Dubbo 源码分析 —— 动态编译（二）之 JDK》</li>
+</ul>
+<h3 id="【5-14-消息派发扩展】"><a href="#【5-14-消息派发扩展】" class="headerlink" title="【5.14 消息派发扩展】"></a>【5.14 消息派发扩展】</h3><blockquote>
+</blockquote>
+<p>通道信息派发器，用于指定线程池模型。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— NIO 服务器（一）之抽象 API》</li>
+</ul>
+<h3 id="【5-15-线程池扩展】"><a href="#【5-15-线程池扩展】" class="headerlink" title="【5.15 线程池扩展】"></a>【5.15 线程池扩展】</h3><blockquote>
+</blockquote>
+<p>服务提供方线程程实现策略，当服务器收到一个请求时，需要在线程池中创建一个线程去执行服务提供方业务逻辑。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 线程池》</li>
+</ul>
+<h3 id="【5-16-序列化扩展】"><a href="#【5-16-序列化扩展】" class="headerlink" title="【5.16 序列化扩展】"></a>【5.16 序列化扩展】</h3><blockquote>
+</blockquote>
+<p>将对象转成字节流，用于网络传输，以及将字节流转为对象，用于在收到字节流数据后还原成对象。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 序列化（一）之 总体实现》</li>
+<li>《精尽 Dubbo 源码分析 —— 序列化（二）之 Dubbo 实现》</li>
+<li>《精尽 Dubbo 源码分析 —— 序列化（三）之 Kryo 实现》</li>
+</ul>
+<h3 id="【5-17-网络传输扩展】"><a href="#【5-17-网络传输扩展】" class="headerlink" title="【5.17 网络传输扩展】"></a>【5.17 网络传输扩展】</h3><blockquote>
+</blockquote>
+<p>远程通讯的服务器及客户端传输实现。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— NIO 服务器（一）之抽象 API》</li>
+<li>《精尽 Dubbo 源码分析 —— NIO 服务器（二）之 Transport 层》</li>
+</ul>
+<h3 id="【5-18-信息交换扩展】"><a href="#【5-18-信息交换扩展】" class="headerlink" title="【5.18 信息交换扩展】"></a>【5.18 信息交换扩展】</h3><blockquote>
+</blockquote>
+<p>基于传输层之上，实现 Request-Response 信息交换语义。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— NIO 服务器（四）之 Exchange 层》</li>
+</ul>
+<h3 id="【5-19-组网扩展】"><a href="#【5-19-组网扩展】" class="headerlink" title="【5.19 组网扩展】"></a>【5.19 组网扩展】</h3><blockquote>
+</blockquote>
+<p>对等网络节点组网器。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 注册中心（五）之 Multicast 》</li>
+</ul>
+<h3 id="【5-20-Telnet-命令扩展】"><a href="#【5-20-Telnet-命令扩展】" class="headerlink" title="【5.20 Telnet 命令扩展】"></a>【5.20 Telnet 命令扩展】</h3><blockquote>
+</blockquote>
+<p>所有服务器均支持 telnet 访问，用于人工干预。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— NIO 服务器（三）之 Telnet 层》</li>
+</ul>
+<h3 id="【5-21-状态检查扩展】"><a href="#【5-21-状态检查扩展】" class="headerlink" title="【5.21 状态检查扩展】"></a>【5.21 状态检查扩展】</h3><blockquote>
+</blockquote>
+<p>检查服务依赖各种资源的状态，此状态检查可同时用于 telnet 的 status 命令和 hosting 的 status 页面。</p>
+<p>对应源码解析文章：</p>
+<p>TODO</p>
+<h3 id="【5-22-容器扩展】"><a href="#【5-22-容器扩展】" class="headerlink" title="【5.22 容器扩展】"></a>【5.22 容器扩展】</h3><blockquote>
+</blockquote>
+<p>服务容器扩展，用于自定义加载内容。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 服务容器》</li>
+</ul>
+<h3 id="【5-23-页面扩展】"><a href="#【5-23-页面扩展】" class="headerlink" title="【5.23 页面扩展】"></a>【5.23 页面扩展】</h3><blockquote>
+</blockquote>
+<p>对等网络节点组网器。</p>
+<ul>
+<li>官方文档写的有问题，应该是请求处理器，有点类似 Servlet 。</li>
+</ul>
+<p>对应源码解析文章：</p>
+<p>TODO</p>
+<h3 id="【5-24-缓存扩展】"><a href="#【5-24-缓存扩展】" class="headerlink" title="【5.24 缓存扩展】"></a>【5.24 缓存扩展】</h3><blockquote>
+</blockquote>
+<p>用请求参数作为 key，缓存返回结果。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 过滤器（十）之 CacheFilter》</li>
+</ul>
+<h3 id="【5-25-验证扩展】"><a href="#【5-25-验证扩展】" class="headerlink" title="【5.25 验证扩展】"></a>【5.25 验证扩展】</h3><blockquote>
+</blockquote>
+<p>参数验证扩展点。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码分析 —— 过滤器（十一）之 ValidationFilter》</li>
+</ul>
+<h3 id="【5-26-日志适配扩展】"><a href="#【5-26-日志适配扩展】" class="headerlink" title="【5.26 日志适配扩展】"></a>【5.26 日志适配扩展】</h3><blockquote>
+</blockquote>
+<p>日志输出适配扩展点。</p>
+<p>对应源码解析文章：</p>
+<ul>
+<li>《精尽 Dubbo 源码解析 —— 日志适配》</li>
+</ul>
+<h2 id="1-4-Dubbo-运维指南"><a href="#1-4-Dubbo-运维指南" class="headerlink" title="1.4 Dubbo 运维指南"></a>1.4 Dubbo 运维指南</h2><p>《Dubbo 运维指南》 ，暂时无映射的需要。</p>
+<p> </p>
+
+                </div>
+                <!-- 欧阳思海，modify，2020.05.01-->
+<!-- 文章详情详情页面的头部广告位置信息 -->
+<div id="post-head-panel">
+    
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" style="font-size: 18px;" target="_blank">
+        <img src="/icons/hot.gif">
+        本人花费半年的时间总结的《Java面试指南》已拿腾讯等大厂offer，已开源在github ，欢迎star！
+    </a>
+    
+    
+</div>
+<br />
+
+
+
+<blockquote>
+    
+            <p>本文GitHub <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">https://github.com/OUYANGSIHAI/JavaInterview</a> 已收录，这是我花了6个月总结的<b>一线大厂Java面试</b>总结，本人已拿大厂offer，欢迎star</p>
+    
+    <p>原文链接：blog.ouyangsihai.cn &gt;&gt; <a href="/jia-jing-jing-jin-dubbo-yuan-li-yu-yuan-ma-zhuan-lan-yi-jing-wan-cheng-69-pian-yu-ji-zong-gong-75-pian.html" target="_blank">【加精】精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )</a></p>
+</blockquote>
+                <hr />
+
+                
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.88rem;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-large waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fa fa-close"></i></a>
+            <h4 class="reward-title">多少都是对我的认可</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="http://image.ouyangsihai.cn/FpbhsOuf3Ar9vY34B97Y2qQ7LVGe" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="http://image.ouyangsihai.cn/FgYlMzms68PH73PWpZBwPfbLTAws" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+                
+
+                <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+
+<div id="article-share">
+    
+    <div class="social-share" data-disabled="qzone" data-wechat-qrcode-helper="<p>微信里点“发现”->“扫一扫”二维码便可查看分享。</p>"></div>
+    
+</div>
+
+<script src="/libs/share/js/social-share.min.js"></script>
+
+                
+
+                
+                <div class="reprint1">
+                    <p>
+                        <span class="reprint1-tip">
+                            <i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;转载请注明:
+                        </span>
+                        <a href="https://blog.ouyangsihai.cn" class="b-link-green">好好学java</a>
+                        <i class="fa fa-angle-right fa-lg fa-fw text-color"></i>
+                        <a href="/jia-jing-jing-jin-dubbo-yuan-li-yu-yuan-ma-zhuan-lan-yi-jing-wan-cheng-69-pian-yu-ji-zong-gong-75-pian.html" class="b-link-green">【加精】精尽 Dubbo 原理与源码专栏( 已经完成 69+ 篇，预计总共 75+ 篇 )</a>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        
+
+        
+
+        
+
+        
+
+        
+        <style>
+    .valine-card {
+        margin: 1.5rem auto;
+    }
+
+    .valine-card .card-content {
+        padding: 20px 20px 5px 20px;
+    }
+    /* valine 评论框增加背景图片 */
+    #vcomments textarea {
+        box-sizing: border-box;
+        background: url("") 100% 100% no-repeat;
+    }
+
+    #vcomments input[type=text],
+    #vcomments input[type=email],
+    #vcomments input[type=url],
+    #vcomments textarea {
+        box-sizing: border-box;
+    }
+
+    #vcomments p {
+        margin: 2px 2px 10px;
+        font-size: 1.05rem;
+        line-height: 1.78rem;
+    }
+
+    #vcomments blockquote p {
+        text-indent: 0.2rem;
+    }
+
+    #vcomments a {
+        padding: 0 2px;
+        color: #42b983;
+        font-weight: 500;
+        text-decoration: underline;
+    }
+
+    #vcomments img {
+        max-width: 100%;
+        height: auto;
+        cursor: pointer;
+    }
+
+    #vcomments ol li {
+        list-style-type: decimal;
+    }
+
+    #vcomments ol,
+    ul {
+        display: block;
+        padding-left: 2em;
+        word-spacing: 0.05rem;
+    }
+
+    #vcomments ul li,
+    ol li {
+        display: list-item;
+        line-height: 1.8rem;
+        font-size: 1rem;
+    }
+
+    #vcomments ul li {
+        list-style-type: disc;
+    }
+
+    #vcomments ul ul li {
+        list-style-type: circle;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    #vcomments table, th, td {
+        border: 0;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments h1 {
+        font-size: 1.85rem;
+        font-weight: bold;
+        line-height: 2.2rem;
+    }
+
+    #vcomments h2 {
+        font-size: 1.65rem;
+        font-weight: bold;
+        line-height: 1.9rem;
+    }
+
+    #vcomments h3 {
+        font-size: 1.45rem;
+        font-weight: bold;
+        line-height: 1.7rem;
+    }
+
+    #vcomments h4 {
+        font-size: 1.25rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    #vcomments h5 {
+        font-size: 1.1rem;
+        font-weight: bold;
+        line-height: 1.4rem;
+    }
+
+    #vcomments h6 {
+        font-size: 1rem;
+        line-height: 1.3rem;
+    }
+
+    #vcomments p {
+        font-size: 1rem;
+        line-height: 1.5rem;
+    }
+
+    #vcomments hr {
+        margin: 12px 0;
+        border: 0;
+        border-top: 1px solid #ccc;
+    }
+
+    #vcomments blockquote {
+        margin: 15px 0;
+        border-left: 5px solid #42b983;
+        padding: 1rem 0.8rem 0.3rem 0.8rem;
+        color: #666;
+        background-color: rgba(66, 185, 131, .1);
+    }
+
+    #vcomments pre {
+        font-family: monospace, monospace;
+        padding: 1.2em;
+        margin: .5em 0;
+        background: #272822;
+        overflow: auto;
+        border-radius: 0.3em;
+        tab-size: 4;
+    }
+
+    #vcomments code {
+        font-family: monospace, monospace;
+        padding: 1px 3px;
+        font-size: 0.92rem;
+        color: #e96900;
+        background-color: #f8f8f8;
+        border-radius: 2px;
+    }
+
+    #vcomments pre code {
+        font-family: monospace, monospace;
+        padding: 0;
+        color: #e8eaf6;
+        background-color: #272822;
+    }
+
+    #vcomments pre[class*="language-"] {
+        padding: 1.2em;
+        margin: .5em 0;
+    }
+
+    #vcomments code[class*="language-"],
+    pre[class*="language-"] {
+        color: #e8eaf6;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    #vcomments b,
+    strong {
+        font-weight: bold;
+    }
+
+    #vcomments dfn {
+        font-style: italic;
+    }
+
+    #vcomments small {
+        font-size: 85%;
+    }
+
+    #vcomments cite {
+        font-style: normal;
+    }
+
+    #vcomments mark {
+        background-color: #fcf8e3;
+        padding: .2em;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    /* 修复评论第一行位置错位 */
+    .v .vlist .vcard {
+    padding-top: 2.5em !important ;
+    }
+</style>
+
+<div class="card valine-card" data-aos="fade-up">
+    <div id="vcomments" class="card-content"></div>
+</div>
+
+<script src="/libs/valine/av-min.js"></script>
+<script src="/libs/valine/Valine.min.js"></script>
+<!-- <link rel="stylesheet" type="text/css" href="/libs//libs/jQuery-emoji/dist/css/jquery.emoji.css">
+<script src="/libs//libs/jQuery-emoji/dist/js/jquery.emoji.min.js"></script>
+<script src="/libs//libs/jQuery-emoji/dist/js/emoji.list.js"></script> -->
+<script>
+    new Valine({
+        el: '#vcomments',
+        appId: 'MxSNOS83TYWU3Opsy2GTW1ih-gzGzoHsz',
+        appKey: '4XevOgmAxHEwVDnIKgvEUihB',
+        notify: 'true' === 'true',
+        verify: 'true' === 'true',
+        visitor: 'true' === 'true',
+        avatar: 'mm',
+        pageSize: '10',
+        lang: 'zh-cn',
+        placeholder: '请畅所欲言吧，别害羞~',
+
+    });
+
+//     function parse_emoji() {
+//     jQuery(".vcontent").emojiParse({
+//       basePath: '/libs/jQuery-emoji/images/emoji',
+//       icons: emojiLists   // 注：详见 js/emoji.list.js
+//     });
+//   }
+  
+//   setTimeout(function() {
+//     // jQuery emoji 解析
+//     parse_emoji();
+//     // jquery emoji 初始化
+//     jQuery(".veditor").emoji({
+//       showTab: true,
+//       animation: 'slide',
+//       basePath: '/libs/jQuery-emoji/images/emoji',
+//       icons: emojiLists  // 注：详见 js/emoji.list.js
+//     });
+//     jQuery(".vmore").on("click", function() {
+//       setTimeout(function() {
+//         parse_emoji();
+//       }, 500);
+//     });
+//   }, 800)
+
+</script>
+        
+
+        
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/kafka-ri-zhi-cun-chu-xiang-jie.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="Kafka 日志存储详解">
+                        
+                        <span class="card-title">Kafka 日志存储详解</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            点击上方“Java知音”，选择“置顶公众号”
+技术文章第一时间送达！
+
+
+
+
+作者：爱宝贝丶
+my.oschina.net/zhangxufeng/blog/3114166
+
+
+
+
+my.oschina.net&#x2F;zhangxufe
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="fa fa-clock fa-fw icon-date"></i>2021-04-05
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" class="post-category" target="_blank">
+                                    分布式
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/Java%E5%88%86%E5%B8%83%E5%BC%8F-Java/" target="_blank">
+                        <span class="chip bg-color">Java分布式,Java</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fa fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/yuan-ma-fen-xi-dubbo-wang-luo-tong-xin-pian-nettyclient.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/1.jpg" class="responsive-img" alt="源码分析Dubbo网络通信篇NettyClient">
+                        
+                        <span class="card-title">源码分析Dubbo网络通信篇NettyClient</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            前言
+在源码分析Dubbo通讯篇之网络核心类一文中已给出Dubbo netty client的启动流程，如下图： 
+
+
+
+
+
+正文
+以Dubbo协议为例，DubboProtocol#refer中，在创建Invoker时，通过getClien
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="fa fa-clock fa-fw icon-date"></i>2021-04-05
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/dubbo/" class="post-category" target="_blank">
+                                    dubbo
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/dubbo%E6%BA%90%E7%A0%81/" target="_blank">
+                        <span class="chip bg-color">dubbo源码</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+    </div>
+</div>
+
+
+<script>
+    $('#articleContent').on('copy', function (e) {
+        // IE8 or earlier browser is 'undefined'
+        if (typeof window.getSelection === 'undefined') return;
+
+        var selection = window.getSelection();
+        // if the selection is short let's not annoy our users.
+        if (('' + selection).length < Number.parseInt('500')) {
+            return;
+        }
+
+        // create a div outside of the visible area and fill it with the selected text.
+        var bodyElement = document.getElementsByTagName('body')[0];
+        var newdiv = document.createElement('div');
+        newdiv.style.position = 'absolute';
+        newdiv.style.left = '-99999px';
+        bodyElement.appendChild(newdiv);
+        newdiv.appendChild(selection.getRangeAt(0).cloneContents());
+
+        // we need a <pre> tag workaround.
+        // otherwise the text inside "pre" loses all the line breaks!
+        if (selection.getRangeAt(0).commonAncestorContainer.nodeName === 'CODE') {
+            newdiv.innerHTML = "<pre>" + newdiv.innerHTML + "</pre>";
+        }
+
+        var url = document.location.href;
+        newdiv.innerHTML += '<br />'
+            + '来源: 好好学java<br />'
+            + '作者: 好好学java<br />'
+            + '链接: <a href="' + url + '">' + url + '</a><br />'
+            + '本文章著作权归作者所有，任何形式的转载都请注明出处。';
+
+        selection.selectAllChildren(newdiv);
+        window.setTimeout(function () { bodyElement.removeChild(newdiv); }, 200);
+    });
+</script>
+
+
+
+<!--
+<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+<script>
+    const btw = new BTWPlugin();
+    btw.init({
+        id: 'container',
+        blogId: '15305-1590684104111-518',
+        name: '程序员的技术圈子',
+        qrcode: 'http://image.ouyangsihai.cn/FtAUOeE5--1JTdcuuZFIhMuEUuJO',
+        keyword: 'vip',
+    });
+</script>
+-->
+
+    </div>
+    <div id="toc-aside" style="width: 310px;" class="expanded col l3 hide-on-med-and-down">
+        <!-- 自定义右侧card：欧阳思海 -->
+        <!-- <div id="my-card" style="background: ">
+            
+        </div> -->
+        <!-- <div class="toc-widget">
+            <div class="toc-title" style="display: none;"><i class="fa fa-list-alt"></i>&nbsp;&nbsp;</div>
+            <div id="toc-content"></div>
+        </div> -->
+
+
+
+
+
+
+
+
+        <aside class="col-lg-3" style="width: 300px;">
+
+            <link rel="stylesheet" type="text/css" href="/css/my-aside.css">
+
+            <!-- 关注公众号信息：欧阳思海 -->
+            <div class="widget-wrap">
+                <div class="widget bg-danger" style="color:whitesmoke; background-color: #419488">
+                    <div class="card-front animated col s12 m12 l8 offset-l2 fadeInUp">
+                        <div class="row">
+                            <div class="col-md-5" style="text-align: center;">
+                                <img class="adv" style="width: 95px; height: 95px;"
+                                    src="http://image.ouyangsihai.cn/FtAUOeE5--1JTdcuuZFIhMuEUuJO">
+                            </div>
+                            <div class="col-md-7" style="text-align: center;">
+                                <h2 style="font-size: 18px; 
+                                    margin: 0; 
+                                    padding: 0;
+                                    border: 0; 
+                                    outline: 0;
+                                    font-weight: inherit;
+                                    font-style: inherit;
+                                    font-family: inherit;
+                                    vertical-align: baseline;">关注公众号</h2>
+                                 
+                                <small style="font-size: 15px;">
+                                    →「技术干货」每日推送 <br>
+                                    →「回复资料」领取资料 <br>
+                                    →「微信加群」每周福利 <br>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div style="font-size: 0.8em;">
+                        <a href="/assets/erweima.jpg" target="_blank"
+                            style="color:orange;font-size: 14px;">点击添加我的微信，加入技术讨论群</a>
+                        除公众号以外，我还会在以下平台发布内容：
+                    </div>
+                    -->
+
+                    <div class="profile-block social-links col-md-7" style="text-align: center;">
+                        <table style="align-items: center; 
+                                        padding-left: 25px;">
+                            <tbody>
+                                <tr>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank" title="GitHub"
+                                            class="tooltip">
+                                            <img style="width: 22px;height: 22px;" src="/icons/github.svg"></a>
+                                    </td>
+
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://www.zhihu.com/people/hai-hai-ren-sheng-50/activities"
+                                            target="_blank" title="知乎" class="tooltip">
+                                            <img style="width: 22px;" src="/icons/zhihu.svg"></a>
+                                    </td>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://blog.csdn.net/sihai12345" target="_blank" title="CSDN"
+                                            class="tooltip">
+                                            <img style="width: 18px;" src="/icons/CSDN.svg"></a>
+                                    </td>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://www.jianshu.com/u/12b0bd4c857c" target="_blank" title="简书"
+                                            class="tooltip">
+                                            <img style="width: 22px;" src="/icons/JianShu.svg"></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            
+
+            <!-- custom rightside_link：热门文章推荐：欧阳思海 -->
+            
+            <div class="widget-wrap widget-panel">
+                <p style="text-align: left;padding-bottom: 10px;line-height: 30px; font-size: 14px;">
+                    
+                    <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        本人花费半年的时间总结的《 Java 面试指南》已拿腾讯等大厂 offer，已开源在 github ，欢迎 star！
+                    </a><br>
+                    
+                    <a href="https://mp.weixin.qq.com/s/I0jimqziHqRNaIy0kXRCnw" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        2020 Java 1000G 最新学习资源，Java基础、Java项目实战、Java分布式等等！
+                    </a><br>
+                    
+                    <a href="http://image.ouyangsihai.cn/FpB-dO6g-XU44mMrVlj7EL1y7Rs7" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        高级 Java 开发微信群，一起搞事情吧！
+                    </a><br>
+                    
+                </p>
+            </div>
+            
+
+            
+
+            <!-- custom rightside_banner：右侧广告或者其他的栏目设置：欧阳思海 -->
+            
+            <div class="widget-wrap">
+                <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">
+                    <img src="http://image.ouyangsihai.cn/FhhoEYMaNr6m0v8KhG8vSPgoREBV" style="width: 100%;">
+                </a>
+            </div>
+            
+            
+
+            
+
+            <!-- 右侧专栏分类：欧阳思海 -->
+            
+            <div class="widget-wrap widget-panel">
+                <ul class="media-list">
+                    
+                    <li class="media">
+                        <a href="/categories/MySQL的艺术世界/" target="_blank">
+                            <div class="media-left">
+                                <img class="media-object" src="http://image.ouyangsihai.cn/Fn3kQurieQ_0QUeqPmx5RW5i6R9n" style="width: 55px;">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading" style="margin-bottom: 10px; font-size: 100%;
+                                                                    margin: 0;
+                                                                    padding: 0;
+                                                                    border: 0;
+                                                                    outline: 0;
+                                                                    font-weight: inherit;
+                                                                    font-style: inherit;
+                                                                    font-family: inherit;
+                                                                    vertical-align: baseline;">
+                                    MySQL 的系列文章，解决全部面试问题！
+                                </h4>
+                                <p>
+                                    总共10篇文章，面试热门的锁、事务，通通解决了！
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    <hr>
+                    
+                    <li class="media">
+                        <a href="/categories/深入理解Java虚拟机/" target="_blank">
+                            <div class="media-left">
+                                <img class="media-object" src="http://image.ouyangsihai.cn/FpcS21VWJOHSgGzKcpW3_xVTSEeN" style="width: 55px;">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading" style="margin-bottom: 10px; font-size: 100%;
+                                                                    margin: 0;
+                                                                    padding: 0;
+                                                                    border: 0;
+                                                                    outline: 0;
+                                                                    font-weight: inherit;
+                                                                    font-style: inherit;
+                                                                    font-family: inherit;
+                                                                    vertical-align: baseline;">
+                                    深入理解 Java 虚拟机，面试必问
+                                </h4>
+                                <p>
+                                    总共10篇文章，包括内存模型、GC算法、GC收集器等。
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    <hr>
+                    
+                </ul>
+            </div>
+            
+
+            <!-- 右侧分类 -->
+            <div class="widget-wrap widget-panel">
+                <h3 class="widget-title">文章分类</h3>
+                <div class="widget">
+                    <ul class="category-list">
+                        
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/趣聊数据结构与算法/">>
+                                趣聊数据结构与算法</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/职业生涯浅谈/">>
+                                职业生涯浅谈</a><span class="category-list-count">33</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java项目分享/">>
+                                Java项目分享</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java面试经验/">>
+                                Java面试经验</a><span class="category-list-count">4</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/我要进大厂/">>
+                                我要进大厂</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/好好学java/">>
+                                好好学java</a><span class="category-list-count">1116</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/剑指offer/">>
+                                剑指offer</a><span class="category-list-count">112</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/css/">>
+                                css</a><span class="category-list-count">12</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/其他框架/">>
+                                其他框架</a><span class="category-list-count">142</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python其他/">>
+                                python其他</a><span class="category-list-count">45</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/数据库相关/">>
+                                数据库相关</a><span class="category-list-count">293</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java核心知识/">>
+                                Java核心知识</a><span class="category-list-count">196</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java面试题/">>
+                                Java面试题</a><span class="category-list-count">308</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/mybatis源码/">>
+                                mybatis源码</a><span class="category-list-count">56</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/spring教程/">>
+                                spring教程</a><span class="category-list-count">173</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springboot教程/">>
+                                springboot教程</a><span class="category-list-count">156</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/实战Activiti工作流/">>
+                                实战Activiti工作流</a><span class="category-list-count">4</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springcloud教程/">>
+                                springcloud教程</a><span class="category-list-count">39</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/linux/">>
+                                linux</a><span class="category-list-count">91</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python框架/">>
+                                python框架</a><span class="category-list-count">43</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python基础/">>
+                                python基础</a><span class="category-list-count">78</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/dubbo/">>
+                                dubbo</a><span class="category-list-count">37</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java源码/">>
+                                Java源码</a><span class="category-list-count">76</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/叽叽喳喳杂七杂八/">>
+                                叽叽喳喳杂七杂八</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/MySQL的艺术世界/">>
+                                MySQL的艺术世界</a><span class="category-list-count">8</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/jquery/">>
+                                jquery</a><span class="category-list-count">14</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java并发/">>
+                                Java并发</a><span class="category-list-count">43</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java文章合辑/">>
+                                Java文章合辑</a><span class="category-list-count">11</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java基础修炼/">>
+                                Java基础修炼</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/不一样的Java8/">>
+                                不一样的Java8</a><span class="category-list-count">3</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/小程序开发的世界/">>
+                                小程序开发的世界</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java学习资源分享/">>
+                                Java学习资源分享</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java小学生漫游/">>
+                                Java小学生漫游</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/rocketmq源码解析/">>
+                                rocketmq源码解析</a><span class="category-list-count">33</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springmvc最新教程/">>
+                                springmvc最新教程</a><span class="category-list-count">9</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java的Exception/">>
+                                Java的Exception</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/vue-js/">>
+                                vue.js</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/实战设计模式/">>
+                                实战设计模式</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python数据处理/">>
+                                python数据处理</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java-Web闯关/">>
+                                Java Web闯关</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springboot2-0最新教程/">>
+                                springboot2.0最新教程</a><span class="category-list-count">11</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/netty/">>
+                                netty</a><span class="category-list-count">16</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/rpc/">>
+                                rpc</a><span class="category-list-count">13</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/拥抱大厂系列/">>
+                                拥抱大厂系列</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/eureka/">>
+                                eureka</a><span class="category-list-count">19</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/分布式/">>
+                                分布式</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/中间件/">>
+                                中间件</a><span class="category-list-count">23</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java基础/">>
+                                Java基础</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/带你学Python/">>
+                                带你学Python</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/使用技术工具/">>
+                                使用技术工具</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/mycat源码/">>
+                                mycat源码</a><span class="category-list-count">5</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/深入理解Java虚拟机/">>
+                                深入理解Java虚拟机</a><span class="category-list-count">8</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/spring源码/">>
+                                spring源码</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java集合源码分析/">>
+                                Java集合源码分析</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/github的repo/">>
+                                github的repo</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java框架深究/">>
+                                Java框架深究</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/分布式架构/">>
+                                分布式架构</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+
+        </aside>
+
+
+
+
+
+
+
+
+
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. 修改成永远不显示：欧阳思海-->
+
+
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h1, h2, h3, h4, h5'
+        });
+
+        console.log('============');
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h1, h2, h3, h4, h5').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+                        
+            /* 修复文章卡片 div 的宽度. */
+            let fixPostCardWidth = function (srcId, targetId) {
+                let srcDiv = $('#' + srcId);
+                if (srcDiv.length === 0) {
+                    return;
+                }
+
+                let w = srcDiv.width();
+                if (w >= 450) {
+                    w = w + 21;
+                } else if (w >= 350 && w < 450) {
+                    w = w + 18;
+                } else if (w >= 300 && w < 350) {
+                    w = w + 16;
+                } else {
+                    w = w + 14;
+                }
+                $('#' + targetId).width(w);
+            };
+
+            // 切换TOC目录展开收缩的相关操作.
+            // 修改右侧边栏功能：欧阳思海
+            const expandedClass = 'expanded';
+            let $tocAside = $('#toc-aside');
+            let $mainContent = $('#main-content');
+
+            $('#floating-toc-btn .btn-floating').click(function () {
+                if ($tocAside.hasClass(expandedClass)) {
+                    $tocAside.removeClass(expandedClass).slideUp(500);
+                    $mainContent.removeClass('l9');
+                } else {
+                    $tocAside.addClass(expandedClass).slideDown(500);
+                    $mainContent.addClass('l9');
+                }
+                fixPostCardWidth('artDetail', 'prenext-posts');
+            });
+                        
+                    });
+</script>
+    
+
+</main>
+
+
+        <footer class="page-footer bg-color">
+    <div class="container row center-align">
+        <div class="col s12 m8 l8 copy-right">
+            
+	    Copyright&copy; 2019 <a href="https://www.java1000.com/" target="_blank"> 好好学java </a>维护. 网站备案/许可证号：赣ICP备17007984号-3
+            <br>
+            <span id="sitetime"></span>
+            <br>
+
+            
+
+            
+                    <!-- 
+                        <span id="busuanzi_container_site_pv" style='display:none'></span>
+                        总访问量: <span id="busuanzi_value_site_pv" class="white-color"></span>
+                    
+        
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'></span>
+                        人次&nbsp; | &nbsp;访客人数: <span id="busuanzi_value_site_uv" class="white-color"></span> 人
+                     -->
+                        <!-- 修改计数：欧阳思海 -->
+                    
+                        <span id="busuanzi_container_site_pv" style='display:inline'>
+                            <i class="fa fa-heart-o"></i>
+                            本站总访问量 <span id="busuanzi_value_site_pv" class="white-color"></span>
+                        </span>
+                    
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'>
+                            人次,&nbsp;访客数 <span id="busuanzi_value_site_uv" class="white-color"></span> 人.
+                        </span>
+                    
+    
+            
+
+            
+                &nbsp; | &nbsp;字数统计:&nbsp;
+                <span class="white-color">8290.3k</span> 字
+            
+
+            
+            <br>
+
+        </div>
+
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fa fa-code-branch"></i>
+    </a>
+
+
+ 
+    <a href="https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=1446037005@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fa fa-envelope-open"></i>
+    </a>
+
+
+
+
+    <a href="https://zhihu.com/people/hai-hai-ren-sheng-50/activities" class="tooltipped" target="_blank" data-tooltip="访问我的知乎" data-position="top" data-delay="50">
+        <i class="fa fa-inverse">知</i>
+    </a>
+
+
+
+
+
+
+
+
+
+    <a href="https://blog.ouyangsihai.cn/sitemap.xml" class="tooltipped" target="_blank" data-tooltip="站点地图" data-position="top" data-delay="50">
+        <i class="fa fa-sitemap"></i>
+    </a>
+
+
+
+    <a href="https://blog.ouyangsihai.cn/friends" class="tooltipped" target="_blank" data-tooltip="友情链接" data-position="top" data-delay="50">
+        <i class="fa fa-address-book"></i>
+    </a>
+</div>
+
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+
+        var t1 = Date.UTC(2019, 08, 10, 00, 00, 00); //北京时间2019-8-1 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes *
+            minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "本站已运行 " + diffYears + " 年 " + diffDays + " 天 " + diffHours +
+            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒" ;
+    } /*因为建站时间还没有一年，就将之注释掉了。需要的可以取消*/
+    siteTime();
+</script>
+
+<!-- 修改计数：欧阳思海 -->
+<script>
+    $(document).ready(function () {
+
+        var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+        var pvcountOffset = 1005469;  // 初始化首次数据
+        var uvcountOffset = 250804;
+
+        function fixCount() {
+            if (document.getElementById("busuanzi_container_site_pv").style.display != "none") {
+                $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + pvcountOffset);
+                clearInterval(int);
+            }
+            if ($("#busuanzi_container_site_pv").css("display") != "none") {
+                $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + uvcountOffset); // 加上初始数据 
+                clearInterval(int); // 停止检测
+            }
+        }
+    });
+</script>
+
+
+
+
+        <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.json", 'searchInput', 'searchResult');
+});
+</script>
+        <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fa fa-angle-up"></i>
+    </a>
+</div>
+
+
+        <script src="/libs/materialize/materialize.min.js"></script>
+        <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+        <script src="/libs/aos/aos.js"></script>
+        <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+        <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+        <script src="/js/matery.js"></script>
+
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-149362573-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    gtag('config', 'UA-149362573-1');
+</script>
+
+
+
+        
+            <script src="/libs/others/clicklove.js"></script>
+        
+
+        
+            <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+        
+
+        <!-- 洪卫 shw2018 add 2019.08.28 -->
+        <script type="text/javascript">
+            var OriginTitile = document.title,
+                st;
+            document.addEventListener("visibilitychange", function () {
+                document.hidden ? (document.title = "看不见我🙈~看不见我🙈~", clearTimeout(st)) : (document.title =
+                    "(๑•̀ㅂ•́) ✧被发现了～", st = setTimeout(function () {
+                        document.title = OriginTitile
+                    }, 3e3))
+            })
+        </script>
+
+        <!-- 鼠标点击烟花爆炸效果  洪卫 shw2018 add 2019.09.09 -->
+        
+
+        <!-- 背景雪花飘落特效洪卫 shw2018 add 2019.09.10 -->
+        
+
+        <!-- 鼠标点击文字特效 洪卫 shw2018 add 2019.09.10-->
+        
+
+        <!-- 背景雪花飘落特效 洪卫 shw2018 add 2019.09.10 -->
+        
+
+        <!-- 在线聊天工具  洪卫 shw2018 add 2019.09.11 -->
+        
+
+        <!-- 背景 canvas-nest  洪卫 shw 2018  add 2019.09.15-->
+        
+
+        <!-- 背景静止彩带  洪卫 shw 2018  add 2019.09.15-->
+        
+
+        <!-- 背景动态彩带 洪卫 shw 2018  add 2019.09.15-->
+        
+
+    </body>
+</html>

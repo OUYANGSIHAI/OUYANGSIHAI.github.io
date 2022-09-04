@@ -1,0 +1,2772 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+    <!-- shw2018 洪卫  modify 2019.08.15-->
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="Spring Boot, Spring Cloud, 微服务, Java技术, 好好学java, Java面试, 分布式, 最新干货分享">
+    <meta name="baidu-site-verification" content="fmlEuI34ir" />
+    <meta name="google-site-verification" content="ZWVq5UvPg33BCEA3LRTUkYe5J854o9lF1_WRTer9l8A" />
+    <meta name="description" content="本站是 好好学java 的技术分享博客。内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、分布式、Java面试、测试开发等相关的研究与知识分享。">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>万字讲解API网关的来龙去脉 | 好好学java | Spring Boot | Spring Cloud | 微服务 | Java技术 | Java面试 | 分布式 | 最新干货分享</title>
+    <link rel="icon" type="image/png" href="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7">
+
+    <!-- <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css"> -->
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    <!-- 自定义fontawesome样式：欧阳思海 -->
+    <link rel="stylesheet" type="text/css" href="/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/brands.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/fontawesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/regular.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/solid.min.css">
+
+
+    <style type="text/css">
+        code[class*="language-"],
+            pre[class*="language-"] {
+                white-space: pre !important;
+            }
+
+            
+
+        /* 将matery.css中的背景颜色修改放到这里：欧阳思海 */
+        .bg-color {
+            background-image: linear-gradient(to right, #ec8585 0%, #419488 100%);
+            opacity: 0.9;
+            // 透明度
+        }
+    </style>
+
+    <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
+    <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+
+    
+    
+    <script>
+        (function () {
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+    
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?6fe466069710c03a563713b507fbaca7";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+    <!-- Google Analytics -->
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-XXXXX-Y', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <!-- End Google Analytics -->
+
+    <script>(function (i, s, o, g, r, a, m) { i["DaoVoiceObject"] = r; i[r] = i[r] || function () { (i[r].q = i[r].q || []).push(arguments) }, i[r].l = 1 * new Date(); a = s.createElement(o), m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; a.charset = "utf-8"; m.parentNode.insertBefore(a, m) })(window, document, "script", ('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/0a804bac.js", "daovoice")</script>
+
+    <script>
+        if (true) {
+            daovoice('init', {
+                app_id: "0a804bac",
+                user_id: "NO_89757", // 必填: 该用户在您系统上的唯一ID
+                email: "daovoice@example.com", // 选填:  该用户在您系统上的主邮箱
+                name: "道客船长", // 选填: 用户名
+                signed_up: 1449821660 // 选填: 用户的注册时间，用Unix时间戳表示
+            });
+            daovoice('update');
+
+            daovoice('init', {
+                app_id: "0a804bac"
+            });
+            daovoice('update');
+        }
+    </script>
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/rss2.xml" title="好好学java" type="application/rss+xml">
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+    <body>
+
+        <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span" style="font-size: 1.4rem;">好好学java</span>
+                </a>
+            </div>
+            
+
+
+<!-- <a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-navicon"></i></a>
+<ul class="right">
+    
+    <li class="hide-on-med-and-down">
+        <a href="" class="waves-effect waves-light">
+            
+            <i class="fa "></i>
+            
+            <span></span>
+        </a>
+    </li>
+    
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title=""></i>
+        </a>
+    </li>
+</ul> -->
+
+<!-- 支持二级菜单特性 洪卫 shw2018 modify 2019.09.17  -->
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-align-justify"></i></a>
+<ul class="right nav-menu">
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-folder-minus"></i>
+                
+                <span style="font-size: 1.1rem;">Java学习</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/" >
+                    
+                    <span>Java入门</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Javaweb/" >
+                    
+                    <span>Java Web</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/spring%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>Spring教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/springboot%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>SpringBoot教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/springcloud%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>SpringCloud教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98/" >
+                    
+                    <span>Java面试</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%89%91%E6%8C%87offer/" >
+                    
+                    <span>剑指offer</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-code-branch"></i>
+                
+                <span style="font-size: 1.1rem;">Java进阶</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97/" >
+                    
+                    <span>设计模式</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" >
+                    
+                    <span>Java并发编程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/" >
+                    
+                    <span>数据库</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/redis/" >
+                    
+                    <span>Redis</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/linux/" >
+                    
+                    <span>Linux</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/" >
+                    
+                    <span>Java实战项目</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-code"></i>
+                
+                <span style="font-size: 1.1rem;">python学习</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/python%E5%9F%BA%E7%A1%80/" >
+                    
+                    <span>python基础</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/python%E6%A1%86%E6%9E%B6/" >
+                    
+                    <span>python框架</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/python%E5%85%B6%E4%BB%96/" >
+                    
+                    <span>python其他</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-coffee"></i>
+                
+                <span style="font-size: 1.1rem;">Java扩展</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/dubbo/" >
+                    
+                    <span>dubbo</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/netty/" >
+                    
+                    <span>netty</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/rpc/" >
+                    
+                    <span>rpc</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/eureka/" >
+                    
+                    <span>eureka</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/" >
+                    
+                    <span>中间件</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" >
+                    
+                    <span>分布式</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-desktop"></i>
+                
+                <span style="font-size: 1.1rem;">计算机核心</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" >
+                    
+                    <span>数据结构</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98/" >
+                    
+                    <span>leetcode刷题</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" >
+                    
+                    <span>计算机网络</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" >
+                    
+                    <span>算法</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/categories/" class="waves-effect waves-light">
+              
+                <i style="font-size: 1.1rem;" class="fa fa-adjust"></i>
+              
+              <span style="font-size: 1.1rem;">学习资源</span>
+            </a>
+
+            
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/contact" class="waves-effect waves-light">
+              
+                <i style="font-size: 1.1rem;" class="fa fa-envelope"></i>
+              
+              <span style="font-size: 1.1rem;">留言</span>
+            </a>
+
+            
+      </li>
+    
+
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title="搜索"></i>
+        </a>
+    </li>
+
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">好好学java</div>
+        <div class="logo-desc">
+            
+            
+            本站是 好好学java 的技术分享博客，涵盖Java后端技术、SpringBoot、微服务架构、分布式、Java面试等知 ...
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-folder-minus"></i>
+			
+			Java学习
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/ " style="margin-left:75px";>
+				  
+		          <span>Java入门</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Javaweb/ " style="margin-left:75px";>
+				  
+		          <span>Java Web</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/spring%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>Spring教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/springboot%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>SpringBoot教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/springcloud%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>SpringCloud教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98/ " style="margin-left:75px";>
+				  
+		          <span>Java面试</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%89%91%E6%8C%87offer/ " style="margin-left:75px";>
+				  
+		          <span>剑指offer</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-code-branch"></i>
+			
+			Java进阶
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97/ " style="margin-left:75px";>
+				  
+		          <span>设计模式</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>Java并发编程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/ " style="margin-left:75px";>
+				  
+		          <span>数据库</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/redis/ " style="margin-left:75px";>
+				  
+		          <span>Redis</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/linux/ " style="margin-left:75px";>
+				  
+		          <span>Linux</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/ " style="margin-left:75px";>
+				  
+		          <span>Java实战项目</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-code"></i>
+			
+			python学习
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/python%E5%9F%BA%E7%A1%80/ " style="margin-left:75px";>
+				  
+		          <span>python基础</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/python%E6%A1%86%E6%9E%B6/ " style="margin-left:75px";>
+				  
+		          <span>python框架</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/python%E5%85%B6%E4%BB%96/ " style="margin-left:75px";>
+				  
+		          <span>python其他</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-coffee"></i>
+			
+			Java扩展
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/dubbo/ " style="margin-left:75px";>
+				  
+		          <span>dubbo</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/netty/ " style="margin-left:75px";>
+				  
+		          <span>netty</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/rpc/ " style="margin-left:75px";>
+				  
+		          <span>rpc</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/eureka/ " style="margin-left:75px";>
+				  
+		          <span>eureka</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/ " style="margin-left:75px";>
+				  
+		          <span>中间件</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/ " style="margin-left:75px";>
+				  
+		          <span>分布式</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-desktop"></i>
+			
+			计算机核心
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/ " style="margin-left:75px";>
+				  
+		          <span>数据结构</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98/ " style="margin-left:75px";>
+				  
+		          <span>leetcode刷题</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/ " style="margin-left:75px";>
+				  
+		          <span>计算机网络</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E7%AE%97%E6%B3%95/ " style="margin-left:75px";>
+				  
+		          <span>算法</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories/" class="waves-effect waves-light">
+			
+			    <i class="fa fa-fw fa-adjust"></i>
+			
+			学习资源
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa fa-fw fa-envelope"></i>
+			
+			留言
+		</a>
+          
+        </li>
+        
+        
+    </ul>
+</div>
+
+        </div>
+
+        
+    </nav>
+
+</header>
+
+        
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/0.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <div class="description center-align post-title">
+                        万字讲解API网关的来龙去脉
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 20px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+
+    /* 自定义mycard：欧阳思海 */
+
+    #my-card {
+        /* position: relative; */
+        width: 310px;
+        height: 300px;
+        /* max-height: 330px; */
+        margin-bottom: 15px;
+        margin-top: 15px;
+        /* text-align: center; */
+        border: 0;
+        border-radius: 3px;
+        color: rgba(0, 0, 0, .87);
+        background: #fff 50%;
+        background-image: none;
+        background-size: auto;
+        background-size: cover;
+        box-shadow: 0 15px 35px rgba(50, 50, 93, .1), 0 5px 15px rgba(0, 0, 0, .07);
+    }
+
+    /* .widget {
+        line-height: 1.6em;
+        word-wrap: break-word;
+        font-size: 0.9em;
+        padding-top: 15px;
+        padding-left: -45px;
+    } */
+</style>
+
+
+
+
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- shw2018 洪卫  modify 2019.08.15-->
+
+<!-- 代码块修改的代码开始 -->
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFunction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+<!-- 代码块折行 -->
+
+<style type="text/css">
+code[class*="language-"], pre[class*="language-"] { white-space: pre !important; }
+</style>
+
+<!-- 代码块修改代码结束 -->
+
+
+<!-- 文章内容详情 -->
+<div id="container">
+    <div id="artDetail">
+        <div class="card">
+            <div class="card-content article-info">
+                <div class="row tag-cate">
+                    <div class="col s7">
+                        
+                        <div class="article-tag">
+                            <span class="chip bg-color">无标签</span>
+                        </div>
+                        
+                    </div>
+                    <div class="col s5 right-align">
+                        
+                        <div class="post-cate">
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E5%A5%BD%E5%A5%BD%E5%AD%A6java/" class="post-category" target="_blank">
+                                好好学java
+                            </a>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <div class="post-info">
+                    <div class="post-date info-break-policy">
+                        <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
+                        2021-04-04
+                    </div>
+
+                    <div class="post-author info-break-policy">
+                        <i class="fa fa-user-o fa-fw"></i>作者:&nbsp;&nbsp;
+                        
+                        欧阳思海
+                        
+                    </div>
+
+                    
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;
+                        14.3k
+                    </div>
+                    
+
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-clock-o fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                        50 分
+                    </div>
+                    
+                    
+
+                    
+                    <span id="busuanzi_container_site_pv" style='display:none'></span>
+                    <i class="fa fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                    <span id="busuanzi_value_page_pv"></span>
+
+                    
+
+                </div>
+            </div>
+            <hr class="clearfix">
+            <div class="card-content article-card-content">
+                <!-- 欧阳思海，modify，2020.05.01-->
+<!-- 文章详情详情页面的头部广告位置信息 -->
+<div id="post-head-panel">
+    
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" style="font-size: 18px;" target="_blank">
+        <img src="/icons/hot.gif">
+        本人花费半年的时间总结的《Java面试指南》已拿腾讯等大厂offer，已开源在github ，欢迎star！
+    </a>
+    
+    
+</div>
+<br />
+
+
+
+<blockquote>
+    
+            <p>本文GitHub <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">https://github.com/OUYANGSIHAI/JavaInterview</a> 已收录，这是我花了6个月总结的<b>一线大厂Java面试</b>总结，本人已拿大厂offer，欢迎star</p>
+    
+    <p>原文链接：blog.ouyangsihai.cn &gt;&gt; <a href="/wan-zi-jiang-jie-api-wang-guan-de-lai-long-qu-mai.html" target="_blank">万字讲解API网关的来龙去脉</a></p>
+</blockquote>
+                <div id="articleContent">
+                    <p>点击上方 **好好学java **，选择 **星标 **公众号</p>
+<pre class="line-numbers language-java"><code class="language-java">
+重磅资讯、干货，第一时间送达
+
+
+今日推荐：<span class="token number">2020</span>年<span class="token number">7</span>月程序员工资统计，平均<span class="token number">14357</span>元，又跌了，扎心个人原创100W<span class="token operator">+</span>访问量博客：点击前往，查看更多
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>本文作者：人月神话   </p>
+<p>出处：blog.sina.com.cn&#x2F;</p>
+<p>s&#x2F;blog_493a84550102z8x4.html</p>
+<h2 id="序"><a href="#序" class="headerlink" title="序"></a>序</h2><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9KUmVVc2ljZm1FUGJKNkRuVEgzNkdCakZUdjc4TlNpYmZCeUxqZ1p2UE0wb2liSXBhZHlXZXhqY2FHWlNjN3Y2dXFJWlNjQjBZMXRwWEN4Mk9STExCWEdlZy82NDA?x-oss-process=image/format,png">
+
+<p>今天准备再详细讲解下 API 网关的基础概念，使用场景和核心功能，以及基于 API 网关核心引擎做的 API 全生命周期管理功能扩展等，最好再介绍下当前主流的开源 API 网关引擎。</p>
+<h2 id="API-网关概述"><a href="#API-网关概述" class="headerlink" title="API 网关概述"></a>API 网关概述</h2><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9KUmVVc2ljZm1FUGJKNkRuVEgzNkdCakZUdjc4TlNpYmZCaHlmd1psdlpxUU1oWjltTHRDMmt0emR0N2NmaWE3cmdxdmN3SFBRbzV1WW1YQjJRcGlhMmFJeFEvNjQw?x-oss-process=image/format,png">
+
+<p>在微服务架构体系里面，我们一般会使用到微服务网关或叫 API 网关。</p>
+<p>大家都比较清楚，在微服务架构体系下本身是去中心化的架构，通过服务注册中心来实现服务注册发现和消费调用，那么为何又需要使用 API 网关？</p>
+<p>在传统的 ESB 总线进行服务集成的时候我们就经常谈到一个概念就是位置透明，即需要屏蔽底层业务模块提供 API 接口服务地址信息，并实现多个微服务 API 接口的统一出口。即类似设计模式里面经常谈到的门面模式。</p>
+<h3 id="如何给-API-网关一个定义？"><a href="#如何给-API-网关一个定义？" class="headerlink" title="如何给 API 网关一个定义？"></a>如何给 API 网关一个定义？</h3><p>简单来说 API 网关就是将所有的微服务提供的 API 接口服务能力全部汇聚进来，统一接入进行管理，也正是通过统一拦截，就可以通过网关实现对 API 接口的安全，日志，限流熔断等共性需求。如果再简单说下，通过网关实现了几个关键能力。</p>
+<ul>
+<li>内部的微服务对外部访问来说位置透明，外部应用只需和网关交互 统一拦截接口服务，实现安全，日志，限流熔断等需求<br>从这里，我们就可以看到 API 网关和传统架构里面的 ESB 总线是类似的，这些关键能力本身也是 ESB 服务总线的能力，但是 ESB 服务总线由于要考虑遗留系统的接入，因此增加了：</li>
+<li>大量适配器实现对遗留系统的遗留接口适配，多协议转换能力 进行数据的复制映射，路由等能力<br>对于两者，我原来做过一个简单的对比，大家可以参考。</li>
+</ul>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9KUmVVc2ljZm1FUGJKNkRuVEgzNkdCakZUdjc4TlNpYmZCVWpBdVRRSlhxdGljTWVBeHduaWNlbEMxaWFremZSVjNZWHBJWVdOSEY3VlpIU2t0clpnRlRZb3NBLzY0MA?x-oss-process=image/format,png">
+
+<p>这个概念理解后，我们再回到微服务架构里面。</p>
+<p>对于微服务架构大家经常说的最多的就是去中心化的架构，认为 ESB 中心化架构模式已经过时。而实际上经过上面分析你可以看到。在微服务架构里面的 API 网关仍然是中心化的架构模式，所有的 API 接口都要经过网关这个点。</p>
+<ul>
+<li>非中心化架构-》走微服务里面的服务注册中心进行接口交互- 中心化架构-》走网关进行接口服务暴露和共享交互<br>对于微服务架构里面有无去中心化的架构？当然是有的，即我们常说的微服务模块之间可以通过服务注册中心来实现服务发现查找，服务间的点对点调用即使去中心化的。</li>
+</ul>
+<p>如果一个单体拆分为微服务后，完全不需要和外部应用打交道，也不需要共享自己的接口能力，那么这个微服务体系里面就不需要用 API 网关，仅仅使用服务注册中心即可。通过服务注册中心实现完全的去中心化和接口调用更高的性能。</p>
+<h3 id="什么时候需要使用-API-网关？"><a href="#什么时候需要使用-API-网关？" class="headerlink" title="什么时候需要使用 API 网关？"></a>什么时候需要使用 API 网关？</h3><p>如果一个微服务架构下，虽然不会外部的其它应用进行交互和集成，但是整个应用本身存在 APP 应用端，而 APP 应用端通过前后端分析开发，同时需要通过互联网访问。本身存在需要一个统一访问 API 访问入口，同时也需要考虑和内部微服务模块进一步进行安全隔离。</p>
+<p>当我们谈到这里的时候，你会发现我们常说的 API 网关的服务代理或透传能力，实际和我们常说的 Ngnix 反向代理或路由是一个意思。</p>
+<p>如果你仅仅是为了统一 API 接口的访问出口，并考虑类似 DMZ 区的安全隔离，那么在你架构前期完全不需要马上实施 API 网关，直接采用 Ngnix 进行服务路由代理即可。因为在这种架构下，API 接口消费端，提供端全部是一个开发团队开发，各种问题分析排查都相当方便，类似 API 接口安全访问等也可以通过 JWT，Auth2.0 等统一实现，而且这个过程也并不复杂。</p>
+<h3 id="能力开放或多应用外部集成对-API-管控治理需要"><a href="#能力开放或多应用外部集成对-API-管控治理需要" class="headerlink" title="能力开放或多应用外部集成对 API 管控治理需要"></a>能力开放或多应用外部集成对 API 管控治理需要</h3><p>但是当我们面临是和多个外部应用集成，或者说将自己的 API 接口服务能力开放给外部多个合作伙伴使用的时候，这个时候对于 API 接口的管控治理要求自然增加。</p>
+<p>即在常规的服务代理路由基础上，需要增加类似负载均衡，安全，日志，限流熔断等各种能力，而且我们不希望这些能力在 API 接口开发的时候考虑，而是希望这些能力是在 API 接入到网关的时候统一灵活配置来实现管控。</p>
+<p>那么这个时候使用 API 网关作用就体现出来。</p>
+<h2 id="API-网关核心功能说明"><a href="#API-网关核心功能说明" class="headerlink" title="API 网关核心功能说明"></a>API 网关核心功能说明</h2><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9KUmVVc2ljZm1FUGJKNkRuVEgzNkdCakZUdjc4TlNpYmZCMFFDakxSS1I5V01zRXBqWG81Z0hFT1A3RkVBQVg1aWJ3c3Y4aWNpYThnNXNpYVc5eVI3Nmtmc1V5dy82NDA?x-oss-process=image/format,png">
+
+<p>对于 API 网关实际上前面已经多次强调，可以看做是 ESB 总线的轻量化实现，不再需要复杂的协议转换，适配和数据映射等能力，但是提升了流量控制和安全，实时监控等方面的能力。对于 API 网关引擎部分提供的核心功能，再简单总结如下：</p>
+<h3 id="1-实现统一服务代理和服务统一出口"><a href="#1-实现统一服务代理和服务统一出口" class="headerlink" title="1.实现统一服务代理和服务统一出口"></a>1.实现统一服务代理和服务统一出口</h3><p>这点是网关和常规点对点服务注册中心最大的一个区别点，就是位置透明，消费端只需要和网关打交道，具体网关如何和后台的微服务模块打交道，后台微服务模块的部署逻辑，模块提供服务的 IP 地址等都不用关心。</p>
+<p>由于实现了位置透明，带来一点就是数据流必须通过网关，那么网关本身又成为了去中心的微服务架构中的中心化节点，那么就必须考虑网关节点的性能，可靠性和弹性扩展能力。</p>
+<p>网关要实现位置透明，延伸出来对应的网关必须提供的能力就包括了</p>
+<ul>
+<li>提供服务注册和服务接入的能力- 提供服务代理和服务路由能力，能够将服务路由到具体的原始服务上- 提供负载均衡能力（该点并不是必须具备）<br>在这里准备重点强调下负载均衡能力，实际上对于 API 网关往往并不是必须具备负载均衡能力。</li>
+<li>其一是提供 API 接口服务的模块本身进行了负载均衡，再提供地址- 其二是类似容器化集成和部署，已经可以通过 Kubernetes 实现了负载均衡<br>我们可以看下对于注册和接入到 API 网关服务的三种场景，只有场景一需要由 API 网关来提供负载均衡能力。</li>
+</ul>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9KUmVVc2ljZm1FUGJKNkRuVEgzNkdCakZUdjc4TlNpYmZCZm9ad1h6TWZiQmljNnBPOHBVSGI0bmYwVVpTWTJHVmJLWTNZZFcwaGRFTTVhcWhaV3lPVGJEUS82NDA?x-oss-process=image/format,png">
+
+<p>注意 API 网关是否需要具备负载均衡能力，是必须考虑的一个点，即如果底层微服务模块提供的 API 接口服务本身能够提供负载均衡后的地址，那么网关不需要进行负载均衡。如果底层模块不具备这个能力，那么网关必须具备负载均衡能力。</p>
+<p>微服务模块本身可以基于容器化资源池提供的能力进行动态扩展，因此这个地方本身又有两层负载均衡，一个是 kubernates 提供的集群能力，一个是多个 API 网关本身提供的集群能力。当然 API 网关本身也具备负载均衡功能，可以和 Kubernate 进行衔接。</p>
+<h3 id="2-通过网关的拦截能力来实现所有共性能力抽取和实现"><a href="#2-通过网关的拦截能力来实现所有共性能力抽取和实现" class="headerlink" title="2. 通过网关的拦截能力来实现所有共性能力抽取和实现"></a>2. 通过网关的拦截能力来实现所有共性能力抽取和实现</h3><p>刚才已经谈到启用网关后就承载了数据流，因此可以通过对接口访问输入和输出的拦截来实现所有共性可复用能力的抽取和实现。这些共性能力可以理解为网关实现的一个个拦截插件，本身可插拔，灵活可配置。</p>
+<p>这些插件能力中最核心的就是安全，日志，流控。</p>
+<p>其中安全可以实现访问安全，传输安全，数据安全等，其中访问安全本身又可以实现类似 Token，IP，用户名密码等多种安全控制策略。包括对 Auth2.0 等标准规范的支持等。</p>
+<p>对于日志也是网关提供的一个关键能力，即可以实现对服务消费日志，详细的输入和输出报文的查询能力，这个在各开源网关往往并不具备这个能力，也无法面向业务系统人员去使用，因此这块能力提升往往都需要在开源网关基础上做大量扩展。</p>
+<p>流控是我们谈的另外一个关键能力，包括了服务限流和服务熔断。对于服务限流主要是实现对服务消费前线程数控制，资源分配实现消费前等待。而对于服务熔断，即直接对服务进行下线或禁用，以避免大并发服务消费调用对网关造成的影响或带来的服务雪崩等。</p>
+<p>一个网关来说，流控能力相对关键，因为网关是中心化节点，必须保证网关的高可靠运行。因此网关流控能力强弱直接影响到网关的高可靠性和性能，而判断流控能力强弱的关键则在于灵活的流量控制策略配置，只有这样才能够做到既实现流控，又不影响到关键业务和接口服务的访问。</p>
+<h3 id="3-满足前后端分离的需求"><a href="#3-满足前后端分离的需求" class="headerlink" title="3. 满足前后端分离的需求"></a>3. 满足前后端分离的需求</h3><p>注意，如果一个企业开发的业务系统涉及到手机 APP 端，而手机 APP 端一定涉及到公网访问，按业务系统内部部署安全策略也一定涉及到 DMZ 区的设置和硬件防火墙隔离。</p>
+<p>而对于 API 网关本身恰好又是可以部署到 DMZ 区的一个内容，既实现了服务代理路由，又实现了安全隔离，如果存在这种场景，即使业务应用不和外部系统打交道，为了前后端的隔离和外部访问，往往也需要 API 网关能力支撑。当然前期你也可以使用 Ngnix 来替代 API 网关实现统一代理。</p>
+<h3 id="4-灰度发布或金丝雀发布"><a href="#4-灰度发布或金丝雀发布" class="headerlink" title="4. 灰度发布或金丝雀发布"></a>4. 灰度发布或金丝雀发布</h3><p>这个在我原来谈网关的文章的时候很少谈到这点，但是实际上在 DevOps 和微服务架构实施下，对于灰度发布能力往往也是必须的。比如我们对已有的一个接口服务做了修改，我们想先在某些业务系统试用，没有问题再发布到所有的业务系统。这个时候就涉及到金丝雀发布的问题。当然你可以配置是按系统，按 IP，按用户还是其他的发布策略。</p>
+<p>这块的能力不仅仅是 DevOps 的自动部署，同时也必须考虑网关层能够基于动态发布的内容进行路由。确保服务调用消费的路由路径是隔离开的。而对于金丝雀发布策略允许你直接只导入指定量的流量到新的版本，API 网关就可以帮你来做这件事情。你可以配置 10%的请求到新的版本，然后一旦你确保了新版本没有 bug，你可以把流量切换到 100%。</p>
+<h3 id="5-服务组合能力"><a href="#5-服务组合能力" class="headerlink" title="5. 服务组合能力"></a>5. 服务组合能力</h3><p>实际上当我们谈 API 网关的时候，一般不会谈服务组合能力，因为一涉及到服务组合或编排，那么必然导入网关整体架构变重。从当前主流网关看，一般也不提供类似能力。</p>
+<p>实际上服务组合编排难点在于，上个服务的输出往往要成为下一个服务的输入，同时服务输入和输出还存在大量的数据映射操作。我们回顾下类似智慧家庭里面的组合场景编排，实际上很简单，比如我回到家后需要打开空调，关窗帘，打开热水器，开灯的一系列动作，我只是需要简单将这些动作编排在一起。</p>
+<p>对应到 API 网关的服务组合，实际上我们也可以做轻量的服务组合，即去掉数据映射等复杂组合场景，只需要实现简单的服务多次调用，服务返回数据的组合等即可。</p>
+<p>对于具体的服务组合和编排，可以参考下面这篇文章：</p>
+<p>从 ESB 服务组合编排到 NetflixConductor 微服务编排</p>
+<h2 id="API-全生命周期管理能力"><a href="#API-全生命周期管理能力" class="headerlink" title="API 全生命周期管理能力"></a>API 全生命周期管理能力</h2><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9KUmVVc2ljZm1FUGJKNkRuVEgzNkdCakZUdjc4TlNpYmZCZXJ4SXAyWm9NZ3ozbFdLaWJXMUw5UmowZ3hsYWlhZGx1QlVKcVlTZjR4Y0lvbXRaOWNvaWJHV213LzY0MA?x-oss-process=image/format,png">
+
+<p>可以看到，API 网关更多是一个底层引擎，而要实现完整的 API 管控，往往还需要配合 API 全生命周期管理能力。这个完全可以在底层 API 网关引擎基础上进行扩展开发。</p>
+<h3 id="API-接口的定义"><a href="#API-接口的定义" class="headerlink" title="API 接口的定义"></a>API 接口的定义</h3><p>在定义 API 接口的时候首先要定义 API 分组，这个从京东，淘宝等 OpenAPI 能力开放平台的 API 文档都可以看到，首先要有 API 归类分组，然后再定义详细的 API。</p>
+<p>比如京东开放平台，有商品，店铺，仓储，支付等多个类目，然后各类目下有详细的 API 的定义。</p>
+<p>API 的定义包括两个部分，一个是 API 基本信息定义，一个是详细输入输出定义。</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9KUmVVc2ljZm1FUGJKNkRuVEgzNkdCakZUdjc4TlNpYmZCbzV3MURvbkpQRGJZVjBSMERJaWF2VVhaZ0NKandUeW5MVUVpYWNybkJyVEM0dXg0TUdrU1FCS3cvNjQw?x-oss-process=image/format,png">
+
+<p>API 基本信息仍然是包括了 API 的编码，API 名称，API 的分组，API 的用途描述，API 的缓存，安全等基本控制信息的定义等。还有就是这个 API 接口的访问路径定义，API 接口是 Get 还是 Post 方法定义等。</p>
+<p>API 详细信息主要就是 API 的输入和输出信息定义。</p>
+<p>API 的输入参数注意实际有多种形式，一个就是在 API 访问路径上的路径参数，还有一个就是在访问路径后?参数后面的查询参数信息，还有就是一个完整的 Request Body 请求参数信息。</p>
+<p>比如对于 Http Rest 查询接口，这类 Get 方法接口，可以看到并没有 Body 信息，更多的是通过路径和查询参数定义来完成查询。而对于 Post 接口往往就涉及到具体的 Body 信息定义。</p>
+<p>但是要注意，为了实现 Http Rest 接口和 SOAP WS 接口服务的互相转换，对于 SOAP WS 查询服务接口在自动转换为 Http Rest 接口服务的时候实际上仍然为转换为 Post 方法+Body 参数模式。</p>
+<p>对于 API 接口定义，仍需要预留标准的系统级参数部分内容。这部分内容是 API 网关实现统一标准化管理的基础，不能随便修改和变动。比如京东 API 平台预留的 API 名称，方法，版本，Token，APP_Key，Date 等都是使用系统级别的参数定义，是每一个接口 API 暴露后都需要增加的参数头信息。</p>
+<h3 id="API-快速开发的支持"><a href="#API-快速开发的支持" class="headerlink" title="API 快速开发的支持"></a>API 快速开发的支持</h3><p>在 API 接口服务定义完成后，一方面是可以通过类似 WADL 或 RAML 等标准的 Rest 接口定义规范文件，另外一个就是需要提供客户端和服务端的开发框架代码。</p>
+<p>在这个基础上，还可以提供完整的示例代码下载，方便开发商或合作伙伴对 API 接口进行快速开发。开发完成的后端原始服务接口，在注册接入前还可以提供接口服务的模型匹配自校验功能，确认开发的服务完全遵循从上到下方式-》API 开发框架生成和 API 后端服务开发。</p>
+<p>对于 API 接口管理，如果是标准的从顶朝下模式，即在定义了 API 接口后，实现生成类似 WADL 或 RAML 标准接口规范。后端服务基于我们标准的 API 接口契约进行开发，那么开发完成后就方便快速代理方式接入，在接入过程中就不再有参数映射和转换的问题，否则我们的 API 接入过程会比较复杂。</p>
+<h3 id="API-接口服务的注册和接入"><a href="#API-接口服务的注册和接入" class="headerlink" title="API 接口服务的注册和接入"></a>API 接口服务的注册和接入</h3><p>API 接口定义过程和 API 接口的注册接入最好分开。</p>
+<p>在 API 接口定义完成后进行 API 接口服务的注册，即选择具体的后端服务，然后对服务进行接入。同时将后端服务对应到我们在前面定义的 API 接口代理服务上。注意在前面谈到的 API 路径定义，方法类型定义，实际上也可以在 API 接口服务注册和接入的时候来完成。</p>
+<p>API 接口服务的后续变更发布，还可以考虑和 DevOps 平台配合并支持灰度发布功能。</p>
+<p>反向的后端服务快速接入并发布为 API 接口服务，即直接对后端已有的 API 服务进行快速接入，将 API 后端服务发布为代理服务，在整个接入过程中需要定义 API 接口名称，API 访问路径，API 方法类型等信息。在发布为 API 接口服务后，对于后端服务的 API 参数信息也需要进行快速导入，以方便在 API 接口查询中看到详细的接口内容定义。</p>
+<p>在将后端业务服务发布为 API 接口服务的时候，发布的代理服务要自动增加系统级的输入参数信息，这个输入参数最好的方式是在访问路径中进行增加，以减少对已有的后端服务的影响。</p>
+<p>API 接口在注册和接入完成后，将自动进行服务部署和服务发布，即注册接入完成后的服务可以通过发布的访问路径地址进行访问。</p>
+<h3 id="服务接入适配能力"><a href="#服务接入适配能力" class="headerlink" title="服务接入适配能力"></a>服务接入适配能力</h3><p>服务注册接入本身分为两个层面，一个是已有服务的注册接入，一个是需要适配后的服务发布。在设计的时候需要考虑到两个方面的需求。</p>
+<p>对于已有服务的存代理接入最简单，即只需要提供业务系统的 Rest 接口服务地址即可，在接入的时候，对相关的日志，安全，流控，负载均衡等策略进行配置，配置完成后即完成服务接入和注册。同时对于路由服务接入需要单独考虑，对于路由服务在接入的时候可以适配到多个原始业务系统的接口服务地址。</p>
+<p>服务发布是对原来我们服务适配功能的一个改进，即直接从底向上的进行服务发布，而不需要实现定义服务元数据或模型，制定服务契约格式等，在服务发布完成后再生成相关的基础数据到服务元数据库即可。对于服务发布参考服务适配的能力，我们可以考虑如下场景下的需求。</p>
+<ul>
+<li>将一个已有的 SOAP WS 服务发布和注册为一个 Http Rest 接口服务。- 将一个数据库表，或存储过程发布为一个 Http Rest 接口服务。- 将一个 JMS 消息接口发布为一个 Http Rest 接口服务。- 将一个 JAR 包中的 API 接口方法或函数发布为一个 Http Rest 接口服务。<br>对于服务发布而言，如果不仅仅是微服务网关能力，而是一个微服务支撑或微服务快速开发平台的话，还可以提供完整的服务开发和设计能力。即在微服务平台首先定义数据或对象模型，然后将对象模型转换为 Http Rest 中的资源对象，并发布对应的 Get , Post 各种 Http Rest 接口服务。</li>
+</ul>
+<p>对应发布的接口服务可以直接在微服务平台上进行拦截，模拟生成相关的输入或输出数据。当然也可以直接将数据模型对象生成到对应的数据库，同时将微服务 API 接口的实现生成对应的 Java 代码框架并给出参考实现。而我们剩余的工作，仅仅是填充代码逻辑即可。通过这种方式可以极大的提高我们进行微服务架构开发的速度。</p>
+<h3 id="API-接口在线模拟测试功能"><a href="#API-接口在线模拟测试功能" class="headerlink" title="API 接口在线模拟测试功能"></a>API 接口在线模拟测试功能</h3><p>这个功能参考当前的 OpenAPI 能力开放平台的做法来实现即可。即对于已经发布完成的 API 接口服务，提供在线测试工具进行在线测试。同时对接口服务调用的输入参数进行结构化展示，方便用户对测试需要的各种参数进行输入。在输入完成后形成完整的提交参数完整字符串。通过测试，可以返回最终的模拟调用返回结果字符串信息。</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9KUmVVc2ljZm1FUGJKNkRuVEgzNkdCakZUdjc4TlNpYmZCSHNKRkdXQkREWXVEWGZHeTA4dkhpYlRpY296OFA5aWFTYVpEQjB2WXdwUmljQk9vNll1RUNGaGZ2US82NDA?x-oss-process=image/format,png">
+
+<p>同样，这里可以采用 Swagger 工具来完成，Swagger 不仅仅是 API 接口的定义，接口文档的生成，同时还可以根据可以接口定义，自动生成接口测试用例，对接口进行测试工作。我们也很容易将 Swagger 能力整合都 API 网关的管理平台中。</p>
+<h3 id="API-接口查询功能"><a href="#API-接口查询功能" class="headerlink" title="API 接口查询功能"></a>API 接口查询功能</h3><p>对于 API 接口查询功能也是一个标准的功能，实际上可以考虑将查询功能和 API 接口服务的分类浏览分开。对于 API 接口的分类浏览参考开放平台的 API 接口文档做法来实现接口。对于 API 接口查询，即可以设置不同的动态查询条件，对 API 接口进行查询，返回结果集。对于查询到的 API 接口清单列表，可以点击详细进入到 API 接口详细的输入和输出信息查看界面。</p>
+<h3 id="API-状态管理功能"><a href="#API-状态管理功能" class="headerlink" title="API 状态管理功能"></a>API 状态管理功能</h3><p>对于已经注册和发布的 API 接口可以对其状态进行管理。其中主要的状态包括了待发布，上线，暂停，下线废弃等几种关键状态。对于 API 状态本身还需要和后续的 API 监控管理结合，能够通过 API 性能监控动态的调整 API 接口的状态。比如在 API 触发熔断后，自动对 API 接口状态调整为暂停。</p>
+<h3 id="API-版本管理能力"><a href="#API-版本管理能力" class="headerlink" title="API 版本管理能力"></a>API 版本管理能力</h3><p>对于 API 需要启用版本管理能力。当前一些 API 接口服务实现方法会在路径参数中增加 API 版本信息，以确定究竟访问哪个版本。但是由于不同的 API 版本可能存在返回的结果集的数据结构不一样的问题，因此对于这种场景需要针对该 API 定义不同的大版本，不同的大版本实际上对应不同的后端原始服务。</p>
+<p>在这里我们介绍下当前主流的一些 API 网关功能供参考。</p>
+<h2 id="开源-Kong-API-网关"><a href="#开源-Kong-API-网关" class="headerlink" title="开源 Kong API 网关"></a>开源 Kong API 网关</h2><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9KUmVVc2ljZm1FUGJKNkRuVEgzNkdCakZUdjc4TlNpYmZCVm5zMlhRR3pOaWExTE5QYTJnR2ppYW1oTVlmc1VMZ2p0WUFPSnY0aWF3QjF5NFpsU0kxS3lKcERRLzY0MA?x-oss-process=image/format,png">
+
+<p>在微服务架构之下，服务被拆的非常零散，降低了耦合度的同时也给服务的统一管理增加了难度。如上图左所示，在旧的服务治理体系之下，鉴权，限流，日志，监控等通用功能需要在每个服务中单独实现，这使得系统维护者没有一个全局的视图来统一管理这些功能。API 网关致力于解决的问题便是为微服务纳管这些通用的功能，在此基础上提高系统的可扩展性。</p>
+<p>Kong 的插件机制是其高可扩展性的根源，Kong 可以很方便地为路由和服务提供各种插件，网关所需要的基本特性，Kong 都如数支持：</p>
+<ul>
+<li>云原生: 与平台无关，Kong 可以从裸机运行到 Kubernetes- 动态路由：Kong 的背后是 OpenResty+Lua，所以继承了动态路由的特性- 限流和熔断- 健康检查- 日志: 可以记录通过 Kong 的 HTTP，TCP，UDP 请求和响应。- 鉴权: 权限控制，IP 黑白名单，同样是 OpenResty 的特性- SSL: Setup a Specific SSL Certificate for an underlying service or API.- 监控: Kong 提供了实时监控插件- 认证: 如数支持 HMAC, JWT, Basic, OAuth2.0 等常用协议- REST API: 通过 Rest API 进行配置管理，从繁琐的配置文件中解放- 可用性: 天然支持分布式- 高性能: 背靠非阻塞通信的 nginx，性能自不用说- 插件机制: 提供众多开箱即用的插件，且有易于扩展的自定义插件接口<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9KUmVVc2ljZm1FUGJKNkRuVEgzNkdCakZUdjc4TlNpYmZCMXcwS3NIbkhUSGppY040R2hWRmYzWDVwZ1ZVbjc1TUtIOHZCYXRVcjFTeXdvamtrNlZuYjlXUS82NDA?x-oss-process=image/format,png"></li>
+</ul>
+<p>从上面图可以看到，Kong 网关是基于 OpenResty 应用服务器，OpenResty 是一个基于 Nginx 与 Lua 的高性能 Web 平台，其内部集成了大量精良的 Lua 库、第三方模块以及大多数的依赖项。用于方便地搭建能够处理超高并发、扩展性极高的动态 Web 应用、Web 服务和动态网关。而 Kong 核心基于 OpenResty 构建，并且拥有强大的插件扩展功能。</p>
+<p>在 Http 请求到达 Kong 网关后，转发给后端应用之前，可以通过网关的各种插件对请求进行流量控制，安全，日志等各方面的处理能力。当前 Kong 的插件分为开源版和社区版，社区版还有更多的定制功能，但是社区版是要收费的。</p>
+<p>目前，KONG 开源版本一共开放 28 个插件，如下：</p>
+<p>acl、aws-lambda、basic-auth、bot-detection、correlation-id、cors、datadog、file-log、galileo、hmac-auth、http-log、ip-restriction、jwt、key-auth、ldap-auth、loggly、oauth2、rate-limiting、request-size-limiting、request-termination、request-transformer、response-ratelimiting、response-transformer、runscope、statsd、syslog、tcp-log、udp-log。</p>
+<p>以上这些插件主要分五大类，Authentication 认证，Security 安全，Traffic Control 流量控制，Analytics &amp; Monitoring 分析&amp;监控，Logging 日志，其他还有请求报文处理类。插件类似 AOP 开发中的横切功能，可以灵活的配置进行拦截控制，下面选择一些关键性的插件进行简单的说明。</p>
+<h3 id="黑白名单控制能力-ip-restriction"><a href="#黑白名单控制能力-ip-restriction" class="headerlink" title="黑白名单控制能力-ip-restriction"></a>黑白名单控制能力-ip-restriction</h3><p>Kong 提供的 IP 黑白名单控制能力还算相当强，从配置项里面可以看到主要可以针对两个维度进行配置，一个是针对所有的 API 接口还是针对特定的 API 接口，一个是针对所有的所有的消费方还是特定的某个消费方。对于 IP 配置可以是一个区段，也可以是特定的 IP 地址。但是黑白名单不能同时配置，其次当前没有一个功能是针对某一个系统提供的所有服务都启用黑名单或白名单功能。</p>
+<h3 id="日志记录能力-syslog-file-log，http-log"><a href="#日志记录能力-syslog-file-log，http-log" class="headerlink" title="日志记录能力-syslog, file-log，http-log"></a>日志记录能力-syslog, file-log，http-log</h3><p>这里主要日志的插件比较多，一个是 sysLog 在配置后可以直接将 Kong 产生的日志写入到应用服务器的系统日志文件中。如果配置了 file-log 则是单独写入到你指定的 file 文件中。对于 http-log 则是对于 http 服务请求，可以详细的记录请求的输入和输出报文信息，但是具体是记录到哪里，需要通过 config.http_endpoint 配置。具体关键的配置参数信息如下：</p>
+<p>consumer_id: 可选参数,消费者 id(启用了消费者认证可以使用，根据 id 识别发出请求的消费者);</p>
+<p>config.http_endpoint: 日志接收服务器(包括使用的协议,http or https);</p>
+<p>config.method: 可选参数,默认 POST,访问日志服务器的请求方式(可选值:PUT,PATCH,POST);</p>
+<p>config.timeout: 可选参数,默认 10000 毫秒,请求超时时间</p>
+<p>config.keepalive: 可选参数,默认 60000 毫秒,连接在关闭之前可存活时间</p>
+<h3 id="熔断插件-request-termination"><a href="#熔断插件-request-termination" class="headerlink" title="熔断插件-request-termination"></a>熔断插件-request-termination</h3><p>该插件用来定义指定请求或服务不进行上层服务,而直接返回指定的内容.用来为指定的请求或指定的服务进行熔断。注意 Kong 的熔断插件感觉是临时对服务的禁用，而不是说当达到某一种监控阈值的时候自动触发熔断，或者相关内容还没有了解到。从官方文档的应用场景也可以看到这点。</p>
+<p>Temporarily disable a Service (e.g. it is under maintenance).</p>
+<p>Temporarily disable a Route (e.g. the rest of the Service is up and running, but a particular endpoint must be disabled).</p>
+<p>Temporarily disable a Consumer (e.g. excessive consumption).</p>
+<p>如果仅仅是这种方式的熔断话，实际上意义并不是很大。但是可用的地方就在于当某个业务系统进行发版部署的时候我们可以对该业务系统或该业务系统所提供的所有服务进行熔断。</p>
+<h3 id="限流插件-rate-limiting"><a href="#限流插件-rate-limiting" class="headerlink" title="限流插件-rate-limiting"></a>限流插件-rate-limiting</h3><p>Kong 当前提供的限流相对来说还是比较弱，即主要是控制某一个 API 接口服务在单位时间内最多只能够调用多少次，如果超过这个次数那么网关就直接拒绝访问并返回错误提示信息。而在前面我讲限流和流量控制的时候经常会说到，就是限流实际上一个是根据服务调用次数，一个是根据服务调用数据量，需要在这两个方面进行限流。而里面更加重要的反而是数据量的限流，因为大数据量报文往往更加容易造成内存溢出异常。</p>
+<h3 id="安全认证类插件"><a href="#安全认证类插件" class="headerlink" title="安全认证类插件"></a>安全认证类插件</h3><p>当前 Kong 网关提供 basic-auth，key-auth、ldap-auth，hmac-auth 多种认证插件。</p>
+<p>Basic-auth 基本认证插件，即我们根据用户名和密码来生成一个 base64 编码，同时将该编码和目标服务绑定，这样在消费目标服务的时候就需要在报文头填写这个 Base64 编码信息。</p>
+<p>Key-auth 认证插件则是利用提前预设好的关键字名称，如下面设置的 keynote &#x3D; apices，然后为 consumer 设置一个 key-auth 密钥，假如 key-auth&#x3D;test@keyauth。在请求 api 的时候，将 apikey&#x3D;test@keyauth，作为一个参数附加到请求 url 后，或者放置到 headers 中。</p>
+<p>Hmac-auth 插件是设置绑定的 service 和 rout，以启动 hmac 验证。然后在 Consumers 页面中 Hmac credentials of Consumer 设置中添加一个 username 和 secret。</p>
+<h3 id="请求报文容量限制-request-size-limiting"><a href="#请求报文容量限制-request-size-limiting" class="headerlink" title="请求报文容量限制-request-size-limiting"></a>请求报文容量限制-request-size-limiting</h3><p>该插件用于限制请求报文的数据量大小，可以限制单个服务，也可以显示所有的 API 接口服务。</p>
+<h3 id="支持-OAuth2-0-身份认证-oauth2"><a href="#支持-OAuth2-0-身份认证-oauth2" class="headerlink" title="支持 OAuth2.0 身份认证-oauth2"></a>支持 OAuth2.0 身份认证-oauth2</h3><p>Kong 网关支持 OAuth2.0 身份认证，OAuth2.0 协议根据使用不同的适用场景，定义了用于四种授权模式。</p>
+<p>Authorization code（授权码模式）：标准的 Server 授权模式，非常适合 Server 端的 Web 应用。一旦资源的拥有者授权访问他们的数据之后，他们将会被重定向到 Web 应用并在 URL 的查询参数中附带一个授权码（code）。在客户端里，该 code 用于请求访问令牌（access_token）。并且该令牌交换的过程是两个服务端之前完成的，防止其他人甚至是资源拥有者本人得到该令牌。另外，在该授权模式下可以通过 refresh_token 来刷新令牌以延长访问授权时间，也是最为复杂的一种方式。</p>
+<p>Implicit Grant（隐式模式）：该模式是所有授权模式中最简单的一种，并为运行于浏览器中的脚本应用做了优化。当用户访问该应用时，服务端会立即生成一个新的访问令牌（access_token）并通过 URL 的#hash 传回客户端。这时，客户端就可以利用 JavaScript 等将其取出然后请求 API 接口。该模式不需要授权码（code），当然也不会提供 refresh token 以获得长期访问的入口。</p>
+<p>Resource Owner Password Credentials（密码模式）：自己有一套用户体系，这种模式要求用户提供用户名和密码来交换访问令牌（access_token）。该模式仅用于非常值得信任的用户，例如 API 提供者本人所写的移动应用。虽然用户也要求提供密码，但并不需要存储在设备上。因为初始验证之后，只需将 OAuth 的令牌记录下来即可。如果用户希望取消授权，因为其真实密码并没有被记录，因此无需修改密码就可以立即取消授权。token 本身也只是得到有限的授权，因此相比最传统的 username&#x2F;password 授权，该模式依然更为安全。</p>
+<p>Client Credentials（客户端模式）：没有用户的概念，一种基于 APP 的密钥直接进行授权，因此 APP 的权限非常大。它适合像数据库或存储服务器这种对 API 的访问需求。</p>
+<h3 id="简单转换能力-request-transformer-and-response-transformer"><a href="#简单转换能力-request-transformer-and-response-transformer" class="headerlink" title="简单转换能力-request-transformer and response transformer"></a>简单转换能力-request-transformer and response transformer</h3><p>Kong 网关提供对输入和输出报文简单转换的能力，这部分内容后续再详细展开介绍。从当前配置来看，主要是对消息报文提供了 Add, Replace,Rename,Append 等各种简单操作能力。</p>
+<p>Kong 网关和其它网关的一些对比。</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9KUmVVc2ljZm1FUGJKNkRuVEgzNkdCakZUdjc4TlNpYmZCZ2ZTSFNGTWNBend1MFdiWVRUNFhzMlp2eUp6N1FNaWI4aWFaNnlmSlpnaWFQSjFHS0J5NXNmVHVRLzY0MA?x-oss-process=image/format,png">
+
+<p>从上面对比图也可以看到，Kong 网关在功能，性能，插件可扩展性各方面都能够更好的满足企业 API 网关的需求。因此我们也是基于 Konga 来进一步定制对 Kong 网关的管控治理平台。</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9KUmVVc2ljZm1FUGJKNkRuVEgzNkdCakZUdjc4TlNpYmZCZE5qZTVEY0RvcFhicUdEd0xVNlNucTIwNUxWcUt4Y1pWdGliVnM0TFExc0l6SzBhR0t3VUVhUS82NDA?x-oss-process=image/format,png">
+
+<p>在整个定制中增加了基于 DB 适配的 Http Rest API 接口的自动发布，API 服务自动化注册，服务日志采集和服务日志查询，常见映射模板定制，接口服务的自动化测试等方面的能力。</p>
+<h2 id="阿里公有云-API-网关"><a href="#阿里公有云-API-网关" class="headerlink" title="阿里公有云 API 网关"></a>阿里公有云 API 网关</h2><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9KUmVVc2ljZm1FUGJKNkRuVEgzNkdCakZUdjc4TlNpYmZCWDJpYXNaSEg5NG9mQXJsVDlDSUtISFRPaWNqMWsxWW5ldkRkRkpRdTlpYXF4NFloU0p5WEJvR1hRLzY0MA?x-oss-process=image/format,png">
+
+<p>首先我们来看下阿里云提供的 API 网关产品的功能介绍：</p>
+<p>API 网关（API Gateway），是提供 API 托管服务，涵盖 API 发布、管理、运维、售卖的全生命周期管理。辅助用户简单、快速、低成本、低风险的实现微服务聚合、前后端分离、系统集成，向合作伙伴、开发者开放功能和数据。</p>
+<p>阿里提供的 API 网关提供的关键功能，参考产品本身的功能文档说明，主要如下：</p>
+<h3 id="API-生命周期管理"><a href="#API-生命周期管理" class="headerlink" title="API 生命周期管理"></a>API 生命周期管理</h3><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9KUmVVc2ljZm1FUGJKNkRuVEgzNkdCakZUdjc4TlNpYmZCcXRtVzNDRUxqNGxieHcxMm5tNm1ZT2w0TGozSlBRdWljTWdFVHJ6SHU3OEN3M25TZDZGR2djUS82NDA?x-oss-process=image/format,png">
+
+<p>支持包括 API 注册和接入发布、API 测试、API 下线等生命周期管理功能。支持 API 日常管理、API 版本管理、API 快速回滚等维护功能。基本需要覆盖 API 管理全生命周期。</p>
+<h3 id="全面的安全防护"><a href="#全面的安全防护" class="headerlink" title="全面的安全防护"></a>全面的安全防护</h3><p>支持多种认证方式，支持 HMAC (SHA-1，SHA-256) 算法签名。支持 HTTPS 协议，支持 SSL 加密。防攻击、防注入、请求防重放、请求防篡改。（没看到是否支持 Auth2.0 和具体的 Token 验证机制）</p>
+<h3 id="灵活的权限控制"><a href="#灵活的权限控制" class="headerlink" title="灵活的权限控制"></a>灵活的权限控制</h3><p>用户以 APP 作为请求 API 的身份，网关支持针对 APP 的权限控制。只有已经获得授权的 APP 才能请求相应的 API。API 提供者可以将调用某个 API 的权限主动授予给某个 APP。若 API 上架到 API 市场，购买者可以将已购买的 API 授权给自己的 APP。(没看到是否基于 IP 进行控制，还是基于 Token 进行控制，即对于消费方分配独立的 Token 信息)</p>
+<h3 id="精准的流量控制"><a href="#精准的流量控制" class="headerlink" title="精准的流量控制"></a>精准的流量控制</h3><p>流量控制可以用于管控 API 的被访问频率、APP 的请求频率、用户的请求频率。流量控制的时间单位可以是分钟、小时、天。支持流控例外，允许设置特殊的 APP 或者用户。（流量控制只支持服务运行频率，没看到可以基于数据量进行流控）</p>
+<h3 id="请求校验"><a href="#请求校验" class="headerlink" title="请求校验"></a>请求校验</h3><p>支持参数类型、参数值（范围、枚举、正则、Json Schema）校验，无效校验会被 API 网关直接拒绝，以减少无效请求对后端造成的资源浪费，大幅降低后端服务的处理成本。（这个功能实际有一定的用处，并不会牺牲太多的性能，但是会实现一些简单的参数完整性校验能力。）</p>
+<h3 id="数据转换"><a href="#数据转换" class="headerlink" title="数据转换"></a>数据转换</h3><p>通过配置映射规则，实现前、后端数据翻译。支持前端请求的数据转换。支持返回结果的数据转换。(暂时不清楚数据转换功能能够实现的能力）</p>
+<h3 id="监控报警"><a href="#监控报警" class="headerlink" title="监控报警"></a>监控报警</h3><p>提供可视化的 API 实时监控，包括：调用量、流量大小、响应时间、错误率，在陆续增加维度。支持历史情况查询，以便统筹分析。可配置预警方式（短信、Email），订阅预警信息，以便实时掌握 API 运行情况。</p>
+<h3 id="自动工具"><a href="#自动工具" class="headerlink" title="自动工具"></a>自动工具</h3><p>自动生成 API 文档，可供在线查看。API 网关提供多种语言 SDK 的示例。降低 API 的运维成本。提供可视化的界面调试工具，快速测试，快速上线。(当前网上也有不少的 API 接口文档自动生成工具可选）</p>
+<h3 id="API-市场"><a href="#API-市场" class="headerlink" title="API 市场"></a>API 市场</h3><p>可将 API 上架到 API 市场，供更多开发者采购和使用。</p>
+<p>从整个功能的介绍可以看到对于 API 的全生命周期管理（注册，接入，代理，路由，负载均衡），安全，权限，流量控制，监控和告警等是所有 API 网关都必须具备的功能。而对于 API 市场，API 文档自动生成，请求的参数校验，数据的转换等则可以看做是扩展功能。</p>
+<p>对于 API 市场往往是一个重要的扩展能力，即对于 API 接口服务可以作为商品一样进行订购和使用，并根据相应的调用次数，调用的数据量等条件进行计费处理。这我们我们说的 PaaS 平台的服务层能力作为产品和服务发布，能够进行订购生产订单，能够进行计费等完全是一个道理。</p>
+<h3 id="对于公有云上-API-网关存在的背景说明"><a href="#对于公有云上-API-网关存在的背景说明" class="headerlink" title="对于公有云上 API 网关存在的背景说明"></a>对于公有云上 API 网关存在的背景说明</h3><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9KUmVVc2ljZm1FUGJKNkRuVEgzNkdCakZUdjc4TlNpYmZCNmsydFF2eGJTUzR0SjJ1SzlwczNoaFBCeVhpY3dXRjdXb0tVaWN1VlBuUzM2MDRTWVBKRHNWVGcvNjQw?x-oss-process=image/format,png">
+
+<p>对于类似亚马逊，华为云，阿里云等公有云上为何要提供 API 网关类产品，其关键点还是在于一个企业如果内部的主动业务应用和系统都迁移到公有云后，那么当企业需要将内部多个业务系统的共享或发布给外部使用的时候如何做？这个时候必须要有一个 API 网关，来进行能力的统一发布，最基本是提供统一的服务目录访问，更加重要的是实现统一的安全管理，授权，服务日志监控预警能力。</p>
+<p>因此一个企业迁移到公有云后，只要存在内部多业务系统，多组件都需要发布 API 接口能力给外部使用的时候，一定存在 API 网关的应用场景。</p>
+<h2 id="其它开源-API-网关"><a href="#其它开源-API-网关" class="headerlink" title="其它开源 API 网关"></a>其它开源 API 网关</h2><h3 id="有赞团队的-API-网关实践"><a href="#有赞团队的-API-网关实践" class="headerlink" title="有赞团队的 API 网关实践"></a>有赞团队的 API 网关实践</h3><p><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9KUmVVc2ljZm1FUGJKNkRuVEgzNkdCakZUdjc4TlNpYmZCNXk1SDhVMFN4c3FzbFQ4NmhtbmlhaWExaHIySFh1WW45cXBnRkgwWEtLbm04MWg4REdRMlhmWWcvNjQw?x-oss-process=image/format,png"><a target="_blank" rel="noopener" href="https://tech.youzan.com/api-gateway-in-practice/">https://tech.youzan.com/api-gateway-in-practice/</a></p>
+<p>有赞 API 网关目前承载着微商城、零售、微小店、餐饮、美业、AppSDK、部分 PC、三方开发者等多个业务的调用，每天有着亿级别的流量。</p>
+<p>有赞后端服务最开始是由 PHP 搭建，随着整个技术体系的升级，后面逐步从 PHP 迁移到基于 Dubbo 开发了一个新的框架 Nova，兼容 Dubbo 调用，同时支持调用 PHP 服务。于是网关也支持了新的 Nova 协议，这样就有 Dubbo、Http、Nova 三种协议。</p>
+<p>在这篇文章中提到的网关核心设计部分相关内容可以参考</p>
+<p>异步特性：我们使用 Jetty 容器来部署应用，并开启 Servlet3.0 的异步特性，由于网关业务本身就是调用大量业务接口，因此 IO 操作会比较频繁，使用该特性能较大提升网关整体并发能力及吞吐量。</p>
+<p>缓存：为了进一步提升网关的性能，我们增加了一层分布式缓存（借用 Codis 实现），将一些不经常变更的 API 元数据缓存下来，这样不仅减少了应用和 DB 的交互次数，还加快了读取效率。</p>
+<p>链式处理：在设计网关的时候，我们采用责任链模式来实现网关的核心处理流程，将每个处理逻辑看成一个 Pipe，每个 Pipe 按照预先设定的顺序先后执行</p>
+<p>平滑限流：消除了简单计数器限流带来的短时间内流量不均的问题。目前网关支持 IP、店铺、API、应用 ID 和三方 ID 等多个维度的限流，也支持各维度的自由组合限流。</p>
+<p>熔断降级：使用 Hystrix 进行熔断降级处理。Hystrix 支持线程池和信号量 2 种模式的隔离方案，内部也开发了一个基于 Hystrix 的服务熔断平台</p>
+<p>预警监控：实时地从 Kafka 消费 API 调用日志，如果发现某个 API 的 RT 或者错误次数超过配置的报警阈值，则会立即触发报警</p>
+<h3 id="企业级-API-网关设计"><a href="#企业级-API-网关设计" class="headerlink" title="企业级 API 网关设计"></a>企业级 API 网关设计</h3><p><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9KUmVVc2ljZm1FUGJKNkRuVEgzNkdCakZUdjc4TlNpYmZCellLV011aWNKb1FIcmliSUdwR2FoYU5TYjZZdXlweG16WUdnU1BqcWQyWXgyR2g5aWJlOUdLaWI3Zy82NDA?x-oss-process=image/format,png"><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1080652">https://cloud.tencent.com/developer/article/1080652</a></p>
+<p>这篇文章是对企业级 API 网关设计必须系统化的产生，从 API 网关的概述，API 网关所起的作用，当前主流的 API 网关功能对比分析，API 网关的高可用性设计多方面进行了阐述。</p>
+<p>网关层作为客户端与服务端的一层挡板，主要起到了三大类作用：</p>
+<ul>
+<li>隔离作用：作为企业系统边界，隔离外网系统与内网系统。- 解耦作用：通过解耦，使得微服务系统的各方能够独立、自由、高效、灵活地调整。- 脚手架作用：提供了一个地点，方便通过扩展机制对请求进行一系列加工和处理。<br>API 网关作为对外提供服务的入口，就像企业服务的大门。一方面，要有足够的能力，应对大量的对外访问，另一方面，还要给对内的服务提供一定的安全保障。除此之外，企业提供的 API 服务多种多样，API 网关要能够对这些 API 的全生命周期进行便捷的管理，例如服务发布、调整、下架、计费、监控等。</li>
+</ul>
+<p>企业 API 网关在功能设计上主要应该考虑如下内容：</p>
+<p>API 生命周期管理功能：覆盖 API 的定义、测试、发布的整个生命周期管理。</p>
+<p>API 开发和使用支持功能：</p>
+<ul>
+<li>安全防护功能：API 请求到达网关需要经过身份认证、权限认证，才能到达后端服务。- 流量控制功能：API 调用次数，异常，分级。流控粒度：分钟、小时、天。- 请求管理功能：可根据配置进行参数类型、参数值（范围、枚举、正则）的校验- 监控告警功能：提供实时、可视化的 API 监控，调用量、调用方式、响应时间、错误率。- API 交易功能：提供 API 交易市场，计量计费、Quota 控制、运营售卖等需求。<br>顺着这篇文章，我们参考了另外一篇谈如何设计高并发下 API 网关的一篇文章，重点对并发模型，SEDA 基于事件的并发架构进行了阐述。</li>
+</ul>
+<p>地址：<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzI5MDEzMzg5Nw==&amp;mid=412734308&amp;idx=1&amp;sn=f1c1bd5e22e2ae7dedf4b788a625e814&amp;scene=21#wechat_redirect">https://mp.weixin.qq.com/s?__biz=MzI5MDEzMzg5Nw==&amp;mid=412734308&amp;idx=1&amp;sn=f1c1bd5e22e2ae7dedf4b788a625e814&amp;scene=21#wechat_redirect</a></p>
+<p>传统的并发编程模型主要有两种：一种是 Thread-based concurrency, 另一种是 Event-driven concurrency。总结下两种模式的特点如下：</p>
+<p>基于线程的并发：每个任务一线程直线式的编程使用资源高昂，context 切换代价高，竞争锁昂贵，太多线程可能导致吞吐量下降，响应时间暴涨；</p>
+<p>基于事件的并发：单线程处理事件的每个并发流实现为一个有限状态机应用直接控制并发负载增加的时候，吞吐量饱和响应时间线性增长。</p>
+<p>SEDA 架构是目前云计算、微服务时代下一种优秀的消息处理架构，而且历经考验，稳定可靠。SEDA 架构的核心思想：把一个请求处理过程分成几个 Stage，每个 Stage 可由不同的微服务进行处理，不同资源消耗的 Stage 使用不同数量的线程来处理，微服务之间采用异步通讯的模式。</p>
+<h3 id="开源-API-网关-Goku"><a href="#开源-API-网关-Goku" class="headerlink" title="开源 API 网关 Goku"></a>开源 API 网关 Goku</h3><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9KUmVVc2ljZm1FUGJKNkRuVEgzNkdCakZUdjc4TlNpYmZCaWNhNkZaaWM2SlpvaWJSSE1LbnMxZTZUQVBmVlAydFltdkhRMlVxaWI5YUxsWVVOcXk1cWljSzR2a0EvNjQw?x-oss-process=image/format,png">
+
+<p>GoKu API Gateway，中文名：悟空 API 网关，是 eoLinker 旗下、国内首个企业级开源的 go 语言 API 网关，帮助企业进行 API 服务治理与 API 性能安全维护，为企业数字化赋能。</p>
+<p>GoKu 支持 OpenAPI 与微服务管理，支持私有云部署，实现 API 转发、请求参数转换、数据校验等功能，提供图形化界面管理，能够快速管理多个 API 网关，提高 API 业务安全性。</p>
+<ul>
+<li>码云地址：<a target="_blank" rel="noopener" href="https://gitee.com/eolinker/goku-api-gateway-">https://gitee.com/eolinker/goku-api-gateway-</a> 官网地址：<a target="_blank" rel="noopener" href="https://www.eolinker.com/product/api_gateway/">https://www.eolinker.com/product/api_gateway/</a><br>Goku API Gateway （悟空 API 网关）是运行在企业系统服务边界上的微服务网关。当您构建网站、App、IOT 甚至是开放 API 交易时，Goku API Gateway 能够帮你将内部系统中重复的组件抽取出来并放置在 Goku 网关上运行，如进行用户授权、访问控制、防火墙、数据转换等；并且 Goku 提供服务编排的功能，让企业可以快速从各类服务上获取需要的数据，对业务实现快速响应。</li>
+</ul>
+<p>Goku API Gateway 的社区版本（CE）拥有完善的使用指南和二次开发指南，代码使用纯 Go 语言编写，拥有良好的性能和扩展性，并且内置的插件系统能够让企业针对自身业务进行定制开发。并且 Goku API Gateway 支持与 EOLINKER 旗下的 API Studio 接口管理平台结合，对 API 进行全面的管理、自动化测试、监控和运维。</p>
+<p><strong>产品关键特性</strong></p>
+<ul>
+<li>控制台：通过清晰的 UI 界面对网关集群进行各项配置。- 集群管理：Goku 网关节点是无状态的，配置信息自动同步，支持节点水平拓展和多集群部署。- 热更新：无需重启服务，即可持续更新配置和插件。- 服务编排：一个编排 API 对应多个 backend，backend 的入参支持客户端传入，也支持 backend 间的参数传递；backend 的返回数据支持字段的过滤、删除、移动、重命名、拆包和封包；编排 API 能够设定编排调用失败时的异常返回。- 数据转换：支持将返回数据转换成 JSON 或 XML。- 负载均衡：支持有权重的 round-robin 负载平衡。- 服务发现：从 Consul、Eureka 等注册中心发现后端服务器。- HTTP(S)反向代理：隐藏真实后端服务，支持 Rest API、Webservice。- 多租户管理：根据不同的访问终端或用户来判断。- 访问策略：支持不同策略访问不同的 API、配置不同的鉴权（匿名、Apikey、Basic）等。- 灵活的转发规则：支持模糊匹配请求路径，支持改写转发路径等，可为不同访问策略或集群设置不同的负载。- IP 黑白名单。- 自定义插件：允许插件挂载在常见阶段，例如 before match，access 和 proxy。- CLI: 使用命令行来启动、关闭和重启 Goku。- Serverless: 在转发过程的每一个阶段，都可以添加并调用自定义的插件。- 请求日志(access log)：仅记录转发的基本内容，自定义记录字段与排序顺序，定期自动清理日志。- 运行日志(system log)：提供控制台和节点的运行日志，默认仅记录 ERROR 等级的信息，可将等级按实际情况调成 INFO、WARN 或 DEBUG。- 可扩展：简单易用的插件机制方便扩展功能。- 高性能：性能在众多网关之中表现优异。- Open API：提供 API 对网关进行操作，便于集成。- 版本控制：支持操作的发布和多次回滚。- 监控和指标：支持 Prometheus、Graphite。- 具体对比：<a target="_blank" rel="noopener" href="https://help.eolinker.com/#/tutorial/?groupID=c-269&amp;productID=19">https://help.eolinker.com/#/tutorial/?groupID=c-269&amp;productID=19</a><br>从对比可以看到，开源版本对于关键的服务限流熔断，服务降级，数据缓存，格式转换，请求大小校验等能力是没有的，这些能力只在企业版本中提供。</li>
+</ul>
+<p>由于该网关基于 Go 语言编写，因此比类似 Zuul 网关有更好的性能，实际性能测试结果数据来看，和 Kong 网关的性能比较接近，比 Kong 网关性能略好。</p>
+<p><strong>关键内容说明</strong></p>
+<p>整个部署架构图和常见的 ESB 总线或 API 网关产品类似，数据库可以采用 Oracle 或 Mysql 数据库，缓存采用 Redis 库进行缓存。前端通过 F5 或 Ngnix 进行负载均衡，本身网关节点是无状态的，支持集群化架构部署。</p>
+<p>通过定期检查后端服务器的可用情况，智能识别可用后端、屏蔽不可用后端，减少服务器开销。这个实际类似对后端的业务服务进行心跳监测，出现问题后进行屏蔽或预警，后端服务不可用时候实际通过 API 网关封装暴露的新代理服务本身也处于不可用状态。</p>
+<p>对于后端的业务服务本身可以再通过类似 Ngnix 集群或 K8s 集群暴露集群 IP 地址接入，当然网关本身也支持直接将多个后端业务多节点接入到网关中，由网关对后端业务服务器阶段进行负载均衡，在采用了类似容器化和 K8s 或集群架构的后端来说，该功能往往并不会用到。</p>
+<p>API 健康检查，文档编写完成之后，API 定期检查节点运行状态，若节点出现异常则通过邮件或者 API 发送告警信息，并自动尝试重启修复节点。实际我们看到对于 API 的监控检查包括了两个方面，一个是通过网关封装后的 API 节点的监控检查，一个是后端业务 API 服务的监控检查。</p>
+<p>API 断线重连：请求转发失败后，网关会进行一定次数的断线重连，防止因网络闪断等原因导致 API 访问质量下降。这个类似我们说的服务重试机制，传统 ESB 总线的标准能力。该功能还是有用，主要是为了防止网络闪断引起的服务访问异常。</p>
+<p>在网关里可以给不同的调用方或客户端设置访问策略，不同的访问策略可以设置不同的 API 访问权限、鉴权方式以及插件功能等。网关支持 开放策略 与 普通策略：</p>
+<ul>
+<li>开放策略：系统自带访问策略，使用开放策略时不需要传递策略 ID 参数;- 普通策略：自定义访问策略，需要传递策略 ID 参数。<br>网关的插件分为 策略插件 与 API 插件。</li>
+</ul>
+<p>策略插件包括：流量控制、鉴权、IP 黑白名单等。API 插件包括：参数映射、额外参数、熔断、服务降级等。鉴权的对象为 策略 (Strategy) ，策略可表示为一个公司、一个业务部门或一个用户。开源版网关支持以下鉴权方式：Public、Basic、Apikey。暂时没有看到基于消费访问 IP 地址的服务访问鉴权，不清楚是否企业版有对应的 IP 认证鉴权支持。</p>
+<p><strong>日志管理能力</strong></p>
+<p>网关系统的日志分为两大部分：请求日志（access.log）和系统运行时日志；运行时日志又分为：控制台的运行日志（console.log）、各节点的运行日志（node.log）。对于请求日志可以详细的配置日志存放路径，记录周期，具体记录的内容等。</p>
+<p>整体相对来说，当前网关提供的日志管理能够偏弱，特别是日志信息的查看，基于服务日志运行进行的 API 接口服务的运行分析统计等方面的能力。</p>
+<p>参数映射：功能具备，但是使用起来会比较麻烦，暂时没看到图形化或者表格方式的参数映射界面。对于参数映射不一定完全的图形化，但是提供类似阿里云 API 网关的表格化映射是一种可行的方式。</p>
+<h3 id="小豹-API-网关"><a href="#小豹-API-网关" class="headerlink" title="小豹 API 网关"></a>小豹 API 网关</h3><p><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9KUmVVc2ljZm1FUGJKNkRuVEgzNkdCakZUdjc4TlNpYmZCYUlQVFNMQ2tZemliNmp6dkVnc2lhdVI2bU43bmgxcEV3dXBBUWRieHBGeDQ0enNQUGgwbVI4aWJBLzY0MA?x-oss-process=image/format,png"><a target="_blank" rel="noopener" href="http://www.xbgateway.com/architecture.html">http://www.xbgateway.com/architecture.html</a></p>
+<p>这个是最近在网上查找 API 网关相关资料的时候搜索到的一个商用的 API 网关，从产品介绍材料来看，我们前面谈过的网关的核心功能基本上全部包括，而且相当来说也比较完善。同时提供了一个较方便的 API 网关的治理管控平台，可以方便的对 API 注册接入和运行全生命周期， 方便对安全，流控，日志各方面进行灵活管控。</p>
+<p>下面我们看下网站对 API 网关架构特点的一些说明：</p>
+<p>基于 Netty NIO 的响应式架构；分布式缓存基于 Redis；数据库基于 Mysql，分布式配置基于 ZooKeeper</p>
+<p>API 配置缓存，运行时不依赖 DB，配置更新后自动通知各网关节点；</p>
+<p>支持自定义组件，动态加载，在不中断网关服务的情况下重新加载配置和运行组件；</p>
+<p>API 服务连续异常后自动熔断和自我恢复，访问异常、超时处理；</p>
+<p>网关核心运行过程不写磁盘 IO，避免磁盘 IO 性能影响网关吞吐量；</p>
+<p>Docker 容器化支持，拆分网关、管理服务、第三方中间件依赖等镜像，便于灵活扩容。</p>
+<h3 id="RestCloud-API-企业微服务-API-开发"><a href="#RestCloud-API-企业微服务-API-开发" class="headerlink" title="RestCloud API 企业微服务 API 开发"></a>RestCloud API 企业微服务 API 开发</h3><p><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9KUmVVc2ljZm1FUGJKNkRuVEgzNkdCakZUdjc4TlNpYmZCaHJaR0w5OEhTQXd5MDNPTGlhSzdJSjJzY0J6NndGM1VPMjRISVoyM2RWaWNRTXhlMGRmakVkcVEvNjQw?x-oss-process=image/format,png"><a target="_blank" rel="noopener" href="http://www.restcloud.cn/restcloud/mycms/apigateway.html">http://www.restcloud.cn/restcloud/mycms/apigateway.html</a></p>
+<p>RestCloud API 网关是完全自主研发的面向企业级的 API 网关，一且以简单、易用、轻量级为目标进行研发，同时兼顾作为企业级的服务总线可以替换企业原有的 ESB 产品，RestCloud 是集 ESB 和 API 网关于一体的企业级网关产品。这个不仅仅提供了 API 网关， 也提供了微服务快速开发平台，API 服务治理平台，DaaS 等相关组件。</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X2pwZy9KUmVVc2ljZm1FUGJKNkRuVEgzNkdCakZUdjc4TlNpYmZCWnRWQkFGTm9pYzI2cmJJTVpWSG0zcXVhVzBOaWJ0T09lZ0Z5NWp0Q2JpY2JLeE9IaWJMSkVMVzBCdy82NDA?x-oss-process=image/format,png">
+
+<p>另外 RestCloud 本身还提供了 Http Rest API 接口的快速开发平台，可以将数据库表，表对象，1 多多对象关系的快速的发布为 Http Rest API 接口服务，同时支持多数据库接口适配。</p>
+<p>最后，再附上我历时三个月总结的 <strong>Java 面试 + Java 后端技术学习指南</strong>，笔者这几年及春招的总结，<strong>github 1.4k star</strong>，拿去不谢！</p>
+<pre class="line-numbers language-java"><code class="language-java">
+
+下载方式<span class="token number">1</span><span class="token punctuation">.</span> 首先扫描下方二维码
+<span class="token number">2</span><span class="token punctuation">.</span> 后台回复「Java面试」即可获取
+
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>原文地址：<a target="_blank" rel="noopener" href="https://sihai.blog.csdn.net/article/details/109465943">https://sihai.blog.csdn.net/article/details/109465943</a></p>
+
+                </div>
+                <!-- 欧阳思海，modify，2020.05.01-->
+<!-- 文章详情详情页面的头部广告位置信息 -->
+<div id="post-head-panel">
+    
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" style="font-size: 18px;" target="_blank">
+        <img src="/icons/hot.gif">
+        本人花费半年的时间总结的《Java面试指南》已拿腾讯等大厂offer，已开源在github ，欢迎star！
+    </a>
+    
+    
+</div>
+<br />
+
+
+
+<blockquote>
+    
+            <p>本文GitHub <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">https://github.com/OUYANGSIHAI/JavaInterview</a> 已收录，这是我花了6个月总结的<b>一线大厂Java面试</b>总结，本人已拿大厂offer，欢迎star</p>
+    
+    <p>原文链接：blog.ouyangsihai.cn &gt;&gt; <a href="/wan-zi-jiang-jie-api-wang-guan-de-lai-long-qu-mai.html" target="_blank">万字讲解API网关的来龙去脉</a></p>
+</blockquote>
+                <hr />
+
+                
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.88rem;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-large waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fa fa-close"></i></a>
+            <h4 class="reward-title">多少都是对我的认可</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="http://image.ouyangsihai.cn/FpbhsOuf3Ar9vY34B97Y2qQ7LVGe" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="http://image.ouyangsihai.cn/FgYlMzms68PH73PWpZBwPfbLTAws" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+                
+
+                <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+
+<div id="article-share">
+    
+    <div class="social-share" data-disabled="qzone" data-wechat-qrcode-helper="<p>微信里点“发现”->“扫一扫”二维码便可查看分享。</p>"></div>
+    
+</div>
+
+<script src="/libs/share/js/social-share.min.js"></script>
+
+                
+
+                
+                <div class="reprint1">
+                    <p>
+                        <span class="reprint1-tip">
+                            <i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;转载请注明:
+                        </span>
+                        <a href="https://blog.ouyangsihai.cn" class="b-link-green">好好学java</a>
+                        <i class="fa fa-angle-right fa-lg fa-fw text-color"></i>
+                        <a href="/wan-zi-jiang-jie-api-wang-guan-de-lai-long-qu-mai.html" class="b-link-green">万字讲解API网关的来龙去脉</a>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        
+
+        
+
+        
+
+        
+
+        
+        <style>
+    .valine-card {
+        margin: 1.5rem auto;
+    }
+
+    .valine-card .card-content {
+        padding: 20px 20px 5px 20px;
+    }
+    /* valine 评论框增加背景图片 */
+    #vcomments textarea {
+        box-sizing: border-box;
+        background: url("") 100% 100% no-repeat;
+    }
+
+    #vcomments input[type=text],
+    #vcomments input[type=email],
+    #vcomments input[type=url],
+    #vcomments textarea {
+        box-sizing: border-box;
+    }
+
+    #vcomments p {
+        margin: 2px 2px 10px;
+        font-size: 1.05rem;
+        line-height: 1.78rem;
+    }
+
+    #vcomments blockquote p {
+        text-indent: 0.2rem;
+    }
+
+    #vcomments a {
+        padding: 0 2px;
+        color: #42b983;
+        font-weight: 500;
+        text-decoration: underline;
+    }
+
+    #vcomments img {
+        max-width: 100%;
+        height: auto;
+        cursor: pointer;
+    }
+
+    #vcomments ol li {
+        list-style-type: decimal;
+    }
+
+    #vcomments ol,
+    ul {
+        display: block;
+        padding-left: 2em;
+        word-spacing: 0.05rem;
+    }
+
+    #vcomments ul li,
+    ol li {
+        display: list-item;
+        line-height: 1.8rem;
+        font-size: 1rem;
+    }
+
+    #vcomments ul li {
+        list-style-type: disc;
+    }
+
+    #vcomments ul ul li {
+        list-style-type: circle;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    #vcomments table, th, td {
+        border: 0;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments h1 {
+        font-size: 1.85rem;
+        font-weight: bold;
+        line-height: 2.2rem;
+    }
+
+    #vcomments h2 {
+        font-size: 1.65rem;
+        font-weight: bold;
+        line-height: 1.9rem;
+    }
+
+    #vcomments h3 {
+        font-size: 1.45rem;
+        font-weight: bold;
+        line-height: 1.7rem;
+    }
+
+    #vcomments h4 {
+        font-size: 1.25rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    #vcomments h5 {
+        font-size: 1.1rem;
+        font-weight: bold;
+        line-height: 1.4rem;
+    }
+
+    #vcomments h6 {
+        font-size: 1rem;
+        line-height: 1.3rem;
+    }
+
+    #vcomments p {
+        font-size: 1rem;
+        line-height: 1.5rem;
+    }
+
+    #vcomments hr {
+        margin: 12px 0;
+        border: 0;
+        border-top: 1px solid #ccc;
+    }
+
+    #vcomments blockquote {
+        margin: 15px 0;
+        border-left: 5px solid #42b983;
+        padding: 1rem 0.8rem 0.3rem 0.8rem;
+        color: #666;
+        background-color: rgba(66, 185, 131, .1);
+    }
+
+    #vcomments pre {
+        font-family: monospace, monospace;
+        padding: 1.2em;
+        margin: .5em 0;
+        background: #272822;
+        overflow: auto;
+        border-radius: 0.3em;
+        tab-size: 4;
+    }
+
+    #vcomments code {
+        font-family: monospace, monospace;
+        padding: 1px 3px;
+        font-size: 0.92rem;
+        color: #e96900;
+        background-color: #f8f8f8;
+        border-radius: 2px;
+    }
+
+    #vcomments pre code {
+        font-family: monospace, monospace;
+        padding: 0;
+        color: #e8eaf6;
+        background-color: #272822;
+    }
+
+    #vcomments pre[class*="language-"] {
+        padding: 1.2em;
+        margin: .5em 0;
+    }
+
+    #vcomments code[class*="language-"],
+    pre[class*="language-"] {
+        color: #e8eaf6;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    #vcomments b,
+    strong {
+        font-weight: bold;
+    }
+
+    #vcomments dfn {
+        font-style: italic;
+    }
+
+    #vcomments small {
+        font-size: 85%;
+    }
+
+    #vcomments cite {
+        font-style: normal;
+    }
+
+    #vcomments mark {
+        background-color: #fcf8e3;
+        padding: .2em;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    /* 修复评论第一行位置错位 */
+    .v .vlist .vcard {
+    padding-top: 2.5em !important ;
+    }
+</style>
+
+<div class="card valine-card" data-aos="fade-up">
+    <div id="vcomments" class="card-content"></div>
+</div>
+
+<script src="/libs/valine/av-min.js"></script>
+<script src="/libs/valine/Valine.min.js"></script>
+<!-- <link rel="stylesheet" type="text/css" href="/libs//libs/jQuery-emoji/dist/css/jquery.emoji.css">
+<script src="/libs//libs/jQuery-emoji/dist/js/jquery.emoji.min.js"></script>
+<script src="/libs//libs/jQuery-emoji/dist/js/emoji.list.js"></script> -->
+<script>
+    new Valine({
+        el: '#vcomments',
+        appId: 'MxSNOS83TYWU3Opsy2GTW1ih-gzGzoHsz',
+        appKey: '4XevOgmAxHEwVDnIKgvEUihB',
+        notify: 'true' === 'true',
+        verify: 'true' === 'true',
+        visitor: 'true' === 'true',
+        avatar: 'mm',
+        pageSize: '10',
+        lang: 'zh-cn',
+        placeholder: '请畅所欲言吧，别害羞~',
+
+    });
+
+//     function parse_emoji() {
+//     jQuery(".vcontent").emojiParse({
+//       basePath: '/libs/jQuery-emoji/images/emoji',
+//       icons: emojiLists   // 注：详见 js/emoji.list.js
+//     });
+//   }
+  
+//   setTimeout(function() {
+//     // jQuery emoji 解析
+//     parse_emoji();
+//     // jquery emoji 初始化
+//     jQuery(".veditor").emoji({
+//       showTab: true,
+//       animation: 'slide',
+//       basePath: '/libs/jQuery-emoji/images/emoji',
+//       icons: emojiLists  // 注：详见 js/emoji.list.js
+//     });
+//     jQuery(".vmore").on("click", function() {
+//       setTimeout(function() {
+//         parse_emoji();
+//       }, 500);
+//     });
+//   }, 800)
+
+</script>
+        
+
+        
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/yi-kuan-vue-bian-xie-de-gong-neng-qiang-da-de-swagger-ui-you-dian-xiu-fu-kai-yuan-di-zhi.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="一款vue编写的功能强大的swagger-ui，有点秀（附开源地址）">
+                        
+                        <span class="card-title">一款vue编写的功能强大的swagger-ui，有点秀（附开源地址）</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            点击上方 **好好学java **，选择 **星标 **公众号
+
+重磅资讯、干货，第一时间送达
+
+
+今日推荐：2020年7月程序员工资统计，平均14357元，又跌了，扎心个人原创100W+访问量博客：点击前往，查看更多
+
+
+
+  作者：Re
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="fa fa-clock fa-fw icon-date"></i>2021-04-04
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E5%A5%BD%E5%A5%BD%E5%AD%A6java/" class="post-category" target="_blank">
+                                    好好学java
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fa fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/4-ci-die-dai-10w-xing-ji-bie-shu-ju-de-excel-dao-ru-you-hua-ji-lu.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="4次迭代！10w行级别数据的Excel导入优化记录">
+                        
+                        <span class="card-title">4次迭代！10w行级别数据的Excel导入优化记录</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            点击上方 **好好学java **，选择 **星标 **公众号
+
+重磅资讯、干货，第一时间送达
+
+
+今日推荐：2020年7月程序员工资统计，平均14357元，又跌了，扎心个人原创100W+访问量博客：点击前往，查看更多
+
+链接 : http
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="fa fa-clock fa-fw icon-date"></i>2021-04-04
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E5%A5%BD%E5%A5%BD%E5%AD%A6java/" class="post-category" target="_blank">
+                                    好好学java
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+    </div>
+</div>
+
+
+<script>
+    $('#articleContent').on('copy', function (e) {
+        // IE8 or earlier browser is 'undefined'
+        if (typeof window.getSelection === 'undefined') return;
+
+        var selection = window.getSelection();
+        // if the selection is short let's not annoy our users.
+        if (('' + selection).length < Number.parseInt('500')) {
+            return;
+        }
+
+        // create a div outside of the visible area and fill it with the selected text.
+        var bodyElement = document.getElementsByTagName('body')[0];
+        var newdiv = document.createElement('div');
+        newdiv.style.position = 'absolute';
+        newdiv.style.left = '-99999px';
+        bodyElement.appendChild(newdiv);
+        newdiv.appendChild(selection.getRangeAt(0).cloneContents());
+
+        // we need a <pre> tag workaround.
+        // otherwise the text inside "pre" loses all the line breaks!
+        if (selection.getRangeAt(0).commonAncestorContainer.nodeName === 'CODE') {
+            newdiv.innerHTML = "<pre>" + newdiv.innerHTML + "</pre>";
+        }
+
+        var url = document.location.href;
+        newdiv.innerHTML += '<br />'
+            + '来源: 好好学java<br />'
+            + '作者: 好好学java<br />'
+            + '链接: <a href="' + url + '">' + url + '</a><br />'
+            + '本文章著作权归作者所有，任何形式的转载都请注明出处。';
+
+        selection.selectAllChildren(newdiv);
+        window.setTimeout(function () { bodyElement.removeChild(newdiv); }, 200);
+    });
+</script>
+
+
+
+<!--
+<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+<script>
+    const btw = new BTWPlugin();
+    btw.init({
+        id: 'container',
+        blogId: '15305-1590684104111-518',
+        name: '程序员的技术圈子',
+        qrcode: 'http://image.ouyangsihai.cn/FtAUOeE5--1JTdcuuZFIhMuEUuJO',
+        keyword: 'vip',
+    });
+</script>
+-->
+
+    </div>
+    <div id="toc-aside" style="width: 310px;" class="expanded col l3 hide-on-med-and-down">
+        <!-- 自定义右侧card：欧阳思海 -->
+        <!-- <div id="my-card" style="background: ">
+            
+        </div> -->
+        <!-- <div class="toc-widget">
+            <div class="toc-title" style="display: none;"><i class="fa fa-list-alt"></i>&nbsp;&nbsp;</div>
+            <div id="toc-content"></div>
+        </div> -->
+
+
+
+
+
+
+
+
+        <aside class="col-lg-3" style="width: 300px;">
+
+            <link rel="stylesheet" type="text/css" href="/css/my-aside.css">
+
+            <!-- 关注公众号信息：欧阳思海 -->
+            <div class="widget-wrap">
+                <div class="widget bg-danger" style="color:whitesmoke; background-color: #419488">
+                    <div class="card-front animated col s12 m12 l8 offset-l2 fadeInUp">
+                        <div class="row">
+                            <div class="col-md-5" style="text-align: center;">
+                                <img class="adv" style="width: 95px; height: 95px;"
+                                    src="http://image.ouyangsihai.cn/FtAUOeE5--1JTdcuuZFIhMuEUuJO">
+                            </div>
+                            <div class="col-md-7" style="text-align: center;">
+                                <h2 style="font-size: 18px; 
+                                    margin: 0; 
+                                    padding: 0;
+                                    border: 0; 
+                                    outline: 0;
+                                    font-weight: inherit;
+                                    font-style: inherit;
+                                    font-family: inherit;
+                                    vertical-align: baseline;">关注公众号</h2>
+                                 
+                                <small style="font-size: 15px;">
+                                    →「技术干货」每日推送 <br>
+                                    →「回复资料」领取资料 <br>
+                                    →「微信加群」每周福利 <br>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div style="font-size: 0.8em;">
+                        <a href="/assets/erweima.jpg" target="_blank"
+                            style="color:orange;font-size: 14px;">点击添加我的微信，加入技术讨论群</a>
+                        除公众号以外，我还会在以下平台发布内容：
+                    </div>
+                    -->
+
+                    <div class="profile-block social-links col-md-7" style="text-align: center;">
+                        <table style="align-items: center; 
+                                        padding-left: 25px;">
+                            <tbody>
+                                <tr>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank" title="GitHub"
+                                            class="tooltip">
+                                            <img style="width: 22px;height: 22px;" src="/icons/github.svg"></a>
+                                    </td>
+
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://www.zhihu.com/people/hai-hai-ren-sheng-50/activities"
+                                            target="_blank" title="知乎" class="tooltip">
+                                            <img style="width: 22px;" src="/icons/zhihu.svg"></a>
+                                    </td>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://blog.csdn.net/sihai12345" target="_blank" title="CSDN"
+                                            class="tooltip">
+                                            <img style="width: 18px;" src="/icons/CSDN.svg"></a>
+                                    </td>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://www.jianshu.com/u/12b0bd4c857c" target="_blank" title="简书"
+                                            class="tooltip">
+                                            <img style="width: 22px;" src="/icons/JianShu.svg"></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            
+
+            <!-- custom rightside_link：热门文章推荐：欧阳思海 -->
+            
+            <div class="widget-wrap widget-panel">
+                <p style="text-align: left;padding-bottom: 10px;line-height: 30px; font-size: 14px;">
+                    
+                    <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        本人花费半年的时间总结的《 Java 面试指南》已拿腾讯等大厂 offer，已开源在 github ，欢迎 star！
+                    </a><br>
+                    
+                    <a href="https://mp.weixin.qq.com/s/I0jimqziHqRNaIy0kXRCnw" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        2020 Java 1000G 最新学习资源，Java基础、Java项目实战、Java分布式等等！
+                    </a><br>
+                    
+                    <a href="http://image.ouyangsihai.cn/FpB-dO6g-XU44mMrVlj7EL1y7Rs7" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        高级 Java 开发微信群，一起搞事情吧！
+                    </a><br>
+                    
+                </p>
+            </div>
+            
+
+            
+
+            <!-- custom rightside_banner：右侧广告或者其他的栏目设置：欧阳思海 -->
+            
+            <div class="widget-wrap">
+                <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">
+                    <img src="http://image.ouyangsihai.cn/FhhoEYMaNr6m0v8KhG8vSPgoREBV" style="width: 100%;">
+                </a>
+            </div>
+            
+            
+
+            
+
+            <!-- 右侧专栏分类：欧阳思海 -->
+            
+            <div class="widget-wrap widget-panel">
+                <ul class="media-list">
+                    
+                    <li class="media">
+                        <a href="/categories/MySQL的艺术世界/" target="_blank">
+                            <div class="media-left">
+                                <img class="media-object" src="http://image.ouyangsihai.cn/Fn3kQurieQ_0QUeqPmx5RW5i6R9n" style="width: 55px;">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading" style="margin-bottom: 10px; font-size: 100%;
+                                                                    margin: 0;
+                                                                    padding: 0;
+                                                                    border: 0;
+                                                                    outline: 0;
+                                                                    font-weight: inherit;
+                                                                    font-style: inherit;
+                                                                    font-family: inherit;
+                                                                    vertical-align: baseline;">
+                                    MySQL 的系列文章，解决全部面试问题！
+                                </h4>
+                                <p>
+                                    总共10篇文章，面试热门的锁、事务，通通解决了！
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    <hr>
+                    
+                    <li class="media">
+                        <a href="/categories/深入理解Java虚拟机/" target="_blank">
+                            <div class="media-left">
+                                <img class="media-object" src="http://image.ouyangsihai.cn/FpcS21VWJOHSgGzKcpW3_xVTSEeN" style="width: 55px;">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading" style="margin-bottom: 10px; font-size: 100%;
+                                                                    margin: 0;
+                                                                    padding: 0;
+                                                                    border: 0;
+                                                                    outline: 0;
+                                                                    font-weight: inherit;
+                                                                    font-style: inherit;
+                                                                    font-family: inherit;
+                                                                    vertical-align: baseline;">
+                                    深入理解 Java 虚拟机，面试必问
+                                </h4>
+                                <p>
+                                    总共10篇文章，包括内存模型、GC算法、GC收集器等。
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    <hr>
+                    
+                </ul>
+            </div>
+            
+
+            <!-- 右侧分类 -->
+            <div class="widget-wrap widget-panel">
+                <h3 class="widget-title">文章分类</h3>
+                <div class="widget">
+                    <ul class="category-list">
+                        
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/趣聊数据结构与算法/">>
+                                趣聊数据结构与算法</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/职业生涯浅谈/">>
+                                职业生涯浅谈</a><span class="category-list-count">33</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java项目分享/">>
+                                Java项目分享</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java面试经验/">>
+                                Java面试经验</a><span class="category-list-count">4</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/我要进大厂/">>
+                                我要进大厂</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/好好学java/">>
+                                好好学java</a><span class="category-list-count">1116</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/剑指offer/">>
+                                剑指offer</a><span class="category-list-count">112</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/css/">>
+                                css</a><span class="category-list-count">12</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/其他框架/">>
+                                其他框架</a><span class="category-list-count">142</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python其他/">>
+                                python其他</a><span class="category-list-count">45</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/数据库相关/">>
+                                数据库相关</a><span class="category-list-count">293</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java核心知识/">>
+                                Java核心知识</a><span class="category-list-count">196</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java面试题/">>
+                                Java面试题</a><span class="category-list-count">308</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/mybatis源码/">>
+                                mybatis源码</a><span class="category-list-count">56</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/spring教程/">>
+                                spring教程</a><span class="category-list-count">173</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springboot教程/">>
+                                springboot教程</a><span class="category-list-count">156</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/实战Activiti工作流/">>
+                                实战Activiti工作流</a><span class="category-list-count">4</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springcloud教程/">>
+                                springcloud教程</a><span class="category-list-count">39</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/linux/">>
+                                linux</a><span class="category-list-count">91</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python框架/">>
+                                python框架</a><span class="category-list-count">43</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python基础/">>
+                                python基础</a><span class="category-list-count">78</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/dubbo/">>
+                                dubbo</a><span class="category-list-count">37</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java源码/">>
+                                Java源码</a><span class="category-list-count">76</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/叽叽喳喳杂七杂八/">>
+                                叽叽喳喳杂七杂八</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/MySQL的艺术世界/">>
+                                MySQL的艺术世界</a><span class="category-list-count">8</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/jquery/">>
+                                jquery</a><span class="category-list-count">14</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java并发/">>
+                                Java并发</a><span class="category-list-count">43</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java文章合辑/">>
+                                Java文章合辑</a><span class="category-list-count">11</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java基础修炼/">>
+                                Java基础修炼</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/不一样的Java8/">>
+                                不一样的Java8</a><span class="category-list-count">3</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/小程序开发的世界/">>
+                                小程序开发的世界</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java学习资源分享/">>
+                                Java学习资源分享</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java小学生漫游/">>
+                                Java小学生漫游</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/rocketmq源码解析/">>
+                                rocketmq源码解析</a><span class="category-list-count">33</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springmvc最新教程/">>
+                                springmvc最新教程</a><span class="category-list-count">9</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java的Exception/">>
+                                Java的Exception</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/vue-js/">>
+                                vue.js</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/实战设计模式/">>
+                                实战设计模式</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python数据处理/">>
+                                python数据处理</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java-Web闯关/">>
+                                Java Web闯关</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springboot2-0最新教程/">>
+                                springboot2.0最新教程</a><span class="category-list-count">11</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/netty/">>
+                                netty</a><span class="category-list-count">16</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/rpc/">>
+                                rpc</a><span class="category-list-count">13</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/拥抱大厂系列/">>
+                                拥抱大厂系列</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/eureka/">>
+                                eureka</a><span class="category-list-count">19</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/分布式/">>
+                                分布式</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/中间件/">>
+                                中间件</a><span class="category-list-count">23</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java基础/">>
+                                Java基础</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/带你学Python/">>
+                                带你学Python</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/使用技术工具/">>
+                                使用技术工具</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/mycat源码/">>
+                                mycat源码</a><span class="category-list-count">5</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/深入理解Java虚拟机/">>
+                                深入理解Java虚拟机</a><span class="category-list-count">8</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/spring源码/">>
+                                spring源码</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java集合源码分析/">>
+                                Java集合源码分析</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/github的repo/">>
+                                github的repo</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java框架深究/">>
+                                Java框架深究</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/分布式架构/">>
+                                分布式架构</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+
+        </aside>
+
+
+
+
+
+
+
+
+
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. 修改成永远不显示：欧阳思海-->
+
+
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h1, h2, h3, h4, h5'
+        });
+
+        console.log('============');
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h1, h2, h3, h4, h5').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+                        
+            /* 修复文章卡片 div 的宽度. */
+            let fixPostCardWidth = function (srcId, targetId) {
+                let srcDiv = $('#' + srcId);
+                if (srcDiv.length === 0) {
+                    return;
+                }
+
+                let w = srcDiv.width();
+                if (w >= 450) {
+                    w = w + 21;
+                } else if (w >= 350 && w < 450) {
+                    w = w + 18;
+                } else if (w >= 300 && w < 350) {
+                    w = w + 16;
+                } else {
+                    w = w + 14;
+                }
+                $('#' + targetId).width(w);
+            };
+
+            // 切换TOC目录展开收缩的相关操作.
+            // 修改右侧边栏功能：欧阳思海
+            const expandedClass = 'expanded';
+            let $tocAside = $('#toc-aside');
+            let $mainContent = $('#main-content');
+
+            $('#floating-toc-btn .btn-floating').click(function () {
+                if ($tocAside.hasClass(expandedClass)) {
+                    $tocAside.removeClass(expandedClass).slideUp(500);
+                    $mainContent.removeClass('l9');
+                } else {
+                    $tocAside.addClass(expandedClass).slideDown(500);
+                    $mainContent.addClass('l9');
+                }
+                fixPostCardWidth('artDetail', 'prenext-posts');
+            });
+                        
+                    });
+</script>
+    
+
+</main>
+
+
+        <footer class="page-footer bg-color">
+    <div class="container row center-align">
+        <div class="col s12 m8 l8 copy-right">
+            
+	    Copyright&copy; 2019 <a href="https://www.java1000.com/" target="_blank"> 好好学java </a>维护. 网站备案/许可证号：赣ICP备17007984号-3
+            <br>
+            <span id="sitetime"></span>
+            <br>
+
+            
+
+            
+                    <!-- 
+                        <span id="busuanzi_container_site_pv" style='display:none'></span>
+                        总访问量: <span id="busuanzi_value_site_pv" class="white-color"></span>
+                    
+        
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'></span>
+                        人次&nbsp; | &nbsp;访客人数: <span id="busuanzi_value_site_uv" class="white-color"></span> 人
+                     -->
+                        <!-- 修改计数：欧阳思海 -->
+                    
+                        <span id="busuanzi_container_site_pv" style='display:inline'>
+                            <i class="fa fa-heart-o"></i>
+                            本站总访问量 <span id="busuanzi_value_site_pv" class="white-color"></span>
+                        </span>
+                    
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'>
+                            人次,&nbsp;访客数 <span id="busuanzi_value_site_uv" class="white-color"></span> 人.
+                        </span>
+                    
+    
+            
+
+            
+                &nbsp; | &nbsp;字数统计:&nbsp;
+                <span class="white-color">8290.3k</span> 字
+            
+
+            
+            <br>
+
+        </div>
+
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fa fa-code-branch"></i>
+    </a>
+
+
+ 
+    <a href="https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=1446037005@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fa fa-envelope-open"></i>
+    </a>
+
+
+
+
+    <a href="https://zhihu.com/people/hai-hai-ren-sheng-50/activities" class="tooltipped" target="_blank" data-tooltip="访问我的知乎" data-position="top" data-delay="50">
+        <i class="fa fa-inverse">知</i>
+    </a>
+
+
+
+
+
+
+
+
+
+    <a href="https://blog.ouyangsihai.cn/sitemap.xml" class="tooltipped" target="_blank" data-tooltip="站点地图" data-position="top" data-delay="50">
+        <i class="fa fa-sitemap"></i>
+    </a>
+
+
+
+    <a href="https://blog.ouyangsihai.cn/friends" class="tooltipped" target="_blank" data-tooltip="友情链接" data-position="top" data-delay="50">
+        <i class="fa fa-address-book"></i>
+    </a>
+</div>
+
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+
+        var t1 = Date.UTC(2019, 08, 10, 00, 00, 00); //北京时间2019-8-1 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes *
+            minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "本站已运行 " + diffYears + " 年 " + diffDays + " 天 " + diffHours +
+            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒" ;
+    } /*因为建站时间还没有一年，就将之注释掉了。需要的可以取消*/
+    siteTime();
+</script>
+
+<!-- 修改计数：欧阳思海 -->
+<script>
+    $(document).ready(function () {
+
+        var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+        var pvcountOffset = 1005469;  // 初始化首次数据
+        var uvcountOffset = 250804;
+
+        function fixCount() {
+            if (document.getElementById("busuanzi_container_site_pv").style.display != "none") {
+                $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + pvcountOffset);
+                clearInterval(int);
+            }
+            if ($("#busuanzi_container_site_pv").css("display") != "none") {
+                $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + uvcountOffset); // 加上初始数据 
+                clearInterval(int); // 停止检测
+            }
+        }
+    });
+</script>
+
+
+
+
+        <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.json", 'searchInput', 'searchResult');
+});
+</script>
+        <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fa fa-angle-up"></i>
+    </a>
+</div>
+
+
+        <script src="/libs/materialize/materialize.min.js"></script>
+        <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+        <script src="/libs/aos/aos.js"></script>
+        <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+        <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+        <script src="/js/matery.js"></script>
+
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-149362573-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    gtag('config', 'UA-149362573-1');
+</script>
+
+
+
+        
+            <script src="/libs/others/clicklove.js"></script>
+        
+
+        
+            <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+        
+
+        <!-- 洪卫 shw2018 add 2019.08.28 -->
+        <script type="text/javascript">
+            var OriginTitile = document.title,
+                st;
+            document.addEventListener("visibilitychange", function () {
+                document.hidden ? (document.title = "看不见我🙈~看不见我🙈~", clearTimeout(st)) : (document.title =
+                    "(๑•̀ㅂ•́) ✧被发现了～", st = setTimeout(function () {
+                        document.title = OriginTitile
+                    }, 3e3))
+            })
+        </script>
+
+        <!-- 鼠标点击烟花爆炸效果  洪卫 shw2018 add 2019.09.09 -->
+        
+
+        <!-- 背景雪花飘落特效洪卫 shw2018 add 2019.09.10 -->
+        
+
+        <!-- 鼠标点击文字特效 洪卫 shw2018 add 2019.09.10-->
+        
+
+        <!-- 背景雪花飘落特效 洪卫 shw2018 add 2019.09.10 -->
+        
+
+        <!-- 在线聊天工具  洪卫 shw2018 add 2019.09.11 -->
+        
+
+        <!-- 背景 canvas-nest  洪卫 shw 2018  add 2019.09.15-->
+        
+
+        <!-- 背景静止彩带  洪卫 shw 2018  add 2019.09.15-->
+        
+
+        <!-- 背景动态彩带 洪卫 shw 2018  add 2019.09.15-->
+        
+
+    </body>
+</html>

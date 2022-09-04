@@ -1,0 +1,2814 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+    <!-- shw2018 洪卫  modify 2019.08.15-->
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="Spring Boot, Spring Cloud, 微服务, Java技术, 好好学java, Java面试, 分布式, 最新干货分享">
+    <meta name="baidu-site-verification" content="fmlEuI34ir" />
+    <meta name="google-site-verification" content="ZWVq5UvPg33BCEA3LRTUkYe5J854o9lF1_WRTer9l8A" />
+    <meta name="description" content="本站是 好好学java 的技术分享博客。内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、分布式、Java面试、测试开发等相关的研究与知识分享。">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>彻头彻尾理解 LinkedHashMap | 好好学java | Spring Boot | Spring Cloud | 微服务 | Java技术 | Java面试 | 分布式 | 最新干货分享</title>
+    <link rel="icon" type="image/png" href="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7">
+
+    <!-- <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css"> -->
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    <!-- 自定义fontawesome样式：欧阳思海 -->
+    <link rel="stylesheet" type="text/css" href="/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/brands.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/fontawesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/regular.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/solid.min.css">
+
+
+    <style type="text/css">
+        code[class*="language-"],
+            pre[class*="language-"] {
+                white-space: pre !important;
+            }
+
+            
+
+        /* 将matery.css中的背景颜色修改放到这里：欧阳思海 */
+        .bg-color {
+            background-image: linear-gradient(to right, #ec8585 0%, #419488 100%);
+            opacity: 0.9;
+            // 透明度
+        }
+    </style>
+
+    <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
+    <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+
+    
+    
+    <script>
+        (function () {
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+    
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?6fe466069710c03a563713b507fbaca7";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+    <!-- Google Analytics -->
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-XXXXX-Y', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <!-- End Google Analytics -->
+
+    <script>(function (i, s, o, g, r, a, m) { i["DaoVoiceObject"] = r; i[r] = i[r] || function () { (i[r].q = i[r].q || []).push(arguments) }, i[r].l = 1 * new Date(); a = s.createElement(o), m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; a.charset = "utf-8"; m.parentNode.insertBefore(a, m) })(window, document, "script", ('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/0a804bac.js", "daovoice")</script>
+
+    <script>
+        if (true) {
+            daovoice('init', {
+                app_id: "0a804bac",
+                user_id: "NO_89757", // 必填: 该用户在您系统上的唯一ID
+                email: "daovoice@example.com", // 选填:  该用户在您系统上的主邮箱
+                name: "道客船长", // 选填: 用户名
+                signed_up: 1449821660 // 选填: 用户的注册时间，用Unix时间戳表示
+            });
+            daovoice('update');
+
+            daovoice('init', {
+                app_id: "0a804bac"
+            });
+            daovoice('update');
+        }
+    </script>
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/rss2.xml" title="好好学java" type="application/rss+xml">
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+    <body>
+
+        <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span" style="font-size: 1.4rem;">好好学java</span>
+                </a>
+            </div>
+            
+
+
+<!-- <a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-navicon"></i></a>
+<ul class="right">
+    
+    <li class="hide-on-med-and-down">
+        <a href="" class="waves-effect waves-light">
+            
+            <i class="fa "></i>
+            
+            <span></span>
+        </a>
+    </li>
+    
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title=""></i>
+        </a>
+    </li>
+</ul> -->
+
+<!-- 支持二级菜单特性 洪卫 shw2018 modify 2019.09.17  -->
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-align-justify"></i></a>
+<ul class="right nav-menu">
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-folder-minus"></i>
+                
+                <span style="font-size: 1.1rem;">Java学习</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/" >
+                    
+                    <span>Java入门</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Javaweb/" >
+                    
+                    <span>Java Web</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/spring%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>Spring教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/springboot%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>SpringBoot教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/springcloud%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>SpringCloud教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98/" >
+                    
+                    <span>Java面试</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%89%91%E6%8C%87offer/" >
+                    
+                    <span>剑指offer</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-code-branch"></i>
+                
+                <span style="font-size: 1.1rem;">Java进阶</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97/" >
+                    
+                    <span>设计模式</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" >
+                    
+                    <span>Java并发编程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/" >
+                    
+                    <span>数据库</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/redis/" >
+                    
+                    <span>Redis</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/linux/" >
+                    
+                    <span>Linux</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/" >
+                    
+                    <span>Java实战项目</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-code"></i>
+                
+                <span style="font-size: 1.1rem;">python学习</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/python%E5%9F%BA%E7%A1%80/" >
+                    
+                    <span>python基础</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/python%E6%A1%86%E6%9E%B6/" >
+                    
+                    <span>python框架</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/python%E5%85%B6%E4%BB%96/" >
+                    
+                    <span>python其他</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-coffee"></i>
+                
+                <span style="font-size: 1.1rem;">Java扩展</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/dubbo/" >
+                    
+                    <span>dubbo</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/netty/" >
+                    
+                    <span>netty</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/rpc/" >
+                    
+                    <span>rpc</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/eureka/" >
+                    
+                    <span>eureka</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/" >
+                    
+                    <span>中间件</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" >
+                    
+                    <span>分布式</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-desktop"></i>
+                
+                <span style="font-size: 1.1rem;">计算机核心</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" >
+                    
+                    <span>数据结构</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98/" >
+                    
+                    <span>leetcode刷题</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" >
+                    
+                    <span>计算机网络</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" >
+                    
+                    <span>算法</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/categories/" class="waves-effect waves-light">
+              
+                <i style="font-size: 1.1rem;" class="fa fa-adjust"></i>
+              
+              <span style="font-size: 1.1rem;">学习资源</span>
+            </a>
+
+            
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/contact" class="waves-effect waves-light">
+              
+                <i style="font-size: 1.1rem;" class="fa fa-envelope"></i>
+              
+              <span style="font-size: 1.1rem;">留言</span>
+            </a>
+
+            
+      </li>
+    
+
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title="搜索"></i>
+        </a>
+    </li>
+
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">好好学java</div>
+        <div class="logo-desc">
+            
+            
+            本站是 好好学java 的技术分享博客，涵盖Java后端技术、SpringBoot、微服务架构、分布式、Java面试等知 ...
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-folder-minus"></i>
+			
+			Java学习
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/ " style="margin-left:75px";>
+				  
+		          <span>Java入门</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Javaweb/ " style="margin-left:75px";>
+				  
+		          <span>Java Web</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/spring%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>Spring教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/springboot%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>SpringBoot教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/springcloud%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>SpringCloud教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98/ " style="margin-left:75px";>
+				  
+		          <span>Java面试</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%89%91%E6%8C%87offer/ " style="margin-left:75px";>
+				  
+		          <span>剑指offer</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-code-branch"></i>
+			
+			Java进阶
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97/ " style="margin-left:75px";>
+				  
+		          <span>设计模式</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>Java并发编程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/ " style="margin-left:75px";>
+				  
+		          <span>数据库</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/redis/ " style="margin-left:75px";>
+				  
+		          <span>Redis</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/linux/ " style="margin-left:75px";>
+				  
+		          <span>Linux</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/ " style="margin-left:75px";>
+				  
+		          <span>Java实战项目</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-code"></i>
+			
+			python学习
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/python%E5%9F%BA%E7%A1%80/ " style="margin-left:75px";>
+				  
+		          <span>python基础</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/python%E6%A1%86%E6%9E%B6/ " style="margin-left:75px";>
+				  
+		          <span>python框架</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/python%E5%85%B6%E4%BB%96/ " style="margin-left:75px";>
+				  
+		          <span>python其他</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-coffee"></i>
+			
+			Java扩展
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/dubbo/ " style="margin-left:75px";>
+				  
+		          <span>dubbo</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/netty/ " style="margin-left:75px";>
+				  
+		          <span>netty</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/rpc/ " style="margin-left:75px";>
+				  
+		          <span>rpc</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/eureka/ " style="margin-left:75px";>
+				  
+		          <span>eureka</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/ " style="margin-left:75px";>
+				  
+		          <span>中间件</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/ " style="margin-left:75px";>
+				  
+		          <span>分布式</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-desktop"></i>
+			
+			计算机核心
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/ " style="margin-left:75px";>
+				  
+		          <span>数据结构</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98/ " style="margin-left:75px";>
+				  
+		          <span>leetcode刷题</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/ " style="margin-left:75px";>
+				  
+		          <span>计算机网络</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E7%AE%97%E6%B3%95/ " style="margin-left:75px";>
+				  
+		          <span>算法</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories/" class="waves-effect waves-light">
+			
+			    <i class="fa fa-fw fa-adjust"></i>
+			
+			学习资源
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa fa-fw fa-envelope"></i>
+			
+			留言
+		</a>
+          
+        </li>
+        
+        
+    </ul>
+</div>
+
+        </div>
+
+        
+    </nav>
+
+</header>
+
+        
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/11.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <div class="description center-align post-title">
+                        彻头彻尾理解 LinkedHashMap
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 20px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+
+    /* 自定义mycard：欧阳思海 */
+
+    #my-card {
+        /* position: relative; */
+        width: 310px;
+        height: 300px;
+        /* max-height: 330px; */
+        margin-bottom: 15px;
+        margin-top: 15px;
+        /* text-align: center; */
+        border: 0;
+        border-radius: 3px;
+        color: rgba(0, 0, 0, .87);
+        background: #fff 50%;
+        background-image: none;
+        background-size: auto;
+        background-size: cover;
+        box-shadow: 0 15px 35px rgba(50, 50, 93, .1), 0 5px 15px rgba(0, 0, 0, .07);
+    }
+
+    /* .widget {
+        line-height: 1.6em;
+        word-wrap: break-word;
+        font-size: 0.9em;
+        padding-top: 15px;
+        padding-left: -45px;
+    } */
+</style>
+
+
+
+
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- shw2018 洪卫  modify 2019.08.15-->
+
+<!-- 代码块修改的代码开始 -->
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFunction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+<!-- 代码块折行 -->
+
+<style type="text/css">
+code[class*="language-"], pre[class*="language-"] { white-space: pre !important; }
+</style>
+
+<!-- 代码块修改代码结束 -->
+
+
+<!-- 文章内容详情 -->
+<div id="container">
+    <div id="artDetail">
+        <div class="card">
+            <div class="card-content article-info">
+                <div class="row tag-cate">
+                    <div class="col s7">
+                        
+                        <div class="article-tag">
+                            <!--我修改的地方：欧阳思海-->
+                            
+                            <a href="/tags/Java%E5%9F%BA%E7%A1%80/" target="_blank">
+                                <span class="chip bg-color">Java基础</span>
+                            </a>
+                            
+                        </div>
+                        
+                    </div>
+                    <div class="col s5 right-align">
+                        
+                        <div class="post-cate">
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/" class="post-category" target="_blank">
+                                Java核心知识
+                            </a>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <div class="post-info">
+                    <div class="post-date info-break-policy">
+                        <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
+                        2021-04-05
+                    </div>
+
+                    <div class="post-author info-break-policy">
+                        <i class="fa fa-user-o fa-fw"></i>作者:&nbsp;&nbsp;
+                        
+                        欧阳思海
+                        
+                    </div>
+
+                    
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;
+                        11.3k
+                    </div>
+                    
+
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-clock-o fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                        51 分
+                    </div>
+                    
+                    
+
+                    
+                    <span id="busuanzi_container_site_pv" style='display:none'></span>
+                    <i class="fa fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                    <span id="busuanzi_value_page_pv"></span>
+
+                    
+
+                </div>
+            </div>
+            <hr class="clearfix">
+            <div class="card-content article-card-content">
+                <!-- 欧阳思海，modify，2020.05.01-->
+<!-- 文章详情详情页面的头部广告位置信息 -->
+<div id="post-head-panel">
+    
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" style="font-size: 18px;" target="_blank">
+        <img src="/icons/hot.gif">
+        本人花费半年的时间总结的《Java面试指南》已拿腾讯等大厂offer，已开源在github ，欢迎star！
+    </a>
+    
+    
+</div>
+<br />
+
+
+
+<blockquote>
+    
+            <p>本文GitHub <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">https://github.com/OUYANGSIHAI/JavaInterview</a> 已收录，这是我花了6个月总结的<b>一线大厂Java面试</b>总结，本人已拿大厂offer，欢迎star</p>
+    
+    <p>原文链接：blog.ouyangsihai.cn &gt;&gt; <a href="/che-tou-che-wei-li-jie-linkedhashmap.html" target="_blank">彻头彻尾理解 LinkedHashMap</a></p>
+</blockquote>
+                <div id="articleContent">
+                    <p>点击蓝字“程序员考拉”欢迎关注！</p>
+<img class="__bg_gif" style="visibility: visible !important; width: 547px !important;" title="彻头彻尾理解 LinkedHashMap" src="https://www.javazhiyin.com/wp-content/uploads/2019/03/java8-1553058539.gif" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="彻头彻尾理解 LinkedHashMap" width="547px">
+
+<p> </p>
+<p>一. LinkedHashMap 概述</p>
+<p>HashMap 是 Java Collection Framework 的重要成员，也是Map族(如下图所示)中我们最为常用的一种。不过遗憾的是，HashMap是无序的，也就是说，迭代HashMap所得到的元素顺序并不是它们最初放置到HashMap的顺序。HashMap的这一缺点往往会造成诸多不便，因为在有些场景中，我们确需要用到一个可以保持插入顺序的Map。庆幸的是，JDK为我们解决了这个问题，它为HashMap提供了一个子类 —— LinkedHashMap。虽然LinkedHashMap增加了时间和空间上的开销，但是它通过维护一个额外的双向链表保证了迭代顺序。特别地，该迭代顺序可以是插入顺序，也可以是访问顺序。因此，根据链表中元素的顺序可以将LinkedHashMap分为：保持插入顺序的LinkedHashMap 和 保持访问顺序的LinkedHashMap，其中LinkedHashMap的默认实现是按插入顺序排序的。</p>
+<p> </p>
+<img class="" style="width: 100%; height: auto;" title="彻头彻尾理解 LinkedHashMap" src="https://www.javazhiyin.com/wp-content/uploads/2019/03/java3-1553058539.png" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="彻头彻尾理解 LinkedHashMap">
+
+<p> </p>
+<p>本质上，HashMap和双向链表合二为一即是LinkedHashMap。所谓LinkedHashMap，其落脚点在HashMap，因此更准确地说，它是一个将所有Entry节点链入一个双向链表双向链表的HashMap。在LinkedHashMapMap中，所有put进来的Entry都保存在如下面第一个图所示的哈希表中，但由于它又额外定义了一个以head为头结点的双向链表(如下面第二个图所示)，因此对于每次put进来Entry，除了将其保存到哈希表中对应的位置上之外，还会将其插入到双向链表的尾部。</p>
+<p>　　　　　　　　　　　　　<img class="" style="width: 100%; height: auto;" title="彻头彻尾理解 LinkedHashMap" src="https://www.javazhiyin.com/wp-content/uploads/2019/03/java1-1553058539.png" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="彻头彻尾理解 LinkedHashMap"></p>
+<p> </p>
+<img class="" style="width: 100%; height: auto;" title="彻头彻尾理解 LinkedHashMap" src="https://www.javazhiyin.com/wp-content/uploads/2019/03/java4-1553058539.jpeg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="彻头彻尾理解 LinkedHashMap">
+
+<p>更直观地，下图很好地还原了LinkedHashMap的原貌：HashMap和双向链表的密切配合和分工合作造就了LinkedHashMap。特别需要注意的是，next用于维护HashMap各个桶中的Entry链，before、after用于维护LinkedHashMap的双向链表，虽然它们的作用对象都是Entry，但是各自分离，是两码事儿。</p>
+<p>　　　　　　　　　　<img class="" style="width: 100%; height: auto;" title="彻头彻尾理解 LinkedHashMap" src="https://www.javazhiyin.com/wp-content/uploads/2019/03/java6-1553058540.jpg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="彻头彻尾理解 LinkedHashMap"></p>
+<p>　</p>
+<p>其中，HashMap与LinkedHashMap的Entry结构示意图如下图所示：</p>
+<p>　　　　<img class="" style="font-size: 14px;" title="彻头彻尾理解 LinkedHashMap" src="https://www.javazhiyin.com/wp-content/uploads/2019/03/java10-1553058540.png" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="彻头彻尾理解 LinkedHashMap"></p>
+<p> </p>
+<p>特别地，由于LinkedHashMap是HashMap的子类，所以LinkedHashMap自然会拥有HashMap的所有特性。比如，LinkedHashMap也最多只允许一条Entry的键为Null(多条会覆盖)，但允许多条Entry的值为Null。此外，LinkedHashMap 也是 Map 的一个非同步的实现。此外，LinkedHashMap还可以用来实现LRU (Least recently used, 最近最少使用)算法，这个问题会在下文的特别谈到。</p>
+<p> </p>
+<p>二. LinkedHashMap 在 JDK 中的定义</p>
+<p>1、类结构定义</p>
+<p>LinkedHashMap继承于HashMap，其在JDK中的定义为：</p>
+<td class="line_numbers"><pre>123456</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">public class LinkedHashMapK,Vextends HashMapK,Vimplements MapK,V {     ...}</pre></td>
+
+<p>public class LinkedHashMapK,V<br>extends HashMapK,V<br>implements MapK,V {</p>
+<pre class="line-numbers language-java"><code class="language-java">
+<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>}</p>
+<p>2、成员变量定义</p>
+<p>与HashMap相比，LinkedHashMap增加了两个属性用于保证迭代顺序，分别是 双向链表头结点header 和 标志位accessOrder (值为true时，表示按照访问顺序迭代；值为false时，表示按照插入顺序迭代)。</p>
+<td class="line_numbers"><pre>123456789101112</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">/**     * The head of the doubly linked list.     */private transient EntryK,V header;  // 双向链表的表头元素 /**     * The iteration ordering method for this linked hash map: tttrue/tt     * for access-order, ttfalse/tt for insertion-order.     *     * @serial     */private final boolean accessOrder;  //true表示按照访问顺序迭代，false时表示按照插入顺序</pre></td>
+
+<p>&#x2F;**<br>     * The head of the doubly linked list.<br>     *&#x2F;<br>private transient EntryK,V header;  &#x2F;&#x2F; 双向链表的表头元素</p>
+<p>&#x2F;**<br>     * The iteration ordering method for this linked hash map: tttrue&#x2F;tt<br>     * for access-order, ttfalse&#x2F;tt for insertion-order.<br>     *<br>     * @serial<br>     *&#x2F;<br>private final boolean accessOrder;  &#x2F;&#x2F;true表示按照访问顺序迭代，false时表示按照插入顺序</p>
+<p>3、成员方法定义</p>
+<p>从下图我们可以看出，LinkedHashMap中并增加没有额外方法。也就是说，LinkedHashMap与HashMap在操作上大致相同，只是在实现细节上略有不同罢了。</p>
+<p>　　　　　　　　　　　　　　<img class="" style="width: 100%; height: auto;" title="彻头彻尾理解 LinkedHashMap" src="https://www.javazhiyin.com/wp-content/uploads/2019/03/java0-1553058540.png" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="彻头彻尾理解 LinkedHashMap"></p>
+<p> </p>
+<p>4、基本元素 Entry</p>
+<p>LinkedHashMap采用的hash算法和HashMap相同，但是它重新定义了Entry。LinkedHashMap中的Entry增加了两个指针 before 和 after，它们分别用于维护双向链接列表。特别需要注意的是，next用于维护HashMap各个桶中Entry的连接顺序，before、after用于维护Entry插入的先后顺序的，源代码如下：</p>
+<td class="line_numbers"><pre>12345678910</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">private static class EntryK,V extends HashMap.EntryK,V { // These fields comprise the doubly linked list used for iteration.    EntryK,V before, after;     Entry(int hash, K key, V value, HashMap.EntryK,V next) {super(hash, key, value, next);    }    ...}</pre></td>
+
+<p>private static class EntryK,V extends HashMap.EntryK,V {</p>
+<p>&#x2F;&#x2F; These fields comprise the doubly linked list used for iteration.<br>    EntryK,V before, after;</p>
+<pre class="line-numbers language-java"><code class="language-java">
+<span class="token function">Entry</span><span class="token punctuation">(</span><span class="token keyword">int</span> hash<span class="token punctuation">,</span> K key<span class="token punctuation">,</span> V value<span class="token punctuation">,</span> HashMap<span class="token punctuation">.</span>EntryK<span class="token punctuation">,</span>V next<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>super(hash, key, value, next);<br>    }<br>    …<br>}</p>
+<p>形象地，HashMap与LinkedHashMap的Entry结构示意图如下图所示：</p>
+<p><strong><img class="" style="width: 100%; height: auto;" title="彻头彻尾理解 LinkedHashMap" src="https://www.javazhiyin.com/wp-content/uploads/2019/03/java7-1553058540.png" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="彻头彻尾理解 LinkedHashMap"></strong></p>
+<p> </p>
+<p>三. LinkedHashMap 的构造函数</p>
+<p>LinkedHashMap 一共提供了五个构造函数，它们都是在HashMap的构造函数的基础上实现的，分别如下：</p>
+<p> </p>
+<p>1、LinkedHashMap()</p>
+<p>该构造函数意在构造一个具有 默认初始容量 (16)和默认负载因子(0.75)的空 LinkedHashMap，是 Java Collection Framework 规范推荐提供的，其源码如下：</p>
+<td class="line_numbers"><pre>12345678</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">/**     * Constructs an empty insertion-ordered ttLinkedHashMap/tt instance     * with the default initial capacity (16) and load factor (0.75).     */public LinkedHashMap() {        super();  // 调用HashMap对应的构造函数        accessOrder = false;           // 迭代顺序的默认值    }</pre></td>
+
+<p>&#x2F;**<br>     * Constructs an empty insertion-ordered ttLinkedHashMap&#x2F;tt instance<br>     * with the default initial capacity (16) and load factor (0.75).<br>     *&#x2F;<br>public LinkedHashMap() {<br>        super();  &#x2F;&#x2F; 调用HashMap对应的构造函数<br>        accessOrder &#x3D; false;           &#x2F;&#x2F; 迭代顺序的默认值<br>    }</p>
+<p>2、LinkedHashMap(int initialCapacity, float loadFactor)</p>
+<p>该构造函数意在构造一个指定初始容量和指定负载因子的空 LinkedHashMap，其源码如下：</p>
+<td class="line_numbers"><pre>12345678910111213</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">/**     * Constructs an empty insertion-ordered ttLinkedHashMap/tt instance     * with the specified initial capacity and load factor.     *     * @param  initialCapacity the initial capacity     * @param  loadFactor      the load factor     * @throws IllegalArgumentException if the initial capacity is negative     *         or the load factor is nonpositive     */public LinkedHashMap(int initialCapacity, float loadFactor) {super(initialCapacity, loadFactor);      // 调用HashMap对应的构造函数        accessOrder = false;            // 迭代顺序的默认值    }</pre></td>
+
+<p>&#x2F;**<br>     * Constructs an empty insertion-ordered ttLinkedHashMap&#x2F;tt instance<br>     * with the specified initial capacity and load factor.<br>     *<br>     * @param  initialCapacity the initial capacity<br>     * @param  loadFactor      the load factor<br>     * @throws IllegalArgumentException if the initial capacity is negative<br>     *         or the load factor is nonpositive<br>     *&#x2F;<br>public LinkedHashMap(int initialCapacity, float loadFactor) {<br>super(initialCapacity, loadFactor);      &#x2F;&#x2F; 调用HashMap对应的构造函数<br>        accessOrder &#x3D; false;            &#x2F;&#x2F; 迭代顺序的默认值<br>    }</p>
+<p>3、LinkedHashMap(int initialCapacity)</p>
+<p>该构造函数意在构造一个指定初始容量和默认负载因子 (0.75)的空 LinkedHashMap，其源码如下：</p>
+<td class="line_numbers"><pre>1234567891011</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">/**     * Constructs an empty insertion-ordered ttLinkedHashMap/tt instance     * with the specified initial capacity and a default load factor (0.75).     *     * @param  initialCapacity the initial capacity     * @throws IllegalArgumentException if the initial capacity is negative     */public LinkedHashMap(int initialCapacity) {super(initialCapacity);  // 调用HashMap对应的构造函数        accessOrder = false;     // 迭代顺序的默认值    }</pre></td>
+
+<p>&#x2F;**<br>     * Constructs an empty insertion-ordered ttLinkedHashMap&#x2F;tt instance<br>     * with the specified initial capacity and a default load factor (0.75).<br>     *<br>     * @param  initialCapacity the initial capacity<br>     * @throws IllegalArgumentException if the initial capacity is negative<br>     *&#x2F;<br>public LinkedHashMap(int initialCapacity) {<br>super(initialCapacity);  &#x2F;&#x2F; 调用HashMap对应的构造函数<br>        accessOrder &#x3D; false;     &#x2F;&#x2F; 迭代顺序的默认值<br>    }</p>
+<p>4、LinkedHashMap(Map? extends K, ? extends V m)</p>
+<p>该构造函数意在构造一个与指定 Map 具有相同映射的 LinkedHashMap，其 初始容量不小于 16 (具体依赖于指定Map的大小)，负载因子是 0.75，是 Java Collection Framework 规范推荐提供的，其源码如下：</p>
+<td class="line_numbers"><pre>12345678910111213</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">/**     * Constructs an insertion-ordered ttLinkedHashMap/tt instance with     * the same mappings as the specified map.  The ttLinkedHashMap/tt     * instance is created with a default load factor (0.75) and an initial     * capacity sufficient to hold the mappings in the specified map.     *     * @param  m the map whose mappings are to be placed in this map     * @throws NullPointerException if the specified map is null     */public LinkedHashMap(Map? extends K, ? extends V m) {super(m);       // 调用HashMap对应的构造函数        accessOrder = false;    // 迭代顺序的默认值    }</pre></td>
+
+<p>&#x2F;**<br>     * Constructs an insertion-ordered ttLinkedHashMap&#x2F;tt instance with<br>     * the same mappings as the specified map.  The ttLinkedHashMap&#x2F;tt<br>     * instance is created with a default load factor (0.75) and an initial<br>     * capacity sufficient to hold the mappings in the specified map.<br>     *<br>     * @param  m the map whose mappings are to be placed in this map<br>     * @throws NullPointerException if the specified map is null<br>     *&#x2F;<br>public LinkedHashMap(Map? extends K, ? extends V m) {<br>super(m);       &#x2F;&#x2F; 调用HashMap对应的构造函数<br>        accessOrder &#x3D; false;    &#x2F;&#x2F; 迭代顺序的默认值<br>    }</p>
+<p>5、LinkedHashMap(int initialCapacity, float loadFactor, boolean accessOrder)</p>
+<p>该构造函数意在构造一个指定初始容量和指定负载因子的具有指定迭代顺序的LinkedHashMap，其源码如下：</p>
+<td class="line_numbers"><pre>1234567891011121314151617</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">/**     * Constructs an empty ttLinkedHashMap/tt instance with the     * specified initial capacity, load factor and ordering mode.     *     * @param  initialCapacity the initial capacity     * @param  loadFactor      the load factor     * @param  accessOrder     the ordering mode - tttrue/tt for     *         access-order, ttfalse/tt for insertion-order     * @throws IllegalArgumentException if the initial capacity is negative     *         or the load factor is nonpositive     */public LinkedHashMap(int initialCapacity,float loadFactor,boolean accessOrder) {super(initialCapacity, loadFactor);   // 调用HashMap对应的构造函数this.accessOrder = accessOrder;    // 迭代顺序的默认值    }</pre></td>
+
+<p>&#x2F;**<br>     * Constructs an empty ttLinkedHashMap&#x2F;tt instance with the<br>     * specified initial capacity, load factor and ordering mode.<br>     *<br>     * @param  initialCapacity the initial capacity<br>     * @param  loadFactor      the load factor<br>     * @param  accessOrder     the ordering mode - tttrue&#x2F;tt for<br>     *         access-order, ttfalse&#x2F;tt for insertion-order<br>     * @throws IllegalArgumentException if the initial capacity is negative<br>     *         or the load factor is nonpositive<br>     *&#x2F;<br>public LinkedHashMap(int initialCapacity,<br>float loadFactor,<br>boolean accessOrder) {<br>super(initialCapacity, loadFactor);   &#x2F;&#x2F; 调用HashMap对应的构造函数<br>this.accessOrder &#x3D; accessOrder;    &#x2F;&#x2F; 迭代顺序的默认值<br>    }</p>
+<p>正如我们在《Map 综述（一）：彻头彻尾理解 HashMap》一文中提到的那样，初始容量 和负载因子是影响HashMap性能的两个重要参数。同样地，它们也是影响LinkedHashMap性能的两个重要参数。此外，LinkedHashMap 增加了双向链表头结点 header和标志位 accessOrder两个属性用于保证迭代顺序。</p>
+<p> </p>
+<p>6、init 方法</p>
+<p>从上面的五种构造函数我们可以看出，无论采用何种方式创建LinkedHashMap，其都会调用HashMap相应的构造函数。事实上，不管调用HashMap的哪个构造函数，HashMap的构造函数都会在最后调用一个init()方法进行初始化，只不过这个方法在HashMap中是一个空实现，而在LinkedHashMap中重写了它用于初始化它所维护的双向链表。例如，HashMap的参数为空的构造函数以及init方法的源码如下：</p>
+<td class="line_numbers"><pre>1234567891011121314151617181920</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">/**     * Constructs an empty ttHashMap/tt with the default initial capacity     * (16) and the default load factor (0.75).     */public HashMap() {this.loadFactor = DEFAULT_LOAD_FACTOR;        threshold = (int)(DEFAULT_INITIAL_CAPACITY * DEFAULT_LOAD_FACTOR);        table = new Entry[DEFAULT_INITIAL_CAPACITY];        init();    } /**     * Initialization hook for subclasses. This method is called     * in all constructors and pseudo-constructors (clone, readObject)     * after HashMap has been initialized but before any entries have     * been inserted.  (In the absence of this method, readObject would     * require explicit knowledge of subclasses.)     */void init() {    }</pre></td>
+
+<p>&#x2F;**<br>     * Constructs an empty ttHashMap&#x2F;tt with the default initial capacity<br>     * (16) and the default load factor (0.75).<br>     *&#x2F;<br>public HashMap() {<br>this.loadFactor &#x3D; DEFAULT_LOAD_FACTOR;<br>        threshold &#x3D; (int)(DEFAULT_INITIAL_CAPACITY * DEFAULT_LOAD_FACTOR);<br>        table &#x3D; new Entry[DEFAULT_INITIAL_CAPACITY];<br>        init();<br>    }</p>
+<p>&#x2F;**<br>     * Initialization hook for subclasses. This method is called<br>     * in all constructors and pseudo-constructors (clone, readObject)<br>     * after HashMap has been initialized but before any entries have<br>     * been inserted.  (In the absence of this method, readObject would<br>     * require explicit knowledge of subclasses.)<br>     *&#x2F;<br>void init() {<br>    }</p>
+<p>在LinkedHashMap中，它重写了init方法以便初始化双向列表，源码如下：</p>
+<td class="line_numbers"><pre>123456789</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">/**     * Called by superclass constructors and pseudoconstructors (clone,     * readObject) before any entries are inserted into the map.  Initializes     * the chain.     */void init() {        header = new EntryK,V(-1, null, null, null);        header.before = header.after = header;    }</pre></td>
+
+<p>&#x2F;**<br>     * Called by superclass constructors and pseudoconstructors (clone,<br>     * readObject) before any entries are inserted into the map.  Initializes<br>     * the chain.<br>     *&#x2F;<br>void init() {<br>        header &#x3D; new EntryK,V(-1, null, null, null);<br>        header.before &#x3D; header.after &#x3D; header;<br>    }</p>
+<p>因此，我们在创建LinkedHashMap的同时就会不知不觉地对双向链表进行初始化。</p>
+<p> </p>
+<p>四. LinkedHashMap 的数据结构</p>
+<p>本质上，LinkedHashMap &#x3D; HashMap + 双向链表，也就是说，HashMap和双向链表合二为一即是LinkedHashMap。也可以这样理解，LinkedHashMap 在不对HashMap做任何改变的基础上，给HashMap的任意两个节点间加了两条连线(before指针和after指针)，使这些节点形成一个双向链表。在LinkedHashMapMap中，所有put进来的Entry都保存在HashMap中，但由于它又额外定义了一个以head为头结点的空的双向链表，因此对于每次put进来Entry还会将其插入到双向链表的尾部。</p>
+<p> </p>
+<img class="" style="width: 100%; height: auto;" title="彻头彻尾理解 LinkedHashMap" src="https://www.javazhiyin.com/wp-content/uploads/2019/03/java8-1553058541.jpg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="彻头彻尾理解 LinkedHashMap">
+
+<p>　　　　　　</p>
+<p>五. LinkedHashMap 的快速存取</p>
+<p>我们知道，在HashMap中最常用的两个操作就是：put(Key,Value) 和 get(Key)。同样地，在 LinkedHashMap 中最常用的也是这两个操作。对于put(Key,Value)方法而言，LinkedHashMap完全继承了HashMap的 put(Key,Value) 方法，只是对put(Key,Value)方法所调用的recordAccess方法和addEntry方法进行了重写；对于get(Key)方法而言，LinkedHashMap则直接对它进行了重写。下面我们结合JDK源码看 LinkedHashMap 的存取实现。</p>
+<p> </p>
+<p>1、LinkedHashMap 的存储实现 : put(key, vlaue)</p>
+<p>上面谈到，LinkedHashMap没有对 put(key,vlaue) 方法进行任何直接的修改，完全继承了HashMap的 put(Key,Value) 方法，其源码如下：</p>
+<td class="line_numbers"><pre>12345678910111213141516171819202122232425262728293031323334353637383940</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">/**     * Associates the specified value with the specified key in this map.     * If the map previously contained a mapping for the key, the old     * value is replaced.     *     * @param key key with which the specified value is to be associated     * @param value value to be associated with the specified key     * @return the previous value associated with key, or null if there was no mapping for key.     *  Note that a null return can also indicate that the map previously associated null with key.     */public V put(K key, V value) { //当key为null时，调用putForNullKey方法，并将该键值对保存到table的第一个位置 if (key == null)return putForNullKey(value);  //根据key的hashCode计算hash值int hash = hash(key.hashCode());            //计算该键值对在数组中的存储位置（哪个桶）int i = indexFor(hash, table.length);               //在table的第i个桶上进行迭代，寻找 key 保存的位置for (EntryK,V e = table[i]; e != null; e = e.next) {                  Object k;//判断该条链上是否存在hash值相同且key值相等的映射，若存在，则直接覆盖 value，并返回旧valueif (e.hash == hash && ((k = e.key) == key || key.equals(k))) {                V oldValue = e.value;                e.value = value;                e.recordAccess(this); // LinkedHashMap重写了Entry中的recordAccess方法--- (1)    return oldValue;    // 返回旧值            }        }         modCount++; //修改次数增加1，快速失败机制 //原Map中无该映射，将该添加至该链的链头        addEntry(hash, key, value, i);  // LinkedHashMap重写了HashMap中的createEntry方法 ---- (2)    return null;    }</pre></td>
+
+<p>&#x2F;**<br>     * Associates the specified value with the specified key in this map.<br>     * If the map previously contained a mapping for the key, the old<br>     * value is replaced.<br>     *<br>     * @param key key with which the specified value is to be associated<br>     * @param value value to be associated with the specified key<br>     * @return the previous value associated with key, or null if there was no mapping for key.<br>     *  Note that a null return can also indicate that the map previously associated null with key.<br>     *&#x2F;<br>public V put(K key, V value) {</p>
+<p>&#x2F;&#x2F;当key为null时，调用putForNullKey方法，并将该键值对保存到table的第一个位置<br>if (key &#x3D;&#x3D; null)<br>return putForNullKey(value); </p>
+<p>&#x2F;&#x2F;根据key的hashCode计算hash值<br>int hash &#x3D; hash(key.hashCode());           </p>
+<p>&#x2F;&#x2F;计算该键值对在数组中的存储位置（哪个桶）<br>int i &#x3D; indexFor(hash, table.length);              </p>
+<p>&#x2F;&#x2F;在table的第i个桶上进行迭代，寻找 key 保存的位置<br>for (EntryK,V e &#x3D; table[i]; e !&#x3D; null; e &#x3D; e.next) {<br>            Object k;<br>&#x2F;&#x2F;判断该条链上是否存在hash值相同且key值相等的映射，若存在，则直接覆盖 value，并返回旧value<br>if (e.hash &#x3D;&#x3D; hash &amp;&amp; ((k &#x3D; e.key) &#x3D;&#x3D; key || key.equals(k))) {<br>                V oldValue &#x3D; e.value;<br>                e.value &#x3D; value;<br>                e.recordAccess(this); &#x2F;&#x2F; LinkedHashMap重写了Entry中的recordAccess方法— (1)<br>return oldValue;    &#x2F;&#x2F; 返回旧值<br>            }<br>        }</p>
+<pre class="line-numbers language-java"><code class="language-java">
+    modCount<span class="token operator">++</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">//修改次数增加1，快速失败机制</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>&#x2F;&#x2F;原Map中无该映射，将该添加至该链的链头<br>        addEntry(hash, key, value, i);  &#x2F;&#x2F; LinkedHashMap重写了HashMap中的createEntry方法 —- (2)<br>return null;<br>    }</p>
+<p>上述源码反映了LinkedHashMap与HashMap保存数据的过程。特别地，在LinkedHashMap中，它对addEntry方法和Entry的recordAccess方法进行了重写。下面我们对比地看一下LinkedHashMap 和HashMap的addEntry方法的具体实现：</p>
+<td class="line_numbers"><pre>1234567891011121314151617181920212223242526272829303132333435363738394041424344454647</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">/**     * This override alters behavior of superclass put method. It causes newly     * allocated entry to get inserted at the end of the linked list and     * removes the eldest entry if appropriate.     *     * LinkedHashMap中的addEntry方法     */void addEntry(int hash, K key, V value, int bucketIndex) {    //创建新的Entry，并插入到LinkedHashMap中          createEntry(hash, key, value, bucketIndex);  // 重写了HashMap中的createEntry方法 //双向链表的第一个有效节点（header后的那个节点）为最近最少使用的节点，这是用来支持LRU算法的        EntryK,V eldest = header.after;  //如果有必要，则删除掉该近期最少使用的节点，  //这要看对removeEldestEntry的覆写,由于默认为false，因此默认是不做任何处理的。  if (removeEldestEntry(eldest)) {              removeEntryForKey(eldest.key);          } else {  //扩容到原来的2倍  if (size = threshold)                  resize(2 * table.length);          }      }      -------------------------------我是分割线------------------------------------ /**     * Adds a new entry with the specified key, value and hash code to     * the specified bucket.  It is the responsibility of this     * method to resize the table if appropriate.     *     * Subclass overrides this to alter the behavior of put method.     *      * HashMap中的addEntry方法     */void addEntry(int hash, K key, V value, int bucketIndex) {//获取bucketIndex处的Entry        EntryK,V e = table[bucketIndex]; //将新创建的 Entry 放入 bucketIndex 索引处，并让新的 Entry 指向原来的 Entry         table[bucketIndex] = new EntryK,V(hash, key, value, e); //若HashMap中元素的个数超过极限了，则容量扩大两倍if (size++ = threshold)            resize(2 * table.length);    }</pre></td>
+
+<p>&#x2F;**<br>     * This override alters behavior of superclass put method. It causes newly<br>     * allocated entry to get inserted at the end of the linked list and<br>     * removes the eldest entry if appropriate.<br>     *<br>     * LinkedHashMap中的addEntry方法<br>     *&#x2F;<br>void addEntry(int hash, K key, V value, int bucketIndex) {   </p>
+<p>&#x2F;&#x2F;创建新的Entry，并插入到LinkedHashMap中<br>        createEntry(hash, key, value, bucketIndex);  &#x2F;&#x2F; 重写了HashMap中的createEntry方法</p>
+<p>&#x2F;&#x2F;双向链表的第一个有效节点（header后的那个节点）为最近最少使用的节点，这是用来支持LRU算法的<br>        EntryK,V eldest &#x3D; header.after;<br>&#x2F;&#x2F;如果有必要，则删除掉该近期最少使用的节点，<br>&#x2F;&#x2F;这要看对removeEldestEntry的覆写,由于默认为false，因此默认是不做任何处理的。<br>if (removeEldestEntry(eldest)) {<br>            removeEntryForKey(eldest.key);<br>        } else {<br>&#x2F;&#x2F;扩容到原来的2倍<br>if (size &#x3D; threshold)<br>                resize(2 * table.length);<br>        }<br>    } </p>
+<pre class="line-numbers language-java"><code class="language-java">
+<span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">-</span>我是分割线<span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>&#x2F;**<br>     * Adds a new entry with the specified key, value and hash code to<br>     * the specified bucket.  It is the responsibility of this<br>     * method to resize the table if appropriate.<br>     *<br>     * Subclass overrides this to alter the behavior of put method.<br>     *<br>     * HashMap中的addEntry方法<br>     *&#x2F;<br>void addEntry(int hash, K key, V value, int bucketIndex) {<br>&#x2F;&#x2F;获取bucketIndex处的Entry<br>        EntryK,V e &#x3D; table[bucketIndex];</p>
+<p>&#x2F;&#x2F;将新创建的 Entry 放入 bucketIndex 索引处，并让新的 Entry 指向原来的 Entry<br>        table[bucketIndex] &#x3D; new EntryK,V(hash, key, value, e);</p>
+<p>&#x2F;&#x2F;若HashMap中元素的个数超过极限了，则容量扩大两倍<br>if (size++ &#x3D; threshold)<br>            resize(2 * table.length);<br>    }</p>
+<p>由于LinkedHashMap本身维护了插入的先后顺序，因此其可以用来做缓存，14~19行的操作就是用来支持LRU算法的，这里暂时不用去关心它。此外，在LinkedHashMap的addEntry方法中，它重写了HashMap中的createEntry方法，我们接着看一下createEntry方法：</p>
+<td class="line_numbers"><pre>12345678910111213</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">oid createEntry(int hash, K key, V value, int bucketIndex) { // 向哈希表中插入Entry，这点与HashMap中相同 //创建新的Entry并将其链入到数组对应桶的链表的头结点处，         HashMap.EntryK,V old = table[bucketIndex];          EntryK,V e = new EntryK,V(hash, key, value, old);          table[bucketIndex] = e;      //在每次向哈希表插入Entry的同时，都会将其插入到双向链表的尾部，  //这样就按照Entry插入LinkedHashMap的先后顺序来迭代元素(LinkedHashMap根据双向链表重写了迭代器)//同时，新put进来的Entry是最近访问的Entry，把其放在链表末尾 ，也符合LRU算法的实现          e.addBefore(header);          size++;      }</pre></td>
+
+<p>oid createEntry(int hash, K key, V value, int bucketIndex) {<br>&#x2F;&#x2F; 向哈希表中插入Entry，这点与HashMap中相同<br>&#x2F;&#x2F;创建新的Entry并将其链入到数组对应桶的链表的头结点处，<br>        HashMap.EntryK,V old &#x3D; table[bucketIndex];<br>        EntryK,V e &#x3D; new EntryK,V(hash, key, value, old);<br>        table[bucketIndex] &#x3D; e;     </p>
+<p>&#x2F;&#x2F;在每次向哈希表插入Entry的同时，都会将其插入到双向链表的尾部，<br>&#x2F;&#x2F;这样就按照Entry插入LinkedHashMap的先后顺序来迭代元素(LinkedHashMap根据双向链表重写了迭代器)<br>&#x2F;&#x2F;同时，新put进来的Entry是最近访问的Entry，把其放在链表末尾 ，也符合LRU算法的实现<br>        e.addBefore(header);<br>        size++;<br>    }</p>
+<p>由以上源码我们可以知道，在LinkedHashMap中向哈希表中插入新Entry的同时，还会通过Entry的addBefore方法将其链入到双向链表中。其中，addBefore方法本质上是一个双向链表的插入操作，其源码如下：</p>
+<td class="line_numbers"><pre>1234567</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">//在双向链表中，将当前的Entry插入到existingEntry(header)的前面  private void addBefore(EntryK,V existingEntry) {          after  = existingEntry;          before = existingEntry.before;          before.after = this;          after.before = this;      }</pre></td>
+
+<p>&#x2F;&#x2F;在双向链表中，将当前的Entry插入到existingEntry(header)的前面<br>private void addBefore(EntryK,V existingEntry) {<br>        after  &#x3D; existingEntry;<br>        before &#x3D; existingEntry.before;<br>        before.after &#x3D; this;<br>        after.before &#x3D; this;<br>    }</p>
+<p>到此为止，我们分析了在LinkedHashMap中put一条键值对的完整过程。总的来说，相比HashMap而言，LinkedHashMap在向哈希表添加一个键值对的同时，也会将其链入到它所维护的双向链表中，以便设定迭代顺序。</p>
+<p> </p>
+<p>2、LinkedHashMap 的扩容操作 : resize()</p>
+<p>在HashMap中，我们知道随着HashMap中元素的数量越来越多，发生碰撞的概率将越来越大，所产生的子链长度就会越来越长，这样势必会影响HashMap的存取速度。为了保证HashMap的效率，系统必须要在某个临界点进行扩容处理，该临界点就是HashMap中元素的数量在数值上等于threshold（table数组长度*加载因子）。但是，不得不说，扩容是一个非常耗时的过程，因为它需要重新计算这些元素在新table数组中的位置并进行复制处理。所以，如果我们能够提前预知HashMap 中元素的个数，那么在构造HashMap时预设元素的个数能够有效的提高HashMap的性能。</p>
+<p>　　</p>
+<p>同样的问题也存在于LinkedHashMap中，因为LinkedHashMap本来就是一个HashMap，只是它还将所有Entry节点链入到了一个双向链表中。LinkedHashMap完全继承了HashMap的resize()方法，只是对它所调用的transfer方法进行了重写。我们先看resize()方法源码：</p>
+<td class="line_numbers"><pre>123456789101112131415161718192021222324252627282930313233</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">/**     * Rehashes the contents of this map into a new array with a     * larger capacity.  This method is called automatically when the     * number of keys in this map reaches its threshold.     *     * If current capacity is MAXIMUM_CAPACITY, this method does not     * resize the map, but sets threshold to Integer.MAX_VALUE.     * This has the effect of preventing future calls.     *     * @param newCapacity the new capacity, MUST be a power of two;     *        must be greater than current capacity unless current     *        capacity is MAXIMUM_CAPACITY (in which case value     *        is irrelevant).     */void resize(int newCapacity) {        Entry[] oldTable = table;int oldCapacity = oldTable.length; // 若 oldCapacity 已达到最大值，直接将 threshold 设为 Integer.MAX_VALUEif (oldCapacity == MAXIMUM_CAPACITY) {              threshold = Integer.MAX_VALUE;return;             // 直接返回        } // 否则，创建一个更大的数组        Entry[] newTable = new Entry[newCapacity]; //将每条Entry重新哈希到新的数组中        transfer(newTable);  //LinkedHashMap对它所调用的transfer方法进行了重写         table = newTable;        threshold = (int)(newCapacity * loadFactor);  // 重新设定 threshold    }</pre></td>
+
+<p>&#x2F;**<br>     * Rehashes the contents of this map into a new array with a<br>     * larger capacity.  This method is called automatically when the<br>     * number of keys in this map reaches its threshold.<br>     *<br>     * If current capacity is MAXIMUM_CAPACITY, this method does not<br>     * resize the map, but sets threshold to Integer.MAX_VALUE.<br>     * This has the effect of preventing future calls.<br>     *<br>     * @param newCapacity the new capacity, MUST be a power of two;<br>     *        must be greater than current capacity unless current<br>     *        capacity is MAXIMUM_CAPACITY (in which case value<br>     *        is irrelevant).<br>     *&#x2F;<br>void resize(int newCapacity) {<br>        Entry[] oldTable &#x3D; table;<br>int oldCapacity &#x3D; oldTable.length;</p>
+<p>&#x2F;&#x2F; 若 oldCapacity 已达到最大值，直接将 threshold 设为 Integer.MAX_VALUE<br>if (oldCapacity &#x3D;&#x3D; MAXIMUM_CAPACITY) {<br>            threshold &#x3D; Integer.MAX_VALUE;<br>return;             &#x2F;&#x2F; 直接返回<br>        }</p>
+<p>&#x2F;&#x2F; 否则，创建一个更大的数组<br>        Entry[] newTable &#x3D; new Entry[newCapacity];</p>
+<p>&#x2F;&#x2F;将每条Entry重新哈希到新的数组中<br>        transfer(newTable);  &#x2F;&#x2F;LinkedHashMap对它所调用的transfer方法进行了重写</p>
+<pre class="line-numbers language-java"><code class="language-java">
+    table <span class="token operator">=</span> newTable<span class="token punctuation">;</span>
+    threshold <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">int</span><span class="token punctuation">)</span><span class="token punctuation">(</span>newCapacity <span class="token operator">*</span> loadFactor<span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment" spellcheck="true">// 重新设定 threshold</span>
+<span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>从上面代码中我们可以看出，Map扩容操作的核心在于重哈希。所谓重哈希是指重新计算原HashMap中的元素在新table数组中的位置并进行复制处理的过程。鉴于性能和LinkedHashMap自身特点的考量，LinkedHashMap对重哈希过程(transfer方法)进行了重写，源码如下：</p>
+<td class="line_numbers"><pre>123456789101112131415</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">/**     * Transfers all entries to new table array.  This method is called     * by superclass resize.  It is overridden for performance, as it is     * faster to iterate using our linked list.     */void transfer(HashMap.Entry[] newTable) {int newCapacity = newTable.length;// 与HashMap相比，借助于双向链表的特点进行重哈希使得代码更加简洁for (EntryK,V e = header.after; e != header; e = e.after) {int index = indexFor(e.hash, newCapacity);   // 计算每个Entry所在的桶// 将其链入桶中的链表            e.next = newTable[index];            newTable[index] = e;           }    }</pre></td>
+
+<p>&#x2F;**<br>     * Transfers all entries to new table array.  This method is called<br>     * by superclass resize.  It is overridden for performance, as it is<br>     * faster to iterate using our linked list.<br>     *&#x2F;<br>void transfer(HashMap.Entry[] newTable) {<br>int newCapacity &#x3D; newTable.length;<br>&#x2F;&#x2F; 与HashMap相比，借助于双向链表的特点进行重哈希使得代码更加简洁<br>for (EntryK,V e &#x3D; header.after; e !&#x3D; header; e &#x3D; e.after) {<br>int index &#x3D; indexFor(e.hash, newCapacity);   &#x2F;&#x2F; 计算每个Entry所在的桶<br>&#x2F;&#x2F; 将其链入桶中的链表<br>            e.next &#x3D; newTable[index];<br>            newTable[index] &#x3D; e;<br>        }<br>    }</p>
+<p>如上述源码所示，LinkedHashMap借助于自身维护的双向链表轻松地实现了重哈希操作。</p>
+<p> </p>
+<p>3、LinkedHashMap 的读取实现 ：get(Object key)</p>
+<p>相对于LinkedHashMap的存储而言，读取就显得比较简单了。LinkedHashMap中重写了HashMap中的get方法，源码如下：</p>
+<td class="line_numbers"><pre>123456789101112131415161718192021222324252627282930313233343536373839404142434445464748</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">/**     * Returns the value to which the specified key is mapped,     * or {@code null} if this map contains no mapping for the key.     *     * pMore formally, if this map contains a mapping from a key     * {@code k} to a value {@code v} such that {@code (key==null ? k==null :     * key.equals(k))}, then this method returns {@code v}; otherwise     * it returns {@code null}.  (There can be at most one such mapping.)     *     * pA return value of {@code null} does not inecessarily/i     * indicate that the map contains no mapping for the key; it's also     * possible that the map explicitly maps the key to {@code null}.     * The {@link #containsKey containsKey} operation may be used to     * distinguish these two cases.     */public V get(Object key) {// 根据key获取对应的Entry，若没有这样的Entry，则返回null        EntryK,V e = (EntryK,V)getEntry(key); if (e == null)      // 若不存在这样的Entry，直接返回return null;        e.recordAccess(this);return e.value;    } /**     * Returns the entry associated with the specified key in the     * HashMap.  Returns null if the HashMap contains no mapping     * for the key.     *      * HashMap 中的方法     *          */final EntryK,V getEntry(Object key) {if (size == 0) {return null;        }         int hash = (key == null) ? 0 : hash(key);for (EntryK,V e = table[indexFor(hash, table.length)];             e != null;             e = e.next) {            Object k;if (e.hash == hash &&                ((k = e.key) == key || (key != null && key.equals(k))))return e;        }return null;    }</pre></td>
+
+<p>&#x2F;**<br>     * Returns the value to which the specified key is mapped,<br>     * or {@code null} if this map contains no mapping for the key.<br>     *<br>     * pMore formally, if this map contains a mapping from a key<br>     * {@code k} to a value {@code v} such that {@code (key&#x3D;&#x3D;null ? k&#x3D;&#x3D;null :<br>     * key.equals(k))}, then this method returns {@code v}; otherwise<br>     * it returns {@code null}.  (There can be at most one such mapping.)<br>     *<br>     * pA return value of {@code null} does not inecessarily&#x2F;i<br>     * indicate that the map contains no mapping for the key; it’s also<br>     * possible that the map explicitly maps the key to {@code null}.<br>     * The {@link #containsKey containsKey} operation may be used to<br>     * distinguish these two cases.<br>     *&#x2F;<br>public V get(Object key) {<br>&#x2F;&#x2F; 根据key获取对应的Entry，若没有这样的Entry，则返回null<br>        EntryK,V e &#x3D; (EntryK,V)getEntry(key);<br>if (e &#x3D;&#x3D; null)      &#x2F;&#x2F; 若不存在这样的Entry，直接返回<br>return null;<br>        e.recordAccess(this);<br>return e.value;<br>    }</p>
+<p>&#x2F;**<br>     * Returns the entry associated with the specified key in the<br>     * HashMap.  Returns null if the HashMap contains no mapping<br>     * for the key.<br>     *<br>     * HashMap 中的方法<br>     *<br>     *&#x2F;<br>final EntryK,V getEntry(Object key) {<br>if (size &#x3D;&#x3D; 0) {<br>return null;<br>        }</p>
+<pre class="line-numbers language-java"><code class="language-java">
+    <span class="token keyword">int</span> hash <span class="token operator">=</span> <span class="token punctuation">(</span>key <span class="token operator">==</span> null<span class="token punctuation">)</span> <span class="token operator">?</span> <span class="token number">0</span> <span class="token operator">:</span> <span class="token function">hash</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>for (EntryK,V e &#x3D; table[indexFor(hash, table.length)];<br>             e !&#x3D; null;<br>             e &#x3D; e.next) {<br>            Object k;<br>if (e.hash &#x3D;&#x3D; hash &amp;&amp;<br>                ((k &#x3D; e.key) &#x3D;&#x3D; key || (key !&#x3D; null &amp;&amp; key.equals(k))))<br>return e;<br>        }<br>return null;<br>    }</p>
+<p>在LinkedHashMap的get方法中，通过HashMap中的getEntry方法获取Entry对象。注意这里的recordAccess方法，如果链表中元素的排序规则是按照插入的先后顺序排序的话，该方法什么也不做；如果链表中元素的排序规则是按照访问的先后顺序排序的话，则将e移到链表的末尾处，笔者会在后文专门阐述这个问题。</p>
+<p> </p>
+<p>另外，同样地，调用LinkedHashMap的get(Object key)方法后，若返回值是 NULL，则也存在如下两种可能：</p>
+<p> </p>
+<p> 该 key 对应的值就是 null;</p>
+<p> HashMap 中不存在该 key。</p>
+<p> </p>
+<p>4、LinkedHashMap 存取小结</p>
+<p>LinkedHashMap 的存取过程基本与HashMap基本类似，只是在细节实现上稍有不同，这是由LinkedHashMap本身的特性所决定的，因为它要额外维护一个双向链表用于保持迭代顺序。在put操作上，虽然LinkedHashMap完全继承了HashMap的put操作，但是在细节上还是做了一定的调整，比如，在LinkedHashMap中向哈希表中插入新Entry的同时，还会通过Entry的addBefore方法将其链入到双向链表中。在扩容操作上，虽然LinkedHashMap完全继承了HashMap的resize操作，但是鉴于性能和LinkedHashMap自身特点的考量，LinkedHashMap对其中的重哈希过程(transfer方法)进行了重写。在读取操作上，LinkedHashMap中重写了HashMap中的get方法，通过HashMap中的getEntry方法获取Entry对象。在此基础上，进一步获取指定键对应的值。</p>
+<p> </p>
+<p>六. LinkedHashMap 与 LRU(Least recently used，最近最少使用)算法</p>
+<p>到此为止，我们已经分析完了LinkedHashMap的存取实现，这与HashMap大体相同。LinkedHashMap区别于HashMap最大的一个不同点是，前者是有序的，而后者是无序的。为此，LinkedHashMap增加了两个属性用于保证顺序，分别是双向链表头结点header和标志位accessOrder。我们知道，header是LinkedHashMap所维护的双向链表的头结点，而accessOrder用于决定具体的迭代顺序。实际上，accessOrder标志位的作用可不像我们描述的这样简单，我们接下来仔细分析一波~</p>
+<p>　　</p>
+<p>我们知道，当accessOrder标志位为true时，表示双向链表中的元素按照访问的先后顺序排列，可以看到，虽然Entry插入链表的顺序依然是按照其put到LinkedHashMap中的顺序，但put和get方法均有调用recordAccess方法（put方法在key相同时会调用）。recordAccess方法判断accessOrder是否为true，如果是，则将当前访问的Entry（put进来的Entry或get出来的Entry）移到双向链表的尾部（key不相同时，put新Entry时，会调用addEntry，它会调用createEntry，该方法同样将新插入的元素放入到双向链表的尾部，既符合插入的先后顺序，又符合访问的先后顺序，因为这时该Entry也被访问了）；当标志位accessOrder的值为false时，表示双向链表中的元素按照Entry插入LinkedHashMap到中的先后顺序排序，即每次put到LinkedHashMap中的Entry都放在双向链表的尾部，这样遍历双向链表时，Entry的输出顺序便和插入的顺序一致，这也是默认的双向链表的存储顺序。因此，当标志位accessOrder的值为false时，虽然也会调用recordAccess方法，但不做任何操作。</p>
+<p> </p>
+<p>注意到我们在前面介绍的LinkedHashMap的五种构造方法，前四个构造方法都将accessOrder设为false，说明默认是按照插入顺序排序的；而第五个构造方法可以自定义传入的accessOrder的值，因此可以指定双向循环链表中元素的排序规则。特别地，当我们要用LinkedHashMap实现LRU算法时，就需要调用该构造方法并将accessOrder置为true。</p>
+<p> </p>
+<p>1、put操作与标志位accessOrder</p>
+<td class="line_numbers"><pre>12345678910111213141516171819202122232425</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">// 将key/value添加到LinkedHashMap中      public V put(K key, V value) {      // 若key为null，则将该键值对添加到table[0]中。      if (key == null)      return putForNullKey(value);      // 若key不为null，则计算该key的哈希值，然后将其添加到该哈希值对应的链表中。      int hash = hash(key.hashCode());      int i = indexFor(hash, table.length);      for (EntryK,V e = table[i]; e != null; e = e.next) {              Object k;      // 若key对已经存在，则用新的value取代旧的value     if (e.hash == hash && ((k = e.key) == key || key.equals(k))) {                  V oldValue = e.value;                  e.value = value;                  e.recordAccess(this);      return oldValue;              }          }       // 若key不存在，则将key/value键值对添加到table中          modCount++;    //将key/value键值对添加到table[i]处        addEntry(hash, key, value, i);      return null;      }</pre></td>
+
+<p>&#x2F;&#x2F; 将key&#x2F;value添加到LinkedHashMap中<br>public V put(K key, V value) {<br>&#x2F;&#x2F; 若key为null，则将该键值对添加到table[0]中。<br>if (key &#x3D;&#x3D; null)<br>return putForNullKey(value);<br>&#x2F;&#x2F; 若key不为null，则计算该key的哈希值，然后将其添加到该哈希值对应的链表中。<br>int hash &#x3D; hash(key.hashCode());<br>int i &#x3D; indexFor(hash, table.length);<br>for (EntryK,V e &#x3D; table[i]; e !&#x3D; null; e &#x3D; e.next) {<br>        Object k;<br>&#x2F;&#x2F; 若key对已经存在，则用新的value取代旧的value<br>if (e.hash &#x3D;&#x3D; hash &amp;&amp; ((k &#x3D; e.key) &#x3D;&#x3D; key || key.equals(k))) {<br>            V oldValue &#x3D; e.value;<br>            e.value &#x3D; value;<br>            e.recordAccess(this);<br>return oldValue;<br>        }<br>    }      </p>
+<p>&#x2F;&#x2F; 若key不存在，则将key&#x2F;value键值对添加到table中<br>    modCount++;<br>&#x2F;&#x2F;将key&#x2F;value键值对添加到table[i]处<br>    addEntry(hash, key, value, i);<br>return null;<br>}</p>
+<p>从上述源码我们可以看到，当要put进来的Entry的key在哈希表中已经在存在时，会调用Entry的recordAccess方法；当该key不存在时，则会调用addEntry方法将新的Entry插入到对应桶的单链表的头部。我们先来看recordAccess方法：</p>
+<td class="line_numbers"><pre>123456789101112131415161718</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">/**    * This method is invoked by the superclass whenever the value    * of a pre-existing entry is read by Map.get or modified by Map.set.    * If the enclosing Map is access-ordered, it moves the entry    * to the end of the list; otherwise, it does nothing.    */void recordAccess(HashMapK,V m) {          LinkedHashMapK,V lm = (LinkedHashMapK,V)m;  //如果链表中元素按照访问顺序排序，则将当前访问的Entry移到双向循环链表的尾部，  //如果是按照插入的先后顺序排序，则不做任何事情。  if (lm.accessOrder) {              lm.modCount++;  //移除当前访问的Entry  remove();  //将当前访问的Entry插入到链表的尾部              addBefore(lm.header);            }        }</pre></td>
+
+<p>&#x2F;**<br>    * This method is invoked by the superclass whenever the value<br>    * of a pre-existing entry is read by Map.get or modified by Map.set.<br>    * If the enclosing Map is access-ordered, it moves the entry<br>    * to the end of the list; otherwise, it does nothing.<br>    *&#x2F;<br>void recordAccess(HashMapK,V m) {<br>        LinkedHashMapK,V lm &#x3D; (LinkedHashMapK,V)m;<br>&#x2F;&#x2F;如果链表中元素按照访问顺序排序，则将当前访问的Entry移到双向循环链表的尾部，<br>&#x2F;&#x2F;如果是按照插入的先后顺序排序，则不做任何事情。<br>if (lm.accessOrder) {<br>            lm.modCount++;<br>&#x2F;&#x2F;移除当前访问的Entry<br>remove();<br>&#x2F;&#x2F;将当前访问的Entry插入到链表的尾部<br>            addBefore(lm.header);<br>          }<br>      }</p>
+<p>LinkedHashMap重写了HashMap中的recordAccess方法（HashMap中该方法为空），当调用父类的put方法时，在发现key已经存在时，会调用该方法；当调用自己的get方法时，也会调用到该方法。该方法提供了LRU算法的实现，它将最近使用的Entry放到双向循环链表的尾部。也就是说，当accessOrder为true时，get方法和put方法都会调用recordAccess方法使得最近使用的Entry移到双向链表的末尾；当accessOrder为默认值false时，从源码中可以看出recordAccess方法什么也不会做。我们反过头来，再看一下addEntry方法：</p>
+<td class="line_numbers"><pre>1234567891011121314151617181920212223242526272829303132333435363738</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">/**     * This override alters behavior of superclass put method. It causes newly     * allocated entry to get inserted at the end of the linked list and     * removes the eldest entry if appropriate.     *     * LinkedHashMap中的addEntry方法     */void addEntry(int hash, K key, V value, int bucketIndex) {    //创建新的Entry，并插入到LinkedHashMap中          createEntry(hash, key, value, bucketIndex);  // 重写了HashMap中的createEntry方法 //双向链表的第一个有效节点（header后的那个节点）为最近最少使用的节点，这是用来支持LRU算法的        EntryK,V eldest = header.after;  //如果有必要，则删除掉该近期最少使用的节点，  //这要看对removeEldestEntry的覆写,由于默认为false，因此默认是不做任何处理的。  if (removeEldestEntry(eldest)) {              removeEntryForKey(eldest.key);          } else {  //扩容到原来的2倍  if (size = threshold)                  resize(2 * table.length);          }      }  void createEntry(int hash, K key, V value, int bucketIndex) { // 向哈希表中插入Entry，这点与HashMap中相同 //创建新的Entry并将其链入到数组对应桶的链表的头结点处，         HashMap.EntryK,V old = table[bucketIndex];          EntryK,V e = new EntryK,V(hash, key, value, old);          table[bucketIndex] = e;      //在每次向哈希表插入Entry的同时，都会将其插入到双向链表的尾部，  //这样就按照Entry插入LinkedHashMap的先后顺序来迭代元素(LinkedHashMap根据双向链表重写了迭代器)//同时，新put进来的Entry是最近访问的Entry，把其放在链表末尾 ，也符合LRU算法的实现          e.addBefore(header);          size++;      }</pre></td>
+
+<p>&#x2F;**<br>     * This override alters behavior of superclass put method. It causes newly<br>     * allocated entry to get inserted at the end of the linked list and<br>     * removes the eldest entry if appropriate.<br>     *<br>     * LinkedHashMap中的addEntry方法<br>     *&#x2F;<br>void addEntry(int hash, K key, V value, int bucketIndex) {   </p>
+<p>&#x2F;&#x2F;创建新的Entry，并插入到LinkedHashMap中<br>        createEntry(hash, key, value, bucketIndex);  &#x2F;&#x2F; 重写了HashMap中的createEntry方法</p>
+<p>&#x2F;&#x2F;双向链表的第一个有效节点（header后的那个节点）为最近最少使用的节点，这是用来支持LRU算法的<br>        EntryK,V eldest &#x3D; header.after;<br>&#x2F;&#x2F;如果有必要，则删除掉该近期最少使用的节点，<br>&#x2F;&#x2F;这要看对removeEldestEntry的覆写,由于默认为false，因此默认是不做任何处理的。<br>if (removeEldestEntry(eldest)) {<br>            removeEntryForKey(eldest.key);<br>        } else {<br>&#x2F;&#x2F;扩容到原来的2倍<br>if (size &#x3D; threshold)<br>                resize(2 * table.length);<br>        }<br>    } </p>
+<p>void createEntry(int hash, K key, V value, int bucketIndex) {<br>&#x2F;&#x2F; 向哈希表中插入Entry，这点与HashMap中相同<br>&#x2F;&#x2F;创建新的Entry并将其链入到数组对应桶的链表的头结点处，<br>        HashMap.EntryK,V old &#x3D; table[bucketIndex];<br>        EntryK,V e &#x3D; new EntryK,V(hash, key, value, old);<br>        table[bucketIndex] &#x3D; e;     </p>
+<p>&#x2F;&#x2F;在每次向哈希表插入Entry的同时，都会将其插入到双向链表的尾部，<br>&#x2F;&#x2F;这样就按照Entry插入LinkedHashMap的先后顺序来迭代元素(LinkedHashMap根据双向链表重写了迭代器)<br>&#x2F;&#x2F;同时，新put进来的Entry是最近访问的Entry，把其放在链表末尾 ，也符合LRU算法的实现<br>        e.addBefore(header);<br>        size++;<br>    }</p>
+<p>同样是将新的Entry链入到table中对应桶中的单链表中，但可以在createEntry方法中看出，同时也会把新put进来的Entry插入到了双向链表的尾部。从插入顺序的层面来说，新的Entry插入到双向链表的尾部可以实现按照插入的先后顺序来迭代Entry，而从访问顺序的层面来说，新put进来的Entry又是最近访问的Entry，也应该将其放在双向链表的尾部。在上面的addEntry方法中还调用了removeEldestEntry方法，该方法源码如下：</p>
+<td class="line_numbers"><pre>123456789101112131415161718192021222324252627282930313233343536373839404142434445</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">/**     * Returns tttrue/tt if this map should remove its eldest entry.     * This method is invoked by ttput/tt and ttputAll/tt after     * inserting a new entry into the map.  It provides the implementor     * with the opportunity to remove the eldest entry each time a new one     * is added.  This is useful if the map represents a cache: it allows     * the map to reduce memory consumption by deleting stale entries.     *     * pSample use: this override will allow the map to grow up to 100     * entries and then delete the eldest entry each time a new entry is     * added, maintaining a steady state of 100 entries.     * pre     *     private static final int MAX_ENTRIES = 100;     *     *     protected boolean removeEldestEntry(Map.Entry eldest) {     *        return size()  MAX_ENTRIES;     *     }     * /pre     *     * pThis method typically does not modify the map in any way,     * instead allowing the map to modify itself as directed by its     * return value.  It iis/i permitted for this method to modify     * the map directly, but if it does so, it imust/i return     * ttfalse/tt (indicating that the map should not attempt any     * further modification).  The effects of returning tttrue/tt     * after modifying the map from within this method are unspecified.     *     * pThis implementation merely returns ttfalse/tt (so that this     * map acts like a normal map - the eldest element is never removed).     *     * @param    eldest The least recently inserted entry in the map, or if     *           this is an access-ordered map, the least recently accessed     *           entry.  This is the entry that will be removed it this     *           method returns tttrue/tt.  If the map was empty prior     *           to the ttput/tt or ttputAll/tt invocation resulting     *           in this invocation, this will be the entry that was just     *           inserted; in other words, if the map contains a single     *           entry, the eldest entry is also the newest.     * @return   tttrue/tt if the eldest entry should be removed     *           from the map; ttfalse/tt if it should be retained.     */protected boolean removeEldestEntry(Map.EntryK,V eldest) {return false;    }}</pre></td>
+
+<p>&#x2F;**<br>     * Returns tttrue&#x2F;tt if this map should remove its eldest entry.<br>     * This method is invoked by ttput&#x2F;tt and ttputAll&#x2F;tt after<br>     * inserting a new entry into the map.  It provides the implementor<br>     * with the opportunity to remove the eldest entry each time a new one<br>     * is added.  This is useful if the map represents a cache: it allows<br>     * the map to reduce memory consumption by deleting stale entries.<br>     *<br>     * pSample use: this override will allow the map to grow up to 100<br>     * entries and then delete the eldest entry each time a new entry is<br>     * added, maintaining a steady state of 100 entries.<br>     * pre<br>     *     private static final int MAX_ENTRIES &#x3D; 100;<br>     *<br>     *     protected boolean removeEldestEntry(Map.Entry eldest) {<br>     *        return size()  MAX_ENTRIES;<br>     *     }<br>     * &#x2F;pre<br>     *<br>     * pThis method typically does not modify the map in any way,<br>     * instead allowing the map to modify itself as directed by its<br>     * return value.  It iis&#x2F;i permitted for this method to modify<br>     * the map directly, but if it does so, it imust&#x2F;i return<br>     * ttfalse&#x2F;tt (indicating that the map should not attempt any<br>     * further modification).  The effects of returning tttrue&#x2F;tt<br>     * after modifying the map from within this method are unspecified.<br>     *<br>     * pThis implementation merely returns ttfalse&#x2F;tt (so that this<br>     * map acts like a normal map - the eldest element is never removed).<br>     *<br>     * @param    eldest The least recently inserted entry in the map, or if<br>     *           this is an access-ordered map, the least recently accessed<br>     *           entry.  This is the entry that will be removed it this<br>     *           method returns tttrue&#x2F;tt.  If the map was empty prior<br>     *           to the ttput&#x2F;tt or ttputAll&#x2F;tt invocation resulting<br>     *           in this invocation, this will be the entry that was just<br>     *           inserted; in other words, if the map contains a single<br>     *           entry, the eldest entry is also the newest.<br>     * @return   tttrue&#x2F;tt if the eldest entry should be removed<br>     *           from the map; ttfalse&#x2F;tt if it should be retained.<br>     *&#x2F;<br>protected boolean removeEldestEntry(Map.EntryK,V eldest) {<br>return false;<br>    }<br>}</p>
+<p>该方法是用来被重写的，一般地，如果用LinkedHashmap实现LRU算法，就要重写该方法。比如可以将该方法覆写为如果设定的内存已满，则返回true，这样当再次向LinkedHashMap中putEntry时，在调用的addEntry方法中便会将近期最少使用的节点删除掉（header后的那个节点）。在第七节，笔者便重写了该方法并实现了一个名副其实的LRU结构。</p>
+<p> </p>
+<p>2、get操作与标志位accessOrder</p>
+<td class="line_numbers"><pre>1234567891011121314151617181920212223</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">/**     * Returns the value to which the specified key is mapped,     * or {@code null} if this map contains no mapping for the key.     *     * pMore formally, if this map contains a mapping from a key     * {@code k} to a value {@code v} such that {@code (key==null ? k==null :     * key.equals(k))}, then this method returns {@code v}; otherwise     * it returns {@code null}.  (There can be at most one such mapping.)     *     * pA return value of {@code null} does not inecessarily/i     * indicate that the map contains no mapping for the key; it's also     * possible that the map explicitly maps the key to {@code null}.     * The {@link #containsKey containsKey} operation may be used to     * distinguish these two cases.     */public V get(Object key) {// 根据key获取对应的Entry，若没有这样的Entry，则返回null        EntryK,V e = (EntryK,V)getEntry(key); if (e == null)      // 若不存在这样的Entry，直接返回return null;        e.recordAccess(this);return e.value;    }</pre></td>
+
+<p>&#x2F;**<br>     * Returns the value to which the specified key is mapped,<br>     * or {@code null} if this map contains no mapping for the key.<br>     *<br>     * pMore formally, if this map contains a mapping from a key<br>     * {@code k} to a value {@code v} such that {@code (key&#x3D;&#x3D;null ? k&#x3D;&#x3D;null :<br>     * key.equals(k))}, then this method returns {@code v}; otherwise<br>     * it returns {@code null}.  (There can be at most one such mapping.)<br>     *<br>     * pA return value of {@code null} does not inecessarily&#x2F;i<br>     * indicate that the map contains no mapping for the key; it’s also<br>     * possible that the map explicitly maps the key to {@code null}.<br>     * The {@link #containsKey containsKey} operation may be used to<br>     * distinguish these two cases.<br>     *&#x2F;<br>public V get(Object key) {<br>&#x2F;&#x2F; 根据key获取对应的Entry，若没有这样的Entry，则返回null<br>        EntryK,V e &#x3D; (EntryK,V)getEntry(key);<br>if (e &#x3D;&#x3D; null)      &#x2F;&#x2F; 若不存在这样的Entry，直接返回<br>return null;<br>        e.recordAccess(this);<br>return e.value;<br>    }</p>
+<p>在LinkedHashMap中进行读取操作时，一样也会调用recordAccess方法。上面笔者已经表述的很清楚了，此不赘述。</p>
+<p> </p>
+<p>3、LinkedListMap与LRU小结</p>
+<p>使用LinkedHashMap实现LRU的必要前提是将accessOrder标志位设为true以便开启按访问顺序排序的模式。我们可以看到，无论是put方法还是get方法，都会导致目标Entry成为最近访问的Entry，因此就把该Entry加入到了双向链表的末尾：get方法通过调用recordAccess方法来实现；put方法在覆盖已有key的情况下，也是通过调用recordAccess方法来实现，在插入新的Entry时，则是通过createEntry中的addBefore方法来实现。这样，我们便把最近使用的Entry放入到了双向链表的后面。多次操作后，双向链表前面的Entry便是最近没有使用的，这样当节点个数满的时候，删除最前面的Entry(head后面的那个Entry)即可，因为它就是最近最少使用的Entry。</p>
+<p> </p>
+<p>七. 使用LinkedHashMap实现LRU算法</p>
+<p>如下所示，笔者使用LinkedHashMap实现一个符合LRU算法的数据结构，该结构最多可以缓存6个元素，但元素多余六个时，会自动删除最近最久没有被使用的元素，如下所示：</p>
+<td class="line_numbers"><pre>123456789101112131415161718192021222324252627282930313233343536373839404142434445464748</pre></td><td class="code"><pre class="java5" style="font-family:monospace;">/**         * Title: 使用LinkedHashMap实现LRU算法     * Description:  * @author rico        * @created 2017年5月12日 上午11:32:10     */public class LRUK,V extends LinkedHashMapK, V implements MapK, V{ private static final long serialVersionUID = 1L; public LRU(int initialCapacity,float loadFactor,boolean accessOrder) {super(initialCapacity, loadFactor, accessOrder);    } /**      * @description 重写LinkedHashMap中的removeEldestEntry方法，当LRU中元素多余6个时，     *              删除最不经常使用的元素     * @author rico            * @created 2017年5月12日 上午11:32:51           * @param eldest     * @return     * @see java.util.LinkedHashMap#removeEldestEntry(java.util.Map.Entry)          */@Overrideprotected boolean removeEldestEntry(java.util.Map.EntryK, V eldest) {// TODO Auto-generated method stubif(size()  6){return true;        }return false;    } public static void main(String[] args) {         LRUCharacter, Integer lru = new LRUCharacter, Integer(16, 0.75f, true);         String s = "abcdefghijkl";for (int i = 0; i  s.length(); i++) {            lru.put(s.charAt(i), i);        }        System.out.println("LRU中key为h的Entry的值为： " + lru.get('h'));        System.out.println("LRU的大小 ：" + lru.size());        System.out.println("LRU ：" + lru);    }}</pre></td>
+
+<p>&#x2F;**        </p>
+<ul>
+<li>Title: 使用LinkedHashMap实现LRU算法    </li>
+<li>Description: </li>
+<li>@author rico       </li>
+<li>@created 2017年5月12日 上午11:32:10</li>
+</ul>
+<p> *&#x2F;<br>public class LRUK,V extends LinkedHashMapK, V implements MapK, V{</p>
+<p>private static final long serialVersionUID &#x3D; 1L;</p>
+<p>public LRU(int initialCapacity,<br>float loadFactor,<br>boolean accessOrder) {<br>super(initialCapacity, loadFactor, accessOrder);<br>    }</p>
+<p>&#x2F;**<br>     * @description 重写LinkedHashMap中的removeEldestEntry方法，当LRU中元素多余6个时，<br>     *              删除最不经常使用的元素<br>     * @author rico<br>     * @created 2017年5月12日 上午11:32:51<br>     * @param eldest<br>     * @return<br>     * @see java.util.LinkedHashMap#removeEldestEntry(java.util.Map.Entry)<br>     *&#x2F;<br>@Override<br>protected boolean removeEldestEntry(java.util.Map.EntryK, V eldest) {<br>&#x2F;&#x2F; TODO Auto-generated method stub<br>if(size()  6){<br>return true;<br>        }<br>return false;<br>    }</p>
+<p>public static void main(String[] args) {</p>
+<pre class="line-numbers language-java"><code class="language-java">
+    LRUCharacter<span class="token punctuation">,</span> Integer lru <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">LRUCharacter</span><span class="token punctuation">,</span> <span class="token function">Integer</span><span class="token punctuation">(</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>16, 0.75f, true);</p>
+<pre class="line-numbers language-java"><code class="language-java">
+    String s <span class="token operator">=</span> <span class="token string">"abcdefghijkl"</span><span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>for (int i &#x3D; 0; i  s.length(); i++) {<br>            lru.put(s.charAt(i), i);<br>        }<br>        System.out.println(“LRU中key为h的Entry的值为： “ + lru.get(‘h’));<br>        System.out.println(“LRU的大小 ：” + lru.size());<br>        System.out.println(“LRU ：” + lru);<br>    }<br>}</p>
+<p>下图是程序的运行结果：</p>
+<p>　 　 　 　 <img class="" style="width: 100%; height: auto;" title="彻头彻尾理解 LinkedHashMap" src="https://www.javazhiyin.com/wp-content/uploads/2019/03/java10-1553058541.png" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="彻头彻尾理解 LinkedHashMap"></p>
+<p> </p>
+<p>八. LinkedHashMap 有序性原理分析</p>
+<p>如前文所述，LinkedHashMap 增加了双向链表头结点header 和 标志位accessOrder两个属性用于保证迭代顺序。但是要想真正实现其有序性，还差临门一脚，那就是重写HashMap 的迭代器，其源码实现如下：</p>
+<p>从上述代码中我们可以知道，LinkedHashMap重写了HashMap 的迭代器，它使用其维护的双向链表进行迭代输出。</p>
+<p> </p>
+<p>作者：书呆子Rico</p>
+<p>地址：<a target="_blank" rel="noopener" href="http://blog.csdn.net/justloveyou_/">http://blog.csdn.net/justloveyou_/</a></p>
+<p> </p>
+<p>欢迎点赞分享到朋友圈！</p>
+<img class="" style="color: #222222; font-family: 'Helvetica Neue', 'Hiragino Sans GB', 'Microsoft YaHei', 黑体, Arial, sans-serif; text-align: start;" title="彻头彻尾理解 LinkedHashMap" src="https://www.javazhiyin.com/wp-content/uploads/2019/03/java4-1553058541.jpg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="彻头彻尾理解 LinkedHashMap">
+
+<p> </p>
+<blockquote>
+<p>原文始发于微信公众号（程序员考拉）：<a target="_blank" rel="noopener" href="http://mp.weixin.qq.com/s/WlM6vgVXue9dxCpV8hp2og">彻头彻尾理解 LinkedHashMap</a></p>
+</blockquote>
+
+                </div>
+                <!-- 欧阳思海，modify，2020.05.01-->
+<!-- 文章详情详情页面的头部广告位置信息 -->
+<div id="post-head-panel">
+    
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" style="font-size: 18px;" target="_blank">
+        <img src="/icons/hot.gif">
+        本人花费半年的时间总结的《Java面试指南》已拿腾讯等大厂offer，已开源在github ，欢迎star！
+    </a>
+    
+    
+</div>
+<br />
+
+
+
+<blockquote>
+    
+            <p>本文GitHub <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">https://github.com/OUYANGSIHAI/JavaInterview</a> 已收录，这是我花了6个月总结的<b>一线大厂Java面试</b>总结，本人已拿大厂offer，欢迎star</p>
+    
+    <p>原文链接：blog.ouyangsihai.cn &gt;&gt; <a href="/che-tou-che-wei-li-jie-linkedhashmap.html" target="_blank">彻头彻尾理解 LinkedHashMap</a></p>
+</blockquote>
+                <hr />
+
+                
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.88rem;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-large waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fa fa-close"></i></a>
+            <h4 class="reward-title">多少都是对我的认可</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="http://image.ouyangsihai.cn/FpbhsOuf3Ar9vY34B97Y2qQ7LVGe" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="http://image.ouyangsihai.cn/FgYlMzms68PH73PWpZBwPfbLTAws" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+                
+
+                <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+
+<div id="article-share">
+    
+    <div class="social-share" data-disabled="qzone" data-wechat-qrcode-helper="<p>微信里点“发现”->“扫一扫”二维码便可查看分享。</p>"></div>
+    
+</div>
+
+<script src="/libs/share/js/social-share.min.js"></script>
+
+                
+
+                
+                <div class="reprint1">
+                    <p>
+                        <span class="reprint1-tip">
+                            <i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;转载请注明:
+                        </span>
+                        <a href="https://blog.ouyangsihai.cn" class="b-link-green">好好学java</a>
+                        <i class="fa fa-angle-right fa-lg fa-fw text-color"></i>
+                        <a href="/che-tou-che-wei-li-jie-linkedhashmap.html" class="b-link-green">彻头彻尾理解 LinkedHashMap</a>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        
+
+        
+
+        
+
+        
+
+        
+        <style>
+    .valine-card {
+        margin: 1.5rem auto;
+    }
+
+    .valine-card .card-content {
+        padding: 20px 20px 5px 20px;
+    }
+    /* valine 评论框增加背景图片 */
+    #vcomments textarea {
+        box-sizing: border-box;
+        background: url("") 100% 100% no-repeat;
+    }
+
+    #vcomments input[type=text],
+    #vcomments input[type=email],
+    #vcomments input[type=url],
+    #vcomments textarea {
+        box-sizing: border-box;
+    }
+
+    #vcomments p {
+        margin: 2px 2px 10px;
+        font-size: 1.05rem;
+        line-height: 1.78rem;
+    }
+
+    #vcomments blockquote p {
+        text-indent: 0.2rem;
+    }
+
+    #vcomments a {
+        padding: 0 2px;
+        color: #42b983;
+        font-weight: 500;
+        text-decoration: underline;
+    }
+
+    #vcomments img {
+        max-width: 100%;
+        height: auto;
+        cursor: pointer;
+    }
+
+    #vcomments ol li {
+        list-style-type: decimal;
+    }
+
+    #vcomments ol,
+    ul {
+        display: block;
+        padding-left: 2em;
+        word-spacing: 0.05rem;
+    }
+
+    #vcomments ul li,
+    ol li {
+        display: list-item;
+        line-height: 1.8rem;
+        font-size: 1rem;
+    }
+
+    #vcomments ul li {
+        list-style-type: disc;
+    }
+
+    #vcomments ul ul li {
+        list-style-type: circle;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    #vcomments table, th, td {
+        border: 0;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments h1 {
+        font-size: 1.85rem;
+        font-weight: bold;
+        line-height: 2.2rem;
+    }
+
+    #vcomments h2 {
+        font-size: 1.65rem;
+        font-weight: bold;
+        line-height: 1.9rem;
+    }
+
+    #vcomments h3 {
+        font-size: 1.45rem;
+        font-weight: bold;
+        line-height: 1.7rem;
+    }
+
+    #vcomments h4 {
+        font-size: 1.25rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    #vcomments h5 {
+        font-size: 1.1rem;
+        font-weight: bold;
+        line-height: 1.4rem;
+    }
+
+    #vcomments h6 {
+        font-size: 1rem;
+        line-height: 1.3rem;
+    }
+
+    #vcomments p {
+        font-size: 1rem;
+        line-height: 1.5rem;
+    }
+
+    #vcomments hr {
+        margin: 12px 0;
+        border: 0;
+        border-top: 1px solid #ccc;
+    }
+
+    #vcomments blockquote {
+        margin: 15px 0;
+        border-left: 5px solid #42b983;
+        padding: 1rem 0.8rem 0.3rem 0.8rem;
+        color: #666;
+        background-color: rgba(66, 185, 131, .1);
+    }
+
+    #vcomments pre {
+        font-family: monospace, monospace;
+        padding: 1.2em;
+        margin: .5em 0;
+        background: #272822;
+        overflow: auto;
+        border-radius: 0.3em;
+        tab-size: 4;
+    }
+
+    #vcomments code {
+        font-family: monospace, monospace;
+        padding: 1px 3px;
+        font-size: 0.92rem;
+        color: #e96900;
+        background-color: #f8f8f8;
+        border-radius: 2px;
+    }
+
+    #vcomments pre code {
+        font-family: monospace, monospace;
+        padding: 0;
+        color: #e8eaf6;
+        background-color: #272822;
+    }
+
+    #vcomments pre[class*="language-"] {
+        padding: 1.2em;
+        margin: .5em 0;
+    }
+
+    #vcomments code[class*="language-"],
+    pre[class*="language-"] {
+        color: #e8eaf6;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    #vcomments b,
+    strong {
+        font-weight: bold;
+    }
+
+    #vcomments dfn {
+        font-style: italic;
+    }
+
+    #vcomments small {
+        font-size: 85%;
+    }
+
+    #vcomments cite {
+        font-style: normal;
+    }
+
+    #vcomments mark {
+        background-color: #fcf8e3;
+        padding: .2em;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    /* 修复评论第一行位置错位 */
+    .v .vlist .vcard {
+    padding-top: 2.5em !important ;
+    }
+</style>
+
+<div class="card valine-card" data-aos="fade-up">
+    <div id="vcomments" class="card-content"></div>
+</div>
+
+<script src="/libs/valine/av-min.js"></script>
+<script src="/libs/valine/Valine.min.js"></script>
+<!-- <link rel="stylesheet" type="text/css" href="/libs//libs/jQuery-emoji/dist/css/jquery.emoji.css">
+<script src="/libs//libs/jQuery-emoji/dist/js/jquery.emoji.min.js"></script>
+<script src="/libs//libs/jQuery-emoji/dist/js/emoji.list.js"></script> -->
+<script>
+    new Valine({
+        el: '#vcomments',
+        appId: 'MxSNOS83TYWU3Opsy2GTW1ih-gzGzoHsz',
+        appKey: '4XevOgmAxHEwVDnIKgvEUihB',
+        notify: 'true' === 'true',
+        verify: 'true' === 'true',
+        visitor: 'true' === 'true',
+        avatar: 'mm',
+        pageSize: '10',
+        lang: 'zh-cn',
+        placeholder: '请畅所欲言吧，别害羞~',
+
+    });
+
+//     function parse_emoji() {
+//     jQuery(".vcontent").emojiParse({
+//       basePath: '/libs/jQuery-emoji/images/emoji',
+//       icons: emojiLists   // 注：详见 js/emoji.list.js
+//     });
+//   }
+  
+//   setTimeout(function() {
+//     // jQuery emoji 解析
+//     parse_emoji();
+//     // jquery emoji 初始化
+//     jQuery(".veditor").emoji({
+//       showTab: true,
+//       animation: 'slide',
+//       basePath: '/libs/jQuery-emoji/images/emoji',
+//       icons: emojiLists  // 注：详见 js/emoji.list.js
+//     });
+//     jQuery(".vmore").on("click", function() {
+//       setTimeout(function() {
+//         parse_emoji();
+//       }, 500);
+//     });
+//   }, 800)
+
+</script>
+        
+
+        
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/xiang-jie-equals-fang-fa-he-hashcode-fang-fa.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="详解equals()方法和hashCode()方法">
+                        
+                        <span class="card-title">详解equals()方法和hashCode()方法</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            点击蓝字“程序员考拉”欢迎关注！
+
+
+前言Java的基类Object提供了一些方法，其中equals()方法用于判断两个对象是否相等，hashCode()方法用于计算对象的哈希码。equals()和hashCode()都不是final方法，
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="fa fa-clock fa-fw icon-date"></i>2021-04-05
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/" class="post-category" target="_blank">
+                                    Java核心知识
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/Java%E5%9F%BA%E7%A1%80/" target="_blank">
+                        <span class="chip bg-color">Java基础</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fa fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/jdk1.8-yuan-ma-fen-xi-zhi-hashmap.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/3.jpg" class="responsive-img" alt="JDK1.8 源码分析之HashMap">
+                        
+                        <span class="card-title">JDK1.8 源码分析之HashMap</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+
+
+
+
+
+
+
+
+作者：leesf
+cnblogs.com/leesf456/p/5242233.html
+
+
+
+
+cnblogs.com&#x2F;leesf456&#x2F;p&#x2F;5242233.html
+一、前言在分析jdk1
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="fa fa-clock fa-fw icon-date"></i>2021-04-05
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/" class="post-category" target="_blank">
+                                    Java核心知识
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/Java%E5%9F%BA%E7%A1%80/" target="_blank">
+                        <span class="chip bg-color">Java基础</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+    </div>
+</div>
+
+
+<script>
+    $('#articleContent').on('copy', function (e) {
+        // IE8 or earlier browser is 'undefined'
+        if (typeof window.getSelection === 'undefined') return;
+
+        var selection = window.getSelection();
+        // if the selection is short let's not annoy our users.
+        if (('' + selection).length < Number.parseInt('500')) {
+            return;
+        }
+
+        // create a div outside of the visible area and fill it with the selected text.
+        var bodyElement = document.getElementsByTagName('body')[0];
+        var newdiv = document.createElement('div');
+        newdiv.style.position = 'absolute';
+        newdiv.style.left = '-99999px';
+        bodyElement.appendChild(newdiv);
+        newdiv.appendChild(selection.getRangeAt(0).cloneContents());
+
+        // we need a <pre> tag workaround.
+        // otherwise the text inside "pre" loses all the line breaks!
+        if (selection.getRangeAt(0).commonAncestorContainer.nodeName === 'CODE') {
+            newdiv.innerHTML = "<pre>" + newdiv.innerHTML + "</pre>";
+        }
+
+        var url = document.location.href;
+        newdiv.innerHTML += '<br />'
+            + '来源: 好好学java<br />'
+            + '作者: 好好学java<br />'
+            + '链接: <a href="' + url + '">' + url + '</a><br />'
+            + '本文章著作权归作者所有，任何形式的转载都请注明出处。';
+
+        selection.selectAllChildren(newdiv);
+        window.setTimeout(function () { bodyElement.removeChild(newdiv); }, 200);
+    });
+</script>
+
+
+
+<!--
+<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+<script>
+    const btw = new BTWPlugin();
+    btw.init({
+        id: 'container',
+        blogId: '15305-1590684104111-518',
+        name: '程序员的技术圈子',
+        qrcode: 'http://image.ouyangsihai.cn/FtAUOeE5--1JTdcuuZFIhMuEUuJO',
+        keyword: 'vip',
+    });
+</script>
+-->
+
+    </div>
+    <div id="toc-aside" style="width: 310px;" class="expanded col l3 hide-on-med-and-down">
+        <!-- 自定义右侧card：欧阳思海 -->
+        <!-- <div id="my-card" style="background: ">
+            
+        </div> -->
+        <!-- <div class="toc-widget">
+            <div class="toc-title" style="display: none;"><i class="fa fa-list-alt"></i>&nbsp;&nbsp;</div>
+            <div id="toc-content"></div>
+        </div> -->
+
+
+
+
+
+
+
+
+        <aside class="col-lg-3" style="width: 300px;">
+
+            <link rel="stylesheet" type="text/css" href="/css/my-aside.css">
+
+            <!-- 关注公众号信息：欧阳思海 -->
+            <div class="widget-wrap">
+                <div class="widget bg-danger" style="color:whitesmoke; background-color: #419488">
+                    <div class="card-front animated col s12 m12 l8 offset-l2 fadeInUp">
+                        <div class="row">
+                            <div class="col-md-5" style="text-align: center;">
+                                <img class="adv" style="width: 95px; height: 95px;"
+                                    src="http://image.ouyangsihai.cn/FtAUOeE5--1JTdcuuZFIhMuEUuJO">
+                            </div>
+                            <div class="col-md-7" style="text-align: center;">
+                                <h2 style="font-size: 18px; 
+                                    margin: 0; 
+                                    padding: 0;
+                                    border: 0; 
+                                    outline: 0;
+                                    font-weight: inherit;
+                                    font-style: inherit;
+                                    font-family: inherit;
+                                    vertical-align: baseline;">关注公众号</h2>
+                                 
+                                <small style="font-size: 15px;">
+                                    →「技术干货」每日推送 <br>
+                                    →「回复资料」领取资料 <br>
+                                    →「微信加群」每周福利 <br>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div style="font-size: 0.8em;">
+                        <a href="/assets/erweima.jpg" target="_blank"
+                            style="color:orange;font-size: 14px;">点击添加我的微信，加入技术讨论群</a>
+                        除公众号以外，我还会在以下平台发布内容：
+                    </div>
+                    -->
+
+                    <div class="profile-block social-links col-md-7" style="text-align: center;">
+                        <table style="align-items: center; 
+                                        padding-left: 25px;">
+                            <tbody>
+                                <tr>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank" title="GitHub"
+                                            class="tooltip">
+                                            <img style="width: 22px;height: 22px;" src="/icons/github.svg"></a>
+                                    </td>
+
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://www.zhihu.com/people/hai-hai-ren-sheng-50/activities"
+                                            target="_blank" title="知乎" class="tooltip">
+                                            <img style="width: 22px;" src="/icons/zhihu.svg"></a>
+                                    </td>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://blog.csdn.net/sihai12345" target="_blank" title="CSDN"
+                                            class="tooltip">
+                                            <img style="width: 18px;" src="/icons/CSDN.svg"></a>
+                                    </td>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://www.jianshu.com/u/12b0bd4c857c" target="_blank" title="简书"
+                                            class="tooltip">
+                                            <img style="width: 22px;" src="/icons/JianShu.svg"></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            
+
+            <!-- custom rightside_link：热门文章推荐：欧阳思海 -->
+            
+            <div class="widget-wrap widget-panel">
+                <p style="text-align: left;padding-bottom: 10px;line-height: 30px; font-size: 14px;">
+                    
+                    <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        本人花费半年的时间总结的《 Java 面试指南》已拿腾讯等大厂 offer，已开源在 github ，欢迎 star！
+                    </a><br>
+                    
+                    <a href="https://mp.weixin.qq.com/s/I0jimqziHqRNaIy0kXRCnw" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        2020 Java 1000G 最新学习资源，Java基础、Java项目实战、Java分布式等等！
+                    </a><br>
+                    
+                    <a href="http://image.ouyangsihai.cn/FpB-dO6g-XU44mMrVlj7EL1y7Rs7" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        高级 Java 开发微信群，一起搞事情吧！
+                    </a><br>
+                    
+                </p>
+            </div>
+            
+
+            
+
+            <!-- custom rightside_banner：右侧广告或者其他的栏目设置：欧阳思海 -->
+            
+            <div class="widget-wrap">
+                <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">
+                    <img src="http://image.ouyangsihai.cn/FhhoEYMaNr6m0v8KhG8vSPgoREBV" style="width: 100%;">
+                </a>
+            </div>
+            
+            
+
+            
+
+            <!-- 右侧专栏分类：欧阳思海 -->
+            
+            <div class="widget-wrap widget-panel">
+                <ul class="media-list">
+                    
+                    <li class="media">
+                        <a href="/categories/MySQL的艺术世界/" target="_blank">
+                            <div class="media-left">
+                                <img class="media-object" src="http://image.ouyangsihai.cn/Fn3kQurieQ_0QUeqPmx5RW5i6R9n" style="width: 55px;">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading" style="margin-bottom: 10px; font-size: 100%;
+                                                                    margin: 0;
+                                                                    padding: 0;
+                                                                    border: 0;
+                                                                    outline: 0;
+                                                                    font-weight: inherit;
+                                                                    font-style: inherit;
+                                                                    font-family: inherit;
+                                                                    vertical-align: baseline;">
+                                    MySQL 的系列文章，解决全部面试问题！
+                                </h4>
+                                <p>
+                                    总共10篇文章，面试热门的锁、事务，通通解决了！
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    <hr>
+                    
+                    <li class="media">
+                        <a href="/categories/深入理解Java虚拟机/" target="_blank">
+                            <div class="media-left">
+                                <img class="media-object" src="http://image.ouyangsihai.cn/FpcS21VWJOHSgGzKcpW3_xVTSEeN" style="width: 55px;">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading" style="margin-bottom: 10px; font-size: 100%;
+                                                                    margin: 0;
+                                                                    padding: 0;
+                                                                    border: 0;
+                                                                    outline: 0;
+                                                                    font-weight: inherit;
+                                                                    font-style: inherit;
+                                                                    font-family: inherit;
+                                                                    vertical-align: baseline;">
+                                    深入理解 Java 虚拟机，面试必问
+                                </h4>
+                                <p>
+                                    总共10篇文章，包括内存模型、GC算法、GC收集器等。
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    <hr>
+                    
+                </ul>
+            </div>
+            
+
+            <!-- 右侧分类 -->
+            <div class="widget-wrap widget-panel">
+                <h3 class="widget-title">文章分类</h3>
+                <div class="widget">
+                    <ul class="category-list">
+                        
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/趣聊数据结构与算法/">>
+                                趣聊数据结构与算法</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/职业生涯浅谈/">>
+                                职业生涯浅谈</a><span class="category-list-count">33</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java项目分享/">>
+                                Java项目分享</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java面试经验/">>
+                                Java面试经验</a><span class="category-list-count">4</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/我要进大厂/">>
+                                我要进大厂</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/好好学java/">>
+                                好好学java</a><span class="category-list-count">1116</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/剑指offer/">>
+                                剑指offer</a><span class="category-list-count">112</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/css/">>
+                                css</a><span class="category-list-count">12</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/其他框架/">>
+                                其他框架</a><span class="category-list-count">142</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python其他/">>
+                                python其他</a><span class="category-list-count">45</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/数据库相关/">>
+                                数据库相关</a><span class="category-list-count">293</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java核心知识/">>
+                                Java核心知识</a><span class="category-list-count">196</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java面试题/">>
+                                Java面试题</a><span class="category-list-count">308</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/mybatis源码/">>
+                                mybatis源码</a><span class="category-list-count">56</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/spring教程/">>
+                                spring教程</a><span class="category-list-count">173</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springboot教程/">>
+                                springboot教程</a><span class="category-list-count">156</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/实战Activiti工作流/">>
+                                实战Activiti工作流</a><span class="category-list-count">4</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springcloud教程/">>
+                                springcloud教程</a><span class="category-list-count">39</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/linux/">>
+                                linux</a><span class="category-list-count">91</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python框架/">>
+                                python框架</a><span class="category-list-count">43</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python基础/">>
+                                python基础</a><span class="category-list-count">78</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/dubbo/">>
+                                dubbo</a><span class="category-list-count">37</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java源码/">>
+                                Java源码</a><span class="category-list-count">76</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/叽叽喳喳杂七杂八/">>
+                                叽叽喳喳杂七杂八</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/MySQL的艺术世界/">>
+                                MySQL的艺术世界</a><span class="category-list-count">8</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/jquery/">>
+                                jquery</a><span class="category-list-count">14</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java并发/">>
+                                Java并发</a><span class="category-list-count">43</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java文章合辑/">>
+                                Java文章合辑</a><span class="category-list-count">11</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java基础修炼/">>
+                                Java基础修炼</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/不一样的Java8/">>
+                                不一样的Java8</a><span class="category-list-count">3</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/小程序开发的世界/">>
+                                小程序开发的世界</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java学习资源分享/">>
+                                Java学习资源分享</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java小学生漫游/">>
+                                Java小学生漫游</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/rocketmq源码解析/">>
+                                rocketmq源码解析</a><span class="category-list-count">33</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springmvc最新教程/">>
+                                springmvc最新教程</a><span class="category-list-count">9</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java的Exception/">>
+                                Java的Exception</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/vue-js/">>
+                                vue.js</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/实战设计模式/">>
+                                实战设计模式</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python数据处理/">>
+                                python数据处理</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java-Web闯关/">>
+                                Java Web闯关</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springboot2-0最新教程/">>
+                                springboot2.0最新教程</a><span class="category-list-count">11</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/netty/">>
+                                netty</a><span class="category-list-count">16</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/rpc/">>
+                                rpc</a><span class="category-list-count">13</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/拥抱大厂系列/">>
+                                拥抱大厂系列</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/eureka/">>
+                                eureka</a><span class="category-list-count">19</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/分布式/">>
+                                分布式</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/中间件/">>
+                                中间件</a><span class="category-list-count">23</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java基础/">>
+                                Java基础</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/带你学Python/">>
+                                带你学Python</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/使用技术工具/">>
+                                使用技术工具</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/mycat源码/">>
+                                mycat源码</a><span class="category-list-count">5</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/深入理解Java虚拟机/">>
+                                深入理解Java虚拟机</a><span class="category-list-count">8</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/spring源码/">>
+                                spring源码</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java集合源码分析/">>
+                                Java集合源码分析</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/github的repo/">>
+                                github的repo</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java框架深究/">>
+                                Java框架深究</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/分布式架构/">>
+                                分布式架构</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+
+        </aside>
+
+
+
+
+
+
+
+
+
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. 修改成永远不显示：欧阳思海-->
+
+
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h1, h2, h3, h4, h5'
+        });
+
+        console.log('============');
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h1, h2, h3, h4, h5').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+                        
+            /* 修复文章卡片 div 的宽度. */
+            let fixPostCardWidth = function (srcId, targetId) {
+                let srcDiv = $('#' + srcId);
+                if (srcDiv.length === 0) {
+                    return;
+                }
+
+                let w = srcDiv.width();
+                if (w >= 450) {
+                    w = w + 21;
+                } else if (w >= 350 && w < 450) {
+                    w = w + 18;
+                } else if (w >= 300 && w < 350) {
+                    w = w + 16;
+                } else {
+                    w = w + 14;
+                }
+                $('#' + targetId).width(w);
+            };
+
+            // 切换TOC目录展开收缩的相关操作.
+            // 修改右侧边栏功能：欧阳思海
+            const expandedClass = 'expanded';
+            let $tocAside = $('#toc-aside');
+            let $mainContent = $('#main-content');
+
+            $('#floating-toc-btn .btn-floating').click(function () {
+                if ($tocAside.hasClass(expandedClass)) {
+                    $tocAside.removeClass(expandedClass).slideUp(500);
+                    $mainContent.removeClass('l9');
+                } else {
+                    $tocAside.addClass(expandedClass).slideDown(500);
+                    $mainContent.addClass('l9');
+                }
+                fixPostCardWidth('artDetail', 'prenext-posts');
+            });
+                        
+                    });
+</script>
+    
+
+</main>
+
+
+        <footer class="page-footer bg-color">
+    <div class="container row center-align">
+        <div class="col s12 m8 l8 copy-right">
+            
+	    Copyright&copy; 2019 <a href="https://www.java1000.com/" target="_blank"> 好好学java </a>维护. 网站备案/许可证号：赣ICP备17007984号-3
+            <br>
+            <span id="sitetime"></span>
+            <br>
+
+            
+
+            
+                    <!-- 
+                        <span id="busuanzi_container_site_pv" style='display:none'></span>
+                        总访问量: <span id="busuanzi_value_site_pv" class="white-color"></span>
+                    
+        
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'></span>
+                        人次&nbsp; | &nbsp;访客人数: <span id="busuanzi_value_site_uv" class="white-color"></span> 人
+                     -->
+                        <!-- 修改计数：欧阳思海 -->
+                    
+                        <span id="busuanzi_container_site_pv" style='display:inline'>
+                            <i class="fa fa-heart-o"></i>
+                            本站总访问量 <span id="busuanzi_value_site_pv" class="white-color"></span>
+                        </span>
+                    
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'>
+                            人次,&nbsp;访客数 <span id="busuanzi_value_site_uv" class="white-color"></span> 人.
+                        </span>
+                    
+    
+            
+
+            
+                &nbsp; | &nbsp;字数统计:&nbsp;
+                <span class="white-color">8290.3k</span> 字
+            
+
+            
+            <br>
+
+        </div>
+
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fa fa-code-branch"></i>
+    </a>
+
+
+ 
+    <a href="https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=1446037005@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fa fa-envelope-open"></i>
+    </a>
+
+
+
+
+    <a href="https://zhihu.com/people/hai-hai-ren-sheng-50/activities" class="tooltipped" target="_blank" data-tooltip="访问我的知乎" data-position="top" data-delay="50">
+        <i class="fa fa-inverse">知</i>
+    </a>
+
+
+
+
+
+
+
+
+
+    <a href="https://blog.ouyangsihai.cn/sitemap.xml" class="tooltipped" target="_blank" data-tooltip="站点地图" data-position="top" data-delay="50">
+        <i class="fa fa-sitemap"></i>
+    </a>
+
+
+
+    <a href="https://blog.ouyangsihai.cn/friends" class="tooltipped" target="_blank" data-tooltip="友情链接" data-position="top" data-delay="50">
+        <i class="fa fa-address-book"></i>
+    </a>
+</div>
+
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+
+        var t1 = Date.UTC(2019, 08, 10, 00, 00, 00); //北京时间2019-8-1 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes *
+            minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "本站已运行 " + diffYears + " 年 " + diffDays + " 天 " + diffHours +
+            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒" ;
+    } /*因为建站时间还没有一年，就将之注释掉了。需要的可以取消*/
+    siteTime();
+</script>
+
+<!-- 修改计数：欧阳思海 -->
+<script>
+    $(document).ready(function () {
+
+        var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+        var pvcountOffset = 1005469;  // 初始化首次数据
+        var uvcountOffset = 250804;
+
+        function fixCount() {
+            if (document.getElementById("busuanzi_container_site_pv").style.display != "none") {
+                $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + pvcountOffset);
+                clearInterval(int);
+            }
+            if ($("#busuanzi_container_site_pv").css("display") != "none") {
+                $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + uvcountOffset); // 加上初始数据 
+                clearInterval(int); // 停止检测
+            }
+        }
+    });
+</script>
+
+
+
+
+        <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.json", 'searchInput', 'searchResult');
+});
+</script>
+        <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fa fa-angle-up"></i>
+    </a>
+</div>
+
+
+        <script src="/libs/materialize/materialize.min.js"></script>
+        <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+        <script src="/libs/aos/aos.js"></script>
+        <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+        <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+        <script src="/js/matery.js"></script>
+
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-149362573-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    gtag('config', 'UA-149362573-1');
+</script>
+
+
+
+        
+            <script src="/libs/others/clicklove.js"></script>
+        
+
+        
+            <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+        
+
+        <!-- 洪卫 shw2018 add 2019.08.28 -->
+        <script type="text/javascript">
+            var OriginTitile = document.title,
+                st;
+            document.addEventListener("visibilitychange", function () {
+                document.hidden ? (document.title = "看不见我🙈~看不见我🙈~", clearTimeout(st)) : (document.title =
+                    "(๑•̀ㅂ•́) ✧被发现了～", st = setTimeout(function () {
+                        document.title = OriginTitile
+                    }, 3e3))
+            })
+        </script>
+
+        <!-- 鼠标点击烟花爆炸效果  洪卫 shw2018 add 2019.09.09 -->
+        
+
+        <!-- 背景雪花飘落特效洪卫 shw2018 add 2019.09.10 -->
+        
+
+        <!-- 鼠标点击文字特效 洪卫 shw2018 add 2019.09.10-->
+        
+
+        <!-- 背景雪花飘落特效 洪卫 shw2018 add 2019.09.10 -->
+        
+
+        <!-- 在线聊天工具  洪卫 shw2018 add 2019.09.11 -->
+        
+
+        <!-- 背景 canvas-nest  洪卫 shw 2018  add 2019.09.15-->
+        
+
+        <!-- 背景静止彩带  洪卫 shw 2018  add 2019.09.15-->
+        
+
+        <!-- 背景动态彩带 洪卫 shw 2018  add 2019.09.15-->
+        
+
+    </body>
+</html>

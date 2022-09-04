@@ -1,0 +1,3235 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+    <!-- shw2018 洪卫  modify 2019.08.15-->
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="Spring Boot, Spring Cloud, 微服务, Java技术, 好好学java, Java面试, 分布式, 最新干货分享">
+    <meta name="baidu-site-verification" content="fmlEuI34ir" />
+    <meta name="google-site-verification" content="ZWVq5UvPg33BCEA3LRTUkYe5J854o9lF1_WRTer9l8A" />
+    <meta name="description" content="本站是 好好学java 的技术分享博客。内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、分布式、Java面试、测试开发等相关的研究与知识分享。">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>JVM 史上最最最完整深入解析（12000 字总结） | 好好学java | Spring Boot | Spring Cloud | 微服务 | Java技术 | Java面试 | 分布式 | 最新干货分享</title>
+    <link rel="icon" type="image/png" href="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7">
+
+    <!-- <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css"> -->
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    <!-- 自定义fontawesome样式：欧阳思海 -->
+    <link rel="stylesheet" type="text/css" href="/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/brands.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/fontawesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/regular.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/solid.min.css">
+
+
+    <style type="text/css">
+        code[class*="language-"],
+            pre[class*="language-"] {
+                white-space: pre !important;
+            }
+
+            
+
+        /* 将matery.css中的背景颜色修改放到这里：欧阳思海 */
+        .bg-color {
+            background-image: linear-gradient(to right, #ec8585 0%, #419488 100%);
+            opacity: 0.9;
+            // 透明度
+        }
+    </style>
+
+    <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
+    <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+
+    
+    
+    <script>
+        (function () {
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+    
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?6fe466069710c03a563713b507fbaca7";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+    <!-- Google Analytics -->
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-XXXXX-Y', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <!-- End Google Analytics -->
+
+    <script>(function (i, s, o, g, r, a, m) { i["DaoVoiceObject"] = r; i[r] = i[r] || function () { (i[r].q = i[r].q || []).push(arguments) }, i[r].l = 1 * new Date(); a = s.createElement(o), m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; a.charset = "utf-8"; m.parentNode.insertBefore(a, m) })(window, document, "script", ('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/0a804bac.js", "daovoice")</script>
+
+    <script>
+        if (true) {
+            daovoice('init', {
+                app_id: "0a804bac",
+                user_id: "NO_89757", // 必填: 该用户在您系统上的唯一ID
+                email: "daovoice@example.com", // 选填:  该用户在您系统上的主邮箱
+                name: "道客船长", // 选填: 用户名
+                signed_up: 1449821660 // 选填: 用户的注册时间，用Unix时间戳表示
+            });
+            daovoice('update');
+
+            daovoice('init', {
+                app_id: "0a804bac"
+            });
+            daovoice('update');
+        }
+    </script>
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/rss2.xml" title="好好学java" type="application/rss+xml">
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+    <body>
+
+        <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span" style="font-size: 1.4rem;">好好学java</span>
+                </a>
+            </div>
+            
+
+
+<!-- <a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-navicon"></i></a>
+<ul class="right">
+    
+    <li class="hide-on-med-and-down">
+        <a href="" class="waves-effect waves-light">
+            
+            <i class="fa "></i>
+            
+            <span></span>
+        </a>
+    </li>
+    
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title=""></i>
+        </a>
+    </li>
+</ul> -->
+
+<!-- 支持二级菜单特性 洪卫 shw2018 modify 2019.09.17  -->
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-align-justify"></i></a>
+<ul class="right nav-menu">
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-folder-minus"></i>
+                
+                <span style="font-size: 1.1rem;">Java学习</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/" >
+                    
+                    <span>Java入门</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Javaweb/" >
+                    
+                    <span>Java Web</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/spring%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>Spring教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/springboot%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>SpringBoot教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/springcloud%E6%95%99%E7%A8%8B/" >
+                    
+                    <span>SpringCloud教程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98/" >
+                    
+                    <span>Java面试</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%89%91%E6%8C%87offer/" >
+                    
+                    <span>剑指offer</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-code-branch"></i>
+                
+                <span style="font-size: 1.1rem;">Java进阶</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97/" >
+                    
+                    <span>设计模式</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" >
+                    
+                    <span>Java并发编程</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/" >
+                    
+                    <span>数据库</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/redis/" >
+                    
+                    <span>Redis</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/linux/" >
+                    
+                    <span>Linux</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/" >
+                    
+                    <span>Java实战项目</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-code"></i>
+                
+                <span style="font-size: 1.1rem;">python学习</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/python%E5%9F%BA%E7%A1%80/" >
+                    
+                    <span>python基础</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/python%E6%A1%86%E6%9E%B6/" >
+                    
+                    <span>python框架</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/python%E5%85%B6%E4%BB%96/" >
+                    
+                    <span>python其他</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-coffee"></i>
+                
+                <span style="font-size: 1.1rem;">Java扩展</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/dubbo/" >
+                    
+                    <span>dubbo</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/netty/" >
+                    
+                    <span>netty</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/rpc/" >
+                    
+                    <span>rpc</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/eureka/" >
+                    
+                    <span>eureka</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/" >
+                    
+                    <span>中间件</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" >
+                    
+                    <span>分布式</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="/categories/" class="waves-effect waves-light">
+                
+                  <i style="font-size: 1.1rem;" class="fa fa-desktop"></i>
+                
+                <span style="font-size: 1.1rem;">计算机核心</span>
+                <i style="font-size: 1.1rem;" class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" >
+                    
+                    <span>数据结构</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98/" >
+                    
+                    <span>leetcode刷题</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" >
+                    
+                    <span>计算机网络</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" >
+                    
+                    <span>算法</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/categories/" class="waves-effect waves-light">
+              
+                <i style="font-size: 1.1rem;" class="fa fa-adjust"></i>
+              
+              <span style="font-size: 1.1rem;">学习资源</span>
+            </a>
+
+            
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/contact" class="waves-effect waves-light">
+              
+                <i style="font-size: 1.1rem;" class="fa fa-envelope"></i>
+              
+              <span style="font-size: 1.1rem;">留言</span>
+            </a>
+
+            
+      </li>
+    
+
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title="搜索"></i>
+        </a>
+    </li>
+
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="http://image.ouyangsihai.cn/FjihsEiBMONnJIRtPwgGkjE4HAP7" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">好好学java</div>
+        <div class="logo-desc">
+            
+            
+            本站是 好好学java 的技术分享博客，涵盖Java后端技术、SpringBoot、微服务架构、分布式、Java面试等知 ...
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-folder-minus"></i>
+			
+			Java学习
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/ " style="margin-left:75px";>
+				  
+		          <span>Java入门</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Javaweb/ " style="margin-left:75px";>
+				  
+		          <span>Java Web</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/spring%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>Spring教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/springboot%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>SpringBoot教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/springcloud%E6%95%99%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>SpringCloud教程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98/ " style="margin-left:75px";>
+				  
+		          <span>Java面试</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%89%91%E6%8C%87offer/ " style="margin-left:75px";>
+				  
+		          <span>剑指offer</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-code-branch"></i>
+			
+			Java进阶
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97/ " style="margin-left:75px";>
+				  
+		          <span>设计模式</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/ " style="margin-left:75px";>
+				  
+		          <span>Java并发编程</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/ " style="margin-left:75px";>
+				  
+		          <span>数据库</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/redis/ " style="margin-left:75px";>
+				  
+		          <span>Redis</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/linux/ " style="margin-left:75px";>
+				  
+		          <span>Linux</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/ " style="margin-left:75px";>
+				  
+		          <span>Java实战项目</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-code"></i>
+			
+			python学习
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/python%E5%9F%BA%E7%A1%80/ " style="margin-left:75px";>
+				  
+		          <span>python基础</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/python%E6%A1%86%E6%9E%B6/ " style="margin-left:75px";>
+				  
+		          <span>python框架</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/python%E5%85%B6%E4%BB%96/ " style="margin-left:75px";>
+				  
+		          <span>python其他</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-coffee"></i>
+			
+			Java扩展
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/dubbo/ " style="margin-left:75px";>
+				  
+		          <span>dubbo</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/netty/ " style="margin-left:75px";>
+				  
+		          <span>netty</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/rpc/ " style="margin-left:75px";>
+				  
+		          <span>rpc</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/eureka/ " style="margin-left:75px";>
+				  
+		          <span>eureka</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/ " style="margin-left:75px";>
+				  
+		          <span>中间件</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/ " style="margin-left:75px";>
+				  
+		          <span>分布式</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fa fa-fw fa-desktop"></i>
+			
+			计算机核心
+			<span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+		</a>
+            <ul  >
+              
+                <li>   
+				
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/ " style="margin-left:75px";>
+				  
+		          <span>数据结构</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98/ " style="margin-left:75px";>
+				  
+		          <span>leetcode刷题</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/ " style="margin-left:75px";>
+				  
+		          <span>计算机网络</span>
+                  </a>
+                </li>
+              
+                <li>   
+				
+                  <a href="/categories/%E7%AE%97%E6%B3%95/ " style="margin-left:75px";>
+				  
+		          <span>算法</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories/" class="waves-effect waves-light">
+			
+			    <i class="fa fa-fw fa-adjust"></i>
+			
+			学习资源
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa fa-fw fa-envelope"></i>
+			
+			留言
+		</a>
+          
+        </li>
+        
+        
+    </ul>
+</div>
+
+        </div>
+
+        
+    </nav>
+
+</header>
+
+        
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/6.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <div class="description center-align post-title">
+                        JVM 史上最最最完整深入解析（12000 字总结）
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 20px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+
+    /* 自定义mycard：欧阳思海 */
+
+    #my-card {
+        /* position: relative; */
+        width: 310px;
+        height: 300px;
+        /* max-height: 330px; */
+        margin-bottom: 15px;
+        margin-top: 15px;
+        /* text-align: center; */
+        border: 0;
+        border-radius: 3px;
+        color: rgba(0, 0, 0, .87);
+        background: #fff 50%;
+        background-image: none;
+        background-size: auto;
+        background-size: cover;
+        box-shadow: 0 15px 35px rgba(50, 50, 93, .1), 0 5px 15px rgba(0, 0, 0, .07);
+    }
+
+    /* .widget {
+        line-height: 1.6em;
+        word-wrap: break-word;
+        font-size: 0.9em;
+        padding-top: 15px;
+        padding-left: -45px;
+    } */
+</style>
+
+
+
+
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- shw2018 洪卫  modify 2019.08.15-->
+
+<!-- 代码块修改的代码开始 -->
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFunction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+<!-- 代码块折行 -->
+
+<style type="text/css">
+code[class*="language-"], pre[class*="language-"] { white-space: pre !important; }
+</style>
+
+<!-- 代码块修改代码结束 -->
+
+
+<!-- 文章内容详情 -->
+<div id="container">
+    <div id="artDetail">
+        <div class="card">
+            <div class="card-content article-info">
+                <div class="row tag-cate">
+                    <div class="col s7">
+                        
+                        <div class="article-tag">
+                            <!--我修改的地方：欧阳思海-->
+                            
+                            <a href="/tags/Java%E5%9F%BA%E7%A1%80/" target="_blank">
+                                <span class="chip bg-color">Java基础</span>
+                            </a>
+                            
+                        </div>
+                        
+                    </div>
+                    <div class="col s5 right-align">
+                        
+                        <div class="post-cate">
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/" class="post-category" target="_blank">
+                                Java核心知识
+                            </a>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <div class="post-info">
+                    <div class="post-date info-break-policy">
+                        <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
+                        2021-04-05
+                    </div>
+
+                    <div class="post-author info-break-policy">
+                        <i class="fa fa-user-o fa-fw"></i>作者:&nbsp;&nbsp;
+                        
+                        欧阳思海
+                        
+                    </div>
+
+                    
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;
+                        10.4k
+                    </div>
+                    
+
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-clock-o fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                        36 分
+                    </div>
+                    
+                    
+
+                    
+                    <span id="busuanzi_container_site_pv" style='display:none'></span>
+                    <i class="fa fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                    <span id="busuanzi_value_page_pv"></span>
+
+                    
+
+                </div>
+            </div>
+            <hr class="clearfix">
+            <div class="card-content article-card-content">
+                <!-- 欧阳思海，modify，2020.05.01-->
+<!-- 文章详情详情页面的头部广告位置信息 -->
+<div id="post-head-panel">
+    
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" style="font-size: 18px;" target="_blank">
+        <img src="/icons/hot.gif">
+        本人花费半年的时间总结的《Java面试指南》已拿腾讯等大厂offer，已开源在github ，欢迎star！
+    </a>
+    
+    
+</div>
+<br />
+
+
+
+<blockquote>
+    
+            <p>本文GitHub <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">https://github.com/OUYANGSIHAI/JavaInterview</a> 已收录，这是我花了6个月总结的<b>一线大厂Java面试</b>总结，本人已拿大厂offer，欢迎star</p>
+    
+    <p>原文链接：blog.ouyangsihai.cn &gt;&gt; <a href="/jvm-shi-shang-zui-zui-zui-wan-zheng-shen-ru-jie-xi-12000-zi-zong-jie.html" target="_blank">JVM 史上最最最完整深入解析（12000 字总结）</a></p>
+</blockquote>
+                <div id="articleContent">
+                    <img class="rich_pages" style="visibility: visible !important;width: 677px !important;" src="https://www.javazhiyin.com/wp-content/uploads/2020/03/java10-1585393296.png" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="JVM 史上最最最完整深入解析（12000 字总结）" title="JVM 史上最最最完整深入解析（12000 字总结）">
+
+<blockquote>
+</blockquote>
+<section>
+<section>
+作者：Huangy远
+segmentfault.com/a/1190000014395186
+</section>
+</section>
+
+
+<p>segmentfault.com&#x2F;a&#x2F;1190000014395186</p>
+<p>工作之余，想总结一下JVM相关知识。</p>
+<h2 id="Java运行时数据区"><a href="#Java运行时数据区" class="headerlink" title="Java运行时数据区"></a>Java运行时数据区</h2><p>Java虚拟机在执行Java程序的过程中会将其管理的内存划分为若干个不同的数据区域，这些区域有各自的用途、创建和销毁的时间，有些区域随虚拟机进程的启动而存在，有些区域则是依赖用户线程的启动和结束来建立和销毁。</p>
+<p>Java虚拟机所管理的内存包括以下几个运行时数据区域，如图：</p>
+<img class="rich_pages" style="" src="https://www.javazhiyin.com/wp-content/uploads/2020/03/java3-1585393296.png" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="JVM 史上最最最完整深入解析（12000 字总结）" title="JVM 史上最最最完整深入解析（12000 字总结）">
+
+<p>1、<strong>程序计数器：</strong>指向当前线程正在执行的字节码指令。线程私有的。</p>
+<p>2、<strong>虚拟机栈：</strong>虚拟机栈是Java执行方法的内存模型。每个方法被执行的时候，都会创建一个栈帧，把栈帧压人栈，当方法正常返回或者抛出未捕获的异常时，栈帧就会出栈。</p>
+<p><strong>（1）栈帧：栈帧存储方法的相关信息，包含局部变量数表、返回值、操作数栈、动态链接</strong></p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+局部变量表：包含了方法执行过程中的所有变量。局部变量数组所需要的空间在编译期间完成分配，在方法运行期间不会改变局部变量数组的大小。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+返回值：如果有返回值的话，压入调用者栈帧中的操作数栈中，并且把PC的值指向 方法调用指令 后面的一条指令地址。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+操作数栈：操作变量的内存模型。操作数栈的最大深度在编译的时候已经确定（写入方法区code属性的max_stacks项中）。操作数栈的的元素可以是任意Java类型，包括long和double，32位数据占用栈空间为1，64位数据占用2。方法刚开始执行的时候，栈是空的，当方法执行过程中，各种字节码指令往栈中存取数据。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+动态链接：每个栈帧都持有在运行时常量池中该栈帧所属方法的引用，持有这个引用是为了支持方法调用过程中的动态链接。
+</li>
+
+<p>返回值：如果有返回值的话，压入调用者栈帧中的操作数栈中，并且把PC的值指向 方法调用指令 后面的一条指令地址。</p>
+<p>动态链接：每个栈帧都持有在运行时常量池中该栈帧所属方法的引用，持有这个引用是为了支持方法调用过程中的动态链接。</p>
+<p><strong>（2）线程私有</strong></p>
+<p>3、<strong>本地方法栈：</strong></p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+调用本地native的内存模型
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+线程独享。
+</li>
+
+<p>线程独享。</p>
+<p>4、<strong>方法区：</strong></p>
+<p>用于存储已被虚拟机加载的类信息、常量、静态变量、即时编译后的代码等数据</p>
+<p>1.线程共享的</p>
+<p>2.运行时常量池：</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+是方法区的一部分
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+存放编译期生成的各种字面量和符号引用
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+Class文件中除了存有类的版本、字段、方法、接口等描述信息，还有一项是常量池，存有这个类的 编译期生成的各种字面量和符号引用，这部分内容将在类加载后，存放到方法区的运行时常量池中。
+</li>
+
+<p>存放编译期生成的各种字面量和符号引用</p>
+<p><strong>5、堆（Heap）：</strong></p>
+<p>Java对象存储的地方</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+Java堆是虚拟机管理的内存中最大的一块
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+Java堆是所有线程共享的区域
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+在虚拟机启动时创建
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+此内存区域的唯一目的就是存放对象实例，几乎所有对象实例都在这里分配内存。存放new生成的对象和数组
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+Java堆是垃圾收集器管理的内存区域，因此很多时候称为“GC堆”
+</li>
+
+<p>Java堆是所有线程共享的区域</p>
+<p>此内存区域的唯一目的就是存放对象实例，几乎所有对象实例都在这里分配内存。存放new生成的对象和数组</p>
+<h2 id="JMM-Java内存模型"><a href="#JMM-Java内存模型" class="headerlink" title="JMM Java内存模型"></a>JMM Java内存模型</h2><p>1、 Java的并发采用“共享内存”模型，线程之间通过读写内存的公共状态进行通讯。多个线程之间是不能通过直接传递数据交互的，它们之间交互只能通过共享变量实现。</p>
+<p>2、 主要目的是定义程序中各个变量的访问规则。</p>
+<p>3、 Java内存模型规定所有变量都存储在主内存中，每个线程还有自己的工作内存。</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+线程的工作内存中保存了被该线程使用到的变量的拷贝（从主内存中拷贝过来），线程对变量的所有操作都必须在工作内存中执行，而不能直接访问主内存中的变量。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+不同线程之间无法直接访问对方工作内存的变量，线程间变量值的传递都要通过主内存来完成。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+主内存主要对应Java堆中实例数据部分。工作内存对应于虚拟机栈中部分区域。
+</li>
+
+<p>不同线程之间无法直接访问对方工作内存的变量，线程间变量值的传递都要通过主内存来完成。</p>
+<img src="https://www.javazhiyin.com/wp-content/uploads/2020/03/java10-1585393297.jpg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="JVM 史上最最最完整深入解析（12000 字总结）" title="JVM 史上最最最完整深入解析（12000 字总结）">
+
+<p>4、Java<a target="_blank" rel="noopener" href="http://mp.weixin.qq.com/s?__biz=MzU2MTI4MjI0MQ==&mid=2247487399&idx=3&sn=ff752d76ed35346a82fa29a448ba5b1b&chksm=fc7a6209cb0deb1ff10944a2e91ef3f17c431ebb504f63fcd2ed6db3e0d37ea6ecb4d0f6ddf0&scene=21#wechat_redirect">线程之间的通信</a>由内存模型JMM（Java Memory Model）控制。</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+JMM决定一个线程对变量的写入何时对另一个线程可见。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+线程之间共享变量存储在主内存中
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+每个线程有一个私有的本地内存，里面存储了读/写共享变量的副本。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+JMM通过控制每个线程的本地内存之间的交互，来为程序员提供内存可见性保证。
+</li>
+
+<p>线程之间共享变量存储在主内存中</p>
+<p>JMM通过控制每个线程的本地内存之间的交互，来为程序员提供内存可见性保证。</p>
+<p>5、可见性、有序性：</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+当一个共享变量在多个本地内存中有副本时，如果一个本地内存修改了该变量的副本，其他变量应该能够看到修改后的值，此为可见性。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+保证线程的有序执行，这个为有序性。（保证线程安全）
+</li>
+
+<p>保证线程的有序执行，这个为有序性。（保证线程安全）</p>
+<p>6、内存间交互操作：</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+lock（锁定）：作用于主内存的变量，把一个变量标识为一条线程独占状态。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+unlock（解锁）：作用于主内存的变量，把一个处于锁定状态的变量释放出来，释放后的变量才可以被其他线程锁定。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+read（读取）：作用于主内存变量，把主内存的一个变量读取到工作内存中。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+load（载入）：作用于工作内存，把read操作读取到工作内存的变量载入到工作内存的变量副本中
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+use（使用）：作用于工作内存的变量，把工作内存中的变量值传递给一个执行引擎。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+assign（赋值）：作用于工作内存的变量。把执行引擎接收到的值赋值给工作内存的变量。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+store（存储）：把工作内存的变量的值传递给主内存
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+write（写入）：把store操作的值入到主内存的变量中
+</li>
+
+<p>unlock（解锁）：作用于主内存的变量，把一个处于锁定状态的变量释放出来，释放后的变量才可以被其他线程锁定。</p>
+<p>load（载入）：作用于工作内存，把read操作读取到工作内存的变量载入到工作内存的变量副本中</p>
+<p>assign（赋值）：作用于工作内存的变量。把执行引擎接收到的值赋值给工作内存的变量。</p>
+<p>write（写入）：把store操作的值入到主内存的变量中</p>
+<h3 id="6-1、注意："><a href="#6-1、注意：" class="headerlink" title="6.1、注意："></a>6.1、注意：</h3><li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+不允许read、load、store、write操作之一单独出现
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+不允许一个线程丢弃assgin操作
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+不允许一个线程不经过assgin操作，就把工作内存中的值同步到主内存中
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+一个新的变量只能在主内存中生成
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+一个变量同一时刻只允许一条线程对其进行lock操作。但lock操作可以被同一条线程执行多次，只有执行相同次数的unlock操作，变量才会解锁
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+如果对一个变量进行lock操作，将会清空工作内存中此变量的值，在执行引擎使用这个变量前，需要重新执行load或者assgin操作初始化变量的值。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+如果一个变量没有被锁定，不允许对其执行unlock操作，也不允许unlock一个被其他线程锁定的变量
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+对一个变量执行unlock操作之前，需要将该变量同步回主内存中
+</li>
+
+<p>不允许一个线程丢弃assgin操作</p>
+<p>一个新的变量只能在主内存中生成</p>
+<p>如果对一个变量进行lock操作，将会清空工作内存中此变量的值，在执行引擎使用这个变量前，需要重新执行load或者assgin操作初始化变量的值。</p>
+<p>对一个变量执行unlock操作之前，需要将该变量同步回主内存中</p>
+<h2 id="堆的内存划分"><a href="#堆的内存划分" class="headerlink" title="堆的内存划分"></a>堆的内存划分</h2><img class="rich_pages" style="" src="https://www.javazhiyin.com/wp-content/uploads/2020/03/java9-1585393297.png" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="JVM 史上最最最完整深入解析（12000 字总结）" title="JVM 史上最最最完整深入解析（12000 字总结）">
+
+<p>Java堆的内存划分如图所示，分别为年轻代、Old Memory（老年代）、Perm（永久代）。其中在Jdk1.8中，永久代被移除，使用MetaSpace代替。</p>
+<p><strong>1、新生代：</strong></p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+使用复制清除算法（Copinng算法），原因是年轻代每次GC都要回收大部分对象。新生代里面分成一份较大的Eden空间和两份较小的Survivor空间。每次只使用Eden和其中一块Survivor空间，然后垃圾回收的时候，把存活对象放到未使用的Survivor（划分出from、to）空间中，清空Eden和刚才使用过的Survivor空间。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+分为Eden、Survivor From、Survivor To，比例默认为8：1：1
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+内存不足时发生Minor GC
+</li>
+
+<p>分为Eden、Survivor From、Survivor To，比例默认为8：1：1</p>
+<p><strong>2、老年代：</strong></p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+采用标记-整理算法（mark-compact），原因是老年代每次GC只会回收少部分对象。
+</li>
+
+<p><strong>3、Perm：用来存储类的元数据，也就是方法区。</strong></p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+Perm的废除：在jdk1.8中，Perm被替换成MetaSpace，MetaSpace存放在本地内存中。原因是永久代进场内存不够用，或者发生内存泄漏。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+MetaSpace（元空间）：元空间的本质和永久代类似，都是对JVM规范中方法区的实现。不过元空间与永久代之间最大的区别在于：元空间并不在虚拟机中，而是使用本地内存。
+</li>
+
+<p>MetaSpace（元空间）：元空间的本质和永久代类似，都是对JVM规范中方法区的实现。不过元空间与永久代之间最大的区别在于：元空间并不在虚拟机中，而是使用本地内存。</p>
+<p><strong>4、堆内存的划分在JVM里面的示意图：</strong></p>
+<p><strong><img src="https://www.javazhiyin.com/wp-content/uploads/2020/03/java5-1585393297.png" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="JVM 史上最最最完整深入解析（12000 字总结）" title="JVM 史上最最最完整深入解析（12000 字总结）"></strong></p>
+<h2 id="GC垃圾回收"><a href="#GC垃圾回收" class="headerlink" title="GC垃圾回收"></a>GC垃圾回收</h2><h3 id="一、-判断对象是否要回收的方法：可达性分析法"><a href="#一、-判断对象是否要回收的方法：可达性分析法" class="headerlink" title="一、 判断对象是否要回收的方法：可达性分析法"></a>一、 判断对象是否要回收的方法：可达性分析法</h3><p><strong>1、 可达性分析法：</strong></p>
+<p>通过一系列“GC Roots”对象作为起点进行搜索，如果在“GC Roots”和一个对象之间没有可达路径，则称该对象是不可达的。不可达对象不一定会成为可回收对象。进入DEAD状态的线程还可以恢复，GC不会回收它的内存。（把一些对象当做root对象，JVM认为root对象是不可回收的，并且root对象引用的对象也是不可回收的）</p>
+<p><strong>2、 以下对象会被认为是root对象：</strong></p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+虚拟机栈（栈帧中本地变量表）中引用的对象
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+方法区中静态属性引用的对象
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+方法区中常量引用的对象
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+本地方法栈中Native方法引用的对象
+</li>
+
+<p>方法区中静态属性引用的对象</p>
+<p>本地方法栈中Native方法引用的对象</p>
+<p><strong>3、 对象被判定可被回收，需要经历两个阶段：</strong></p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+第一个阶段是可达性分析，分析该对象是否可达
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+第二个阶段是当对象没有重写finalize()方法或者finalize()方法已经被调用过，虚拟机认为该对象不可以被救活，因此回收该对象。（finalize()方法在垃圾回收中的作用是，给该对象一次救活的机会）
+</li>
+
+<p>第二个阶段是当对象没有重写finalize()方法或者finalize()方法已经被调用过，虚拟机认为该对象不可以被救活，因此回收该对象。（finalize()方法在垃圾回收中的作用是，给该对象一次救活的机会）</p>
+<p><strong>4、 方法区中的垃圾回收：</strong></p>
+<p>1.常量池中一些常量、符号引用没有被引用，则会被清理出常量池</p>
+<p>2.无用的类：被判定为无用的类，会被清理出方法区。判定方法如下：</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+该类的所有实例被回收
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+加载该类的ClassLoader被回收
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+该类的Class对象没有被引用
+</li>
+
+<p>加载该类的ClassLoader被回收</p>
+<p><strong>5、 finalize():</strong></p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+GC垃圾回收要回收一个对象的时候，调用该对象的finalize()方法。然后在下一次垃圾回收的时候，才去回收这个对象的内存。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+可以在该方法里面，指定一些对象在释放前必须执行的操作。
+</li>
+
+<p>可以在该方法里面，指定一些对象在释放前必须执行的操作。</p>
+<h3 id="二、-发现虚拟机频繁full-GC时应该怎么办："><a href="#二、-发现虚拟机频繁full-GC时应该怎么办：" class="headerlink" title="二、 发现虚拟机频繁full GC时应该怎么办："></a>二、 发现虚拟机频繁full GC时应该怎么办：</h3><blockquote>
+</blockquote>
+<p>full GC指的是清理整个堆空间，包括年轻代和永久代</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+首先用命令查看触发GC的原因是什么 jstat –gccause 进程id
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+如果是System.gc()，则看下代码哪里调用了这个方法
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+如果是heap inspection(内存检查)，可能是哪里执行jmap –histo[:live]命令
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+如果是GC locker，可能是程序依赖的JNI库的原因
+</li>
+
+<p>如果是System.gc()，则看下代码哪里调用了这个方法</p>
+<p>如果是GC locker，可能是程序依赖的JNI库的原因</p>
+<h3 id="三、常见的垃圾回收算法："><a href="#三、常见的垃圾回收算法：" class="headerlink" title="三、常见的垃圾回收算法："></a>三、常见的垃圾回收算法：</h3><p><strong>1、Mark-Sweep（标记-清除算法）：</strong></p>
+<p>（1）思想：标记清除算法分为两个阶段，标记阶段和清除阶段。标记阶段任务是标记出所有需要回收的对象，清除阶段就是清除被标记对象的空间。</p>
+<p>（2）优缺点：实现简单，容易产生内存碎片</p>
+<p><strong>2、Copying（复制清除算法）：</strong></p>
+<p>（1）思想：将可用内存划分为大小相等的两块，每次只使用其中的一块。当进行垃圾回收的时候了，把其中存活对象全部复制到另外一块中，然后把已使用的内存空间一次清空掉。</p>
+<p>（2）优缺点：不容易产生内存碎片；可用内存空间少；存活对象多的话，效率低下。</p>
+<p><strong>3、Mark-Compact（标记-整理算法）：</strong></p>
+<p>（1）思想：先标记存活对象，然后把存活对象向一边移动，然后清理掉端边界以外的内存。</p>
+<p>（2）优缺点：不容易产生内存碎片；内存利用率高；存活对象多并且分散的时候，移动次数多，效率低下</p>
+<p><strong>4、分代收集算法：</strong>（目前大部分JVM的垃圾收集器所采用的算法）</p>
+<blockquote>
+</blockquote>
+<p>思想：把堆分成新生代和老年代。（永久代指的是方法区）</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+因为新生代每次垃圾回收都要回收大部分对象，所以新生代采用Copying算法。新生代里面分成一份较大的Eden空间和两份较小的Survivor空间。每次只使用Eden和其中一块Survivor空间，然后垃圾回收的时候，把存活对象放到未使用的Survivor（划分出from、to）空间中，清空Eden和刚才使用过的Survivor空间。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+由于老年代每次只回收少量的对象，因此采用mark-compact算法。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+在堆区外有一个永久代。对永久代的回收主要是无效的类和常量
+</li>
+
+<p>由于老年代每次只回收少量的对象，因此采用mark-compact算法。</p>
+<p><strong>5、GC使用时对程序的影响？</strong></p>
+<p>垃圾回收会影响程序的性能，Java虚拟机必须要追踪运行程序中的有用对象，然后释放没用对象，这个过程消耗处理器时间</p>
+<p><strong>6、几种不同的垃圾回收类型：</strong></p>
+<p>（1）<strong>Minor GC：</strong>从年轻代（包括Eden、Survivor区）回收内存。</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+当JVM无法为一个新的对象分配内存的时候，越容易触发Minor GC。所以分配率越高，内存越来越少，越频繁执行Minor GC
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+执行Minor GC操作的时候，不会影响到永久代（Tenured）。从永久代到年轻代的引用，被当成GC Roots，从年轻代到老年代的引用在标记阶段直接被忽略掉。
+</li>
+
+<p>执行Minor GC操作的时候，不会影响到永久代（Tenured）。从永久代到年轻代的引用，被当成GC Roots，从年轻代到老年代的引用在标记阶段直接被忽略掉。</p>
+<p>（2）<strong>Major GC：</strong>清理整个老年代，当eden区内存不足时触发。</p>
+<p>（3）<strong>Full GC：</strong>清理整个堆空间，包括年轻代和老年代。当老年代内存不足时触发</p>
+<h2 id="HotSpot-虚拟机详解"><a href="#HotSpot-虚拟机详解" class="headerlink" title="HotSpot 虚拟机详解"></a>HotSpot 虚拟机详解</h2><p><strong>1、 Java对象创建过程：</strong></p>
+<p>（1）虚拟机遇到一条new指令时，首先检查这个指令的参数能否在常量池中定位到一个类的符号引用，并检查这个符号引用代表的类是否已经加载、连接和初始化。如果没有，就执行该类的加载过程。（Java知音公众号内回复“面试题聚合”，送你一份面试宝典）</p>
+<p>（2）为该对象分配内存。</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+假设Java堆是规整的，所有用过的内存放在一边，空闲的内存放在另外一边，中间放着一个指针作为分界点的指示器。那分配内存只是把指针向空闲空间那边挪动与对象大小相等的距离，这种分配称为“指针碰撞”
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+假设Java堆不是规整的，用过的内存和空闲的内存相互交错，那就没办法进行“指针碰撞”。虚拟机通过维护一个列表，记录哪些内存块是可用的，在分配的时候找出一块足够大的空间分配给对象实例，并更新表上的记录。这种分配方式称为“空闲列表“。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+使用哪种分配方式由Java堆是否规整决定。Java堆是否规整由所采用的垃圾收集器是否带有压缩整理功能决定。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+分配对象保证线程安全的做法：虚拟机使用CAS失败重试的方式保证更新操作的原子性。（实际上还有另外一种方案：每个线程在Java堆中预先分配一小块内存，称为本地线程分配缓冲，TLAB。哪个线程要分配内存，就在哪个线程的TLAB上分配，只有TLAB用完并分配新的TLAB时，才进行同步锁定。虚拟机是否使用TLAB，由-XX:+/-UseTLAB参数决定）
+</li>
+
+<p>假设Java堆不是规整的，用过的内存和空闲的内存相互交错，那就没办法进行“指针碰撞”。虚拟机通过维护一个列表，记录哪些内存块是可用的，在分配的时候找出一块足够大的空间分配给对象实例，并更新表上的记录。这种分配方式称为“空闲列表“。</p>
+<p>分配对象保证线程安全的做法：虚拟机使用CAS失败重试的方式保证更新操作的原子性。（实际上还有另外一种方案：每个线程在Java堆中预先分配一小块内存，称为本地线程分配缓冲，TLAB。哪个线程要分配内存，就在哪个线程的TLAB上分配，只有TLAB用完并分配新的TLAB时，才进行同步锁定。虚拟机是否使用TLAB，由-XX:+&#x2F;-UseTLAB参数决定）</p>
+<p>（3）虚拟机为分配的内存空间初始化为零值（默认值）</p>
+<p>（4）虚拟机对对象进行必要的设置，例如这个对象是哪个类的实例、如何才能找到对象的元数据信息、对象的Hash码、对象的GC分代年龄等信息。这些信息存放在对象的对象头中。</p>
+<p>（5） 执行<code class="java">
+init</code>方法，把对象按照程序员的意愿进行初始化。</p>
+<p><strong>2、 对象的定位访问的方式（通过引用如何去定位到堆上的具体对象的位置）：</strong></p>
+<p>（1）<strong>句柄：</strong>使用句柄的方式，Java堆中将会划分出一块内存作为作为句柄池，引用中存储的就是对象的句柄的地址。而句柄中包含了对象实例数据和对象类型数据的地址。</p>
+<img src="https://www.javazhiyin.com/wp-content/uploads/2020/03/java2-1585393297.jpg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="JVM 史上最最最完整深入解析（12000 字总结）" title="JVM 史上最最最完整深入解析（12000 字总结）">
+
+<p>（2）<strong>直接指针：</strong>使用直接指针的方式，引用中存储的就是对象的地址。Java堆对象的布局必须必须考虑如何去访问对象类型数据。</p>
+<img src="https://www.javazhiyin.com/wp-content/uploads/2020/03/java6-1585393297.jpg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="JVM 史上最最最完整深入解析（12000 字总结）" title="JVM 史上最最最完整深入解析（12000 字总结）">
+
+<p>（3）两种方式各有优点：</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+使用句柄访问的好处是引用中存放的是稳定的句柄地址，当对象被移动（比如说垃圾回收时移动对象），只会改变句柄中实例数据指针，而引用本身不会被修改。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+使用直接指针，节省了一次指针定位的时间开销。
+</li>
+
+<p>使用直接指针，节省了一次指针定位的时间开销。</p>
+<p><strong>3、HotSpot的GC算法实现：</strong></p>
+<p>（1）HotSpot怎么快速找到GC Root？</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+HotSpot使用一组称为OopMap的数据结构。在类加载完成的时候，HotSpot就把对象内什么偏移量上是什么类型的数据计算出来，在JIT编译过程中，也会在栈和寄存器中哪些位置是引用。这样子，在GC扫描的时候，就可以直接知道哪些是可达对象了。
+</li>
+
+<p>（2）安全点：</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+HotSpot只在特定的位置生成OopMap，这些位置称为安全点。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+程序执行过程中并非所有地方都可以停下来开始GC，只有在到达安全点是才可以暂停。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+安全点的选定基本上以“是否具有让程序长时间执行“的特征选定的。比如说方法调用、循环跳转、异常跳转等。具有这些功能的指令才会产生Safepoint。
+</li>
+
+<p>程序执行过程中并非所有地方都可以停下来开始GC，只有在到达安全点是才可以暂停。</p>
+<p>（3）中断方式：</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+**抢占式中断：**在GC发生时，首先把所有线程中断，如果发现有线程不在安全点上，就恢复线程，让它跑到安全点上。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+**主动式中断：**GC需要中断线程时，不直接对线程操作，仅仅设置一个标志，各个线程执行时主动去轮询这个标志，当发现中断标记为真就自己中断挂起。轮询标记的地方和安全点是重合的。
+</li>
+
+<p><strong>主动式中断：</strong>GC需要中断线程时，不直接对线程操作，仅仅设置一个标志，各个线程执行时主动去轮询这个标志，当发现中断标记为真就自己中断挂起。轮询标记的地方和安全点是重合的。</p>
+<p>（4）安全区域：</p>
+<p>一段代码片段中，对象的引用关系不会发生变化，在这个区域中任何地方开始GC都是安全的。在线程进入安全区域时，它首先标志自己已经进入安全区域，在这段时间里，当JVM发起GC时，就不用管进入安全区域的线程了。</p>
+<p>在线程将要离开安全区域时，它检查系统是否完成了GC过程，如果完成了，它就继续前行。否则，它就必须等待直到收到可以离开安全区域的信号。（Java知音公众号内回复“面试题聚合”，送你一份面试宝典）</p>
+<p><strong>4、 GC时为什么要停顿所有Java线程？</strong></p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+因为GC先进行可达性分析。可达性分析是判断GC Root对象到其他对象是否可达，假如分析过程中对象的引用关系在不断变化，分析结果的准确性就无法得到保证。
+</li>
+
+<p><strong>5、 CMS收集器：</strong></p>
+<p>（1）一种以获取最短回收停顿时间为目标的收集器。</p>
+<p>（2）一般用于互联网站或者B&#x2F;S系统的服务端</p>
+<p>（3）基于标记-清除算法的实现，不过更为复杂，整个过程为4个步骤：</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+**初始标记：**标记GC Root能直接引用的对象
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+**并发标记：**利用多线程对每个GC Root对象进行tracing搜索，在堆中查找其下所有能关联到的对象。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+**重新标记：**为了修正并发标记期间，用户程序继续运作而导致标志产生变动的那一部分对象的标记记录。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+**并发清除：**利用多个线程对标记的对象进行清除
+</li>
+
+<p><strong>并发标记：</strong>利用多线程对每个GC Root对象进行tracing搜索，在堆中查找其下所有能关联到的对象。</p>
+<p><strong>并发清除：</strong>利用多个线程对标记的对象进行清除</p>
+<p>（4）由于耗时最长的并发标记和并发清除操作都是用户线程一起工作，所以总体来说，CMS的内存回收工作是和用户线程一起并发执行的。</p>
+<p>（5）缺点：</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+对CPU资源占用比较多。可能因为占用一部分CPU资源导致应用程序响应变慢。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+CMS无法处理浮动垃圾。在并发清除阶段，用户程序继续运行，可能产生新的内存垃圾，这一部分垃圾出现在标记过程之后，因此，CMS无法清除。这部分垃圾称为“浮动垃圾“
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+需要预留一部分内存，在垃圾回收时，给用户程序使用。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+基于标记-清除算法，容易产生大量内存碎片，导致full GC（full GC进行内存碎片的整理）
+</li>
+
+<p>CMS无法处理浮动垃圾。在并发清除阶段，用户程序继续运行，可能产生新的内存垃圾，这一部分垃圾出现在标记过程之后，因此，CMS无法清除。这部分垃圾称为“浮动垃圾“</p>
+<p>基于标记-清除算法，容易产生大量内存碎片，导致full GC（full GC进行内存碎片的整理）</p>
+<p><strong>6、 对象头部分的内存布局：</strong></p>
+<p>HotSpot的对象头分为两部分，第一部分用于存储对象自身的运行时数据，比如哈希码、GC分代年龄等。另外一部分用于指向方法区对象类型数据的指针。</p>
+<p><strong>7、 偏向锁：</strong></p>
+<p>偏向锁偏向于第一个获取它的线程，如果在接下来的执行过程，没有其他线程获取该锁，则持有偏向锁的线程永远不需要同步。（当一个线程获取偏向锁，它每次进入这个锁相关的同步块，虚拟机不在进行任何同步操作。当有另外一个线程尝试获取这个锁时，偏向模式宣告结束）</p>
+<h2 id="JVM优化"><a href="#JVM优化" class="headerlink" title="JVM优化"></a>JVM优化</h2><p>1、一般来说，当survivor区不够大或者占用量达到50%，就会把一些对象放到老年区。通过设置合理的eden区，survivor区及使用率，可以将年轻对象保存在年轻代，从而避免full GC，使用-Xmn设置年轻代的大小</p>
+<p>2、对于占用内存比较多的大对象，一般会选择在老年代分配内存。如果在年轻代给大对象分配内存，年轻代内存不够了，就要在eden区移动大量对象到老年代，然后这些移动的对象可能很快消亡，因此导致full GC。通过设置参数：<code class="java">
+-XX:PetenureSizeThreshold=1000000</code>，单位为B，标明对象大小超过1M时，在老年代(tenured)分配内存空间。</p>
+<p>3、一般情况下，年轻对象放在eden区，当第一次GC后，如果对象还存活，放到survivor区，此后，每GC一次，年龄增加1，当对象的年龄达到阈值，就被放到tenured老年区。这个阈值可以同构<code class="java">
+-XX:MaxTenuringThreshold</code>设置。如果想让对象留在年轻代，可以设置比较大的阈值。</p>
+<p>4、设置最小堆和最大堆：-Xmx和-Xms稳定的堆大小堆垃圾回收是有利的，获得一个稳定的堆大小的方法是设置-Xms和-Xmx的值一样，即最大堆和最小堆一样，如果这样子设置，系统在运行时堆大小理论上是恒定的，稳定的堆空间可以减少GC次数，因此，很多服务端都会将这两个参数设置为一样的数值。稳定的堆大小虽然减少GC次数，但是增加每次GC的时间，因为每次GC要把堆的大小维持在一个区间内。</p>
+<p>5、一个不稳定的堆并非毫无用处。在系统不需要使用大内存的时候，压缩堆空间，使得GC每次应对一个较小的堆空间，加快单次GC次数。基于这种考虑，JVM提供两个参数，用于压缩和扩展堆空间。</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+`-XX:MinHeapFreeRatio` 参数用于设置堆空间的最小空闲比率。默认值是40，当堆空间的空闲内存比率小于40，JVM便会扩展堆空间
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+`-XX:MaxHeapFreeRatio` 参数用于设置堆空间的最大空闲比率。默认值是70， 当堆空间的空闲内存比率大于70，JVM便会压缩堆空间。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+当-Xmx和-Xmx相等时，上面两个参数无效
+</li>
+
+<p><code class="java">
+-XX:MaxHeapFreeRatio</code> 参数用于设置堆空间的最大空闲比率。默认值是70， 当堆空间的空闲内存比率大于70，JVM便会压缩堆空间。</p>
+<p>6、通过增大吞吐量提高系统性能，可以通过设置并行垃圾回收收集器。</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+`-XX:+UseParallelGC`:年轻代使用并行垃圾回收收集器。这是一个关注吞吐量的收集器，可以尽可能的减少垃圾回收时间。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+`-XX:+UseParallelOldGC`:设置老年代使用并行垃圾回收收集器。
+</li>
+
+<p><code class="java">
+-XX:+UseParallelOldGC</code>:设置老年代使用并行垃圾回收收集器。</p>
+<p>7、尝试使用大的内存分页：使用大的内存分页增加CPU的内存寻址能力，从而系统的性能。<code class="java">
+-XX:+LargePageSizeInBytes</code> 设置内存页的大小</p>
+<p>8、使用非占用的垃圾收集器。-XX:+UseConcMarkSweepGC老年代使用CMS收集器降低停顿。</p>
+<p>9、-XXSurvivorRatio&#x3D;3，表示年轻代中的分配比率：survivor:eden &#x3D; 2:3</p>
+<p>10、JVM性能调优的工具：</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+jps（Java Process Status）：输出JVM中运行的进程状态信息(现在一般使用jconsole)
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+jstack：查看java进程内线程的堆栈信息。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+jmap：用于生成堆转存快照
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+jhat：用于分析jmap生成的堆转存快照（一般不推荐使用，而是使用Ecplise Memory Analyzer）
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+jstat是JVM统计监测工具。可以用来显示垃圾回收信息、类加载信息、新生代统计信息等。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+VisualVM：故障处理工具
+</li>
+
+<p>jstack：查看java进程内线程的堆栈信息。</p>
+<p>jhat：用于分析jmap生成的堆转存快照（一般不推荐使用，而是使用Ecplise Memory Analyzer）</p>
+<p>VisualVM：故障处理工具</p>
+<h2 id="类加载机制"><a href="#类加载机制" class="headerlink" title="类加载机制"></a>类加载机制</h2><h3 id="一、-概念"><a href="#一、-概念" class="headerlink" title="一、 概念"></a>一、 概念</h3><p>类加载器把class文件中的二进制数据读入到内存中，存放在方法区，然后在堆区创建一个java.lang.Class对象，用来封装类在方法区内的数据结构。</p>
+<p><strong>类加载的步骤如下：</strong></p>
+<p><strong>1、加载：</strong>查找并加载类的二进制数据（把class文件里面的信息加载到内存里面）</p>
+<p><strong>2、连接：</strong>把内存中类的二进制数据合并到虚拟机的运行时环境中</p>
+<p>（1）验证：确保被加载的类的正确性。包括：</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+类文件的结构检查：检查是否满足Java类文件的固定格式
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+语义检查：确保类本身符合Java的语法规范
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+字节码验证：确保字节码流可以被Java虚拟机安全的执行。字节码流是操作码组成的序列。每一个操作码后面都会跟着一个或者多个操作数。字节码检查这个步骤会检查每一个操作码是否合法。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+二进制兼容性验证：确保相互引用的类之间是协调一致的。
+</li>
+
+<p>语义检查：确保类本身符合Java的语法规范</p>
+<p>二进制兼容性验证：确保相互引用的类之间是协调一致的。</p>
+<p>（2）准备：为类的静态变量分配内存，并将其初始化为默认值</p>
+<p>（3）解析：把类中的符号引用转化为直接引用（比如说方法的符号引用，是有方法名和相关描述符组成，在解析阶段，JVM把符号引用替换成一个指针，这个指针就是直接引用，它指向该类的该方法在方法区中的内存位置）</p>
+<p><strong>3、初始化：</strong></p>
+<p>为类的静态变量赋予正确的初始值。当静态变量的等号右边的值是一个常量表达式时，不会调用static代码块进行初始化。只有等号右边的值是一个运行时运算出来的值，才会调用static初始化。</p>
+<h3 id="二、双亲委派模型"><a href="#二、双亲委派模型" class="headerlink" title="二、双亲委派模型"></a>二、双亲委派模型</h3><p>1、当一个类加载器收到类加载请求的时候，它首先不会自己去加载这个类的信息，而是把该请求转发给父类加载器，依次向上。</p>
+<p>所以所有的类加载请求都会被传递到父类加载器中，只有当父类加载器中无法加载到所需的类，子类加载器才会自己尝试去加载该类。当当前类加载器和所有父类加载器都无法加载该类时，抛出ClassNotFindException异常。</p>
+<p>2、意义：</p>
+<p>提高系统的安全性。用户自定义的类加载器不可能加载应该由父加载器加载的可靠类。（比如用户定义了一个恶意代码，自定义的类加载器首先让系统加载器去加载，系统加载器检查该代码不符合规范，于是就不继续加载了）</p>
+<p>3、定义类加载器：如果某个类加载器能够加载一个类，那么这个类加载器就叫做定义类加载器</p>
+<p>4、初始类加载器：定义类加载器及其所有子加载器都称作初始类加载器。</p>
+<p>5、运行时包：</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+由同一个类加载器加载并且拥有相同包名的类组成运行时包
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+只有属于同一个运行时包的类，才能访问包可见（default）的类和类成员。作用是 限制用户自定义的类冒充核心类库的类去访问核心类库的包可见成员。
+</li>
+
+<p>只有属于同一个运行时包的类，才能访问包可见（default）的类和类成员。作用是 限制用户自定义的类冒充核心类库的类去访问核心类库的包可见成员。</p>
+<p>6、加载两份相同的class对象的情况：A和B不属于父子类加载器关系，并且各自都加载了同一个类。</p>
+<h3 id="三、特点："><a href="#三、特点：" class="headerlink" title="三、特点："></a>三、特点：</h3><p>1、<strong>全盘负责：</strong>当一个类加载器加载一个类时，该类所依赖的其他类也会被这个类加载器加载到内存中。</p>
+<p>2、<strong>缓存机制：</strong>所有的Class对象都会被缓存，当程序需要使用某个Class时，类加载器先从缓存中查找，找不到，才从class文件中读取数据，转化成Class对象，存入缓存中。</p>
+<h3 id="三、-类加载器："><a href="#三、-类加载器：" class="headerlink" title="三、 类加载器："></a>三、 类加载器：</h3><p>两种类型的类加载器：</p>
+<p><strong>1、 JVM自带的类加载器（3种）：</strong></p>
+<p>（1）根类加载器（Bootstrap）：</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+C++编写的，程序员无法在程序中获取该类
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+负责加载虚拟机的核心库，比如java.lang.Object
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+没有继承ClassLoader类
+</li>
+
+<p>负责加载虚拟机的核心库，比如java.lang.Object</p>
+<p>（2）扩展类加载器（Extension）：</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+Java编写的，从指定目录中加载类库
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+父加载器是根类加载器
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+是ClassLoader的子类
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+如果用户把创建的jar文件放到指定目录中，也会被扩展加载器加载。
+</li>
+
+<p>父加载器是根类加载器</p>
+<p>如果用户把创建的jar文件放到指定目录中，也会被扩展加载器加载。</p>
+<p>（3）系统加载器（System）或者应用加载器(App)：</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+Java编写的
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+父加载器是扩展类加载器
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+从环境变量或者class.path中加载类
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+是用户自定义类加载的默认父加载器
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+是ClassLoader的子类
+</li>
+
+<p>父加载器是扩展类加载器</p>
+<p>是用户自定义类加载的默认父加载器</p>
+<p><strong>2、用户自定义的类加载器：</strong></p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+Java.lang.ClassLoader类的子类
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+用户可以定制类的加载方式
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+父类加载器是系统加载器
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+编写步骤：
+</li>
+
+<p>用户可以定制类的加载方式</p>
+<p>编写步骤：</p>
+<p>A、继承ClassLoader</p>
+<p>B、重写findClass方法。从特定位置加载class文件，得到字节数组，然后利用defineClass把字节数组转化为Class对象</p>
+<p>（5）为什么要自定义类加载器？</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+可以从指定位置加载class文件，比如说从数据库、云端加载class文件
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+加密：Java代码可以被轻易的反编译，因此，如果需要对代码进行加密，那么加密以后的代码，就不能使用Java自带的ClassLoader来加载这个类了，需要自定义ClassLoader，对这个类进行解密，然后加载。
+</li>
+
+<p>加密：Java代码可以被轻易的反编译，因此，如果需要对代码进行加密，那么加密以后的代码，就不能使用Java自带的ClassLoader来加载这个类了，需要自定义ClassLoader，对这个类进行解密，然后加载。</p>
+<blockquote>
+</blockquote>
+<p>问题：Java程序对类的执行有几种方式：</p>
+<p><strong>1、 主动使用（6种情况）：</strong></p>
+<p>JVM必须在每个类“首次 主动使用”的时候，才会初始化这些类。</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+创建类的实例
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+读写某个类或者接口的静态变量
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+调用类的静态方法
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+同过反射的API（Class.forName()）获取类
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+初始化一个类的子类
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+JVM启动的时候，被标明启动类的类（包含Main方法的类）
+</li>
+
+<p>读写某个类或者接口的静态变量</p>
+<p>同过反射的API（Class.forName()）获取类</p>
+<p>JVM启动的时候，被标明启动类的类（包含Main方法的类）</p>
+<p>只有当程序使用的静态变量或者静态方法确实在该类中定义时，该可以认为是对该类或者接口的主动使用。</p>
+<p><strong>2、 被动使用：</strong></p>
+<p>除了主动使用的6种情况，其他情况都是被动使用，都不会导致类的初始化。</p>
+<p>3、 JVM规范允许类加载器在预料某个类将要被使用的时候，就预先加载它。如果该class文件缺失或者存在错误，则在程序“首次 主动使用”的时候，才报告这个错误。（Linkage Error错误）。如果这个类一直没有被程序“主动使用”，就不会报错。</p>
+<p>类加载机制与接口：</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+当Java虚拟机初始化一个类时，不会初始化该类实现的接口。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+在初始化一个接口时，不会初始化这个接口父接口。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+只有当程序首次使用该接口的静态变量时，才导致该接口的初始化。
+</li>
+
+<p>在初始化一个接口时，不会初始化这个接口父接口。</p>
+<p>ClassLoader：</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+调用Classloader的loadClass方法去加载一个类，不是主动使用，因此不会进行类的初始化。
+</li>
+
+<p>类的卸载：</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+有JVM自带的三种类加载器（根、扩展、系统）加载的类始终不会卸载。因为JVM始终引用这些类加载器，这些类加载器使用引用他们所加载的类，因此这些Class类对象始终是可到达的。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+由用户自定义类加载器加载的类，是可以被卸载的。
+</li>
+
+<p>由用户自定义类加载器加载的类，是可以被卸载的。</p>
+<p><strong>补充：</strong></p>
+<p>JDK和JRK</p>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+JDK ：Java Development Kit，开发的时候用到的类包。
+</li>
+<li style="margin-bottom: 0.1em;font-size: inherit;color: inherit;line-height: inherit;">
+JRE ：Java Runtime Environment，Java运行的基础，包含运行时需要的所有类库。
+</li>
+
+<p>JRE ：Java Runtime Environment，Java运行的基础，包含运行时需要的所有类库。</p>
+<p>图解java文件转化成机器码</p>
+<img src="https://www.javazhiyin.com/wp-content/uploads/2020/03/java4-1585393297.jpg" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="JVM 史上最最最完整深入解析（12000 字总结）" title="JVM 史上最最最完整深入解析（12000 字总结）">
+
+<p>JVM虚拟机先将java文件编译成class文件（字节码文件），然后再将class文件转换成所有操作系统都能运行的机器指令。</p>
+<p><strong>END</strong></p>
+<p><strong>Java面试题专栏</strong></p>
+<img width="100%" style="letter-spacing: 0.544px;display: block;visibility: visible !important;width: auto !important;" src="https://www.javazhiyin.com/wp-content/uploads/2020/03/java9-1585393297-1.png" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="JVM 史上最最最完整深入解析（12000 字总结）" title="JVM 史上最最最完整深入解析（12000 字总结）">
+
+
+
+
+<p>欢迎长按下图关注公众号<strong>后端技术精选</strong></p>
+<img class="rich_pages __bg_gif" style="visibility: visible !important;width: 578px !important;" src="https://www.javazhiyin.com/wp-content/uploads/2020/03/java5-1585393297.gif" src="https://www.javazhiyin.com/wp-content/themes/mnews/images/post-loading.gif" alt="JVM 史上最最最完整深入解析（12000 字总结）" title="JVM 史上最最最完整深入解析（12000 字总结）">
+
+<blockquote>
+</blockquote>
+<p>原文始发于微信公众号（后端技术精选）：<a target="_blank" rel="noopener" href="http://mp.weixin.qq.com/s/RBGKWhvwa0DZgmbSf7YrGA">JVM 史上最最最完整深入解析（12000 字总结）</a></p>
+
+                </div>
+                <!-- 欧阳思海，modify，2020.05.01-->
+<!-- 文章详情详情页面的头部广告位置信息 -->
+<div id="post-head-panel">
+    
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" style="font-size: 18px;" target="_blank">
+        <img src="/icons/hot.gif">
+        本人花费半年的时间总结的《Java面试指南》已拿腾讯等大厂offer，已开源在github ，欢迎star！
+    </a>
+    
+    
+</div>
+<br />
+
+
+
+<blockquote>
+    
+            <p>本文GitHub <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">https://github.com/OUYANGSIHAI/JavaInterview</a> 已收录，这是我花了6个月总结的<b>一线大厂Java面试</b>总结，本人已拿大厂offer，欢迎star</p>
+    
+    <p>原文链接：blog.ouyangsihai.cn &gt;&gt; <a href="/jvm-shi-shang-zui-zui-zui-wan-zheng-shen-ru-jie-xi-12000-zi-zong-jie.html" target="_blank">JVM 史上最最最完整深入解析（12000 字总结）</a></p>
+</blockquote>
+                <hr />
+
+                
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.88rem;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-large waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fa fa-close"></i></a>
+            <h4 class="reward-title">多少都是对我的认可</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="http://image.ouyangsihai.cn/FpbhsOuf3Ar9vY34B97Y2qQ7LVGe" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="http://image.ouyangsihai.cn/FgYlMzms68PH73PWpZBwPfbLTAws" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+                
+
+                <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+
+<div id="article-share">
+    
+    <div class="social-share" data-disabled="qzone" data-wechat-qrcode-helper="<p>微信里点“发现”->“扫一扫”二维码便可查看分享。</p>"></div>
+    
+</div>
+
+<script src="/libs/share/js/social-share.min.js"></script>
+
+                
+
+                
+                <div class="reprint1">
+                    <p>
+                        <span class="reprint1-tip">
+                            <i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;转载请注明:
+                        </span>
+                        <a href="https://blog.ouyangsihai.cn" class="b-link-green">好好学java</a>
+                        <i class="fa fa-angle-right fa-lg fa-fw text-color"></i>
+                        <a href="/jvm-shi-shang-zui-zui-zui-wan-zheng-shen-ru-jie-xi-12000-zi-zong-jie.html" class="b-link-green">JVM 史上最最最完整深入解析（12000 字总结）</a>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        
+
+        
+
+        
+
+        
+
+        
+        <style>
+    .valine-card {
+        margin: 1.5rem auto;
+    }
+
+    .valine-card .card-content {
+        padding: 20px 20px 5px 20px;
+    }
+    /* valine 评论框增加背景图片 */
+    #vcomments textarea {
+        box-sizing: border-box;
+        background: url("") 100% 100% no-repeat;
+    }
+
+    #vcomments input[type=text],
+    #vcomments input[type=email],
+    #vcomments input[type=url],
+    #vcomments textarea {
+        box-sizing: border-box;
+    }
+
+    #vcomments p {
+        margin: 2px 2px 10px;
+        font-size: 1.05rem;
+        line-height: 1.78rem;
+    }
+
+    #vcomments blockquote p {
+        text-indent: 0.2rem;
+    }
+
+    #vcomments a {
+        padding: 0 2px;
+        color: #42b983;
+        font-weight: 500;
+        text-decoration: underline;
+    }
+
+    #vcomments img {
+        max-width: 100%;
+        height: auto;
+        cursor: pointer;
+    }
+
+    #vcomments ol li {
+        list-style-type: decimal;
+    }
+
+    #vcomments ol,
+    ul {
+        display: block;
+        padding-left: 2em;
+        word-spacing: 0.05rem;
+    }
+
+    #vcomments ul li,
+    ol li {
+        display: list-item;
+        line-height: 1.8rem;
+        font-size: 1rem;
+    }
+
+    #vcomments ul li {
+        list-style-type: disc;
+    }
+
+    #vcomments ul ul li {
+        list-style-type: circle;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    #vcomments table, th, td {
+        border: 0;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments h1 {
+        font-size: 1.85rem;
+        font-weight: bold;
+        line-height: 2.2rem;
+    }
+
+    #vcomments h2 {
+        font-size: 1.65rem;
+        font-weight: bold;
+        line-height: 1.9rem;
+    }
+
+    #vcomments h3 {
+        font-size: 1.45rem;
+        font-weight: bold;
+        line-height: 1.7rem;
+    }
+
+    #vcomments h4 {
+        font-size: 1.25rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    #vcomments h5 {
+        font-size: 1.1rem;
+        font-weight: bold;
+        line-height: 1.4rem;
+    }
+
+    #vcomments h6 {
+        font-size: 1rem;
+        line-height: 1.3rem;
+    }
+
+    #vcomments p {
+        font-size: 1rem;
+        line-height: 1.5rem;
+    }
+
+    #vcomments hr {
+        margin: 12px 0;
+        border: 0;
+        border-top: 1px solid #ccc;
+    }
+
+    #vcomments blockquote {
+        margin: 15px 0;
+        border-left: 5px solid #42b983;
+        padding: 1rem 0.8rem 0.3rem 0.8rem;
+        color: #666;
+        background-color: rgba(66, 185, 131, .1);
+    }
+
+    #vcomments pre {
+        font-family: monospace, monospace;
+        padding: 1.2em;
+        margin: .5em 0;
+        background: #272822;
+        overflow: auto;
+        border-radius: 0.3em;
+        tab-size: 4;
+    }
+
+    #vcomments code {
+        font-family: monospace, monospace;
+        padding: 1px 3px;
+        font-size: 0.92rem;
+        color: #e96900;
+        background-color: #f8f8f8;
+        border-radius: 2px;
+    }
+
+    #vcomments pre code {
+        font-family: monospace, monospace;
+        padding: 0;
+        color: #e8eaf6;
+        background-color: #272822;
+    }
+
+    #vcomments pre[class*="language-"] {
+        padding: 1.2em;
+        margin: .5em 0;
+    }
+
+    #vcomments code[class*="language-"],
+    pre[class*="language-"] {
+        color: #e8eaf6;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    #vcomments b,
+    strong {
+        font-weight: bold;
+    }
+
+    #vcomments dfn {
+        font-style: italic;
+    }
+
+    #vcomments small {
+        font-size: 85%;
+    }
+
+    #vcomments cite {
+        font-style: normal;
+    }
+
+    #vcomments mark {
+        background-color: #fcf8e3;
+        padding: .2em;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    /* 修复评论第一行位置错位 */
+    .v .vlist .vcard {
+    padding-top: 2.5em !important ;
+    }
+</style>
+
+<div class="card valine-card" data-aos="fade-up">
+    <div id="vcomments" class="card-content"></div>
+</div>
+
+<script src="/libs/valine/av-min.js"></script>
+<script src="/libs/valine/Valine.min.js"></script>
+<!-- <link rel="stylesheet" type="text/css" href="/libs//libs/jQuery-emoji/dist/css/jquery.emoji.css">
+<script src="/libs//libs/jQuery-emoji/dist/js/jquery.emoji.min.js"></script>
+<script src="/libs//libs/jQuery-emoji/dist/js/emoji.list.js"></script> -->
+<script>
+    new Valine({
+        el: '#vcomments',
+        appId: 'MxSNOS83TYWU3Opsy2GTW1ih-gzGzoHsz',
+        appKey: '4XevOgmAxHEwVDnIKgvEUihB',
+        notify: 'true' === 'true',
+        verify: 'true' === 'true',
+        visitor: 'true' === 'true',
+        avatar: 'mm',
+        pageSize: '10',
+        lang: 'zh-cn',
+        placeholder: '请畅所欲言吧，别害羞~',
+
+    });
+
+//     function parse_emoji() {
+//     jQuery(".vcontent").emojiParse({
+//       basePath: '/libs/jQuery-emoji/images/emoji',
+//       icons: emojiLists   // 注：详见 js/emoji.list.js
+//     });
+//   }
+  
+//   setTimeout(function() {
+//     // jQuery emoji 解析
+//     parse_emoji();
+//     // jquery emoji 初始化
+//     jQuery(".veditor").emoji({
+//       showTab: true,
+//       animation: 'slide',
+//       basePath: '/libs/jQuery-emoji/images/emoji',
+//       icons: emojiLists  // 注：详见 js/emoji.list.js
+//     });
+//     jQuery(".vmore").on("click", function() {
+//       setTimeout(function() {
+//         parse_emoji();
+//       }, 500);
+//     });
+//   }, 800)
+
+</script>
+        
+
+        
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/qiang-ruan-ruo-xu-yin-yong-zhi-you-ti-hui-guo-liao-cai-neng-ji-zhu.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/3.jpg" class="responsive-img" alt="强软弱虚引用，只有体会过了，才能记住">
+                        
+                        <span class="card-title">强软弱虚引用，只有体会过了，才能记住</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+
+
+
+
+
+作者：CoderBear
+juejin.im/post/5e65b8096fb9a07cbb6e4a43
+
+
+
+
+juejin.im&#x2F;post&#x2F;5e65b8096fb9a07cbb6e4a43
+以前学习强软弱
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="fa fa-clock fa-fw icon-date"></i>2021-04-05
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/" class="post-category" target="_blank">
+                                    Java核心知识
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/Java%E5%9F%BA%E7%A1%80/" target="_blank">
+                        <span class="chip bg-color">Java基础</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fa fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/zui-tong-su-yi-dong-de-hashmap-yuan-ma-fen-xi-jie-du.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="最通俗易懂的 HashMap 源码分析解读">
+                        
+                        <span class="card-title">最通俗易懂的 HashMap 源码分析解读</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            来源：未读代码
+HashMap 作为最常用的集合类之一，有必要深入浅出的了解一下。这篇文章会深入到 HashMap 源码，刨析它的存储结构以及工作机制。
+1. HashMap 的存储结构HashMap 的数据存储结构是一个 NodeK,V 
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="fa fa-clock fa-fw icon-date"></i>2021-04-05
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Java%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86/" class="post-category" target="_blank">
+                                    Java核心知识
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/Java%E5%9F%BA%E7%A1%80/" target="_blank">
+                        <span class="chip bg-color">Java基础</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+    </div>
+</div>
+
+
+<script>
+    $('#articleContent').on('copy', function (e) {
+        // IE8 or earlier browser is 'undefined'
+        if (typeof window.getSelection === 'undefined') return;
+
+        var selection = window.getSelection();
+        // if the selection is short let's not annoy our users.
+        if (('' + selection).length < Number.parseInt('500')) {
+            return;
+        }
+
+        // create a div outside of the visible area and fill it with the selected text.
+        var bodyElement = document.getElementsByTagName('body')[0];
+        var newdiv = document.createElement('div');
+        newdiv.style.position = 'absolute';
+        newdiv.style.left = '-99999px';
+        bodyElement.appendChild(newdiv);
+        newdiv.appendChild(selection.getRangeAt(0).cloneContents());
+
+        // we need a <pre> tag workaround.
+        // otherwise the text inside "pre" loses all the line breaks!
+        if (selection.getRangeAt(0).commonAncestorContainer.nodeName === 'CODE') {
+            newdiv.innerHTML = "<pre>" + newdiv.innerHTML + "</pre>";
+        }
+
+        var url = document.location.href;
+        newdiv.innerHTML += '<br />'
+            + '来源: 好好学java<br />'
+            + '作者: 好好学java<br />'
+            + '链接: <a href="' + url + '">' + url + '</a><br />'
+            + '本文章著作权归作者所有，任何形式的转载都请注明出处。';
+
+        selection.selectAllChildren(newdiv);
+        window.setTimeout(function () { bodyElement.removeChild(newdiv); }, 200);
+    });
+</script>
+
+
+
+<!--
+<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+<script>
+    const btw = new BTWPlugin();
+    btw.init({
+        id: 'container',
+        blogId: '15305-1590684104111-518',
+        name: '程序员的技术圈子',
+        qrcode: 'http://image.ouyangsihai.cn/FtAUOeE5--1JTdcuuZFIhMuEUuJO',
+        keyword: 'vip',
+    });
+</script>
+-->
+
+    </div>
+    <div id="toc-aside" style="width: 310px;" class="expanded col l3 hide-on-med-and-down">
+        <!-- 自定义右侧card：欧阳思海 -->
+        <!-- <div id="my-card" style="background: ">
+            
+        </div> -->
+        <!-- <div class="toc-widget">
+            <div class="toc-title" style="display: none;"><i class="fa fa-list-alt"></i>&nbsp;&nbsp;</div>
+            <div id="toc-content"></div>
+        </div> -->
+
+
+
+
+
+
+
+
+        <aside class="col-lg-3" style="width: 300px;">
+
+            <link rel="stylesheet" type="text/css" href="/css/my-aside.css">
+
+            <!-- 关注公众号信息：欧阳思海 -->
+            <div class="widget-wrap">
+                <div class="widget bg-danger" style="color:whitesmoke; background-color: #419488">
+                    <div class="card-front animated col s12 m12 l8 offset-l2 fadeInUp">
+                        <div class="row">
+                            <div class="col-md-5" style="text-align: center;">
+                                <img class="adv" style="width: 95px; height: 95px;"
+                                    src="http://image.ouyangsihai.cn/FtAUOeE5--1JTdcuuZFIhMuEUuJO">
+                            </div>
+                            <div class="col-md-7" style="text-align: center;">
+                                <h2 style="font-size: 18px; 
+                                    margin: 0; 
+                                    padding: 0;
+                                    border: 0; 
+                                    outline: 0;
+                                    font-weight: inherit;
+                                    font-style: inherit;
+                                    font-family: inherit;
+                                    vertical-align: baseline;">关注公众号</h2>
+                                 
+                                <small style="font-size: 15px;">
+                                    →「技术干货」每日推送 <br>
+                                    →「回复资料」领取资料 <br>
+                                    →「微信加群」每周福利 <br>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div style="font-size: 0.8em;">
+                        <a href="/assets/erweima.jpg" target="_blank"
+                            style="color:orange;font-size: 14px;">点击添加我的微信，加入技术讨论群</a>
+                        除公众号以外，我还会在以下平台发布内容：
+                    </div>
+                    -->
+
+                    <div class="profile-block social-links col-md-7" style="text-align: center;">
+                        <table style="align-items: center; 
+                                        padding-left: 25px;">
+                            <tbody>
+                                <tr>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank" title="GitHub"
+                                            class="tooltip">
+                                            <img style="width: 22px;height: 22px;" src="/icons/github.svg"></a>
+                                    </td>
+
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://www.zhihu.com/people/hai-hai-ren-sheng-50/activities"
+                                            target="_blank" title="知乎" class="tooltip">
+                                            <img style="width: 22px;" src="/icons/zhihu.svg"></a>
+                                    </td>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://blog.csdn.net/sihai12345" target="_blank" title="CSDN"
+                                            class="tooltip">
+                                            <img style="width: 18px;" src="/icons/CSDN.svg"></a>
+                                    </td>
+                                    <td style="margin: 0;
+                                                padding: 0;
+                                                border: 0;
+                                                outline: 0;
+                                                font-weight: inherit;
+                                                font-style: inherit;
+                                                font-family: inherit;
+                                                vertical-align: baseline;"><a
+                                            style="color: whitesmoke;font-size: 25px;"
+                                            href="https://www.jianshu.com/u/12b0bd4c857c" target="_blank" title="简书"
+                                            class="tooltip">
+                                            <img style="width: 22px;" src="/icons/JianShu.svg"></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            
+
+            <!-- custom rightside_link：热门文章推荐：欧阳思海 -->
+            
+            <div class="widget-wrap widget-panel">
+                <p style="text-align: left;padding-bottom: 10px;line-height: 30px; font-size: 14px;">
+                    
+                    <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        本人花费半年的时间总结的《 Java 面试指南》已拿腾讯等大厂 offer，已开源在 github ，欢迎 star！
+                    </a><br>
+                    
+                    <a href="https://mp.weixin.qq.com/s/I0jimqziHqRNaIy0kXRCnw" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        2020 Java 1000G 最新学习资源，Java基础、Java项目实战、Java分布式等等！
+                    </a><br>
+                    
+                    <a href="http://image.ouyangsihai.cn/FpB-dO6g-XU44mMrVlj7EL1y7Rs7" target="_blank">
+
+                        <img src="/icons/hot.gif">
+
+                        高级 Java 开发微信群，一起搞事情吧！
+                    </a><br>
+                    
+                </p>
+            </div>
+            
+
+            
+
+            <!-- custom rightside_banner：右侧广告或者其他的栏目设置：欧阳思海 -->
+            
+            <div class="widget-wrap">
+                <a href="https://github.com/OUYANGSIHAI/JavaInterview" target="_blank">
+                    <img src="http://image.ouyangsihai.cn/FhhoEYMaNr6m0v8KhG8vSPgoREBV" style="width: 100%;">
+                </a>
+            </div>
+            
+            
+
+            
+
+            <!-- 右侧专栏分类：欧阳思海 -->
+            
+            <div class="widget-wrap widget-panel">
+                <ul class="media-list">
+                    
+                    <li class="media">
+                        <a href="/categories/MySQL的艺术世界/" target="_blank">
+                            <div class="media-left">
+                                <img class="media-object" src="http://image.ouyangsihai.cn/Fn3kQurieQ_0QUeqPmx5RW5i6R9n" style="width: 55px;">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading" style="margin-bottom: 10px; font-size: 100%;
+                                                                    margin: 0;
+                                                                    padding: 0;
+                                                                    border: 0;
+                                                                    outline: 0;
+                                                                    font-weight: inherit;
+                                                                    font-style: inherit;
+                                                                    font-family: inherit;
+                                                                    vertical-align: baseline;">
+                                    MySQL 的系列文章，解决全部面试问题！
+                                </h4>
+                                <p>
+                                    总共10篇文章，面试热门的锁、事务，通通解决了！
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    <hr>
+                    
+                    <li class="media">
+                        <a href="/categories/深入理解Java虚拟机/" target="_blank">
+                            <div class="media-left">
+                                <img class="media-object" src="http://image.ouyangsihai.cn/FpcS21VWJOHSgGzKcpW3_xVTSEeN" style="width: 55px;">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading" style="margin-bottom: 10px; font-size: 100%;
+                                                                    margin: 0;
+                                                                    padding: 0;
+                                                                    border: 0;
+                                                                    outline: 0;
+                                                                    font-weight: inherit;
+                                                                    font-style: inherit;
+                                                                    font-family: inherit;
+                                                                    vertical-align: baseline;">
+                                    深入理解 Java 虚拟机，面试必问
+                                </h4>
+                                <p>
+                                    总共10篇文章，包括内存模型、GC算法、GC收集器等。
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    <hr>
+                    
+                </ul>
+            </div>
+            
+
+            <!-- 右侧分类 -->
+            <div class="widget-wrap widget-panel">
+                <h3 class="widget-title">文章分类</h3>
+                <div class="widget">
+                    <ul class="category-list">
+                        
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/趣聊数据结构与算法/">>
+                                趣聊数据结构与算法</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/职业生涯浅谈/">>
+                                职业生涯浅谈</a><span class="category-list-count">33</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java项目分享/">>
+                                Java项目分享</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java面试经验/">>
+                                Java面试经验</a><span class="category-list-count">4</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/我要进大厂/">>
+                                我要进大厂</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/好好学java/">>
+                                好好学java</a><span class="category-list-count">1116</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/剑指offer/">>
+                                剑指offer</a><span class="category-list-count">112</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/css/">>
+                                css</a><span class="category-list-count">12</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/其他框架/">>
+                                其他框架</a><span class="category-list-count">142</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python其他/">>
+                                python其他</a><span class="category-list-count">45</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/数据库相关/">>
+                                数据库相关</a><span class="category-list-count">293</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java核心知识/">>
+                                Java核心知识</a><span class="category-list-count">196</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java面试题/">>
+                                Java面试题</a><span class="category-list-count">308</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/mybatis源码/">>
+                                mybatis源码</a><span class="category-list-count">56</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/spring教程/">>
+                                spring教程</a><span class="category-list-count">173</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springboot教程/">>
+                                springboot教程</a><span class="category-list-count">156</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/实战Activiti工作流/">>
+                                实战Activiti工作流</a><span class="category-list-count">4</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springcloud教程/">>
+                                springcloud教程</a><span class="category-list-count">39</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/linux/">>
+                                linux</a><span class="category-list-count">91</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python框架/">>
+                                python框架</a><span class="category-list-count">43</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python基础/">>
+                                python基础</a><span class="category-list-count">78</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/dubbo/">>
+                                dubbo</a><span class="category-list-count">37</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java源码/">>
+                                Java源码</a><span class="category-list-count">76</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/叽叽喳喳杂七杂八/">>
+                                叽叽喳喳杂七杂八</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/MySQL的艺术世界/">>
+                                MySQL的艺术世界</a><span class="category-list-count">8</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/jquery/">>
+                                jquery</a><span class="category-list-count">14</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java并发/">>
+                                Java并发</a><span class="category-list-count">43</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java文章合辑/">>
+                                Java文章合辑</a><span class="category-list-count">11</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java基础修炼/">>
+                                Java基础修炼</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/不一样的Java8/">>
+                                不一样的Java8</a><span class="category-list-count">3</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/小程序开发的世界/">>
+                                小程序开发的世界</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java学习资源分享/">>
+                                Java学习资源分享</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java小学生漫游/">>
+                                Java小学生漫游</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/rocketmq源码解析/">>
+                                rocketmq源码解析</a><span class="category-list-count">33</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springmvc最新教程/">>
+                                springmvc最新教程</a><span class="category-list-count">9</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java的Exception/">>
+                                Java的Exception</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/vue-js/">>
+                                vue.js</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/实战设计模式/">>
+                                实战设计模式</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/python数据处理/">>
+                                python数据处理</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java-Web闯关/">>
+                                Java Web闯关</a><span class="category-list-count">7</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/springboot2-0最新教程/">>
+                                springboot2.0最新教程</a><span class="category-list-count">11</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/netty/">>
+                                netty</a><span class="category-list-count">16</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/rpc/">>
+                                rpc</a><span class="category-list-count">13</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/拥抱大厂系列/">>
+                                拥抱大厂系列</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/eureka/">>
+                                eureka</a><span class="category-list-count">19</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/分布式/">>
+                                分布式</a><span class="category-list-count">6</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/中间件/">>
+                                中间件</a><span class="category-list-count">23</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java基础/">>
+                                Java基础</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/带你学Python/">>
+                                带你学Python</a><span class="category-list-count">10</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/使用技术工具/">>
+                                使用技术工具</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/mycat源码/">>
+                                mycat源码</a><span class="category-list-count">5</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/深入理解Java虚拟机/">>
+                                深入理解Java虚拟机</a><span class="category-list-count">8</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/spring源码/">>
+                                spring源码</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java集合源码分析/">>
+                                Java集合源码分析</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/github的repo/">>
+                                github的repo</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/Java框架深究/">>
+                                Java框架深究</a><span class="category-list-count">1</span>
+                        </li>
+                        
+                        <li class="category-list-item"><a class="category-list-link" href="categories/分布式架构/">>
+                                分布式架构</a><span class="category-list-count">2</span>
+                        </li>
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+
+        </aside>
+
+
+
+
+
+
+
+
+
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. 修改成永远不显示：欧阳思海-->
+
+
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h1, h2, h3, h4, h5'
+        });
+
+        console.log('============');
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h1, h2, h3, h4, h5').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+                        
+            /* 修复文章卡片 div 的宽度. */
+            let fixPostCardWidth = function (srcId, targetId) {
+                let srcDiv = $('#' + srcId);
+                if (srcDiv.length === 0) {
+                    return;
+                }
+
+                let w = srcDiv.width();
+                if (w >= 450) {
+                    w = w + 21;
+                } else if (w >= 350 && w < 450) {
+                    w = w + 18;
+                } else if (w >= 300 && w < 350) {
+                    w = w + 16;
+                } else {
+                    w = w + 14;
+                }
+                $('#' + targetId).width(w);
+            };
+
+            // 切换TOC目录展开收缩的相关操作.
+            // 修改右侧边栏功能：欧阳思海
+            const expandedClass = 'expanded';
+            let $tocAside = $('#toc-aside');
+            let $mainContent = $('#main-content');
+
+            $('#floating-toc-btn .btn-floating').click(function () {
+                if ($tocAside.hasClass(expandedClass)) {
+                    $tocAside.removeClass(expandedClass).slideUp(500);
+                    $mainContent.removeClass('l9');
+                } else {
+                    $tocAside.addClass(expandedClass).slideDown(500);
+                    $mainContent.addClass('l9');
+                }
+                fixPostCardWidth('artDetail', 'prenext-posts');
+            });
+                        
+                    });
+</script>
+    
+
+</main>
+
+
+        <footer class="page-footer bg-color">
+    <div class="container row center-align">
+        <div class="col s12 m8 l8 copy-right">
+            
+	    Copyright&copy; 2019 <a href="https://www.java1000.com/" target="_blank"> 好好学java </a>维护. 网站备案/许可证号：赣ICP备17007984号-3
+            <br>
+            <span id="sitetime"></span>
+            <br>
+
+            
+
+            
+                    <!-- 
+                        <span id="busuanzi_container_site_pv" style='display:none'></span>
+                        总访问量: <span id="busuanzi_value_site_pv" class="white-color"></span>
+                    
+        
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'></span>
+                        人次&nbsp; | &nbsp;访客人数: <span id="busuanzi_value_site_uv" class="white-color"></span> 人
+                     -->
+                        <!-- 修改计数：欧阳思海 -->
+                    
+                        <span id="busuanzi_container_site_pv" style='display:inline'>
+                            <i class="fa fa-heart-o"></i>
+                            本站总访问量 <span id="busuanzi_value_site_pv" class="white-color"></span>
+                        </span>
+                    
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'>
+                            人次,&nbsp;访客数 <span id="busuanzi_value_site_uv" class="white-color"></span> 人.
+                        </span>
+                    
+    
+            
+
+            
+                &nbsp; | &nbsp;字数统计:&nbsp;
+                <span class="white-color">8290.3k</span> 字
+            
+
+            
+            <br>
+
+        </div>
+
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/OUYANGSIHAI/JavaInterview" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fa fa-code-branch"></i>
+    </a>
+
+
+ 
+    <a href="https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=1446037005@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fa fa-envelope-open"></i>
+    </a>
+
+
+
+
+    <a href="https://zhihu.com/people/hai-hai-ren-sheng-50/activities" class="tooltipped" target="_blank" data-tooltip="访问我的知乎" data-position="top" data-delay="50">
+        <i class="fa fa-inverse">知</i>
+    </a>
+
+
+
+
+
+
+
+
+
+    <a href="https://blog.ouyangsihai.cn/sitemap.xml" class="tooltipped" target="_blank" data-tooltip="站点地图" data-position="top" data-delay="50">
+        <i class="fa fa-sitemap"></i>
+    </a>
+
+
+
+    <a href="https://blog.ouyangsihai.cn/friends" class="tooltipped" target="_blank" data-tooltip="友情链接" data-position="top" data-delay="50">
+        <i class="fa fa-address-book"></i>
+    </a>
+</div>
+
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+
+        var t1 = Date.UTC(2019, 08, 10, 00, 00, 00); //北京时间2019-8-1 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes *
+            minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "本站已运行 " + diffYears + " 年 " + diffDays + " 天 " + diffHours +
+            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒" ;
+    } /*因为建站时间还没有一年，就将之注释掉了。需要的可以取消*/
+    siteTime();
+</script>
+
+<!-- 修改计数：欧阳思海 -->
+<script>
+    $(document).ready(function () {
+
+        var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+        var pvcountOffset = 1005469;  // 初始化首次数据
+        var uvcountOffset = 250804;
+
+        function fixCount() {
+            if (document.getElementById("busuanzi_container_site_pv").style.display != "none") {
+                $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + pvcountOffset);
+                clearInterval(int);
+            }
+            if ($("#busuanzi_container_site_pv").css("display") != "none") {
+                $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + uvcountOffset); // 加上初始数据 
+                clearInterval(int); // 停止检测
+            }
+        }
+    });
+</script>
+
+
+
+
+        <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    console.log("lets go！");
+    console.log("/");
+    searchFunc("/" + "search.json", 'searchInput', 'searchResult');
+});
+</script>
+        <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fa fa-angle-up"></i>
+    </a>
+</div>
+
+
+        <script src="/libs/materialize/materialize.min.js"></script>
+        <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+        <script src="/libs/aos/aos.js"></script>
+        <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+        <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+        <script src="/js/matery.js"></script>
+
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-149362573-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    gtag('config', 'UA-149362573-1');
+</script>
+
+
+
+        
+            <script src="/libs/others/clicklove.js"></script>
+        
+
+        
+            <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+        
+
+        <!-- 洪卫 shw2018 add 2019.08.28 -->
+        <script type="text/javascript">
+            var OriginTitile = document.title,
+                st;
+            document.addEventListener("visibilitychange", function () {
+                document.hidden ? (document.title = "看不见我🙈~看不见我🙈~", clearTimeout(st)) : (document.title =
+                    "(๑•̀ㅂ•́) ✧被发现了～", st = setTimeout(function () {
+                        document.title = OriginTitile
+                    }, 3e3))
+            })
+        </script>
+
+        <!-- 鼠标点击烟花爆炸效果  洪卫 shw2018 add 2019.09.09 -->
+        
+
+        <!-- 背景雪花飘落特效洪卫 shw2018 add 2019.09.10 -->
+        
+
+        <!-- 鼠标点击文字特效 洪卫 shw2018 add 2019.09.10-->
+        
+
+        <!-- 背景雪花飘落特效 洪卫 shw2018 add 2019.09.10 -->
+        
+
+        <!-- 在线聊天工具  洪卫 shw2018 add 2019.09.11 -->
+        
+
+        <!-- 背景 canvas-nest  洪卫 shw 2018  add 2019.09.15-->
+        
+
+        <!-- 背景静止彩带  洪卫 shw 2018  add 2019.09.15-->
+        
+
+        <!-- 背景动态彩带 洪卫 shw 2018  add 2019.09.15-->
+        
+
+    </body>
+</html>
